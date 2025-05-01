@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport</title>
     <style>
-                :root {
+                        :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
             --light: #f8f9fa;
@@ -342,29 +342,10 @@
             font-size: 14px;
         }
     </style>
-    </head>
+</head>
 <body>
-    <!-- Modal de configuration initiale -->
-    <div id="setup-modal" class="setup-modal">
-        <div class="setup-container">
-            <h2>Configuration du profil</h2>
-            <p>Choisissez un nom d'utilisateur et une photo de profil</p>
-            
-            <div class="profile-preview" id="profile-preview">
-                <span id="profile-letter">?</span>
-                <img id="profile-preview-img" class="profile-img">
-                <input type="file" id="profile-upload" accept="image/*" class="file-input">
-            </div>
-            
-            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" class="username-input">
-            <p id="username-info" class="username-info">Ce nom ne pourra pas être changé avant 48 heures</p>
-            
-            <button id="save-profile-btn" class="setup-btn">Enregistrer</button>
-        </div>
-    </div>
-
     <!-- Interface principale -->
-    <div id="main-interface" class="main-interface">
+    <div id="main-interface" class="main-interface" style="display:none">
         <div class="container">
             <header class="header">
                 <div class="logo">
@@ -381,7 +362,7 @@
                     <span class="user-name" id="user-name">Utilisateur</span>
                     <span class="user-count" id="online-count">0</span>
                     <button id="logout-btn" class="logout-btn">Déconnexion</button>
-                    
+
                     <div id="users-list" class="users-list">
                         <h4>Utilisateurs en ligne</h4>
                         <div id="online-users-container" class="online-users-container"></div>
@@ -391,7 +372,7 @@
 
             <div class="welcome-section">
                 <h2 id="welcome-title" class="welcome-title">Bienvenue sur SchoolReport</h2>
-                <p id="username-change-info" class="username-change-info">
+                <p id="username-change-info" class="username-change-info" style="display:none">
                     Vous pourrez changer votre nom le <span id="username-change-date" class="change-date"></span>
                 </p>
             </div>
@@ -437,8 +418,7 @@
             </div>
         </div>
     </div>
-
-    <script type="module">
+        <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
@@ -798,6 +778,6 @@
                 console.error("Erreur lors de la déconnexion:", error);
             }
         }
-    </script>
+     </script>
 </body>
 </html>
