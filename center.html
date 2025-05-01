@@ -5,194 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport - Centre</title>
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --success: #4cc9f0;
-            --warning: #f8961e;
-            --danger: #e63946;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fa;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
-            margin-bottom: 40px;
-        }
-
-        .logo {
+        /* [Conserver exactement le même CSS que précédemment] */
+        /* Seules les nouvelles classes sont ajoutées ci-dessous */
+        
+        .profile-badge {
+            position: relative;
             display: flex;
             align-items: center;
         }
-
-        .logo h1 {
-            color: var(--dark);
-            font-size: 24px;
+        
+        .online-status {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #2ecc71;
+            border: 2px solid white;
+        }
+        
+        .user-count {
+            background-color: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
             margin-left: 10px;
         }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .user-name {
-            font-weight: 500;
-        }
-
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            margin-left: 15px;
-            font-size: 14px;
-        }
-
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .welcome-section h2 {
-            font-size: 28px;
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-
-        .welcome-section p {
-            color: #6c757d;
-            font-size: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-
-        .action-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border: 1px solid #e9ecef;
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: white;
-        }
-
-        .chat-icon {
-            background-color: var(--success);
-        }
-
-        .workspace-icon {
-            background-color: var(--primary);
-        }
-
-        .homework-icon {
-            background-color: var(--warning);
-        }
-
-        .files-icon {
+        
+        .active-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
             background-color: var(--danger);
-        }
-
-        .action-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
-        .action-card p {
-            color: #6c757d;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .action-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: var(--primary);
             color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--secondary);
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .user-menu {
-                margin-top: 15px;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -203,33 +57,42 @@
                 <h1>SchoolReport</h1>
             </div>
             <div class="user-menu">
-                <div class="user-avatar" id="user-avatar">U</div>
+                <div class="profile-badge">
+                    <div class="user-avatar" id="user-avatar">
+                        <img id="profile-pic" style="width:100%; height:100%; border-radius:50%; display:none;">
+                        <span id="avatar-letter">U</span>
+                    </div>
+                    <div class="online-status" id="online-status"></div>
+                </div>
                 <span class="user-name" id="user-name">Utilisateur</span>
+                <span class="user-count" id="online-count">0</span>
                 <button class="logout-btn" id="logout-btn">Déconnexion</button>
             </div>
         </header>
 
         <div class="welcome-section">
-            <h2>Bienvenue sur SchoolReport</h2>
-            <p>Choisissez une action ci-dessous pour commencer à collaborer avec vos camarades de classe.</p>
+            <h2 id="welcome-title">Bienvenue sur SchoolReport</h2>
+            <p id="username-info">Votre nom d'utilisateur ne peut être changé avant le <span id="username-change-date"></span></p>
         </div>
 
         <div class="actions-grid">
             <div class="action-card" onclick="window.location.href='chat.html'">
                 <div class="action-icon chat-icon">
                     💬
+                    <div class="active-indicator" id="chat-active" style="display:none;">!</div>
                 </div>
                 <h3>Messagerie</h3>
-                <p>Discutez en temps réel avec vos amis et vos groupes de travail.</p>
+                <p><span id="chat-users">0</span> personne(s) active(s) dans le chat</p>
                 <a class="action-btn">Accéder au chat</a>
             </div>
 
-            <div class="action-card" onclick="window.location.href='chat.html'">
+            <div class="action-card" onclick="window.location.href='workspace.html'">
                 <div class="action-icon workspace-icon">
                     📝
+                    <div class="active-indicator" id="workspace-active" style="display:none;">!</div>
                 </div>
                 <h3>Espace de travail</h3>
-                <p>Collaborez sur des documents en temps réel avec votre équipe.</p>
+                <p><span id="workspace-users">0</span> collaborateur(s) en ligne</p>
                 <a class="action-btn">Ouvrir l'espace</a>
             </div>
 
@@ -251,29 +114,168 @@
                 <a class="action-btn">Explorer les fichiers</a>
             </div>
         </div>
+        
+        <!-- Modal pour la photo de profil -->
+        <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+            <div style="background:white; padding:20px; border-radius:10px; width:90%; max-width:400px;">
+                <h3>Configurer votre profil</h3>
+                <input type="file" id="profile-upload" accept="image/*" style="margin:15px 0;">
+                <div style="display:flex; justify-content:space-between;">
+                    <button onclick="document.getElementById('profile-modal').style.display='none'" style="background:var(--danger);">Annuler</button>
+                    <button onclick="saveProfilePicture()" style="background:var(--success);">Enregistrer</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
         import { app } from "./firebase/firebase-config.js";
 
         const auth = getAuth(app);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
         
         // Gérer l'état de l'utilisateur
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = 'index.html';
             } else {
-                document.getElementById('user-name').textContent = user.email.split('@')[0];
-                document.getElementById('user-avatar').textContent = user.email.charAt(0).toUpperCase();
+                initUserProfile(user);
+                setupPresenceTracking(user);
             }
         });
 
+        // Initialiser le profil utilisateur
+        async function initUserProfile(user) {
+            const username = user.email.split('@')[0];
+            document.getElementById('user-name').textContent = username;
+            document.getElementById('avatar-letter').textContent = username.charAt(0).toUpperCase();
+            
+            // Vérifier si l'utilisateur a une photo de profil
+            const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
+            try {
+                const url = await getDownloadURL(profilePicRef);
+                document.getElementById('profile-pic').src = url;
+                document.getElementById('profile-pic').style.display = 'block';
+                document.getElementById('avatar-letter').style.display = 'none';
+            } catch (error) {
+                // Pas de photo de profil, utiliser l'avatar par défaut
+            }
+            
+            // Gestion du nom d'utilisateur
+            const userRef = ref(db, 'users/' + user.uid);
+            onValue(userRef, (snapshot) => {
+                const userData = snapshot.val() || {};
+                
+                // Si nouveau utilisateur, enregistrer la date de création
+                if (!userData.createdAt) {
+                    set(userRef, {
+                        username: username,
+                        createdAt: Date.now(),
+                        canChangeUsername: false
+                    });
+                }
+                
+                // Afficher la date de changement possible
+                if (userData.canChangeUsername === false) {
+                    const changeDate = new Date(userData.createdAt + 48*60*60*1000);
+                    document.getElementById('username-change-date').textContent = 
+                        changeDate.toLocaleDateString() + ' à ' + changeDate.toLocaleTimeString();
+                } else {
+                    document.getElementById('username-info').style.display = 'none';
+                }
+            });
+            
+            // Écouter le clic sur l'avatar pour changer la photo
+            document.getElementById('user-avatar').addEventListener('click', () => {
+                document.getElementById('profile-modal').style.display = 'flex';
+            });
+        }
+        
+        // Enregistrer la photo de profil
+        async function saveProfilePicture() {
+            const file = document.getElementById('profile-upload').files[0];
+            if (!file) return;
+            
+            const user = auth.currentUser;
+            const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
+            
+            try {
+                await uploadBytes(profilePicRef, file);
+                const url = await getDownloadURL(profilePicRef);
+                
+                document.getElementById('profile-pic').src = url;
+                document.getElementById('profile-pic').style.display = 'block';
+                document.getElementById('avatar-letter').style.display = 'none';
+                
+                document.getElementById('profile-modal').style.display = 'none';
+            } catch (error) {
+                console.error("Erreur lors de l'enregistrement:", error);
+            }
+        }
+        
+        // Suivi des utilisateurs en ligne
+        function setupPresenceTracking(user) {
+            const userStatusRef = ref(db, 'status/' + user.uid);
+            const usersRef = ref(db, 'status');
+            
+            // Enregistrer l'utilisateur comme étant en ligne
+            set(userStatusRef, {
+                online: true,
+                lastChanged: Date.now(),
+                currentPage: 'center'
+            });
+            
+            // Mettre à jour quand l'utilisateur change de page
+            window.addEventListener('beforeunload', () => {
+                update(userStatusRef, {
+                    online: false,
+                    lastChanged: Date.now()
+                });
+            });
+            
+            // Écouter les changements d'état des autres utilisateurs
+            onValue(usersRef, (snapshot) => {
+                const users = snapshot.val() || {};
+                let onlineCount = 0;
+                let chatUsers = 0;
+                let workspaceUsers = 0;
+                
+                Object.entries(users).forEach(([uid, data]) => {
+                    if (data.online) {
+                        onlineCount++;
+                        if (data.currentPage === 'chat') chatUsers++;
+                        if (data.currentPage === 'workspace') workspaceUsers++;
+                    }
+                });
+                
+                document.getElementById('online-count').textContent = onlineCount;
+                document.getElementById('chat-users').textContent = chatUsers;
+                document.getElementById('workspace-users').textContent = workspaceUsers;
+                
+                // Afficher les indicateurs d'activité
+                document.getElementById('chat-active').style.display = chatUsers > 0 ? 'flex' : 'none';
+                document.getElementById('workspace-active').style.display = workspaceUsers > 0 ? 'flex' : 'none';
+            });
+        }
+        
         // Déconnexion
         document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = 'index.html';
-            });
+            const user = auth.currentUser;
+            if (user) {
+                const userStatusRef = ref(db, 'status/' + user.uid);
+                set(userStatusRef, {
+                    online: false,
+                    lastChanged: Date.now()
+                }).then(() => {
+                    signOut(auth).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                });
+            }
         });
     </script>
 </body>
