@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchoolReport - Devoirs</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #3f37c9;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #4361ee;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .devoir {
+      background: white;
+      border-left: 5px solid #4361ee;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .devoir h3 {
+      margin: 0 0 5px;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gestion des Devoirs</h1>
+
+  <form onsubmit="addHomework(); return false;">
+    <input type="text" id="title" placeholder="Titre du devoir" required />
+    <input type="text" id="subject" placeholder="Matière" required />
+    <input type="date" id="dueDate" required />
+    <textarea id="description" rows="3" placeholder="Description du devoir..."></textarea>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <div id="homeworkList"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+      authDomain: "schoolreport-f8db0.firebaseapp.com",
+      projectId: "schoolreport-f8db0",
+      storageBucket: "schoolreport-f8db0.appspot.com",
+      messagingSenderId: "313069994450",
+      appId: "1:313069994450:web:37b009be4f1812fdca880b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    let currentUser;
+
+    onAuthStateChanged(auth, user => {
+      if (!user) window.location.href = 'index.html';
+      currentUser = user;
+      listenHomeworks();
+    });
+
+    async function addHomework() {
+      const title = document.getElementById('title').value;
+      const subject = document.getElementById('subject').value;
+      const dueDate = document.getElementById('dueDate').value;
+      const description = document.getElementById('description').value;
+
+      await addDoc(collection(db, 'homeworks'), {
+        uid: currentUser.uid,
+        title,
+        subject,
+        dueDate,
+        description,
+        done: false,
+        createdAt: Date.now()
+      });
+
+      document.querySelector('form').reset();
+    }
+
+    function listenHomeworks() {
+      const q = query(collection(db, 'homeworks'), where("uid", "==", currentUser.uid));
+      onSnapshot(q, snapshot => {
+        const list = document.getElementById('homeworkList');
+        list.innerHTML = '';
+        snapshot.forEach(docSnap => {
+          const hw = docSnap.data();
+          const div = document.createElement('div');
+          div.className = 'devoir';
+          const checked = hw.done ? 'checked' : '';
+          div.innerHTML = `
+            <h3 class="${hw.done ? 'completed' : ''}">${hw.title}</h3>
+            <p><strong>Matière:</strong> ${hw.subject}</p>
+            <p><strong>À rendre le:</strong> ${hw.dueDate}</p>
+            <p>${hw.description}</p>
+            <label><input type="checkbox" ${checked} onchange="toggleDone('${docSnap.id}', this.checked)" /> Terminé</label>
+          `;
+          list.appendChild(div);
+        });
+      });
+    }
+
+    window.toggleDone = async function (id, done) {
+      const ref = doc(db, 'homeworks', id);
+      await updateDoc(ref, { done });
+    }
+  </script>
+</body>
+</html>
