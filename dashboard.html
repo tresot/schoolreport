@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard avec Recherche et Discussion</title>
+  <title>Le Codex - Dashboard</title>
   <style>
     :root {
       --bg: #e3f2fd;
@@ -132,8 +132,7 @@
       margin-top: 20px;
     }
 
-    .results table th,
-    .results table td {
+    .results th, .results td {
       padding: 10px;
       text-align: left;
       border-bottom: 1px solid #ddd;
@@ -192,7 +191,6 @@
   </style>
 </head>
 <body>
-
   <div class="navbar">
     <button onclick="showSearchPage()">🔍 Recherche</button>
     <button onclick="showChatPage()">💬 Discussion</button>
@@ -201,7 +199,7 @@
   </div>
 
   <div class="container" id="searchPage">
-    <h1>Le codex</h1>
+    <h1>Le Codex</h1>
     <div class="username-display" id="usernameDisplay"></div>
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Tape ta recherche ici...">
@@ -290,7 +288,6 @@
       window.location.href = "index.html";
     }
 
-    // Affichage du nom d'utilisateur
     window.onload = () => {
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark");
@@ -306,6 +303,5 @@
       document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
     };
   </script>
-
 </body>
 </html>
