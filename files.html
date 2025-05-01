@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchoolReport - Fichiers partagés</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #3f37c9;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    input, select {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #4361ee;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .file-item {
+      background: white;
+      border-left: 5px solid #3f37c9;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .file-item a {
+      text-decoration: none;
+      color: #4361ee;
+    }
+
+    .file-item small {
+      display: block;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fichiers partagés</h1>
+
+  <form onsubmit="uploadFile(); return false;">
+    <input type="file" id="fileInput" required />
+    <select id="subjectSelect" required>
+      <option value="">Choisir une matière</option>
+      <option value="Maths">Maths</option>
+      <option value="SVT">SVT</option>
+      <option value="Physique">Physique</option>
+      <option value="Français">Français</option>
+      <option value="Anglais">Anglais</option>
+      <option value="Histoire">Histoire</option>
+    </select>
+    <div class="error" id="error"></div>
+    <button type="submit">Uploader</button>
+  </form>
+
+  <div id="fileList"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+      authDomain: "schoolreport-f8db0.firebaseapp.com",
+      projectId: "schoolreport-f8db0",
+      storageBucket: "schoolreport-f8db0.appspot.com",
+      messagingSenderId: "313069994450",
+      appId: "1:313069994450:web:37b009be4f1812fdca880b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUser;
+
+    onAuthStateChanged(auth, user => {
+      if (!user) window.location.href = 'index.html';
+      currentUser = user;
+      loadFiles();
+    });
+
+    window.uploadFile = async function () {
+      const fileInput = document.getElementById('fileInput');
+      const subject = document.getElementById('subjectSelect').value;
+      const errorDiv = document.getElementById('error');
+      const file = fileInput.files[0];
+
+      if (!file || !subject) return;
+      if (file.size > 20 * 1024 * 1024) {
+        errorDiv.textContent = "❌ Fichier trop volumineux. Limite de 20 Mo.";
+        return;
+      }
+
+      errorDiv.textContent = "";
+      const filePath = `shared_files/${subject}/${Date.now()}_${file.name}`;
+      const fileRef = ref(storage, filePath);
+      await uploadBytes(fileRef, file);
+      await addDoc(collection(db, "shared_files"), {
+        name: file.name,
+        subject,
+        path: filePath,
+        uploader: currentUser.email,
+        createdAt: Date.now()
+      });
+
+      loadFiles();
+      fileInput.value = "";
+      document.getElementById('subjectSelect').value = "";
+    }
+
+    async function loadFiles() {
+      const listDiv = document.getElementById('fileList');
+      listDiv.innerHTML = "";
+      const filesSnap = await getDocs(collection(db, "shared_files"));
+      const files = filesSnap.docs.map(doc => doc.data());
+
+      files.sort((a, b) => b.createdAt - a.createdAt);
+
+      for (const file of files) {
+        const url = await getDownloadURL(ref(storage, file.path));
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+          <a href="${url}" target="_blank">${file.name}</a>
+          <small>Matière: ${file.subject} | Partagé par: ${file.uploader}</small>
+        `;
+        listDiv.appendChild(div);
+      }
+    }
+  </script>
+</body>
+</html>
