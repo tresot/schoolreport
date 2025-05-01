@@ -58,6 +58,12 @@
       color: green;
       margin-top: 5px;
     }
+
+    .connected-users {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -66,7 +72,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -88,10 +94,13 @@
     ];
 
     let currentUser;
+    let pseudo;
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) return window.location.href = "index.html";
       currentUser = user;
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+      pseudo = userSnap.exists() ? (userSnap.data().pseudo || "Utilisateur") : "Utilisateur";
       renderSubjects();
     });
 
@@ -103,6 +112,7 @@
         const groupId = `group_text_${id}`;
         const statusId = `status_${id}`;
         const statusGroupId = `group_status_${id}`;
+        const connectedId = `connected_${id}`;
         const privateText = await loadNote(subject);
 
         const div = document.createElement("div");
@@ -119,21 +129,18 @@
           <textarea id="${groupId}" placeholder="Chargement..."> </textarea>
           <button onclick="saveGroupNote('${subject}', '${groupId}', '${statusGroupId}')">Sauver pour le groupe</button>
           <div class="status" id="${statusGroupId}"></div>
+          <div class="connected-users" id="${connectedId}">Connectés : ...</div>
         `;
         container.appendChild(div);
         liveGroupNote(subject, groupId);
+        updatePresence(subject, connectedId);
       }
     }
 
     window.saveNote = async (subject, textareaId, statusId) => {
       const text = document.getElementById(textareaId).value;
       const ref = doc(db, "workspace_notes", `${currentUser.uid}_${subject}`);
-      await setDoc(ref, {
-        text,
-        subject,
-        uid: currentUser.uid,
-        updatedAt: Date.now()
-      });
+      await setDoc(ref, { text, subject, uid: currentUser.uid, updatedAt: Date.now() });
       document.getElementById(statusId).textContent = "✅ Sauvegardé !";
       setTimeout(() => document.getElementById(statusId).textContent = "", 3000);
     };
@@ -147,11 +154,7 @@
     window.saveGroupNote = async (subject, textareaId, statusId) => {
       const text = document.getElementById(textareaId).value;
       const ref = doc(db, "workspace_group_notes", subject);
-      await setDoc(ref, {
-        text,
-        subject,
-        updatedAt: Date.now()
-      });
+      await setDoc(ref, { text, subject, updatedAt: Date.now() });
       document.getElementById(statusId).textContent = "✅ Sauvegarde partagée !";
       setTimeout(() => document.getElementById(statusId).textContent = "", 3000);
     };
@@ -162,6 +165,28 @@
         if (snap.exists()) {
           document.getElementById(textareaId).value = snap.data().text || "";
         }
+      });
+    }
+
+    function updatePresence(subject, connectedId) {
+      const userRef = doc(db, "workspace_group_users", subject);
+
+      // Ajouter l'utilisateur à la liste
+      updateDoc(userRef, { users: arrayUnion(pseudo) }).catch(async () => {
+        await setDoc(userRef, { users: [pseudo] });
+      });
+
+      // Afficher les utilisateurs connectés
+      onSnapshot(userRef, snap => {
+        if (snap.exists()) {
+          const users = snap.data().users || [];
+          document.getElementById(connectedId).textContent = `Connectés : ${users.join(", ")}`;
+        }
+      });
+
+      // Nettoyer à la fermeture
+      window.addEventListener("beforeunload", () => {
+        updateDoc(userRef, { users: arrayRemove(pseudo) });
       });
     }
   </script>
