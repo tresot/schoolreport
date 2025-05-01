@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SchoolReport - Connexion</title>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -20,29 +20,29 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Fonctions d'authentification
+        // Authentification - Inscription
         window.signUp = async (email, password) => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                document.getElementById('error-message').textContent = 'Compte créé avec succès !';
-                document.getElementById('error-message').style.color = 'green';
+                document.getElementById('error-message').textContent = "✅ Compte créé avec succès ! Redirection...";
+                setTimeout(() => window.location.href = 'center.html', 1500);
             } catch (error) {
-                document.getElementById('error-message').textContent = error.message;
-                document.getElementById('error-message').style.color = 'red';
+                document.getElementById('error-message').textContent = "❌ " + error.message;
             }
         };
 
+        // Authentification - Connexion
         window.signIn = async (email, password) => {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('error-message').textContent = 'Connexion réussie !';
-                document.getElementById('error-message').style.color = 'green';
+                document.getElementById('error-message').textContent = "✅ Connexion réussie ! Redirection...";
+                setTimeout(() => window.location.href = 'center.html', 1500);
             } catch (error) {
-                document.getElementById('error-message').textContent = 'Erreur de connexion : ' + error.message;
-                document.getElementById('error-message').style.color = 'red';
+                document.getElementById('error-message').textContent = "❌ " + error.message;
             }
         };
 
+        // Bascule entre les formulaires
         window.toggleForms = () => {
             const loginForm = document.getElementById('login-form');
             const signupForm = document.getElementById('signup-form');
@@ -51,8 +51,11 @@
             document.getElementById('error-message').textContent = '';
         };
     </script>
+
+    <!-- Le CSS reste exactement identique à ta version précédente (non répété ici pour clarté) -->
     <style>
-        :root {
+        /* ... ton style CSS copié inchangé ... */
+                :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
             --light: #f8f9fa;
@@ -242,8 +245,7 @@
             </div>
             <button onclick="
                 if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
-                    document.getElementById('error-message').textContent = 'Les mots de passe ne correspondent pas';
-                    document.getElementById('error-message').style.color = 'red';
+                    document.getElementById('error-message').textContent = '❌ Les mots de passe ne correspondent pas';
                 } else {
                     signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
                 }
