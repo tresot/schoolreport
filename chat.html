@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChatFriends - IT</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -35,15 +35,9 @@
     }
 
     @keyframes gradient {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     #messages {
@@ -142,17 +136,46 @@
     </div>
   </div>
 
-  <script>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXfaVcBnRZvaSyH5fi2FKpy5m8gH3q504",
+      authDomain: "chat-schoolreport.firebaseapp.com",
+      projectId: "chat-schoolreport",
+      storageBucket: "chat-schoolreport.firebasestorage.app",
+      messagingSenderId: "987396717760",
+      appId: "1:987396717760:web:a23a454d940d67cce50125",
+      measurementId: "G-QQ7X987EW4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    let username = "Anonyme";
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        username = user.isAnonymous ? "Anonyme" : (user.email || "Utilisateur");
+      } else {
+        signInAnonymously(auth);
+      }
+    });
+
     const messagesDiv = document.getElementById("messages");
 
-    function envoyer() {
+    window.envoyer = function () {
       const input = document.getElementById("message");
       const text = input.value.trim();
       if (!text) return;
 
       const div = document.createElement("div");
       div.classList.add("message", "self");
-      div.innerHTML = `${text}<div class='meta'>Moi</div>`;
+      div.innerHTML = `${text}<div class='meta'>${username}</div>`;
       messagesDiv.appendChild(div);
 
       input.value = "";
