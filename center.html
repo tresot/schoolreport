@@ -347,47 +347,47 @@
 </head>
 <body>
     <!-- Modal de configuration du profil -->
-    <div id="setup-modal">
-        <div class="setup-container">
+    <div id="setup-modal" style="display: none; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div class="setup-container" style="background: #fff; padding: 20px; border-radius: 10px; text-align: center; width: 300px;">
             <h2>Configuration du profil</h2>
             
-            <div class="profile-preview" id="profile-preview" onclick="document.getElementById('profile-upload').click()">
-                <span id="profile-letter">?</span>
-                <img id="profile-preview-img" style="display:none;">
+            <div class="profile-preview" id="profile-preview" onclick="document.getElementById('profile-upload').click()" style="width: 100px; height: 100px; border-radius: 50%; background: #ccc; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative;">
+                <span id="profile-letter" style="font-size: 36px; color: #fff;">?</span>
+                <img id="profile-preview-img" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;">
             </div>
             
-            <input type="file" id="profile-upload" accept="image/*" style="display:none;">
-            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
-            
-            <p id="username-info" style="font-size:12px; color:#666;">
+            <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required style="width: 100%; padding: 8px; margin-top: 10px;">
+
+            <p id="username-info" style="font-size: 12px; color: #666; margin-top: 5px;">
                 Ce nom ne pourra pas être changé avant 48 heures
             </p>
-            
-            <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
+
+            <button class="setup-btn" id="save-profile-btn" style="margin-top: 10px; padding: 8px 15px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">Enregistrer</button>
         </div>
     </div>
 
     <!-- Interface principale -->
-    <div id="main-interface" style="display:none;">
+    <div id="main-interface" style="display: none;">
         <div class="container">
             <header>
                 <div class="logo">
                     <h1>SchoolReport</h1>
                 </div>
-                
+
                 <div class="user-menu">
                     <div class="profile-badge" id="profile-badge">
-                        <div class="user-avatar" id="user-avatar">
-                            <img id="profile-pic" style="width:100%; height:100%; border-radius:50%; display:none;">
-                            <span id="avatar-letter">U</span>
+                        <div class="user-avatar" id="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; cursor: pointer;">
+                            <img id="profile-pic" style="width: 100%; height: 100%; border-radius: 50%; display: none; object-fit: cover;">
+                            <span id="avatar-letter" style="color: white; font-weight: bold;">U</span>
                         </div>
-                        <div class="online-status" id="online-status"></div>
+                        <div class="online-status" id="online-status" style="width: 10px; height: 10px; border-radius: 50%; background: green; position: absolute; bottom: 0; right: 0;"></div>
                     </div>
-                    
+
                     <span class="user-name" id="user-name">Utilisateur</span>
                     <span class="user-count" id="online-count">0</span>
                     <button class="logout-btn" id="logout-btn">Déconnexion</button>
-                    
+
                     <div class="users-list" id="users-list">
                         <h4>Utilisateurs en ligne</h4>
                         <div id="online-users-container"></div>
@@ -397,28 +397,26 @@
 
             <div class="welcome-section">
                 <h2 id="welcome-title">Bienvenue sur SchoolReport</h2>
-                <p id="username-change-info" style="display:none;">
+                <p id="username-change-info" style="display: none;">
                     Vous pourrez changer votre nom le <span id="username-change-date"></span>
                 </p>
             </div>
 
             <div class="actions-grid">
-                <!-- [Conserver les cartes d'action existantes] -->
                 <div class="action-card" onclick="window.location.href='chat.html'">
-                    <div class="action-icon chat-icon">
+                    <div class="action-icon chat-icon" style="position: relative;">
                         💬
-                        <div class="active-indicator" id="chat-active" style="display:none;">!</div>
+                        <div class="active-indicator" id="chat-active" style="display: none; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">!</div>
                     </div>
                     <h3>Messagerie</h3>
                     <p><span id="chat-users">0</span> personne(s) active(s) dans le chat</p>
                     <a class="action-btn">Accéder au chat</a>
                 </div>
-                
+
                 <!-- [Les autres cartes d'action...] -->
             </div>
         </div>
     </div>
-
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
