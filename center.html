@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport</title>
     <style>
-        /* [Conserver tout le CSS existant sans modification] */
-     :root {
+        :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
             --light: #f8f9fa;
@@ -195,7 +194,8 @@
                 grid-template-columns: 1fr;
             }
         }
-                .profile-badge {
+
+        .profile-badge {
             position: relative;
             display: flex;
             align-items: center;
@@ -235,6 +235,7 @@
             justify-content: center;
             font-size: 10px;
         }
+
         #setup-modal {
             position: fixed;
             top: 0;
@@ -342,28 +343,27 @@
             margin-right: 10px;
             font-size: 14px;
         }
-     }
     </style>
 </head>
 <body>
     <!-- Modal de configuration du profil -->
-    <div id="setup-modal" style="display: none; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-        <div class="setup-container" style="background: #fff; padding: 20px; border-radius: 10px; text-align: center; width: 300px;">
+    <div id="setup-modal" style="display: none;">
+        <div class="setup-container">
             <h2>Configuration du profil</h2>
             
-            <div class="profile-preview" id="profile-preview" onclick="document.getElementById('profile-upload').click()" style="width: 100px; height: 100px; border-radius: 50%; background: #ccc; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative;">
-                <span id="profile-letter" style="font-size: 36px; color: #fff;">?</span>
-                <img id="profile-preview-img" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;">
+            <div class="profile-preview" id="profile-preview">
+                <span id="profile-letter">?</span>
+                <img id="profile-preview-img">
             </div>
             
             <input type="file" id="profile-upload" accept="image/*" style="display: none;">
-            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required style="width: 100%; padding: 8px; margin-top: 10px;">
+            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
-            <p id="username-info" style="font-size: 12px; color: #666; margin-top: 5px;">
+            <p id="username-info">
                 Ce nom ne pourra pas être changé avant 48 heures
             </p>
 
-            <button class="setup-btn" id="save-profile-btn" style="margin-top: 10px; padding: 8px 15px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">Enregistrer</button>
+            <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
         </div>
     </div>
 
@@ -376,12 +376,12 @@
                 </div>
 
                 <div class="user-menu">
-                    <div class="profile-badge" id="profile-badge">
-                        <div class="user-avatar" id="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; cursor: pointer;">
-                            <img id="profile-pic" style="width: 100%; height: 100%; border-radius: 50%; display: none; object-fit: cover;">
-                            <span id="avatar-letter" style="color: white; font-weight: bold;">U</span>
+                    <div class="profile-badge">
+                        <div class="user-avatar" id="user-avatar">
+                            <img id="profile-pic">
+                            <span id="avatar-letter">U</span>
                         </div>
-                        <div class="online-status" id="online-status" style="width: 10px; height: 10px; border-radius: 50%; background: green; position: absolute; bottom: 0; right: 0;"></div>
+                        <div class="online-status" id="online-status"></div>
                     </div>
 
                     <span class="user-name" id="user-name">Utilisateur</span>
@@ -406,17 +406,16 @@
                 <div class="action-card" onclick="window.location.href='chat.html'">
                     <div class="action-icon chat-icon" style="position: relative;">
                         💬
-                        <div class="active-indicator" id="chat-active" style="display: none; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">!</div>
+                        <div class="active-indicator" id="chat-active" style="display: none;">!</div>
                     </div>
                     <h3>Messagerie</h3>
                     <p><span id="chat-users">0</span> personne(s) active(s) dans le chat</p>
                     <a class="action-btn">Accéder au chat</a>
                 </div>
-
-                <!-- [Les autres cartes d'action...] -->
-          </div>
+            </div>
         </div>
     </div>
+
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
@@ -431,7 +430,6 @@
         let currentUser = null;
         let currentUsername = '';
         let profilePictureUrl = '';
-        let longPressTimer;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -480,31 +478,7 @@
             setupModal.style.display = 'flex';
 
             // Gestion de l'upload de photo
-            profileUpload.addEventListener('change', handleProfileImageUpload);
-
-            // Gestion de l'enregistrement
-            saveBtn.addEventListener('click', async () => {
-                const username = usernameInput.value.trim();
-                
-                if (!validateUsername(username)) {
-                    alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
-                    return;
-                }
-
-                try {
-                    await saveUserProfile(user, username);
-                    setupModal.style.display = 'none';
-                    setupMainInterface(user, { 
-                        username, 
-                        profilePicture: profilePictureUrl 
-                    });
-                } catch (error) {
-                    console.error("Erreur lors de l'enregistrement:", error);
-                    alert("Une erreur est survenue lors de l'enregistrement");
-                }
-            });
-
-            function handleProfileImageUpload(e) {
+            profileUpload.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
 
@@ -515,33 +489,55 @@
                     profileLetter.style.display = 'none';
                 };
                 reader.readAsDataURL(file);
-            }
-
-            function validateUsername(username) {
-                return username.length >= 3 && username.length <= 20;
-            }
-        }
-
-        async function saveUserProfile(user, username) {
-            const file = document.getElementById('profile-upload').files[0];
-            const userRef = ref(db, 'users/' + user.uid);
-            
-            // Upload de la photo si elle existe
-            if (file) {
-                const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                await uploadBytes(profilePicRef, file);
-                profilePictureUrl = await getDownloadURL(profilePicRef);
-            }
-
-            // Enregistrement des données utilisateur
-            await set(userRef, {
-                username,
-                createdAt: Date.now(),
-                canChangeUsername: false,
-                ...(profilePictureUrl && { profilePicture: profilePictureUrl })
             });
 
-            currentUsername = username;
+            // Gestion de l'enregistrement
+            saveBtn.addEventListener('click', async () => {
+                const username = usernameInput.value.trim();
+                
+                if (username.length < 3 || username.length > 20) {
+                    alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
+                    return;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Enregistrement...';
+
+                try {
+                    // Upload de la photo si elle existe
+                    const file = profileUpload.files[0];
+                    if (file) {
+                        const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
+                        await uploadBytes(profilePicRef, file);
+                        profilePictureUrl = await getDownloadURL(profilePicRef);
+                    }
+
+                    // Enregistrement des données utilisateur
+                    await set(ref(db, 'users/' + user.uid), {
+                        username,
+                        createdAt: Date.now(),
+                        canChangeUsername: false,
+                        profilePicture: profilePictureUrl || null
+                    });
+
+                    // Fermer le modal et afficher l'interface principale
+                    setupModal.style.display = 'none';
+                    
+                    // Recharger les données utilisateur
+                    const userRef = ref(db, 'users/' + user.uid);
+                    onValue(userRef, (snapshot) => {
+                        const userData = snapshot.val();
+                        setupMainInterface(user, userData);
+                    }, { onlyOnce: true });
+
+                } catch (error) {
+                    console.error("Erreur lors de l'enregistrement:", error);
+                    alert("Une erreur est survenue lors de l'enregistrement");
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Enregistrer';
+                }
+            });
         }
 
         function setupMainInterface(user, userData) {
@@ -563,14 +559,20 @@
 
         function updateUserInfo(userData) {
             document.getElementById('user-name').textContent = userData.username;
-            document.getElementById('avatar-letter').textContent = userData.username.charAt(0).toUpperCase();
+            
+            const avatarLetter = document.getElementById('avatar-letter');
+            const profilePic = document.getElementById('profile-pic');
+            
+            avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
+            avatarLetter.style.display = 'block';
+            profilePic.style.display = 'none';
+
             document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
 
             if (userData.profilePicture) {
-                const profilePic = document.getElementById('profile-pic');
                 profilePic.src = userData.profilePicture;
                 profilePic.style.display = 'block';
-                document.getElementById('avatar-letter').style.display = 'none';
+                avatarLetter.style.display = 'none';
             }
 
             // Gestion de la date de changement de nom
@@ -633,7 +635,7 @@
                 lastChanged: Date.now(),
                 currentPage: 'center',
                 username: currentUsername,
-                ...(profilePictureUrl && { profilePicture: profilePictureUrl })
+                profilePicture: profilePictureUrl || null
             });
 
             // Mettre à jour lors de la déconnexion
@@ -649,14 +651,12 @@
                 const users = snapshot.val() || {};
                 let onlineCount = 0;
                 let chatUsers = 0;
-                let workspaceUsers = 0;
                 let onlineUsers = [];
 
                 Object.entries(users).forEach(([uid, data]) => {
                     if (data.online && uid !== user.uid) {
                         onlineCount++;
                         if (data.currentPage === 'chat') chatUsers++;
-                        if (data.currentPage === 'workspace') workspaceUsers++;
                         
                         onlineUsers.push({
                             username: data.username || 'Utilisateur',
@@ -667,18 +667,16 @@
                 });
 
                 // Mise à jour de l'interface
-                updateOnlineUsersDisplay(onlineCount, chatUsers, workspaceUsers, onlineUsers);
+                updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers);
             });
         }
 
-        function updateOnlineUsersDisplay(onlineCount, chatUsers, workspaceUsers, onlineUsers) {
+        function updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers) {
             document.getElementById('online-count').textContent = onlineCount;
             document.getElementById('chat-users').textContent = chatUsers;
-            document.getElementById('workspace-users').textContent = workspaceUsers;
 
             // Indicateurs d'activité
             document.getElementById('chat-active').style.display = chatUsers > 0 ? 'flex' : 'none';
-            document.getElementById('workspace-active').style.display = workspaceUsers > 0 ? 'flex' : 'none';
 
             // Liste des utilisateurs en ligne
             const container = document.getElementById('online-users-container');
@@ -704,6 +702,21 @@
                 signOut(auth).then(() => {
                     window.location.href = 'index.html';
                 });
+            });
+        }
+
+        function setupEventListeners() {
+            // Gestion de l'affichage de la liste des utilisateurs
+            document.getElementById('online-count').addEventListener('click', () => {
+                const usersList = document.getElementById('users-list');
+                usersList.style.display = usersList.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Fermer la liste quand on clique ailleurs
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.user-count') && !e.target.closest('.users-list')) {
+                    document.getElementById('users-list').style.display = 'none';
+                }
             });
         }
     </script>
