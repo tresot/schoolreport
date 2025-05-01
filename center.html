@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchoolReport - Centre</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo h1 {
+            color: var(--dark);
+            font-size: 24px;
+            margin-left: 10px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 14px;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .welcome-section h2 {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #6c757d;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+        }
+
+        .chat-icon {
+            background-color: var(--success);
+        }
+
+        .workspace-icon {
+            background-color: var(--primary);
+        }
+
+        .homework-icon {
+            background-color: var(--warning);
+        }
+
+        .files-icon {
+            background-color: var(--danger);
+        }
+
+        .action-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .action-card p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-menu {
+                margin-top: 15px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>SchoolReport</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <span class="user-name" id="user-name">Utilisateur</span>
+                <button class="logout-btn" id="logout-btn">Déconnexion</button>
+            </div>
+        </header>
+
+        <div class="welcome-section">
+            <h2>Bienvenue sur SchoolReport</h2>
+            <p>Choisissez une action ci-dessous pour commencer à collaborer avec vos camarades de classe.</p>
+        </div>
+
+        <div class="actions-grid">
+            <div class="action-card" onclick="window.location.href='chat.html'">
+                <div class="action-icon chat-icon">
+                    💬
+                </div>
+                <h3>Messagerie</h3>
+                <p>Discutez en temps réel avec vos amis et vos groupes de travail.</p>
+                <a class="action-btn">Accéder au chat</a>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='workspace.html'">
+                <div class="action-icon workspace-icon">
+                    📝
+                </div>
+                <h3>Espace de travail</h3>
+                <p>Collaborez sur des documents en temps réel avec votre équipe.</p>
+                <a class="action-btn">Ouvrir l'espace</a>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='homework.html'">
+                <div class="action-icon homework-icon">
+                    📚
+                </div>
+                <h3>Gestion des devoirs</h3>
+                <p>Organisez vos devoirs et projets avec des échéances claires.</p>
+                <a class="action-btn">Voir les devoirs</a>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='files.html'">
+                <div class="action-icon files-icon">
+                    📁
+                </div>
+                <h3>Fichiers partagés</h3>
+                <p>Accédez à tous les documents partagés par vos professeurs et camarades.</p>
+                <a class="action-btn">Explorer les fichiers</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { app } from "./firebase/firebase-config.js";
+
+        const auth = getAuth(app);
+        
+        // Gérer l'état de l'utilisateur
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('user-name').textContent = user.email.split('@')[0];
+                document.getElementById('user-avatar').textContent = user.email.charAt(0).toUpperCase();
+            }
+        });
+
+        // Déconnexion
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>
