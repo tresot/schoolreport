@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport</title>
     <style>
+        /* [Tout le CSS original reste exactement le même] */
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -288,13 +289,6 @@
             cursor: pointer;
         }
 
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
         .setup-btn {
             background-color: var(--primary);
             color: white;
@@ -351,12 +345,10 @@
         <div class="setup-container">
             <h2>Configuration du profil</h2>
             
-            <div class="profile-preview" id="profile-preview">
+            <div class="profile-preview">
                 <span id="profile-letter">?</span>
-                <img id="profile-preview-img">
             </div>
             
-            <input type="file" id="profile-upload" accept="image/*" style="display: none;">
             <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
             <p id="username-info">
@@ -378,7 +370,6 @@
                 <div class="user-menu">
                     <div class="profile-badge">
                         <div class="user-avatar" id="user-avatar">
-                            <img id="profile-pic">
                             <span id="avatar-letter">U</span>
                         </div>
                         <div class="online-status" id="online-status"></div>
@@ -419,17 +410,11 @@
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
-        import { app } from "./firebase/firebase-config.js";
+        import { app, auth, db } from "./firebase/firebase-config.js";
 
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-        
         // Variables globales
         let currentUser = null;
         let currentUsername = '';
-        let profilePictureUrl = '';
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -457,7 +442,6 @@
                 if (userData && userData.username) {
                     // Profil existant
                     currentUsername = userData.username;
-                    profilePictureUrl = userData.profilePicture || '';
                     setupMainInterface(user, userData);
                 } else {
                     // Nouvel utilisateur
@@ -468,27 +452,20 @@
 
         function setupProfileConfiguration(user) {
             const setupModal = document.getElementById('setup-modal');
-            const profileUpload = document.getElementById('profile-upload');
-            const profilePreview = document.getElementById('profile-preview');
-            const profileLetter = document.getElementById('profile-letter');
-            const profilePreviewImg = document.getElementById('profile-preview-img');
             const usernameInput = document.getElementById('username-input');
             const saveBtn = document.getElementById('save-profile-btn');
+            const profileLetter = document.getElementById('profile-letter');
 
             setupModal.style.display = 'flex';
 
-            // Gestion de l'upload de photo
-            profileUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    profilePreviewImg.src = event.target.result;
-                    profilePreviewImg.style.display = 'block';
-                    profileLetter.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
+            // Mettre à jour la prévisualisation de l'avatar
+            usernameInput.addEventListener('input', () => {
+                const username = usernameInput.value.trim();
+                if (username.length > 0) {
+                    profileLetter.textContent = username.charAt(0).toUpperCase();
+                } else {
+                    profileLetter.textContent = '?';
+                }
             });
 
             // Gestion de l'enregistrement
@@ -504,23 +481,7 @@
                 saveBtn.textContent = 'Enregistrement...';
 
                 try {
-                    // Upload de la photo si elle existe
-                    const file = profileUpload.files[0];
-                    if (file) {
-                        const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                        await uploadBytes(profilePicRef, file);
-                        profilePictureUrl = await getDownloadURL(profilePicRef);
-                    }
-
-                    // Enregistrement des données utilisateur
-                    await set(ref(db, 'users/' + user.uid), {
-                        username,
-                        createdAt: Date.now(),
-                        canChangeUsername: false,
-                        profilePicture: profilePictureUrl || null
-                    });
-
-                    // Fermer le modal et afficher l'interface principale
+                    await saveUserProfile(user, username);
                     setupModal.style.display = 'none';
                     
                     // Recharger les données utilisateur
@@ -529,7 +490,7 @@
                         const userData = snapshot.val();
                         setupMainInterface(user, userData);
                     }, { onlyOnce: true });
-
+                    
                 } catch (error) {
                     console.error("Erreur lors de l'enregistrement:", error);
                     alert("Une erreur est survenue lors de l'enregistrement");
@@ -540,15 +501,24 @@
             });
         }
 
+        async function saveUserProfile(user, username) {
+            const userRef = ref(db, 'users/' + user.uid);
+            
+            await set(userRef, {
+                username,
+                createdAt: Date.now(),
+                canChangeUsername: false
+            });
+
+            currentUsername = username;
+        }
+
         function setupMainInterface(user, userData) {
             const mainInterface = document.getElementById('main-interface');
             mainInterface.style.display = 'block';
 
             // Mise à jour des infos utilisateur
             updateUserInfo(userData);
-
-            // Gestion de la photo de profil
-            setupProfilePictureHandlers(user);
 
             // Suivi des utilisateurs en ligne
             setupPresenceTracking(user);
@@ -561,19 +531,9 @@
             document.getElementById('user-name').textContent = userData.username;
             
             const avatarLetter = document.getElementById('avatar-letter');
-            const profilePic = document.getElementById('profile-pic');
-            
             avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
-            avatarLetter.style.display = 'block';
-            profilePic.style.display = 'none';
-
+            
             document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
-
-            if (userData.profilePicture) {
-                profilePic.src = userData.profilePicture;
-                profilePic.style.display = 'block';
-                avatarLetter.style.display = 'none';
-            }
 
             // Gestion de la date de changement de nom
             if (userData.canChangeUsername === false && userData.createdAt) {
@@ -582,47 +542,6 @@
                 document.getElementById('username-change-date').textContent = 
                     changeDate.toLocaleDateString() + ' à ' + changeDate.toLocaleTimeString();
             }
-        }
-
-        function setupProfilePictureHandlers(user) {
-            const userAvatar = document.getElementById('user-avatar');
-            const profileUpload = document.getElementById('profile-upload');
-            let pressTimer;
-
-            // Clic long pour changer la photo
-            userAvatar.addEventListener('mousedown', () => {
-                pressTimer = setTimeout(() => {
-                    profileUpload.click();
-                }, 1000);
-            });
-
-            userAvatar.addEventListener('mouseup', () => clearTimeout(pressTimer));
-            userAvatar.addEventListener('mouseleave', () => clearTimeout(pressTimer));
-
-            // Gestion du changement de photo
-            profileUpload.addEventListener('change', async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                try {
-                    const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                    await uploadBytes(profilePicRef, file);
-                    const url = await getDownloadURL(profilePicRef);
-
-                    await update(ref(db, 'users/' + user.uid), {
-                        profilePicture: url
-                    });
-
-                    // Mise à jour de l'affichage
-                    const profilePic = document.getElementById('profile-pic');
-                    profilePic.src = url;
-                    profilePic.style.display = 'block';
-                    document.getElementById('avatar-letter').style.display = 'none';
-                } catch (error) {
-                    console.error("Erreur lors du changement de photo:", error);
-                    alert("Une erreur est survenue lors du changement de photo");
-                }
-            });
         }
 
         function setupPresenceTracking(user) {
@@ -634,8 +553,7 @@
                 online: true,
                 lastChanged: Date.now(),
                 currentPage: 'center',
-                username: currentUsername,
-                profilePicture: profilePictureUrl || null
+                username: currentUsername
             });
 
             // Mettre à jour lors de la déconnexion
@@ -660,8 +578,7 @@
                         
                         onlineUsers.push({
                             username: data.username || 'Utilisateur',
-                            firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
-                            profilePicture: data.profilePicture || null
+                            firstLetter: (data.username || 'U').charAt(0).toUpperCase()
                         });
                     }
                 });
@@ -683,9 +600,7 @@
             container.innerHTML = onlineUsers.map(user => `
                 <div class="user-item">
                     <div class="user-avatar-small">
-                        ${user.profilePicture 
-                            ? `<img src="${user.profilePicture}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` 
-                            : user.firstLetter}
+                        ${user.firstLetter}
                     </div>
                     <span>${user.username}</span>
                 </div>
