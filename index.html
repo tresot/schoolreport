@@ -6,7 +6,7 @@
     <title>SchoolReport - Connexion</title>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
@@ -20,33 +20,29 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Fonction d'inscription
+        // Fonctions d'authentification
         window.signUp = async (email, password) => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                document.getElementById('error-message').textContent = "Inscription réussie ! Redirection...";
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);  // Redirection après 2 secondes
+                document.getElementById('error-message').textContent = 'Compte créé avec succès !';
+                document.getElementById('error-message').style.color = 'green';
             } catch (error) {
                 document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error-message').style.color = 'red';
             }
         };
 
-        // Fonction de connexion
         window.signIn = async (email, password) => {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('error-message').textContent = "Connexion réussie ! Redirection...";
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);  // Redirection après 2 secondes
+                document.getElementById('error-message').textContent = 'Connexion réussie !';
+                document.getElementById('error-message').style.color = 'green';
             } catch (error) {
-                document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error-message').textContent = 'Erreur de connexion : ' + error.message;
+                document.getElementById('error-message').style.color = 'red';
             }
         };
 
-        // Fonction pour alterner entre les formulaires
         window.toggleForms = () => {
             const loginForm = document.getElementById('login-form');
             const signupForm = document.getElementById('signup-form');
@@ -54,17 +50,6 @@
             signupForm.classList.toggle('hidden');
             document.getElementById('error-message').textContent = '';
         };
-
-        // Vérifier l'état de l'utilisateur
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Si l'utilisateur est connecté, il est redirigé
-                document.getElementById('error-message').textContent = "Vous êtes déjà connecté. Redirection vers le dashboard...";
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
-            }
-        });
     </script>
     <style>
         :root {
@@ -258,6 +243,7 @@
             <button onclick="
                 if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
                     document.getElementById('error-message').textContent = 'Les mots de passe ne correspondent pas';
+                    document.getElementById('error-message').style.color = 'red';
                 } else {
                     signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
                 }
