@@ -1,9 +1,56 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SchoolReport - Configuration</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SchoolReport - Connexion</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+            authDomain: "schoolreport-f8db0.firebaseapp.com",
+            projectId: "schoolreport-f8db0",
+            storageBucket: "schoolreport-f8db0.appspot.com",
+            messagingSenderId: "313069994450",
+            appId: "1:313069994450:web:37b009be4f1812fdca880b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Authentification - Inscription
+        window.signUp = async (email, password) => {
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                document.getElementById('error-message').textContent = "✅ Compte créé avec succès ! Redirection...";
+                setTimeout(() => window.location.href = 'center.html', 1500);
+            } catch (error) {
+                document.getElementById('error-message').textContent = "❌ " + error.message;
+            }
+        };
+
+        // Authentification - Connexion
+        window.signIn = async (email, password) => {
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('error-message').textContent = "✅ Connexion réussie ! Redirection...";
+                setTimeout(() => window.location.href = 'center.html', 1500);
+            } catch (error) {
+                document.getElementById('error-message').textContent = "❌ " + error.message;
+            }
+        };
+
+        // Bascule entre les formulaires
+        window.toggleForms = () => {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            loginForm.classList.toggle('hidden');
+            signupForm.classList.toggle('hidden');
+            document.getElementById('error-message').textContent = '';
+        };
+    </script>
     <style>
                 :root {
             --primary: #4361ee;
@@ -11,8 +58,6 @@
             --light: #f8f9fa;
             --dark: #212529;
             --success: #4cc9f0;
-            --warning: #f8961e;
-            --danger: #e63946;
         }
 
         * {
@@ -24,702 +69,190 @@
 
         body {
             background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 20px;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
-            margin-bottom: 40px;
+        .auth-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
         }
 
         .logo {
-            display: flex;
-            align-items: center;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         .logo h1 {
             color: var(--dark);
-            font-size: 24px;
-            margin-left: 10px;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .user-name {
-            font-weight: 500;
-        }
-
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            margin-left: 15px;
-            font-size: 14px;
-        }
-
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .welcome-section h2 {
             font-size: 28px;
-            color: var(--dark);
-            margin-bottom: 10px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
-        .welcome-section p {
-            color: #6c757d;
-            font-size: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-
-        .action-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border: 1px solid #e9ecef;
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: white;
-        }
-
-        .chat-icon {
-            background-color: var(--success);
-        }
-
-        .workspace-icon {
-            background-color: var(--primary);
-        }
-
-        .homework-icon {
-            background-color: var(--warning);
-        }
-
-        .files-icon {
-            background-color: var(--danger);
-        }
-
-        .action-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
-        .action-card p {
+        .logo p {
             color: #6c757d;
             font-size: 14px;
+        }
+
+        .auth-form {
+            transition: all 0.3s ease;
+        }
+
+        .auth-form.hidden {
+            display: none;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .action-btn {
-            display: inline-block;
-            padding: 10px 20px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
             background-color: var(--primary);
             color: white;
-            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--secondary);
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .toggle-form a {
+            color: var(--primary);
             text-decoration: none;
             font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--secondary);
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .user-menu {
-                margin-top: 15px;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-                .profile-badge {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .online-status {
-            position: absolute;
-            bottom: -3px;
-            right: -3px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #2ecc71;
-            border: 2px solid white;
-        }
-        
-        .user-count {
-            background-color: var(--primary);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-        
-        .active-indicator {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger);
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        
-        #setup-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .setup-container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-        
-        .setup-container h2 {
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-        
-        .setup-container input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        
-        .profile-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 15px auto;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            overflow: hidden;
-            position: relative;
             cursor: pointer;
         }
-        
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
+
+        .toggle-form a:hover {
+            text-decoration: underline;
         }
-        
-        .setup-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .setup-btn:hover {
-            background-color: var(--secondary);
-        }
-        
-        .users-list {
-            position: absolute;
-            bottom: 50px;
-            right: 10px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            padding: 15px;
-            width: 200px;
-            display: none;
-            z-index: 100;
-        }
-        
-        .user-item {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-        }
-        
-        .user-avatar-small {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
+
+        #error-message {
+            color: #e63946;
             font-size: 14px;
+            text-align: center;
+            margin-top: 20px;
+            min-height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Modal de configuration initiale -->
-    <div id="setup-modal">
-        <div class="setup-container">
-            <h2>Configuration du profil</h2>
-            <p>Choisissez un nom d'utilisateur et une photo de profil</p>
-            
-            <div class="profile-preview" id="profile-preview" onclick="document.getElementById('profile-upload').click()">
-                <span id="profile-letter">?</span>
-                <img id="profile-preview-img">
-            </div>
-            <input type="file" id="profile-upload" accept="image/*" style="display:none;">
-            
-            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20">
-            <p id="username-info" style="font-size:12px; color:#666;">Ce nom ne pourra pas être changé avant 48 heures</p>
-            
-            <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
+    <div class="auth-container">
+        <div class="logo">
+            <h1>SchoolReport</h1>
+            <p>Plateforme collaborative pour étudiants</p>
         </div>
-    </div>
 
-    <!-- Interface principale (cachée initialement) -->
-    <div id="main-interface" style="display:none;">
-        <div class="container">
-            <header>
-                <div class="logo">
-                    <h1>SchoolReport</h1>
-                </div>
-                <div class="user-menu">
-                    <div class="profile-badge" id="profile-badge">
-                        <div class="user-avatar" id="user-avatar">
-                            <img id="profile-pic" style="width:100%; height:100%; border-radius:50%; display:none;">
-                            <span id="avatar-letter">U</span>
-                        </div>
-                        <div class="online-status" id="online-status"></div>
-                    </div>
-                    <span class="user-name" id="user-name">Utilisateur</span>
-                    <span class="user-count" id="online-count" onmousedown="showUsersList(event)" onmouseup="hideUsersList()">0</span>
-                    <button class="logout-btn" id="logout-btn">Déconnexion</button>
-                    
-                    <div class="users-list" id="users-list">
-                        <h4>Utilisateurs en ligne</h4>
-                        <div id="online-users-container"></div>
-                    </div>
-                </div>
-            </header>
+        <div id="error-message"></div>
 
-            <div class="welcome-section">
-                <h2 id="welcome-title">Bienvenue sur SchoolReport</h2>
-                <p id="username-change-info" style="display:none;">Vous pourrez changer votre nom le <span id="username-change-date"></span></p>
+        <!-- Formulaire de Connexion -->
+        <div id="login-form" class="auth-form">
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="votre@email.com">
             </div>
-
-            <div class="actions-grid">
-                <div class="action-card" onclick="window.location.href='chat.html'">
-                    <div class="action-icon chat-icon">
-                        💬
-                        <div class="active-indicator" id="chat-active" style="display:none;">!</div>
-                    </div>
-                    <h3>Messagerie</h3>
-                    <p><span id="chat-users">0</span> personne(s) active(s) dans le chat</p>
-                    <a class="action-btn">Accéder au chat</a>
-                </div>
-
-                <div class="action-card" onclick="window.location.href='workspace.html'">
-                    <div class="action-icon workspace-icon">
-                        📝
-                        <div class="active-indicator" id="workspace-active" style="display:none;">!</div>
-                    </div>
-                    <h3>Espace de travail</h3>
-                    <p><span id="workspace-users">0</span> collaborateur(s) en ligne</p>
-                    <a class="action-btn">Ouvrir l'espace</a>
-                </div>
-
-                <div class="action-card" onclick="window.location.href='homework.html'">
-                    <div class="action-icon homework-icon">
-                        📚
-                    </div>
-                    <h3>Gestion des devoirs</h3>
-                    <p>Organisez vos devoirs et projets avec des échéances claires.</p>
-                    <a class="action-btn">Voir les devoirs</a>
-                </div>
-
-                <div class="action-card" onclick="window.location.href='files.html'">
-                    <div class="action-icon files-icon">
-                        📁
-                    </div>
-                    <h3>Fichiers partagés</h3>
-                    <p>Accédez à tous les documents partagés par vos professeurs et camarades.</p>
-                    <a class="action-btn">Explorer les fichiers</a>
-                </div>
+            <div class="form-group">
+                <label for="login-password">Mot de passe</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <button onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
+                Se connecter
+            </button>
+            <div class="toggle-form">
+                Pas encore de compte ? <a onclick="toggleForms()">S'inscrire</a>
             </div>
         </div>
-    </div>
 
-    <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
-        import { app } from "./firebase/firebase-config.js";
-
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-        
-        let currentUsername = '';
-        let profilePictureUrl = '';
-        let longPressTimer;
-        
-        // Gérer l'état de l'utilisateur
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = 'index.html';
-            } else {
-                checkUserProfile(user);
-            }
-        });
-        
-        // Vérifier si l'utilisateur a déjà un profil configuré
-        function checkUserProfile(user) {
-            const userRef = ref(db, 'users/' + user.uid);
-            onValue(userRef, (snapshot) => {
-                const userData = snapshot.val();
-                
-                if (userData && userData.username) {
-                    // Profil déjà configuré
-                    currentUsername = userData.username;
-                    setupMainInterface(user);
+        <!-- Formulaire d'Inscription -->
+        <div id="signup-form" class="auth-form hidden">
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="votre@email.com">
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Mot de passe</label>
+                <input type="password" id="signup-password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label for="signup-confirm">Confirmer le mot de passe</label>
+                <input type="password" id="signup-confirm" placeholder="••••••••">
+            </div>
+            <button onclick="
+                if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
+                    document.getElementById('error-message').textContent = '❌ Les mots de passe ne correspondent pas';
                 } else {
-                    // Nouvel utilisateur - afficher le modal de configuration
-                    setupProfileConfiguration(user);
+                    signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
                 }
-            });
-        }
-        
-        // Configurer le modal de création de profil
-        function setupProfileConfiguration(user) {
-            document.getElementById('setup-modal').style.display = 'flex';
-            
-            // Prévisualisation de la photo de profil
-            document.getElementById('profile-upload').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        document.getElementById('profile-preview-img').src = event.target.result;
-                        document.getElementById('profile-preview-img').style.display = 'block';
-                        document.getElementById('profile-letter').style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Enregistrement du profil
-            document.getElementById('save-profile-btn').addEventListener('click', async function() {
-                const username = document.getElementById('username-input').value.trim();
-                const file = document.getElementById('profile-upload').files[0];
-                
-                if (!username || username.length < 3) {
-                    alert("Veuillez choisir un nom d'utilisateur valide (minimum 3 caractères)");
-                    return;
-                }
-                
-                currentUsername = username;
-                const userRef = ref(db, 'users/' + user.uid);
-                
-                try {
-                    // Enregistrer la photo de profil si sélectionnée
-                    if (file) {
-                        const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                        await uploadBytes(profilePicRef, file);
-                        profilePictureUrl = await getDownloadURL(profilePicRef);
-                    }
-                    
-                    // Enregistrer les infos utilisateur
-                    await set(userRef, {
-                        username: username,
-                        createdAt: Date.now(),
-                        canChangeUsername: false,
-                        ...(profilePictureUrl && { profilePicture: profilePictureUrl })
-                    });
-                    
-                    // Cacher le modal et afficher l'interface principale
-                    document.getElementById('setup-modal').style.display = 'none';
-                    setupMainInterface(user);
-                } catch (error) {
-                    console.error("Erreur lors de l'enregistrement:", error);
-                    alert("Une erreur est survenue lors de l'enregistrement");
-                }
-            });
-        }
-        
-        // Configurer l'interface principale
-        function setupMainInterface(user) {
-            document.getElementById('main-interface').style.display = 'block';
-            
-            // Afficher le nom d'utilisateur
-            document.getElementById('user-name').textContent = currentUsername;
-            document.getElementById('avatar-letter').textContent = currentUsername.charAt(0).toUpperCase();
-            document.getElementById('welcome-title').textContent = `Bienvenue, ${currentUsername}`;
-            
-            // Charger la photo de profil si elle existe
-            const userRef = ref(db, 'users/' + user.uid);
-            onValue(userRef, (snapshot) => {
-                const userData = snapshot.val();
-                
-                if (userData.profilePicture) {
-                    document.getElementById('profile-pic').src = userData.profilePicture;
-                    document.getElementById('profile-pic').style.display = 'block';
-                    document.getElementById('avatar-letter').style.display = 'none';
-                }
-                
-                // Afficher la date de changement possible si applicable
-                if (userData.canChangeUsername === false && userData.createdAt) {
-                    const changeDate = new Date(userData.createdAt + 48*60*60*1000);
-                    document.getElementById('username-change-info').style.display = 'block';
-                    document.getElementById('username-change-date').textContent = 
-                        changeDate.toLocaleDateString() + ' à ' + changeDate.toLocaleTimeString();
-                }
-            });
-            
-            // Gestion du clic long sur l'avatar pour changer la photo
-            let pressTimer;
-            const avatar = document.getElementById('user-avatar');
-            
-            avatar.addEventListener('mousedown', function() {
-                pressTimer = setTimeout(() => {
-                    document.getElementById('profile-upload').click();
-                }, 1000); // 1 seconde pour le clic long
-            });
-            
-            avatar.addEventListener('mouseup', function() {
-                clearTimeout(pressTimer);
-            });
-            
-            avatar.addEventListener('mouseleave', function() {
-                clearTimeout(pressTimer);
-            });
-            
-            // Gestion du changement de photo
-            document.getElementById('profile-upload').addEventListener('change', async function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                try {
-                    const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                    await uploadBytes(profilePicRef, file);
-                    const url = await getDownloadURL(profilePicRef);
-                    
-                    // Mettre à jour dans la base de données
-                    await update(ref(db, 'users/' + user.uid), {
-                        profilePicture: url
-                    });
-                    
-                    // Mettre à jour l'affichage
-                    document.getElementById('profile-pic').src = url;
-                    document.getElementById('profile-pic').style.display = 'block';
-                    document.getElementById('avatar-letter').style.display = 'none';
-                } catch (error) {
-                    console.error("Erreur lors du changement de photo:", error);
-                }
-            });
-            
-            // Suivi des utilisateurs en ligne
-            setupPresenceTracking(user);
-            
-            // Déconnexion
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                const userStatusRef = ref(db, 'status/' + user.uid);
-                set(userStatusRef, {
-                    online: false,
-                    lastChanged: Date.now()
-                }).then(() => {
-                    signOut(auth).then(() => {
-                        window.location.href = 'index.html';
-                    });
-                });
-            });
-        }
-        
-        // Suivi des utilisateurs connectés
-        function setupPresenceTracking(user) {
-            const userStatusRef = ref(db, 'status/' + user.uid);
-            const usersRef = ref(db, 'status');
-            
-            // Enregistrer l'utilisateur comme étant en ligne
-            set(userStatusRef, {
-                online: true,
-                lastChanged: Date.now(),
-                currentPage: 'center',
-                username: currentUsername,
-                ...(profilePictureUrl && { profilePicture: profilePictureUrl })
-            });
-            
-            // Mettre à jour quand l'utilisateur change de page
-            window.addEventListener('beforeunload', () => {
-                update(userStatusRef, {
-                    online: false,
-                    lastChanged: Date.now()
-                });
-            });
-            
-            // Écouter les changements d'état des autres utilisateurs
-            onValue(usersRef, (snapshot) => {
-                const users = snapshot.val() || {};
-                let onlineCount = 0;
-                let chatUsers = 0;
-                let workspaceUsers = 0;
-                let onlineUsers = [];
-                
-                Object.entries(users).forEach(([uid, data]) => {
-                    if (data.online && uid !== user.uid) {
-                        onlineCount++;
-                        if (data.currentPage === 'chat') chatUsers++;
-                        if (data.currentPage === 'workspace') workspaceUsers++;
-                        
-                        onlineUsers.push({
-                            username: data.username || 'Utilisateur',
-                            firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
-                            profilePicture: data.profilePicture || null
-                        });
-                    }
-                });
-                
-                // Mettre à jour les compteurs
-                document.getElementById('online-count').textContent = onlineCount;
-                document.getElementById('chat-users').textContent = chatUsers;
-                document.getElementById('workspace-users').textContent = workspaceUsers;
-                
-                // Afficher les indicateurs d'activité
-                document.getElementById('chat-active').style.display = chatUsers > 0 ? 'flex' : 'none';
-                document.getElementById('workspace-active').style.display = workspaceUsers > 0 ? 'flex' : 'none';
-                
-                // Mettre à jour la liste des utilisateurs en ligne
-                const container = document.getElementById('online-users-container');
-                container.innerHTML = '';
-                
-                onlineUsers.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.className = 'user-item';
-                    
-                    const avatar = document.createElement('div');
-                    avatar.className = 'user-avatar-small';
-                    
-                    if (user.profilePicture) {
-                        avatar.innerHTML = `<img src="${user.profilePicture}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-                    } else {
-                        avatar.textContent = user.firstLetter;
-                    }
-                    
-                    const name = document.createElement('span');
-                    name.textContent = user.username;
-                    
-                    userElement.appendChild(avatar);
-                    userElement.appendChild(name);
-                    container.appendChild(userElement);
-                });
-            });
-        }
-        
-        // Afficher la liste des utilisateurs connectés
-        function showUsersList(e) {
-            e.preventDefault();
-            clearTimeout(longPressTimer);
-            longPressTimer = setTimeout(() => {
-                const list = document.getElementById('users-list');
-                list.style.display = 'block';
-                
-                // Cacher la liste après 5 secondes
-                setTimeout(() => {
-                    list.style.display = 'none';
-                }, 5000);
-            }, 500); // Délai de 0.5 seconde pour le clic long
-        }
-        
-        function hideUsersList() {
-            clearTimeout(longPressTimer);
-        }
-    </script>
+            ">
+                Créer un compte
+            </button>
+            <div class="toggle-form">
+                Déjà inscrit ? <a onclick="toggleForms()">Se connecter</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
