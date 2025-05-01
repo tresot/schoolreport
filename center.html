@@ -342,409 +342,462 @@
             font-size: 14px;
         }
     </style>
-</head>
+    </head>
 <body>
-
-<div id="setup-modal" style="display:none;">
-    <div class="setup-container">
-        <h2>Configuration du profil</h2>
-        <div class="profile-preview" id="profile-preview" onclick="document.getElementById('profile-upload').click()">
-            <span id="profile-letter">?</span>
-            <img id="profile-preview-img" src="" alt="Prévisualisation du profil">
-        </div>
-        <input type="file" id="profile-upload" accept="image/*" style="display:none;">
-
-        <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20">
-        <p id="username-info" style="font-size:12px; color:#666;">Ce nom ne pourra pas être changé avant 48 heures</p>
-
-        <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
-    </div>
-</div>
-
-<div id="main-interface" style="display:none;">
-    <div class="container">
-        <header>
-            <div class="logo">
-                <h1>SchoolReport</h1>
+    <!-- Modal de configuration initiale -->
+    <div id="setup-modal" class="setup-modal">
+        <div class="setup-container">
+            <h2>Configuration du profil</h2>
+            <p>Choisissez un nom d'utilisateur et une photo de profil</p>
+            
+            <div class="profile-preview" id="profile-preview">
+                <span id="profile-letter">?</span>
+                <img id="profile-preview-img" class="profile-img">
+                <input type="file" id="profile-upload" accept="image/*" class="file-input">
             </div>
-            <div class="user-menu">
-                <div class="profile-badge" id="profile-badge">
-                    <div class="user-avatar" id="user-avatar">
-                        <img id="profile-pic" src="" style="width:100%; height:100%; border-radius:50%; display:none;" alt="Photo de profil">
-                        <span id="avatar-letter">U</span>
+            
+            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" class="username-input">
+            <p id="username-info" class="username-info">Ce nom ne pourra pas être changé avant 48 heures</p>
+            
+            <button id="save-profile-btn" class="setup-btn">Enregistrer</button>
+        </div>
+    </div>
+
+    <!-- Interface principale -->
+    <div id="main-interface" class="main-interface">
+        <div class="container">
+            <header class="header">
+                <div class="logo">
+                    <h1>SchoolReport</h1>
+                </div>
+                <div class="user-menu">
+                    <div class="profile-badge" id="profile-badge">
+                        <div class="user-avatar" id="user-avatar">
+                            <img id="profile-pic" class="profile-img">
+                            <span id="avatar-letter" class="avatar-letter">U</span>
+                        </div>
+                        <div class="online-status" id="online-status"></div>
                     </div>
-                    <div class="online-status" id="online-status"></div>
+                    <span class="user-name" id="user-name">Utilisateur</span>
+                    <span class="user-count" id="online-count">0</span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                    
+                    <div id="users-list" class="users-list">
+                        <h4>Utilisateurs en ligne</h4>
+                        <div id="online-users-container" class="online-users-container"></div>
+                    </div>
                 </div>
-                <span class="user-name" id="user-name">Utilisateur</span>
-                <span class="user-count" id="online-count" onmousedown="showUsersList(event)" onmouseup="hideUsersList()">0</span>
-                <button class="logout-btn" id="logout-btn">Déconnexion</button>
+            </header>
 
-                <div class="users-list" id="users-list">
-                    <h4>Utilisateurs en ligne</h4>
-                    <div id="online-users-container"></div>
-                </div>
-            </div>
-        </header>
-
-        <div class="welcome-section">
-            <h2 id="welcome-title">Bienvenue sur SchoolReport</h2>
-            <p id="username-change-info" style="display:none;">Vous pourrez changer votre nom le <span id="username-change-date"></span></p>
-        </div>
-
-        <div class="actions-grid">
-            <div class="action-card" onclick="window.location.href='chat.html'">
-                <div class="action-icon chat-icon">
-                    💬
-                    <div class="active-indicator" id="chat-active" style="display:none;">!</div>
-                </div>
-                <h3>Messagerie</h3>
-                <p><span id="chat-users">0</span> personne(s) active(s) dans le chat</p>
-                <a class="action-btn">Accéder au chat</a>
+            <div class="welcome-section">
+                <h2 id="welcome-title" class="welcome-title">Bienvenue sur SchoolReport</h2>
+                <p id="username-change-info" class="username-change-info">
+                    Vous pourrez changer votre nom le <span id="username-change-date" class="change-date"></span>
+                </p>
             </div>
 
-            <div class="action-card" onclick="window.location.href='workspace.html'">
-                <div class="action-icon workspace-icon">
-                    📝
-                    <div class="active-indicator" id="workspace-active" style="display:none;">!</div>
+            <div class="actions-grid">
+                <div class="action-card" data-page="chat">
+                    <div class="action-icon chat-icon">
+                        💬
+                        <div id="chat-active" class="active-indicator">!</div>
+                    </div>
+                    <h3>Messagerie</h3>
+                    <p><span id="chat-users" class="user-count">0</span> personne(s) active(s)</p>
+                    <a class="action-btn">Accéder au chat</a>
                 </div>
-                <h3>Espace de travail</h3>
-                <p><span id="workspace-users">0</span> collaborateur(s) en ligne</p>
-                <a class="action-btn">Ouvrir l'espace</a>
-            </div>
 
-            <div class="action-card" onclick="window.location.href='homework.html'">
-                <div class="action-icon homework-icon">
-                    📚
+                <div class="action-card" data-page="workspace">
+                    <div class="action-icon workspace-icon">
+                        📝
+                        <div id="workspace-active" class="active-indicator">!</div>
+                    </div>
+                    <h3>Espace de travail</h3>
+                    <p><span id="workspace-users" class="user-count">0</span> collaborateur(s)</p>
+                    <a class="action-btn">Ouvrir l'espace</a>
                 </div>
-                <h3>Gestion des devoirs</h3>
-                <p>Organisez vos devoirs et projets avec des échéances claires.</p>
-                <a class="action-btn">Voir les devoirs</a>
-            </div>
 
-            <div class="action-card" onclick="window.location.href='files.html'">
-                <div class="action-icon files-icon">
-                    📁
+                <div class="action-card" data-page="homework">
+                    <div class="action-icon homework-icon">
+                        📚
+                    </div>
+                    <h3>Devoirs</h3>
+                    <p>Organisez vos travaux et projets scolaires</p>
+                    <a class="action-btn">Voir les devoirs</a>
                 </div>
-                <h3>Fichiers partagés</h3>
-                <p>Accédez à tous les documents partagés par vos professeurs et camarades.</p>
-                <a class="action-btn">Explorer les fichiers</a>
+
+                <div class="action-card" data-page="files">
+                    <div class="action-icon files-icon">
+                        📁
+                    </div>
+                    <h3>Fichiers</h3>
+                    <p>Documents partagés avec votre classe</p>
+                    <a class="action-btn">Explorer</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script type="module">
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
-    import { app } from "./firebase/firebase-config.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            set, 
+            onValue, 
+            update 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { 
+            getStorage, 
+            ref as storageRef, 
+            uploadBytes, 
+            getDownloadURL 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    const storage = getStorage(app);
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+            authDomain: "schoolreport-f8db0.firebaseapp.com",
+            projectId: "schoolreport-f8db0",
+            storageBucket: "schoolreport-f8db0.appspot.com",
+            messagingSenderId: "313069994450",
+            appId: "1:313069994450:web:37b009be4f1812fdca880b"
+        };
 
-    let currentUsername = '';
-    let profilePictureUrl = '';
-    let longPressTimer;
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
 
-    // Gérer l'état de l'utilisateur
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            window.location.href = 'index.html';
-        } else {
-            checkUserProfile(user);
+        // Variables d'état
+        let selectedFile = null;
+        let currentUserData = null;
+        let pressTimer = null;
+
+        // Écouteur d'état d'authentification
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                checkUserProfile(user);
+            }
+        });
+
+        // Vérifie si le profil utilisateur existe
+        async function checkUserProfile(user) {
+            const userRef = ref(db, `users/${user.uid}`);
+            
+            onValue(userRef, (snapshot) => {
+                const userData = snapshot.val();
+                
+                if (userData && userData.username) {
+                    // Profil existant
+                    currentUserData = userData;
+                    setupMainInterface(user, userData);
+                } else {
+                    // Nouveau profil
+                    showSetupModal(user);
+                }
+            }, { onlyOnce: true });
         }
-    });
 
-    // Vérifier si l'utilisateur a déjà un profil configuré
-    function checkUserProfile(user) {
-        const userRef = ref(db, 'users/' + user.uid);
-        onValue(userRef, (snapshot) => {
-            const userData = snapshot.val();
+        // Affiche le modal de configuration
+        function showSetupModal(user) {
+            document.getElementById('setup-modal').style.display = 'flex';
+            
+            // Gestion de la sélection de photo
+            document.getElementById('profile-upload').addEventListener('change', handleFileSelect);
+            
+            // Gestion du bouton Enregistrer
+            document.getElementById('save-profile-btn').addEventListener('click', () => saveProfile(user));
+            
+            // Clic sur la prévisualisation pour sélectionner une image
+            document.getElementById('profile-preview').addEventListener('click', () => {
+                document.getElementById('profile-upload').click();
+            });
+        }
 
-            if (userData && userData.username) {
-                // Profil déjà configuré
-                currentUsername = userData.username;
-                setupMainInterface(user);
-            } else {
-                // Nouvel utilisateur - afficher le modal de configuration
-                setupProfileConfiguration(user);
-            }
-        });
-    }
-
-    // Configurer le modal de création de profil
-    function setupProfileConfiguration(user) {
-        document.getElementById('setup-modal').style.display = 'flex';
-
-        // Prévisualisation de la photo de profil
-        const profileUpload = document.getElementById('profile-upload');
-        const profilePreviewImg = document.getElementById('profile-preview-img');
-        const profileLetter = document.getElementById('profile-letter');
-
-        profileUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
+        // Gère la sélection de fichier
+        function handleFileSelect(e) {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    profilePreviewImg.src = event.target.result;
-                    profilePreviewImg.style.display = 'block';
-                    profileLetter.style.display = 'none';
+                reader.onload = (event) => {
+                    // Prévisualisation dans le modal
+                    const previewImg = document.getElementById('profile-preview-img');
+                    previewImg.src = event.target.result;
+                    previewImg.style.display = 'block';
+                    document.getElementById('profile-letter').style.display = 'none';
                 };
-                reader.readAsDataURL(file);
-            } else {
-                profilePreviewImg.style.display = 'none';
-                profileLetter.style.display = 'block';
-                profileLetter.textContent = '?'; // Réinitialiser la lettre si aucun fichier n'est sélectionné
+                reader.readAsDataURL(selectedFile);
             }
-        });
+        }
 
-        // Enregistrement du profil
-        document.getElementById('save-profile-btn').addEventListener('click', async function() {
+        // Enregistre le profil utilisateur
+        async function saveProfile(user) {
             const usernameInput = document.getElementById('username-input');
             const username = usernameInput.value.trim();
-            const file = profileUpload.files[0];
-
+            
             if (!username || username.length < 3) {
-                alert("Veuillez choisir un nom d'utilisateur valide (minimum 3 caractères)");
+                alert("Le nom d'utilisateur doit contenir au moins 3 caractères");
                 return;
             }
-
-            currentUsername = username;
-            const userRef = ref(db, 'users/' + user.uid);
-
+            
             try {
-                // Enregistrer la photo de profil si sélectionnée
-                if (file) {
-                    const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                    await uploadBytes(profilePicRef, file);
-                    profilePictureUrl = await getDownloadURL(profilePicRef);
+                let profileUrl = '';
+                
+                // Upload de la photo si sélectionnée
+                if (selectedFile) {
+                    const fileRef = storageRef(storage, `profile_pictures/${user.uid}`);
+                    await uploadBytes(fileRef, selectedFile);
+                    profileUrl = await getDownloadURL(fileRef);
                 }
-
-                // Enregistrer les infos utilisateur
+                
+                // Enregistrement dans la base de données
+                const userRef = ref(db, `users/${user.uid}`);
                 await set(userRef, {
                     username: username,
                     createdAt: Date.now(),
                     canChangeUsername: false,
-                    ...(profilePictureUrl && { profilePicture: profilePictureUrl })
+                    profilePicture: profileUrl || null
                 });
-
-                // Cacher le modal et afficher l'interface principale
+                
+                // Fermeture du modal
                 document.getElementById('setup-modal').style.display = 'none';
-                setupMainInterface(user);
+                setupMainInterface(user, { 
+                    username, 
+                    profilePicture: profileUrl,
+                    createdAt: Date.now()
+                });
             } catch (error) {
                 console.error("Erreur lors de l'enregistrement:", error);
                 alert("Une erreur est survenue lors de l'enregistrement");
             }
-        });
-    }
+        }
 
-    // Configurer l'interface principale
-    function setupMainInterface(user) {
-        document.getElementById('main-interface').style.display = 'block';
-
-        // Afficher le nom d'utilisateur
-        const userNameDisplay = document.getElementById('user-name');
-        const avatarLetterDisplay = document.getElementById('avatar-letter');
-        const welcomeTitle = document.getElementById('welcome-title');
-        userNameDisplay.textContent = currentUsername;
-        avatarLetterDisplay.textContent = currentUsername.charAt(0).toUpperCase();
-        welcomeTitle.textContent = `Bienvenue, ${currentUsername}`;
-
-        // Charger la photo de profil si elle existe
-        const profilePicDisplay = document.getElementById('profile-pic');
-        const userRef = ref(db, 'users/' + user.uid);
-        onValue(userRef, (snapshot) => {
-            const userData = snapshot.val();
-
-            if (userData && userData.profilePicture) {
-                profilePicDisplay.src = userData.profilePicture;
-                profilePicDisplay.style.display = 'block';
-                avatarLetterDisplay.style.display = 'none';
+        // Configure l'interface principale
+        function setupMainInterface(user, userData) {
+            document.getElementById('main-interface').style.display = 'block';
+            currentUserData = userData;
+            
+            // Affichage des infos utilisateur
+            document.getElementById('user-name').textContent = userData.username;
+            document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
+            
+            // Gestion de l'avatar
+            const avatarLetter = document.getElementById('avatar-letter');
+            const profilePic = document.getElementById('profile-pic');
+            
+            avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
+            
+            if (userData.profilePicture) {
+                profilePic.src = userData.profilePicture;
+                profilePic.style.display = 'block';
+                avatarLetter.style.display = 'none';
             } else {
-                profilePicDisplay.style.display = 'none';
-                avatarLetterDisplay.style.display = 'block';
-                avatarLetterDisplay.textContent = currentUsername.charAt(0).toUpperCase();
+                profilePic.style.display = 'none';
+                avatarLetter.style.display = 'flex';
             }
-
-            // Afficher la date de changement possible si applicable
-            const usernameChangeInfo = document.getElementById('username-change-info');
-            const usernameChangeDateSpan = document.getElementById('username-change-date');
-            if (userData && userData.canChangeUsername === false && userData.createdAt) {
+            
+            // Configuration du changement de photo (clic long)
+            setupAvatarChange(user);
+            
+            // Configuration des cartes d'action
+            setupActionCards();
+            
+            // Configuration du suivi de présence
+            setupPresenceTracking(user);
+            
+            // Configuration de la déconnexion
+            document.getElementById('logout-btn').addEventListener('click', () => handleLogout(user));
+            
+            // Affichage de la date de changement possible
+            if (userData.canChangeUsername === false && userData.createdAt) {
                 const changeDate = new Date(userData.createdAt + 48*60*60*1000);
-                usernameChangeInfo.style.display = 'block';
-                usernameChangeDateSpan.textContent =
+                document.getElementById('username-change-info').style.display = 'block';
+                document.getElementById('username-change-date').textContent = 
                     changeDate.toLocaleDateString() + ' à ' + changeDate.toLocaleTimeString();
-            } else {
-                usernameChangeInfo.style.display = 'none';
             }
-        });
+        }
 
-        // Gestion du clic long sur l'avatar pour changer la photo
-        let pressTimer;
-        const avatar = document.getElementById('user-avatar');
-        const profileUploadMain = document.getElementById('profile-upload');
+        // Configure le changement de photo par clic long
+        function setupAvatarChange(user) {
+            const avatar = document.getElementById('user-avatar');
+            let pressTimer;
+            
+            avatar.addEventListener('mousedown', () => {
+                pressTimer = setTimeout(() => {
+                    document.getElementById('profile-upload').click();
+                }, 1000);
+            });
+            
+            avatar.addEventListener('mouseup', () => clearTimeout(pressTimer));
+            avatar.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+            
+            // Gestion du changement de photo
+            document.getElementById('profile-upload').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                try {
+                    const fileRef = storageRef(storage, `profile_pictures/${user.uid}`);
+                    await uploadBytes(fileRef, file);
+                    const url = await getDownloadURL(fileRef);
+                    
+                    // Mise à jour dans la base de données
+                    const userRef = ref(db, `users/${user.uid}`);
+                    await update(userRef, { profilePicture: url });
+                    
+                    // Mise à jour de l'affichage
+                    document.getElementById('profile-pic').src = url;
+                    document.getElementById('profile-pic').style.display = 'block';
+                    document.getElementById('avatar-letter').style.display = 'none';
+                } catch (error) {
+                    console.error("Erreur lors du changement de photo:", error);
+                }
+            });
+        }
 
-        avatar.addEventListener('mousedown', function() {
-            pressTimer = setTimeout(() => {
-                profileUploadMain.click();
-            }, 1000); // 1 seconde pour le clic long
-        });
-
-        avatar.addEventListener('mouseup', function() {
-            clearTimeout(pressTimer);
-        });
-
-        avatar.addEventListener('mouseleave', function() {
-            clearTimeout(pressTimer);
-        });
-
-        // Gestion du changement de photo depuis l'interface principale
-        profileUploadMain.addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            try {
-                const profilePicRef = storageRef(storage, `profile_pictures/${user.uid}`);
-                await uploadBytes(profilePicRef, file);
-                const url = await getDownloadURL(profilePicRef);
-
-                // Mettre à jour dans la base de données
-                await update(ref(db, 'users/' + user.uid), {
-                    profilePicture: url
+        // Configure les cartes d'action
+        function setupActionCards() {
+            document.querySelectorAll('.action-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+                        const page = card.getAttribute('data-page');
+                        window.location.href = `${page}.html`;
+                    }
                 });
+            });
+        }
 
-                // Mettre à jour l'affichage
-                profilePicDisplay.src = url;
-                profilePicDisplay.style.display = 'block';
-                avatarLetterDisplay.style.display = 'none';
-            } catch (error) {
-                console.error("Erreur lors du changement de photo:", error);
-            }
-        });
-
-        // Suivi des utilisateurs en ligne
-        setupPresenceTracking(user);
-
-        // Déconnexion
-        const logoutBtn = document.getElementById('logout-btn');
-        logoutBtn.addEventListener('click', () => {
-            const userStatusRef = ref(db, 'status/' + user.uid);
+        // Configure le suivi de présence
+        function setupPresenceTracking(user) {
+            const userStatusRef = ref(db, `status/${user.uid}`);
+            const usersRef = ref(db, 'status');
+            
+            // Enregistre l'utilisateur comme en ligne
             set(userStatusRef, {
-                online: false,
-                lastChanged: Date.now()
-            }).then(() => {
-                signOut(auth).then(() => {
-                    window.location.href = 'index.html';
+                online: true,
+                lastChanged: Date.now(),
+                currentPage: 'center',
+                username: currentUserData.username,
+                profilePicture: currentUserData.profilePicture || null
+            });
+            
+            // Met à jour lors de la fermeture de la page
+            window.addEventListener('beforeunload', () => {
+                update(userStatusRef, {
+                    online: false,
+                    lastChanged: Date.now()
                 });
             });
-        });
-    }
-
-    // Suivi des utilisateurs connectés
-    function setupPresenceTracking(user) {
-        const userStatusRef = ref(db, 'status/' + user.uid);
-        const usersRef = ref(db, 'status');
-
-        // Enregistrer l'utilisateur comme étant en ligne
-        set(userStatusRef, {
-            online: true,
-            lastChanged: Date.now(),
-            currentPage: 'center',
-            username: currentUsername,
-            ...(profilePictureUrl && { profilePicture: profilePictureUrl })
-        });
-
-        // Mettre à jour quand l'utilisateur change de page
-        window.addEventListener('beforeunload', () => {
-            update(userStatusRef, {
-                online: false,
-                lastChanged: Date.now()
+            
+            // Écoute les changements d'état des autres utilisateurs
+            onValue(usersRef, (snapshot) => {
+                const users = snapshot.val() || {};
+                let onlineCount = 0;
+                let chatUsers = 0;
+                let workspaceUsers = 0;
+                let onlineUsers = [];
+                
+                Object.entries(users).forEach(([uid, data]) => {
+                    if (data.online && uid !== user.uid) {
+                        onlineCount++;
+                        
+                        if (data.currentPage === 'chat') chatUsers++;
+                        if (data.currentPage === 'workspace') workspaceUsers++;
+                        
+                        onlineUsers.push({
+                            username: data.username || 'Utilisateur',
+                            firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
+                            profilePicture: data.profilePicture || null
+                        });
+                    }
+                });
+                
+                // Mise à jour des compteurs
+                document.getElementById('online-count').textContent = onlineCount;
+                document.getElementById('chat-users').textContent = chatUsers;
+                document.getElementById('workspace-users').textContent = workspaceUsers;
+                
+                // Mise à jour des indicateurs d'activité
+                document.getElementById('chat-active').style.display = chatUsers > 0 ? 'flex' : 'none';
+                document.getElementById('workspace-active').style.display = workspaceUsers > 0 ? 'flex' : 'none';
+                
+                // Configuration du clic long sur le compteur
+                setupOnlineUsersList(onlineUsers);
             });
-        });
+        }
 
-        // Écouter les changements d'état des autres utilisateurs
-        const onlineCountSpan = document.getElementById('online-count');
-        const chatUsersSpan = document.getElementById('chat-users');
-        const workspaceUsersSpan = document.getElementById('workspace-users');
-        const chatActiveIndicator = document.getElementById('chat-active');
-        const workspaceActiveIndicator = document.getElementById('workspace-active');
-        const onlineUsersContainer = document.getElementById('online-users-container');
-
-        onValue(usersRef, (snapshot) => {
-            const users = snapshot.val() || {};
-            let onlineCount = 0;
-            let chatUsers = 0;
-            let workspaceUsers = 0;
-            let onlineUsersList = [];
-
-            Object.entries(users).forEach(([uid, data]) => {
-                if (data.online && uid !== user.uid) {
-                    onlineCount++;
-                    if (data.currentPage === 'chat') chatUsers++;
-                    if (data.currentPage === 'workspace') workspaceUsers++;
-
-                    onlineUsersList.push({
-                        username: data.username || 'Utilisateur',
-                        firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
-                        profilePicture: data.profilePicture || null
+        // Configure l'affichage des utilisateurs en ligne (clic long)
+        function setupOnlineUsersList(users) {
+            const onlineCount = document.getElementById('online-count');
+            const usersList = document.getElementById('users-list');
+            const usersContainer = document.getElementById('online-users-container');
+            
+            let pressTimer;
+            
+            onlineCount.addEventListener('mousedown', () => {
+                pressTimer = setTimeout(() => {
+                    // Remplir la liste des utilisateurs
+                    usersContainer.innerHTML = '';
+                    users.forEach(user => {
+                        const userElement = document.createElement('div');
+                        userElement.className = 'user-item';
+                        
+                        const avatar = document.createElement('div');
+                        avatar.className = 'user-avatar-small';
+                        
+                        if (user.profilePicture) {
+                            avatar.innerHTML = `<img src="${user.profilePicture}" class="user-avatar-img">`;
+                        } else {
+                            avatar.textContent = user.firstLetter;
+                        }
+                        
+                        const name = document.createElement('span');
+                        name.textContent = user.username;
+                        
+                        userElement.appendChild(avatar);
+                        userElement.appendChild(name);
+                        usersContainer.appendChild(userElement);
                     });
-                }
+                    
+                    // Afficher la liste
+                    usersList.style.display = 'block';
+                    
+                    // Cacher après 5 secondes
+                    setTimeout(() => {
+                        usersList.style.display = 'none';
+                    }, 5000);
+                }, 500);
             });
+            
+            onlineCount.addEventListener('mouseup', () => clearTimeout(pressTimer));
+            onlineCount.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+        }
 
-            // Mettre à jour les compteurs
-            onlineCountSpan.textContent = onlineCount;
-            chatUsersSpan.textContent = chatUsers;
-            workspaceUsersSpan.textContent = workspaceUsers;
-
-            // Afficher les indicateurs d'activité
-            chatActiveIndicator.style.display = chatUsers > 0 ? 'flex' : 'none';
-            workspaceActiveIndicator.style.display = workspaceUsers > 0 ? 'flex' : 'none';
-
-            // Mettre à jour la liste des utilisateurs en ligne
-            onlineUsersContainer.innerHTML = '';
-
-            onlineUsersList.forEach(user => {
-                const userElement = document.createElement('div');
-                userElement.className = 'user-item';
-
-                const avatar = document.createElement('div');
-                avatar.className = 'user-avatar-small';
-
-                if (user.profilePicture) {
-                    avatar.innerHTML = `<img src="${user.profilePicture}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-                } else {
-                    avatar.textContent = user.firstLetter;
-                }
-
-                const name = document.createElement('span');
-                name.textContent = user.username;
-
-                userElement.appendChild(avatar);
-                userElement.appendChild(name);
-                onlineUsersContainer.appendChild(userElement);
-            });
-        });
-    }
-
-    // Afficher la liste des utilisateurs connectés
-    function showUsersList(e) {
-        e.preventDefault();
-        clearTimeout(longPressTimer);
-        longPressTimer = setTimeout(() => {
-            const list = document.getElementById('users-list');
-            list.style.display = 'block';
-
-            // Cacher la liste après 5 secondes
-            setTimeout(() => {
-                list.style.display = 'none';
-            }, 5000);
-        }, 500); // Délai de 0.5 seconde pour le clic long
-    }
-
-    function hideUsersList() {
-        clearTimeout(longPressTimer);
-    }
-</script>
+        // Gère la déconnexion
+        async function handleLogout(user) {
+            const userStatusRef = ref(db, `status/${user.uid}`);
+            
+            try {
+                await update(userStatusRef, {
+                    online: false,
+                    lastChanged: Date.now()
+                });
+                
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Erreur lors de la déconnexion:", error);
+            }
+        }
+    </script>
 </body>
 </html>
