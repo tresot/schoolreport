@@ -56,6 +56,7 @@
         .user-menu {
             display: flex;
             align-items: center;
+            position: relative;
         }
 
         .user-avatar {
@@ -228,6 +229,7 @@
             border-radius: 12px;
             font-size: 12px;
             margin-left: 10px;
+            cursor: pointer;
         }
         
         .active-indicator {
@@ -321,8 +323,8 @@
 
         .users-list {
             position: absolute;
-            bottom: 50px;
-            right: 10px;
+            top: 50px;
+            right: 0;
             background: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -351,6 +353,7 @@
             margin-right: 10px;
             font-size: 14px;
             overflow: hidden;
+            position: relative;
         }
 
         .user-avatar-small img {
@@ -505,6 +508,7 @@
         let currentUsername = '';
         let currentUserStatusRef = null;
         let pressTimer = null;
+        let connectedUsersRef = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -594,7 +598,8 @@
                 username,
                 createdAt: Date.now(),
                 canChangeUsername: false,
-                lastSeen: Date.now()
+                lastSeen: Date.now(),
+                profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null
             });
 
             currentUsername = username;
@@ -625,15 +630,22 @@
             
             avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
             
-            // Vérifier si une image existe déjà dans le stockage local
-            const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
-            if (savedImage) {
-                profilePic.src = savedImage;
+            // Vérifier si une image existe déjà
+            if (userData.profileImage) {
+                profilePic.src = userData.profileImage;
                 profilePic.style.display = 'block';
                 avatarLetter.style.display = 'none';
+                localStorage.setItem(`profileImage_${currentUser.uid}`, userData.profileImage);
             } else {
-                profilePic.style.display = 'none';
-                avatarLetter.style.display = 'flex';
+                const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
+                if (savedImage) {
+                    profilePic.src = savedImage;
+                    profilePic.style.display = 'block';
+                    avatarLetter.style.display = 'none';
+                } else {
+                    profilePic.style.display = 'none';
+                    avatarLetter.style.display = 'flex';
+                }
             }
 
             document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
@@ -648,80 +660,90 @@
         }
 
         function setupPresenceTracking(user) {
-            currentUserStatusRef = ref(db, 'status/' + user.uid);
-            const usersRef = ref(db, 'status');
-
-            // Marquer l'utilisateur comme en ligne
-            set(currentUserStatusRef, {
-                online: true,
-                lastChanged: Date.now(),
-                currentPage: 'center',
+            // Référence pour le suivi des utilisateurs connectés
+            connectedUsersRef = ref(db, 'connectedUsers');
+            
+            // Référence pour l'utilisateur actuel
+            const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
+            
+            // Récupérer l'image de profil depuis le stockage local ou la base de données
+            const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
+            
+            // Marquer l'utilisateur comme connecté avec toutes ses infos
+            set(userStatusRef, {
+                uid: user.uid,
                 username: currentUsername,
-                userId: user.uid,
-                lastSeen: Date.now()
+                profileImage: profileImage,
+                timestamp: Date.now(),
+                firstLetter: currentUsername.charAt(0).toUpperCase()
             });
 
-            // Gérer la déconnexion
-            onDisconnect(currentUserStatusRef).update({
-                online: false,
-                lastChanged: Date.now(),
-                lastSeen: Date.now()
-            });
+            // Supprimer la présence lors de la déconnexion
+            onDisconnect(userStatusRef).remove();
 
-            // Suivi des autres utilisateurs
-            onValue(usersRef, (snapshot) => {
-                const users = snapshot.val() || {};
+            // Écouter les changements dans la liste des utilisateurs connectés
+            onValue(connectedUsersRef, (snapshot) => {
+                const connectedUsers = snapshot.val() || {};
+                const onlineUsers = [];
                 let onlineCount = 0;
-                let chatUsers = 0;
-                let onlineUsers = [];
 
-                Object.entries(users).forEach(([uid, data]) => {
-                    if (data.online) {
-                        if (data.userId !== user.uid) {
-                            onlineCount++;
-                            if (data.currentPage === 'chat') chatUsers++;
-                        }
-                        
+                // Compter les utilisateurs connectés et préparer la liste
+                Object.entries(connectedUsers).forEach(([uid, userData]) => {
+                    if (uid !== user.uid) { // Exclure l'utilisateur actuel
+                        onlineCount++;
                         onlineUsers.push({
-                            userId: data.userId,
-                            username: data.username || 'Utilisateur',
-                            firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
-                            currentPage: data.currentPage || 'center'
+                            userId: uid,
+                            username: userData.username || 'Utilisateur',
+                            firstLetter: userData.firstLetter || (userData.username || 'U').charAt(0).toUpperCase(),
+                            profileImage: userData.profileImage || null
                         });
                     }
                 });
 
-                // Mise à jour de l'interface
-                updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers);
+                // Mettre à jour l'interface
+                updateOnlineUsersDisplay(onlineCount, onlineUsers);
             });
         }
 
-        function updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers) {
+        function updateOnlineUsersDisplay(onlineCount, onlineUsers) {
+            // Mettre à jour le compteur
             document.getElementById('online-count').textContent = onlineCount;
-            document.getElementById('chat-users').textContent = chatUsers;
 
-            // Indicateurs d'activité
-            document.getElementById('chat-active').style.display = chatUsers > 0 ? 'flex' : 'none';
-
-            // Liste des utilisateurs en ligne
+            // Mettre à jour la liste des utilisateurs
             const container = document.getElementById('online-users-container');
-            container.innerHTML = onlineUsers
-                .filter(user => user.userId !== currentUser.uid)
-                .map(user => `
-                    <div class="user-item">
+            container.innerHTML = '';
+
+            if (onlineUsers.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">Aucun autre utilisateur en ligne</p>';
+            } else {
+                onlineUsers.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-item';
+                    
+                    // Créer le contenu de l'avatar
+                    let avatarContent = '';
+                    if (user.profileImage) {
+                        avatarContent = `<img src="${user.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+                    } else {
+                        avatarContent = user.firstLetter;
+                    }
+                    
+                    userElement.innerHTML = `
                         <div class="user-avatar-small">
-                            ${user.firstLetter}
+                            ${avatarContent}
                         </div>
                         <span>${user.username}</span>
-                    </div>
-                `).join('');
+                    `;
+                    container.appendChild(userElement);
+                });
+            }
         }
 
         function handleLogout() {
-            if (currentUserStatusRef) {
-                update(currentUserStatusRef, {
+            if (connectedUsersRef) {
+                const userStatusRef = ref(db, 'connectedUsers/' + currentUser.uid);
+                update(userStatusRef, {
                     online: false,
-                    lastChanged: Date.now(),
                     lastSeen: Date.now()
                 }).then(() => {
                     signOut(auth).then(() => {
@@ -810,6 +832,18 @@
                 
                 // Sauvegarder dans le stockage local
                 localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
+                
+                // Mettre à jour dans la base de données
+                const userRef = ref(db, 'users/' + currentUser.uid);
+                update(userRef, {
+                    profileImage: imageUrl
+                });
+                
+                // Mettre à jour dans la liste des utilisateurs connectés
+                const userStatusRef = ref(db, 'connectedUsers/' + currentUser.uid);
+                update(userStatusRef, {
+                    profileImage: imageUrl
+                });
                 
                 document.getElementById('image-input-modal').style.display = 'none';
             };
