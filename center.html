@@ -69,6 +69,15 @@
             justify-content: center;
             font-weight: bold;
             margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
         }
 
         .user-name {
@@ -287,6 +296,13 @@
             position: relative;
         }
 
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
         .setup-btn {
             background-color: var(--primary);
             color: white;
@@ -334,6 +350,40 @@
             font-weight: bold;
             margin-right: 10px;
             font-size: 14px;
+            overflow: hidden;
+        }
+
+        .user-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        #image-input-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .image-input-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+        }
+
+        .image-input-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -345,6 +395,7 @@
             
             <div class="profile-preview" id="profile-preview">
                 <span id="profile-letter">?</span>
+                <img id="profile-preview-img">
             </div>
             
             <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
@@ -354,6 +405,17 @@
             </p>
 
             <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
+        </div>
+    </div>
+
+    <!-- Modal pour saisir le nom de l'image -->
+    <div id="image-input-modal">
+        <div class="image-input-container">
+            <h3>Importer une photo</h3>
+            <p>Entrez le nom de l'image (ex: monimage.jpg)</p>
+            <input type="text" id="image-name-input" placeholder="nomdelimage.jpg">
+            <button class="setup-btn" id="confirm-image-btn">Valider</button>
+            <button class="logout-btn" style="margin-top: 10px;" id="cancel-image-btn">Annuler</button>
         </div>
     </div>
 
@@ -368,6 +430,7 @@
                 <div class="user-menu">
                     <div class="profile-badge">
                         <div class="user-avatar" id="user-avatar">
+                            <img id="profile-pic">
                             <span id="avatar-letter">U</span>
                         </div>
                         <div class="online-status" id="online-status"></div>
@@ -434,12 +497,14 @@
 
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, update, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
         import { app, auth, db } from "./firebase/firebase-config.js";
 
         // Variables globales
         let currentUser = null;
         let currentUsername = '';
+        let currentUserStatusRef = null;
+        let pressTimer = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -528,7 +593,8 @@
             await set(userRef, {
                 username,
                 createdAt: Date.now(),
-                canChangeUsername: false
+                canChangeUsername: false,
+                lastSeen: Date.now()
             });
 
             currentUsername = username;
@@ -546,14 +612,30 @@
 
             // Gestion de la déconnexion
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+            // Gestion du clic long sur l'avatar
+            setupLongPressAvatar();
         }
 
         function updateUserInfo(userData) {
             document.getElementById('user-name').textContent = userData.username;
             
             const avatarLetter = document.getElementById('avatar-letter');
+            const profilePic = document.getElementById('profile-pic');
+            
             avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
             
+            // Vérifier si une image existe déjà dans le stockage local
+            const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
+            if (savedImage) {
+                profilePic.src = savedImage;
+                profilePic.style.display = 'block';
+                avatarLetter.style.display = 'none';
+            } else {
+                profilePic.style.display = 'none';
+                avatarLetter.style.display = 'flex';
+            }
+
             document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
 
             // Gestion de la date de changement de nom
@@ -566,24 +648,24 @@
         }
 
         function setupPresenceTracking(user) {
-            const userStatusRef = ref(db, 'status/' + user.uid);
+            currentUserStatusRef = ref(db, 'status/' + user.uid);
             const usersRef = ref(db, 'status');
 
             // Marquer l'utilisateur comme en ligne
-            set(userStatusRef, {
+            set(currentUserStatusRef, {
                 online: true,
                 lastChanged: Date.now(),
                 currentPage: 'center',
                 username: currentUsername,
-                userId: user.uid
+                userId: user.uid,
+                lastSeen: Date.now()
             });
 
-            // Mettre à jour lors de la déconnexion
-            window.addEventListener('beforeunload', () => {
-                update(userStatusRef, {
-                    online: false,
-                    lastChanged: Date.now()
-                });
+            // Gérer la déconnexion
+            onDisconnect(currentUserStatusRef).update({
+                online: false,
+                lastChanged: Date.now(),
+                lastSeen: Date.now()
             });
 
             // Suivi des autres utilisateurs
@@ -636,16 +718,21 @@
         }
 
         function handleLogout() {
-            const userStatusRef = ref(db, 'status/' + currentUser.uid);
-            
-            update(userStatusRef, {
-                online: false,
-                lastChanged: Date.now()
-            }).then(() => {
+            if (currentUserStatusRef) {
+                update(currentUserStatusRef, {
+                    online: false,
+                    lastChanged: Date.now(),
+                    lastSeen: Date.now()
+                }).then(() => {
+                    signOut(auth).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                });
+            } else {
                 signOut(auth).then(() => {
                     window.location.href = 'index.html';
                 });
-            });
+            }
         }
 
         function setupEventListeners() {
@@ -657,9 +744,81 @@
             });
 
             // Fermer la liste quand on clique ailleurs
-            document.addEventListener('click', () => {
-                document.getElementById('users-list').style.display = 'none';
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.user-count') && !e.target.closest('.users-list')) {
+                    document.getElementById('users-list').style.display = 'none';
+                }
             });
+
+            // Gestion du modal d'import d'image
+            document.getElementById('confirm-image-btn').addEventListener('click', handleImageImport);
+            document.getElementById('cancel-image-btn').addEventListener('click', () => {
+                document.getElementById('image-input-modal').style.display = 'none';
+            });
+        }
+
+        function setupLongPressAvatar() {
+            const avatar = document.getElementById('user-avatar');
+
+            avatar.addEventListener('mousedown', () => {
+                pressTimer = setTimeout(() => {
+                    showImageInputModal();
+                }, 1000); // 1 seconde pour un clic long
+            });
+
+            avatar.addEventListener('mouseup', () => {
+                clearTimeout(pressTimer);
+            });
+
+            avatar.addEventListener('mouseleave', () => {
+                clearTimeout(pressTimer);
+            });
+
+            // Pour les appareils tactiles
+            avatar.addEventListener('touchstart', () => {
+                pressTimer = setTimeout(() => {
+                    showImageInputModal();
+                }, 1000);
+            });
+
+            avatar.addEventListener('touchend', () => {
+                clearTimeout(pressTimer);
+            });
+        }
+
+        function showImageInputModal() {
+            document.getElementById('image-input-modal').style.display = 'flex';
+            document.getElementById('image-name-input').value = '';
+            document.getElementById('image-name-input').focus();
+        }
+
+        function handleImageImport() {
+            const imageName = document.getElementById('image-name-input').value.trim();
+            if (!imageName) return;
+
+            const imageUrl = `photos/${imageName}`;
+            const img = new Image();
+            
+            img.onload = function() {
+                // L'image existe, on peut l'utiliser
+                const profilePic = document.getElementById('profile-pic');
+                const avatarLetter = document.getElementById('avatar-letter');
+                
+                profilePic.src = imageUrl;
+                profilePic.style.display = 'block';
+                avatarLetter.style.display = 'none';
+                
+                // Sauvegarder dans le stockage local
+                localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
+                
+                document.getElementById('image-input-modal').style.display = 'none';
+            };
+            
+            img.onerror = function() {
+                alert("Image non trouvée. Vérifiez le nom et l'extension (ex: photo.jpg)");
+            };
+            
+            img.src = imageUrl;
         }
     </script>
 </body>
