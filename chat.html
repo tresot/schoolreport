@@ -3,236 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat entre amis</title>
+  <title>Chat - SchoolReport</title>
   <style>
-    /* Style de base (similaire au précédent) */
     body {
-      background-color: #f5f7fa;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: space-between;
     }
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
+
+    #chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       padding: 20px;
     }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-      border-bottom: 2px solid #ccc;
-      margin-bottom: 20px;
-    }
-    header h1 {
-      color: #212529;
-      font-size: 24px;
-    }
-    .user-menu {
-      display: flex;
-      align-items: center;
-    }
-    .user-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #4361ee;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      margin-right: 10px;
-    }
-    .messages {
+
+    #messages {
       flex: 1;
       padding: 1rem;
       background-color: white;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
-      max-height: 300px;
-      overflow-y: auto;
       margin-bottom: 20px;
+      overflow-y: auto;
+      max-height: 70%;
     }
-    .msg {
-      background: #e9ecef;
+
+    #message-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #message-form input {
+      flex-grow: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 10px;
-      font-weight: bold;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      transition: background 0.3s;
+      font-size: 16px;
     }
-    .msg.self {
-      background: #f1f5f9;
+
+    #message-form button {
+      padding: 12px 20px;
+      background-color: #4361ee;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #message-form button:hover {
+      background-color: #3f37c9;
+    }
+
+    .message {
+      background: #e9ecef;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      max-width: 80%;
+      align-self: flex-start;
+    }
+
+    .message.self {
+      background-color: #4361ee;
+      color: white;
       align-self: flex-end;
     }
-    #formulaire {
-      display: flex;
-      padding: 1rem;
-      border-top: 2px solid #e0e0e0;
-      gap: 1rem;
-      align-items: center;
-      background-color: white;
-    }
-    .input__container {
-      flex-grow: 1;
-      position: relative;
-      background-color: #f0f0f0;
-      padding: 10px;
-      border-radius: 5px;
-      width: 100%;
-    }
-    .input__search {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      font-size: 1rem;
-      background: #f5f7fa;
-      color: #212529;
-      border-radius: 5px;
-      transition: background 0.3s;
-    }
-    .input__search:focus {
-      outline: none;
-      background-color: #fff;
-    }
-    .input__button__shadow {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: #4361ee;
-      border: none;
-      padding: 10px;
-      border-radius: 50%;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-    .input__button__shadow:hover {
-      transform: translateY(-50%) scale(1.1);
-    }
-    .button {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: rgb(20, 20, 20);
-      border: none;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
-      cursor: pointer;
-      transition-duration: 0.3s;
-    }
-    .button svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
-    }
-    .button:hover {
-      background-color: #4361ee;
-    }
   </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <div class="logo">
-        <h1>Chat entre amis</h1>
-      </div>
-      <div class="user-menu">
-        <div class="user-avatar" id="user-avatar">
-          <span id="avatar-letter">U</span>
-        </div>
-        <div class="user-name" id="user-name">Utilisateur</div>
-        <button class="logout-btn" id="logout-btn">Déconnexion</button>
-      </div>
-    </header>
-    <div id="erreur">Erreur : Veuillez vous connecter d'abord.</div>
-    <div class="messages" id="messages"></div>
-    <div id="formulaire">
-      <div class="input__container">
-        <input type="text" class="input__search" id="message" placeholder="Votre message...">
-        <button class="input__button__shadow" onclick="envoyer()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js"></script>
-
   <script>
-    // Configuration Firebase de ton projet SchoolReport
-    const firebaseConfig = {
-      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-      authDomain: "schoolreport-f8db0.firebaseapp.com",
-      databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "schoolreport-f8db0",
-      storageBucket: "schoolreport-f8db0.firebasestorage.app",
-      messagingSenderId: "313069994450",
-      appId: "1:313069994450:web:37b009be4f1812fdca880b",
-      measurementId: "G-N8YF0VKWCD"
+    // Récupérer le nom de l'utilisateur depuis sessionStorage
+    const userName = sessionStorage.getItem('userName');
+    if (!userName) {
+      window.location.href = 'index.html'; // Si l'utilisateur n'est pas connecté, le rediriger vers la page de connexion
+    }
+
+    // Afficher le nom de l'utilisateur dans l'interface
+    window.onload = () => {
+      document.getElementById('userNameDisplay').textContent = `Bienvenue, ${userName}`;
     };
 
-    // Initialisation de Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
-
-    // Authentification et gestion des utilisateurs
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        const userName = user.displayName || "Utilisateur";
-        document.getElementById("user-name").textContent = userName;
-        document.getElementById("avatar-letter").textContent = userName.charAt(0).toUpperCase();
-        document.getElementById("erreur").style.display = "none";
-      } else {
-        document.getElementById("erreur").style.display = "block";
-      }
-    });
-
-    // Fonction d'envoi de message
-    function envoyer() {
-      const message = document.getElementById("message").value.trim();
+    // Fonction pour envoyer un message
+    function sendMessage() {
+      const message = document.getElementById('message').value.trim();
       if (message) {
-        const userName = auth.currentUser.displayName || "Utilisateur";
-        db.ref('messages').push({
-          userName: userName,
-          message: message,
-          timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
-        document.getElementById("message").value = '';
+        const messagesDiv = document.getElementById('messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add('self'); // Ajoute la classe pour identifier l'utilisateur
+        messageDiv.textContent = `${userName}: ${message}`;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll vers le bas
+        document.getElementById('message').value = ''; // Réinitialise le champ de message
       }
     }
 
-    // Fonction pour charger les messages en temps réel
-    db.ref('messages').on('child_added', snapshot => {
-      const messageData = snapshot.val();
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("msg");
-      messageDiv.innerHTML = `
-        <div class="auteur">${messageData.userName}</div>
-        <div class="contenu">${messageData.message}</div>
-      `;
-      document.getElementById("messages").appendChild(messageDiv);
-    });
-
-    // Déconnexion
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      auth.signOut().then(() => {
-        window.location.href = "login.html";
-      });
+    // Gérer l'envoi du message avec la touche Enter
+    document.getElementById('message').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
     });
   </script>
+</head>
+<body>
+  <div id="chat-container">
+    <header style="text-align: center; padding: 10px;">
+      <h1 id="userNameDisplay">Bienvenue, Utilisateur</h1>
+    </header>
+    
+    <div id="messages">
+      <!-- Les messages seront affichés ici -->
+    </div>
+
+    <div id="message-form">
+      <input type="text" id="message" placeholder="Tapez votre message..." />
+      <button onclick="sendMessage()">Envoyer</button>
+    </div>
+  </div>
 </body>
 </html>
-
