@@ -442,7 +442,7 @@
 
       const chatBox = document.getElementById("chatBox");
       const newMsg = document.createElement("p");
-      const username = localStorage.getItem("user") || "user";
+      const username = localStorage.getItem("username") || "user";
       newMsg.textContent = `${username} : ${message}`;
       chatBox.appendChild(newMsg);
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -594,7 +594,7 @@
         document.body.classList.add("dark");
       }
 
-      const username = localStorage.getItem("user") || "Invité";
+      const username = localStorage.getItem("username") || "Invité";
       document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
