@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport</title>
     <style>
-        /* [Tout le CSS original reste exactement le même] */
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -286,14 +285,6 @@
             font-size: 40px;
             overflow: hidden;
             position: relative;
-            cursor: pointer;
-        }
-
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
         }
 
         .setup-btn {
@@ -343,14 +334,6 @@
             font-weight: bold;
             margin-right: 10px;
             font-size: 14px;
-            overflow: hidden;
-        }
-
-        .user-avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
         }
     </style>
 </head>
@@ -360,12 +343,10 @@
         <div class="setup-container">
             <h2>Configuration du profil</h2>
             
-            <div class="profile-preview" id="profile-preview" onclick="document.getElementById('profile-upload').click()">
+            <div class="profile-preview" id="profile-preview">
                 <span id="profile-letter">?</span>
-                <img id="profile-preview-img">
             </div>
             
-            <input type="file" id="profile-upload" accept="image/*" style="display: none;">
             <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
             <p id="username-info">
@@ -387,7 +368,6 @@
                 <div class="user-menu">
                     <div class="profile-badge">
                         <div class="user-avatar" id="user-avatar">
-                            <img id="profile-pic">
                             <span id="avatar-letter">U</span>
                         </div>
                         <div class="online-status" id="online-status"></div>
@@ -418,8 +398,35 @@
                         <div class="active-indicator" id="chat-active" style="display: none;">!</div>
                     </div>
                     <h3>Messagerie</h3>
-                    <p><span id="chat-users">0</span> personne(s) active(s) dans le chat</p>
+                    <p>Discutez en temps réel avec vos amis et vos groupes de travail.</p>
                     <a class="action-btn">Accéder au chat</a>
+                </div>
+
+                <div class="action-card" onclick="window.location.href='workspace.html'">
+                    <div class="action-icon workspace-icon">
+                        📝
+                    </div>
+                    <h3>Espace de travail</h3>
+                    <p>Collaborez sur des documents en temps réel avec votre équipe.</p>
+                    <a class="action-btn">Ouvrir l'espace</a>
+                </div>
+
+                <div class="action-card" onclick="window.location.href='homework.html'">
+                    <div class="action-icon homework-icon">
+                        📚
+                    </div>
+                    <h3>Gestion des devoirs</h3>
+                    <p>Organisez vos devoirs et projets avec des échéances claires.</p>
+                    <a class="action-btn">Voir les devoirs</a>
+                </div>
+
+                <div class="action-card" onclick="window.location.href='files.html'">
+                    <div class="action-icon files-icon">
+                        📁
+                    </div>
+                    <h3>Fichiers partagés</h3>
+                    <p>Accédez à tous les documents partagés par vos professeurs et camarades.</p>
+                    <a class="action-btn">Explorer les fichiers</a>
                 </div>
             </div>
         </div>
@@ -433,7 +440,6 @@
         // Variables globales
         let currentUser = null;
         let currentUsername = '';
-        let profileImageFile = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -471,30 +477,11 @@
 
         function setupProfileConfiguration(user) {
             const setupModal = document.getElementById('setup-modal');
-            const profileUpload = document.getElementById('profile-upload');
-            const profilePreview = document.getElementById('profile-preview');
-            const profileLetter = document.getElementById('profile-letter');
-            const profilePreviewImg = document.getElementById('profile-preview-img');
             const usernameInput = document.getElementById('username-input');
             const saveBtn = document.getElementById('save-profile-btn');
+            const profileLetter = document.getElementById('profile-letter');
 
             setupModal.style.display = 'flex';
-
-            // Gestion de l'upload de photo
-            profileUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                profileImageFile = file; // Stocker le fichier pour l'enregistrement
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    profilePreviewImg.src = event.target.result;
-                    profilePreviewImg.style.display = 'block';
-                    profileLetter.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            });
 
             // Mise à jour de l'initiale
             usernameInput.addEventListener('input', () => {
@@ -515,22 +502,7 @@
                 saveBtn.textContent = 'Enregistrement...';
 
                 try {
-                    // Générer un nom de fichier unique
-                    const profilePicName = profileImageFile ? `${user.uid}_${Date.now()}.${profileImageFile.name.split('.').pop()}` : null;
-                    
-                    // Enregistrer les données utilisateur
-                    await set(ref(db, 'users/' + user.uid), {
-                        username,
-                        createdAt: Date.now(),
-                        canChangeUsername: false,
-                        profilePic: profilePicName || null
-                    });
-
-                    // Si une image a été sélectionnée, l'envoyer au serveur
-                    if (profileImageFile) {
-                        await uploadProfileImage(profilePicName);
-                    }
-
+                    await saveUserProfile(user, username);
                     setupModal.style.display = 'none';
                     
                     // Recharger les données utilisateur
@@ -539,7 +511,7 @@
                         const userData = snapshot.val();
                         setupMainInterface(user, userData);
                     }, { onlyOnce: true });
-
+                    
                 } catch (error) {
                     console.error("Erreur lors de l'enregistrement:", error);
                     alert("Une erreur est survenue lors de l'enregistrement");
@@ -550,26 +522,16 @@
             });
         }
 
-        async function uploadProfileImage(filename) {
-            if (!profileImageFile) return;
+        async function saveUserProfile(user, username) {
+            const userRef = ref(db, 'users/' + user.uid);
             
-            const formData = new FormData();
-            formData.append('profileImage', profileImageFile);
-            formData.append('filename', filename);
+            await set(userRef, {
+                username,
+                createdAt: Date.now(),
+                canChangeUsername: false
+            });
 
-            try {
-                const response = await fetch('upload.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Erreur lors de l\'upload');
-                }
-            } catch (error) {
-                console.error("Erreur upload:", error);
-                throw error;
-            }
+            currentUsername = username;
         }
 
         function setupMainInterface(user, userData) {
@@ -590,25 +552,8 @@
             document.getElementById('user-name').textContent = userData.username;
             
             const avatarLetter = document.getElementById('avatar-letter');
-            const profilePic = document.getElementById('profile-pic');
-            
             avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
-            avatarLetter.style.display = 'flex';
-            profilePic.style.display = 'none';
-
-            // Charger l'image de profil si elle existe
-            if (userData.profilePic) {
-                profilePic.src = `photos/${userData.profilePic}`;
-                profilePic.onload = () => {
-                    profilePic.style.display = 'block';
-                    avatarLetter.style.display = 'none';
-                };
-                profilePic.onerror = () => {
-                    profilePic.style.display = 'none';
-                    avatarLetter.style.display = 'flex';
-                };
-            }
-
+            
             document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
 
             // Gestion de la date de changement de nom
@@ -630,7 +575,7 @@
                 lastChanged: Date.now(),
                 currentPage: 'center',
                 username: currentUsername,
-                profilePic: currentUser.profilePic || null
+                userId: user.uid
             });
 
             // Mettre à jour lors de la déconnexion
@@ -650,16 +595,15 @@
 
                 Object.entries(users).forEach(([uid, data]) => {
                     if (data.online) {
-                        if (uid !== user.uid) {
+                        if (data.userId !== user.uid) {
                             onlineCount++;
                             if (data.currentPage === 'chat') chatUsers++;
                         }
                         
                         onlineUsers.push({
-                            uid,
+                            userId: data.userId,
                             username: data.username || 'Utilisateur',
                             firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
-                            profilePic: data.profilePic || null,
                             currentPage: data.currentPage || 'center'
                         });
                     }
@@ -671,7 +615,7 @@
         }
 
         function updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers) {
-            document.getElementById('online-count').textContent = onlineCount > 0 ? onlineCount - 1 : 0;
+            document.getElementById('online-count').textContent = onlineCount;
             document.getElementById('chat-users').textContent = chatUsers;
 
             // Indicateurs d'activité
@@ -680,15 +624,13 @@
             // Liste des utilisateurs en ligne
             const container = document.getElementById('online-users-container');
             container.innerHTML = onlineUsers
-                .filter(user => user.uid !== currentUser.uid)
+                .filter(user => user.userId !== currentUser.uid)
                 .map(user => `
                     <div class="user-item">
                         <div class="user-avatar-small">
-                            ${user.profilePic 
-                                ? `<img src="photos/${user.profilePic}" style="width:100%; height:100%; object-fit:cover;">` 
-                                : user.firstLetter}
+                            ${user.firstLetter}
                         </div>
-                        <span>${user.username} (${user.currentPage})</span>
+                        <span>${user.username}</span>
                     </div>
                 `).join('');
         }
