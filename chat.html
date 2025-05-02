@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatFriends ITC - Avancé</title>
+  <title>ChatFriends ITC - Direct</title>
   <style>
     body {
       margin: 0;
@@ -27,28 +27,6 @@
       margin: 20px;
       overflow: hidden;
       border: 4px solid #0f3;
-    }
-
-    .user-list {
-      width: 250px;
-      background: #e0f7fa;
-      overflow-y: auto;
-      padding: 10px;
-      border-right: 4px solid #00bcd4;
-      box-shadow: inset -5px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .user-item {
-      padding: 10px;
-      cursor: pointer;
-      border-bottom: 2px dashed #00bcd4;
-      color: #00796b;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-
-    .user-item:hover {
-      background: #b2dfdb;
     }
 
     .chat-box {
@@ -132,22 +110,20 @@
 </head>
 <body>
 <div class="chat-container">
-  <div class="user-list" id="userList">
-    <strong>Utilisateurs connectés</strong>
-  </div>
   <div class="chat-box">
     <div class="messages" id="messages"></div>
     <div class="input-area">
       <input type="text" id="messageInput" placeholder="Tapez un message..." autocomplete="off">
       <input type="file" id="imageInput" accept="image/*">
       <button id="sendButton">Envoyer</button>
+      <button id="recordBtn">🎙️</button>
     </div>
   </div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const firebaseConfig = {
@@ -156,7 +132,8 @@ const firebaseConfig = {
   projectId: "chat-schoolreport",
   storageBucket: "chat-schoolreport.appspot.com",
   messagingSenderId: "987396717760",
-  appId: "1:987396717760:web:a23a454d940d67cce50125"
+  appId: "1:987396717760:web:a23a454d940d67cce50125",
+  measurementId: "G-QQ7X987EW4"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -165,14 +142,11 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 let currentUser = null;
-let selectedUserId = null;
-let selectedUserName = "";
 
 const messagesDiv = document.getElementById("messages");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 const imageInput = document.getElementById("imageInput");
-const userListDiv = document.getElementById("userList");
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -181,7 +155,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   currentUser = user;
-  await loadUsers();
+  loadMessages();
 
   messageInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
@@ -192,41 +166,8 @@ onAuthStateChanged(auth, async (user) => {
   sendButton.addEventListener("click", sendMessage);
 });
 
-async function loadUsers() {
-  userListDiv.innerHTML = "<strong>Utilisateurs connectés</strong>";
-  const snapshot = await getDocs(collection(db, "users"));
-
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const uid = docSnap.id;
-
-    if (uid !== currentUser.uid) {
-      const div = document.createElement("div");
-      div.className = "user-item";
-      div.textContent = data.username || "Utilisateur";
-      div.onclick = () => {
-        selectedUserId = uid;
-        selectedUserName = data.username || "Utilisateur";
-        loadMessages(uid);
-      };
-      userListDiv.appendChild(div);
-    }
-  });
-
-  const firstUser = snapshot.docs.find(doc => doc.id !== currentUser.uid);
-  if (firstUser) {
-    selectedUserId = firstUser.id;
-    selectedUserName = firstUser.data().username;
-    loadMessages(firstUser.id);
-  }
-}
-
-async function loadMessages(uid) {
-  messagesDiv.innerHTML = "";
-  if (!uid) return;
-
-  const chatId = generateChatId(currentUser.uid, uid);
-  const q = query(collection(db, `private_messages/${chatId}/messages`), orderBy("timestamp"));
+function loadMessages() {
+  const q = query(collection(db, `general_messages`), orderBy("timestamp"));
   onSnapshot(q, (snapshot) => {
     messagesDiv.innerHTML = "";
     snapshot.forEach(docSnap => {
@@ -236,10 +177,6 @@ async function loadMessages(uid) {
   });
 }
 
-function generateChatId(uid1, uid2) {
-  return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
-}
-
 function displayMessage(data) {
   const div = document.createElement("div");
   div.className = "message" + (data.sender === currentUser.uid ? " self" : "");
@@ -247,33 +184,29 @@ function displayMessage(data) {
   let content = "";
   if (data.text) content += data.text;
   if (data.imageUrl) content += `<br><img src='${data.imageUrl}' alt='image' style='max-width:100px;'>`;
-  if (data.audioUrl) content += `<br><audio controls src='${data.audioUrl}'></audio>`;
 
   div.innerHTML = `
     ${content}
-    <div class='meta'>${data.sender === currentUser.uid ? 'Moi' : selectedUserName}${data.edited ? ' (modifié)' : ''}</div>
+    <div class='meta'>${data.senderName || 'Anonyme'}${data.edited ? ' (modifié)' : ''}</div>
   `;
 
   messagesDiv.appendChild(div);
 }
 
 async function sendMessage() {
-  if (!selectedUserId) {
-    alert("Veuillez sélectionner un utilisateur");
-    return;
-  }
-
   const text = messageInput.value.trim();
   const file = imageInput.files[0];
 
   if (!text && !file) return;
 
   try {
-    const chatId = generateChatId(currentUser.uid, selectedUserId);
     let messageData = {
       sender: currentUser.uid,
       timestamp: serverTimestamp()
     };
+
+    const username = sessionStorage.getItem("user") || "Moi";
+    messageData.senderName = username;
 
     if (file) {
       const filePath = `chat_images/${Date.now()}_${file.name}`;
@@ -286,7 +219,7 @@ async function sendMessage() {
       messageData.text = text;
     }
 
-    await addDoc(collection(db, `private_messages/${chatId}/messages`), messageData);
+    await addDoc(collection(db, `general_messages`), messageData);
     messageInput.value = "";
     imageInput.value = "";
     scrollToBottom();
@@ -302,4 +235,3 @@ function scrollToBottom() {
 </script>
 </body>
 </html>
-
