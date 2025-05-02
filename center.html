@@ -507,6 +507,7 @@
         let currentUsername = '';
         let currentUserStatusRef = null;
         let pressTimer = null;
+        let connectedUsersRef = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -521,6 +522,7 @@
                 } else {
                     currentUser = user;
                     checkUserProfile(user);
+                    setupPresenceTracking(user);
                 }
             });
         }
@@ -609,9 +611,6 @@
             // Mise à jour des infos utilisateur
             updateUserInfo(userData);
 
-            // Suivi des utilisateurs en ligne
-            setupPresenceTracking(user);
-
             // Gestion de la déconnexion
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
@@ -650,58 +649,55 @@
         }
 
         function setupPresenceTracking(user) {
-            currentUserStatusRef = ref(db, 'status/' + user.uid);
-            const usersRef = ref(db, 'status');
-
-            // Marquer l'utilisateur comme en ligne
-            set(currentUserStatusRef, {
-                online: true,
-                lastChanged: Date.now(),
-                currentPage: 'center',
-                username: currentUsername,
-                userId: user.uid,
-                lastSeen: Date.now()
+            // Référence pour le suivi des utilisateurs connectés
+            connectedUsersRef = ref(db, 'connectedUsers');
+            
+            // Référence pour l'utilisateur actuel
+            const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
+            
+            // Marquer l'utilisateur comme connecté
+            set(userStatusRef, {
+                uid: user.uid,
+                username: currentUsername || 'Utilisateur',
+                timestamp: Date.now()
             });
 
-            // Gérer la déconnexion
-            onDisconnect(currentUserStatusRef).update({
-                online: false,
-                lastChanged: Date.now(),
-                lastSeen: Date.now()
-            });
+            // Supprimer la présence lors de la déconnexion
+            onDisconnect(userStatusRef).remove();
 
-            // Suivi des autres utilisateurs
-            onValue(usersRef, (snapshot) => {
-                const users = snapshot.val() || {};
+            // Écouter les changements dans la liste des utilisateurs connectés
+            onValue(connectedUsersRef, (snapshot) => {
+                const connectedUsers = snapshot.val() || {};
+                const onlineUsers = [];
                 let onlineCount = 0;
-                let onlineUsers = [];
 
-                Object.entries(users).forEach(([uid, data]) => {
-                    if (data.online && data.userId !== user.uid) {
+                // Compter les utilisateurs connectés et préparer la liste
+                Object.entries(connectedUsers).forEach(([uid, userData]) => {
+                    if (uid !== user.uid) { // Exclure l'utilisateur actuel
                         onlineCount++;
                         onlineUsers.push({
-                            userId: data.userId,
-                            username: data.username || 'Utilisateur',
-                            firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
-                            currentPage: data.currentPage || 'center'
+                            userId: uid,
+                            username: userData.username || 'Utilisateur',
+                            firstLetter: (userData.username || 'U').charAt(0).toUpperCase()
                         });
                     }
                 });
 
-                // Mise à jour de l'interface
+                // Mettre à jour l'interface
                 updateOnlineUsersDisplay(onlineCount, onlineUsers);
             });
         }
 
         function updateOnlineUsersDisplay(onlineCount, onlineUsers) {
+            // Mettre à jour le compteur
             document.getElementById('online-count').textContent = onlineCount;
 
-            // Liste des utilisateurs en ligne
+            // Mettre à jour la liste des utilisateurs
             const container = document.getElementById('online-users-container');
             container.innerHTML = '';
-            
+
             if (onlineUsers.length === 0) {
-                container.innerHTML = '<p>Aucun autre utilisateur en ligne</p>';
+                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">Aucun autre utilisateur en ligne</p>';
             } else {
                 onlineUsers.forEach(user => {
                     const userElement = document.createElement('div');
