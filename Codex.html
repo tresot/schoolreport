@@ -359,7 +359,7 @@
 
       const chatBox = document.getElementById("chatBox");
       const newMsg = document.createElement("p");
-      const username = localStorage.getItem("username") || "Utilisateur";
+      const username = localStorage.getItem("user") || "Utilisateur";
       newMsg.textContent = `${username} : ${message}`;
       chatBox.appendChild(newMsg);
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -497,7 +497,7 @@
       }
 
       const username = localStorage.getItem("user");
-      if (!username) {
+      if (!user) {
         window.location.href = "center.html";
         return;
       }
