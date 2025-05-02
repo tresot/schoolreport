@@ -500,11 +500,9 @@
 
       const type = document.getElementById("essayType").value;
       
-      // Afficher l'indicateur de chargement
       document.getElementById("loadingIndicator").style.display = "block";
       document.getElementById("essayOutput").value = "";
       
-      // Simuler un délai de génération
       setTimeout(() => {
         const dissertation = genererStructureDissertation(subject, type);
         document.getElementById("essayOutput").value = dissertation;
@@ -517,28 +515,23 @@
       let dissertation = `DISSERTATION : ${sujet.toUpperCase()}\n`;
       dissertation += `Type : ${getTypeName(type)}\n\n`;
       
-      // Introduction
       dissertation += "INTRODUCTION\n\n";
       dissertation += `Le sujet "${sujet}" pose une problématique importante dans le domaine concerné. `;
       dissertation += `Cette dissertation de type ${getTypeName(type)} vise à analyser les différents aspects de cette question. `;
       dissertation += `Nous examinerons successivement les arguments principaux, les contre-arguments, avant de proposer une conclusion éclairée.\n\n`;
       
-      // Développement
       dissertation += "DÉVELOPPEMENT\n\n";
       
-      // Partie 1
       dissertation += "1. Première partie\n";
       dissertation += `La première approche de ${sujet} révèle que... `;
       dissertation += `Selon plusieurs études, on peut observer que... `;
       dissertation += `Cette perspective est particulièrement intéressante car...\n\n`;
       
-      // Partie 2
       dissertation += "2. Deuxième partie\n";
       dissertation += `Une analyse plus approfondie montre que ${sujet}... `;
       dissertation += `En comparant avec d'autres situations, on constate que... `;
       dissertation += `Cette analyse est corroborée par les travaux de...\n\n`;
       
-      // Partie 3 (si argumentative)
       if (type === "argumentative") {
         dissertation += "3. Troisième partie\n";
         dissertation += `Les arguments opposés suggèrent que ${sujet} pourrait aussi être interprété comme... `;
@@ -546,7 +539,6 @@
         dissertation += `Cependant, cette position est contestable car...\n\n`;
       }
       
-      // Conclusion
       dissertation += "CONCLUSION\n\n";
       dissertation += `En conclusion, l'analyse de ${sujet} a permis de mettre en lumière... `;
       dissertation += `Nous avons vu que... `;
@@ -573,8 +565,6 @@
     }
 
     function chargerActualites() {
-      // En production, vous pourriez utiliser une API comme NewsAPI
-      // Ici nous simulons des données statiques
       const newsContent = document.getElementById("newsContent");
       newsContent.innerHTML = `
         <div class="news-item">
@@ -604,12 +594,7 @@
         document.body.classList.add("dark");
       }
 
-      const username = localStorage.getItem("user");
-      if (!user) {
-        window.location.href = "center.html";
-        return;
-      }
-
+      const username = localStorage.getItem("user") || "Invité";
       document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
