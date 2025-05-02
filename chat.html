@@ -141,23 +141,22 @@
       <input type="text" id="messageInput" placeholder="Tapez un message..." autocomplete="off">
       <input type="file" id="imageInput" accept="image/*">
       <button id="sendButton">Envoyer</button>
-      <button id="recordBtn">🎙️</button>
     </div>
   </div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-  authDomain: "schoolreport-f8db0.firebaseapp.com",
-  projectId: "schoolreport-f8db0",
-  storageBucket: "schoolreport-f8db0.appspot.com",
-  messagingSenderId: "313069994450",
-  appId: "1:313069994450:web:37b009be4f1812fdca880b"
+  apiKey: "AIzaSyAXfaVcBnRZvaSyH5fi2FKpy5m8gH3q504",
+  authDomain: "chat-schoolreport.firebaseapp.com",
+  projectId: "chat-schoolreport",
+  storageBucket: "chat-schoolreport.appspot.com",
+  messagingSenderId: "987396717760",
+  appId: "1:987396717760:web:a23a454d940d67cce50125"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -195,25 +194,26 @@ onAuthStateChanged(auth, async (user) => {
 
 async function loadUsers() {
   userListDiv.innerHTML = "<strong>Utilisateurs connectés</strong>";
-  const userSnap = await getDocs(collection(db, "users"));
-  userSnap.forEach(docSnap => {
-    const userData = docSnap.data();
+  const snapshot = await getDocs(collection(db, "users"));
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
     const uid = docSnap.id;
 
     if (uid !== currentUser.uid) {
       const div = document.createElement("div");
       div.className = "user-item";
-      div.textContent = userData.username || "Utilisateur";
+      div.textContent = data.username || "Utilisateur";
       div.onclick = () => {
         selectedUserId = uid;
-        selectedUserName = userData.username;
+        selectedUserName = data.username || "Utilisateur";
         loadMessages(uid);
       };
       userListDiv.appendChild(div);
     }
   });
 
-  const firstUser = userSnap.docs.find(doc => doc.id !== currentUser.uid);
+  const firstUser = snapshot.docs.find(doc => doc.id !== currentUser.uid);
   if (firstUser) {
     selectedUserId = firstUser.id;
     selectedUserName = firstUser.data().username;
@@ -299,8 +299,7 @@ async function sendMessage() {
 function scrollToBottom() {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
-
-const nomUtilisateur = sessionStorage.getItem("user");
 </script>
 </body>
 </html>
+
