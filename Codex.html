@@ -391,14 +391,14 @@
         document.body.classList.add("dark");
       }
 
-      const username = localStorage.getItem("username");
-      if (!username) {
+      const username = localStorage.getItem("user");
+      if (!user) {
         window.location.href = "center.html";
         return;
       }
 
-      document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
-      document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
+      document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${user}`;
+      document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${user}`;
     };
   </script>
 
