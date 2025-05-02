@@ -98,181 +98,190 @@
     </div>
   </div>
 </div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, query,
+  orderBy, onSnapshot, doc, updateDoc,
+  deleteDoc, getDocs
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+import { serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-    authDomain: "schoolreport-f8db0.firebaseapp.com",
-    databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "schoolreport-f8db0",
-    storageBucket: "schoolreport-f8db0.firebasestorage.app",
-    messagingSenderId: "313069994450",
-    appId: "1:313069994450:web:37b009be4f1812fdca880b",
-    measurementId: "G-N8YF0VKWCD"
+  apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+  authDomain: "schoolreport-f8db0.firebaseapp.com",
+  databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "schoolreport-f8db0",
+  storageBucket: "schoolreport-f8db0.firebasestorage.app",
+  messagingSenderId: "313069994450",
+  appId: "1:313069994450:web:37b009be4f1812fdca880b",
+  measurementId: "G-N8YF0VKWCD"
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-  const storage = getStorage(app);
+let currentUser = null;
+let selectedUserId = null;
+let selectedUserName = "";
+let mediaRecorder;
+let audioChunks = [];
 
-  let currentUser = null;
-  let selectedUserId = null;
-  let selectedUserName = "";
-  let mediaRecorder;
-  let audioChunks = [];
+const messagesDiv = document.getElementById("messages");
+const messageInput = document.getElementById("messageInput");
+const imageInput = document.getElementById("imageInput");
+const recordBtn = document.getElementById("recordBtn");
 
-  const messagesDiv = document.getElementById("messages");
-  const messageInput = document.getElementById("messageInput");
-  const imageInput = document.getElementById("imageInput");
-  const recordBtn = document.getElementById("recordBtn");
-
-  recordBtn.onclick = async () => {
-    if (!selectedUserId) return alert("Choisissez un utilisateur d'abord.");
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop();
-      return;
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = async () => {
-      const blob = new Blob(audioChunks, { type: 'audio/webm' });
-      const filePath = `chat_audios/${Date.now()}.webm`;
-      const audioRef = ref(storage, filePath);
-      await uploadBytes(audioRef, blob);
-      const audioUrl = await getDownloadURL(audioRef);
-      const chatId = currentUser.uid < selectedUserId ? `${currentUser.uid}_${selectedUserId}` : `${selectedUserId}_${currentUser.uid}`;
-      await addDoc(collection(db, `private_messages/${chatId}/messages`), {
-        audioUrl,
-        sender: currentUser.uid,
-        timestamp: serverTimestamp()
-      });
-      audioChunks = [];
-    };
-    audioChunks = [];
-    mediaRecorder.start();
-  };
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-    currentUser = user;
-    loadUsers();
-  });
-
-  async function loadUsers() {
-    const userListDiv = document.getElementById("userList");
-    const usersSnap = await getDocs(collection(db, "users"));
-    usersSnap.forEach(docSnap => {
-      const userData = docSnap.data();
-      const uid = docSnap.id;
-      if (uid !== currentUser.uid) {
-        const div = document.createElement("div");
-        div.className = "user-item";
-        div.textContent = userData.pseudo || "Utilisateur";
-        div.onclick = () => {
-          selectedUserId = uid;
-          selectedUserName = userData.pseudo;
-          loadMessages(uid);
-        };
-        userListDiv.appendChild(div);
-      }
-    });
+recordBtn.onclick = async () => {
+  if (!selectedUserId) return alert("Choisissez un utilisateur d'abord.");
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+    return;
   }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+  mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+  mediaRecorder.onstop = async () => {
+    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+    const filePath = `chat_audios/${Date.now()}.webm`;
+    const audioRef = ref(storage, filePath);
+    await uploadBytes(audioRef, blob);
+    const audioUrl = await getDownloadURL(audioRef);
+    const chatId = currentUser.uid < selectedUserId ? `${currentUser.uid}_${selectedUserId}` : `${selectedUserId}_${currentUser.uid}`;
+    await addDoc(collection(db, `private_messages/${chatId}/messages`), {
+      audioUrl,
+      sender: currentUser.uid,
+      timestamp: serverTimestamp()
+    });
+    audioChunks = [];
+  };
+  audioChunks = [];
+  mediaRecorder.start();
+};
 
-  async function loadMessages(uid) {
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+  currentUser = user;
+  loadUsers();
+});
+
+async function loadUsers() {
+  const userListDiv = document.getElementById("userList");
+  const usersSnap = await getDocs(collection(db, "users"));
+  usersSnap.forEach(docSnap => {
+    const userData = docSnap.data();
+    const uid = docSnap.id;
+    if (uid !== currentUser.uid) {
+      const div = document.createElement("div");
+      div.className = "user-item";
+      div.textContent = userData.pseudo || "Utilisateur";
+      div.onclick = () => {
+        selectedUserId = uid;
+        selectedUserName = userData.pseudo;
+        loadMessages(uid);
+      };
+      userListDiv.appendChild(div);
+    }
+  });
+}
+
+async function loadMessages(uid) {
+  messagesDiv.innerHTML = "";
+  const chatId = currentUser.uid < uid ? `${currentUser.uid}_${uid}` : `${uid}_${currentUser.uid}`;
+  const q = query(collection(db, `private_messages/${chatId}/messages`), orderBy("timestamp"));
+  onSnapshot(q, snapshot => {
     messagesDiv.innerHTML = "";
-    const chatId = currentUser.uid < uid ? `${currentUser.uid}_${uid}` : `${uid}_${currentUser.uid}`;
-    const q = query(collection(db, `private_messages/${chatId}/messages`), orderBy("timestamp"));
-    onSnapshot(q, snapshot => {
-      messagesDiv.innerHTML = "";
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "message" + (data.sender === currentUser.uid ? " self" : "");
-        div.innerHTML = `
-          ${data.text || ""}
-          ${data.imageUrl ? `<br><img src='${data.imageUrl}' alt='image'>` : ""}
-          ${data.audioUrl ? `<br><audio controls src='${data.audioUrl}'></audio>` : ""}
-          <div class='meta'>${data.sender === currentUser.uid ? 'Moi' : selectedUserName}${data.edited ? ' (modifié)' : ''}</div>`;
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "message" + (data.sender === currentUser.uid ? " self" : "");
+      div.innerHTML = `
+        ${data.text || ""}
+        ${data.imageUrl ? `<br><img src='${data.imageUrl}' alt='image'>` : ""}
+        ${data.audioUrl ? `<br><audio controls src='${data.audioUrl}'></audio>` : ""}
+        <div class='meta'>${data.sender === currentUser.uid ? 'Moi' : selectedUserName}${data.edited ? ' (modifié)' : ''}</div>`;
 
-        const reactBtn = document.createElement("span");
-        reactBtn.textContent = "🤍+";
-        reactBtn.style.cursor = "pointer";
-        reactBtn.style.fontSize = "0.9rem";
-        reactBtn.title = "Ajouter une réaction";
-        reactBtn.onclick = async () => {
-          const emoji = prompt("Choisissez un emoji : ❤️ 😂 😮");
-          if (emoji && ["❤️", "😂", "😮"].includes(emoji)) {
-            const msgRef = doc(db, `private_messages/${chatId}/messages/${docSnap.id}`);
-            const reactions = data.reactions || [];
-            reactions.push({ uid: currentUser.uid, emoji });
-            await updateDoc(msgRef, { reactions });
+      const reactBtn = document.createElement("span");
+      reactBtn.textContent = "🤍+";
+      reactBtn.style.cursor = "pointer";
+      reactBtn.style.fontSize = "0.9rem";
+      reactBtn.title = "Ajouter une réaction";
+      reactBtn.onclick = async () => {
+        const emoji = prompt("Choisissez un emoji : ❤️ 😂 😮");
+        if (emoji && ["❤️", "😂", "😮"].includes(emoji)) {
+          const msgRef = doc(db, `private_messages/${chatId}/messages/${docSnap.id}`);
+          const reactions = data.reactions || [];
+          reactions.push({ uid: currentUser.uid, emoji });
+          await updateDoc(msgRef, { reactions });
+        }
+      };
+      const reactionsDiv = document.createElement("div");
+      const allReactions = (data.reactions || []).map(r => r.emoji).join(" ");
+      reactionsDiv.textContent = allReactions;
+      div.appendChild(reactBtn);
+      div.appendChild(reactionsDiv);
+
+      if (data.sender === currentUser.uid && data.text && !data.imageUrl && !data.audioUrl) {
+        div.style.cursor = "pointer";
+        div.onclick = async () => {
+          const choix = prompt("Tapez 'edit' pour modifier ou 'delete' pour supprimer ce message.");
+          const msgRef = doc(db, `private_messages/${chatId}/messages/${docSnap.id}`);
+          if (choix === "edit") {
+            const newText = prompt("Modifier votre message :", data.text);
+            if (newText !== null && newText.trim() !== "") {
+              await updateDoc(msgRef, {
+                text: newText,
+                edited: true
+              });
+            }
+          } else if (choix === "delete") {
+            const confirmation = confirm("Voulez-vous vraiment supprimer ce message ?");
+            if (confirmation) {
+              await deleteDoc(msgRef);
+            }
           }
         };
-        const reactionsDiv = document.createElement("div");
-        const allReactions = (data.reactions || []).map(r => r.emoji).join(" ");
-        reactionsDiv.textContent = allReactions;
-        div.appendChild(reactBtn);
-        div.appendChild(reactionsDiv);
+      }
 
-        if (data.sender === currentUser.uid && data.text && !data.imageUrl && !data.audioUrl) {
-          div.style.cursor = "pointer";
-          div.onclick = async (e) => {
-            const choix = prompt("Tapez 'edit' pour modifier ou 'delete' pour supprimer ce message.");
-            const msgRef = doc(db, `private_messages/${chatId}/messages/${docSnap.id}`);
-            if (choix === "edit") {
-              const newText = prompt("Modifier votre message :", data.text);
-              if (newText !== null && newText.trim() !== "") {
-                await updateDoc(msgRef, {
-                  text: newText,
-                  edited: true
-                });
-              }
-            } else if (choix === "delete") {
-              const confirmation = confirm("Voulez-vous vraiment supprimer ce message ?");
-              if (confirmation) {
-                await deleteDoc(msgRef);
-              }
-            }
-          };
-        }
-        messagesDiv.appendChild(div);
-      });
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      messagesDiv.appendChild(div);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+}
+
+async function sendMessage() {
+  if (!selectedUserId) return;
+  const text = messageInput.value.trim();
+  const file = imageInput.files[0];
+  const chatId = currentUser.uid < selectedUserId ? `${currentUser.uid}_${selectedUserId}` : `${selectedUserId}_${currentUser.uid}`;
+  let imageUrl = null;
+
+  if (file) {
+    const filePath = `chat_images/${Date.now()}_${file.name}`;
+    const imageRef = ref(storage, filePath);
+    await uploadBytes(imageRef, file);
+    imageUrl = await getDownloadURL(imageRef);
+  }
+
+  if (text || imageUrl) {
+    await addDoc(collection(db, `private_messages/${chatId}/messages`), {
+      text,
+      imageUrl,
+      sender: currentUser.uid,
+      timestamp: serverTimestamp()
     });
   }
 
-  async function sendMessage() {
-    if (!selectedUserId) return;
-    const text = messageInput.value.trim();
-    const file = imageInput.files[0];
-    const chatId = currentUser.uid < selectedUserId ? `${currentUser.uid}_${selectedUserId}` : `${selectedUserId}_${currentUser.uid}`;
-    let imageUrl = null;
-
-    if (file) {
-      const filePath = `chat_images/${Date.now()}_${file.name}`;
-      const imageRef = ref(storage, filePath);
-      await uploadBytes(imageRef, file);
-      imageUrl = await getDownloadURL(imageRef);
-    }
-
-    if (text || imageUrl) {
-      await addDoc(collection(db, `private_messages/${chatId}/messages`), {
-        text,
-        imageUrl,
-        sender: currentUser.uid,
-        timestamp: serverTimestamp()
-      });
-    }
-
-    messageInput.value = "";
-    imageInput.value = "";
-  }
+  messageInput.value = "";
+  imageInput.value = "";
+}
 </script>
 </body>
 </html>
