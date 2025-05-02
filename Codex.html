@@ -190,11 +190,11 @@
       font-weight: bold;
     }
 
-    /* Dissertation Section */
+    /* Dissertation Section améliorée */
     #dissertationPage {
       background-color: var(--bg-alt);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      padding: 30px;
       border-radius: 12px;
       margin: 90px auto 20px auto;
       max-width: 900px;
@@ -203,58 +203,72 @@
 
     #dissertationPage h1 {
       font-size: 2rem;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       color: var(--accent);
     }
 
-    .input-container {
-      margin-bottom: 20px;
+    .dissertation-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+      justify-content: center;
+      align-items: flex-end;
     }
 
-    #essaySubject {
-      padding: 10px;
-      width: 80%;
-      max-width: 500px;
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 200px;
+    }
+
+    .input-group label {
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    #essaySubject, #essayType {
+      padding: 12px;
       border: 1px solid #ccc;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-    }
-
-    button {
-      padding: 10px 15px;
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
+      border-radius: 8px;
       font-size: 1rem;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: var(--hover);
+      background-color: var(--box);
+      color: var(--text);
     }
 
     #essayOutput {
       width: 100%;
-      height: 300px;
+      min-height: 400px;
       padding: 20px;
       font-size: 1rem;
-      background-color: #f9f9f9;
+      background-color: var(--box);
       border-radius: 12px;
       border: 1px solid #ddd;
-      color: #333;
+      color: var(--text);
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       line-height: 1.6;
-      resize: none;
+      resize: vertical;
       text-align: left;
       margin-top: 20px;
     }
 
-    #essayOutput::placeholder {
-      color: #888;
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+      color: var(--accent);
+    }
+
+    .word-count {
+      text-align: right;
+      margin-top: 10px;
       font-style: italic;
+      color: #666;
+    }
+
+    body.dark .word-count {
+      color: #aaa;
     }
   </style>
 </head>
@@ -290,12 +304,33 @@
 
   <div id="dissertationPage" class="container" style="display: none;">
     <h1>Rédiger une dissertation</h1>
-    <div class="input-container">
-      <input type="text" id="essaySubject" placeholder="Entrez le sujet de la dissertation...">
+    
+    <div class="dissertation-controls">
+      <div class="input-group">
+        <label for="essaySubject">Sujet de la dissertation</label>
+        <input type="text" id="essaySubject" placeholder="Entrez le sujet de la dissertation...">
+      </div>
+      
+      <div class="input-group">
+        <label for="essayType">Type de dissertation</label>
+        <select id="essayType">
+          <option value="argumentative">Argumentative</option>
+          <option value="explicative">Explicative</option>
+          <option value="comparee">Comparée</option>
+          <option value="litteraire">Littéraire</option>
+          <option value="philosophique">Philosophique</option>
+        </select>
+      </div>
+      
       <button onclick="genererDissertation()">Générer la dissertation</button>
     </div>
-
+    
+    <div class="loading" id="loadingIndicator">
+      <p>Génération en cours... Veuillez patienter.</p>
+    </div>
+    
     <textarea id="essayOutput" rows="10" placeholder="La dissertation générée apparaîtra ici..." readonly></textarea>
+    <div class="word-count" id="wordCount">0 mots</div>
   </div>
 
   <script>
@@ -380,11 +415,81 @@
       const subject = document.getElementById("essaySubject").value.trim();
       if (!subject) return alert("Entrez un sujet de dissertation");
 
-      // Générer la dissertation basée sur le sujet (remplacer cette ligne par l'intégration avec une API ou un générateur)
-      const dissertationText = `Voici une dissertation générée pour le sujet "${subject}". Vous pouvez ajouter du texte ici.`;
+      const type = document.getElementById("essayType").value;
       
-      document.getElementById("essayOutput").value = dissertationText;
+      // Afficher l'indicateur de chargement
+      document.getElementById("loadingIndicator").style.display = "block";
+      document.getElementById("essayOutput").value = "";
+      
+      // Simuler un délai de génération
+      setTimeout(() => {
+        const dissertation = genererStructureDissertation(subject, type);
+        document.getElementById("essayOutput").value = dissertation;
+        document.getElementById("loadingIndicator").style.display = "none";
+        updateWordCount();
+      }, 1500);
     }
+
+    function genererStructureDissertation(sujet, type) {
+      let dissertation = `DISSERTATION : ${sujet.toUpperCase()}\n`;
+      dissertation += `Type : ${getTypeName(type)}\n\n`;
+      
+      // Introduction
+      dissertation += "INTRODUCTION\n\n";
+      dissertation += `Le sujet "${sujet}" pose une problématique importante dans le domaine concerné. `;
+      dissertation += `Cette dissertation de type ${getTypeName(type)} vise à analyser les différents aspects de cette question. `;
+      dissertation += `Nous examinerons successivement les arguments principaux, les contre-arguments, avant de proposer une conclusion éclairée.\n\n`;
+      
+      // Développement
+      dissertation += "DÉVELOPPEMENT\n\n";
+      
+      // Partie 1
+      dissertation += "1. Première partie\n";
+      dissertation += `La première approche de ${sujet} révèle que... `;
+      dissertation += `Selon plusieurs études, on peut observer que... `;
+      dissertation += `Cette perspective est particulièrement intéressante car...\n\n`;
+      
+      // Partie 2
+      dissertation += "2. Deuxième partie\n";
+      dissertation += `Une analyse plus approfondie montre que ${sujet}... `;
+      dissertation += `En comparant avec d'autres situations, on constate que... `;
+      dissertation += `Cette analyse est corroborée par les travaux de...\n\n`;
+      
+      // Partie 3 (si argumentative)
+      if (type === "argumentative") {
+        dissertation += "3. Troisième partie\n";
+        dissertation += `Les arguments opposés suggèrent que ${sujet} pourrait aussi être interprété comme... `;
+        dissertation += `Certains experts soutiennent en effet que... `;
+        dissertation += `Cependant, cette position est contestable car...\n\n`;
+      }
+      
+      // Conclusion
+      dissertation += "CONCLUSION\n\n";
+      dissertation += `En conclusion, l'analyse de ${sujet} a permis de mettre en lumière... `;
+      dissertation += `Nous avons vu que... `;
+      dissertation += `Cette réflexion ouvre des perspectives intéressantes pour...`;
+      
+      return dissertation;
+    }
+
+    function getTypeName(type) {
+      const types = {
+        "argumentative": "Argumentative",
+        "explicative": "Explicative",
+        "comparee": "Comparée",
+        "litteraire": "Littéraire",
+        "philosophique": "Philosophique"
+      };
+      return types[type] || type;
+    }
+
+    function updateWordCount() {
+      const text = document.getElementById("essayOutput").value;
+      const wordCount = text.trim() === "" ? 0 : text.split(/\s+/).length;
+      document.getElementById("wordCount").textContent = `${wordCount} mots`;
+    }
+
+    document.getElementById("essayOutput").addEventListener("input", updateWordCount);
 
     window.onload = () => {
       if (localStorage.getItem("darkMode") === "true") {
@@ -392,13 +497,13 @@
       }
 
       const username = localStorage.getItem("user");
-      if (!user) {
+      if (!username) {
         window.location.href = "center.html";
         return;
       }
 
-      document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${user}`;
-      document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${user}`;
+      document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
+      document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
     };
   </script>
 
