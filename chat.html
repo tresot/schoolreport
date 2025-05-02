@@ -1,238 +1,238 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat - Messagerie en Temps Réel</title>
-    <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --success: #4cc9f0;
-            --warning: #f8961e;
-            --danger: #e63946;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fa;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .chat-container {
-            display: flex;
-            height: 80vh;
-            flex-direction: column;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: #fff;
-        }
-
-        .messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-        }
-
-        .message {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .message .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            margin-right: 10px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .message .text {
-            background-color: var(--light);
-            border-radius: 10px;
-            padding: 10px;
-            max-width: 70%;
-            word-wrap: break-word;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .message .text.received {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .message .text.sent {
-            background-color: var(--success);
-            color: white;
-            align-self: flex-end;
-        }
-
-        .input-container {
-            padding: 10px;
-            display: flex;
-            border-top: 1px solid #ccc;
-        }
-
-        .input-container input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            margin-right: 10px;
-        }
-
-        .input-container button {
-            padding: 10px 20px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        .input-container button:hover {
-            background-color: var(--secondary);
-        }
-
-        .user-status {
-            margin-top: 10px;
-            text-align: center;
-            color: var(--dark);
-        }
-        
-        .online-status {
-            color: #2ecc71;
-        }
-
-        .offline-status {
-            color: #e63946;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat entre amis</title>
+  <style>
+    /* Style de base (similaire au précédent) */
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 2px solid #ccc;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      color: #212529;
+      font-size: 24px;
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #4361ee;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .messages {
+      flex: 1;
+      padding: 1rem;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .msg {
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s;
+    }
+    .msg.self {
+      background: #f1f5f9;
+      align-self: flex-end;
+    }
+    #formulaire {
+      display: flex;
+      padding: 1rem;
+      border-top: 2px solid #e0e0e0;
+      gap: 1rem;
+      align-items: center;
+      background-color: white;
+    }
+    .input__container {
+      flex-grow: 1;
+      position: relative;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      width: 100%;
+    }
+    .input__search {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      font-size: 1rem;
+      background: #f5f7fa;
+      color: #212529;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    .input__search:focus {
+      outline: none;
+      background-color: #fff;
+    }
+    .input__button__shadow {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #4361ee;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .input__button__shadow:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+    .button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: rgb(20, 20, 20);
+      border: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+      cursor: pointer;
+      transition-duration: 0.3s;
+    }
+    .button svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+    .button:hover {
+      background-color: #4361ee;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Messagerie en Temps Réel</h1>
-        <div class="chat-container">
-            <div class="messages" id="messages"></div>
-            <div class="input-container">
-                <input type="text" id="message-input" placeholder="Entrez votre message...">
-                <button id="send-btn">Envoyer</button>
-            </div>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <h1>Chat entre amis</h1>
+      </div>
+      <div class="user-menu">
+        <div class="user-avatar" id="user-avatar">
+          <span id="avatar-letter">U</span>
         </div>
-        <div class="user-status">
-            <p id="status-text">Statut: <span id="status" class="offline-status">Déconnecté</span></p>
-        </div>
+        <div class="user-name" id="user-name">Utilisateur</div>
+        <button class="logout-btn" id="logout-btn">Déconnexion</button>
+      </div>
+    </header>
+    <div id="erreur">Erreur : Veuillez vous connecter d'abord.</div>
+    <div class="messages" id="messages"></div>
+    <div id="formulaire">
+      <div class="input__container">
+        <input type="text" class="input__search" id="message" placeholder="Votre message...">
+        <button class="input__button__shadow" onclick="envoyer()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
+  </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, push, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js"></script>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-            authDomain: "schoolreport-f8db0.firebaseapp.com",
-            databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "schoolreport-f8db0",
-            storageBucket: "schoolreport-f8db0.firebasestorage.app",
-            messagingSenderId: "313069994450",
-            appId: "1:313069994450:web:37b009be4f1812fdca880b",
-            measurementId: "G-N8YF0VKWCD"
-        };
+  <script>
+    // Configuration Firebase de ton projet SchoolReport
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+      authDomain: "schoolreport-f8db0.firebaseapp.com",
+      databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "schoolreport-f8db0",
+      storageBucket: "schoolreport-f8db0.firebasestorage.app",
+      messagingSenderId: "313069994450",
+      appId: "1:313069994450:web:37b009be4f1812fdca880b",
+      measurementId: "G-N8YF0VKWCD"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
+    // Initialisation de Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
 
-        let currentUser = null;
-        const messagesRef = ref(db, 'messages');
-        const statusRef = ref(db, 'status');
+    // Authentification et gestion des utilisateurs
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        const userName = user.displayName || "Utilisateur";
+        document.getElementById("user-name").textContent = userName;
+        document.getElementById("avatar-letter").textContent = userName.charAt(0).toUpperCase();
+        document.getElementById("erreur").style.display = "none";
+      } else {
+        document.getElementById("erreur").style.display = "block";
+      }
+    });
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('status').classList.remove('offline-status');
-                document.getElementById('status').classList.add('online-status');
-                document.getElementById('status-text').innerText = `Statut: Connecté en tant que ${user.displayName}`;
-                listenForMessages();
-                updateUserStatus(user.uid, 'online');
-            } else {
-                document.getElementById('status').classList.remove('online-status');
-                document.getElementById('status').classList.add('offline-status');
-                document.getElementById('status-text').innerText = "Statut: Déconnecté";
-            }
+    // Fonction d'envoi de message
+    function envoyer() {
+      const message = document.getElementById("message").value.trim();
+      if (message) {
+        const userName = auth.currentUser.displayName || "Utilisateur";
+        db.ref('messages').push({
+          userName: userName,
+          message: message,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
         });
+        document.getElementById("message").value = '';
+      }
+    }
 
-        function listenForMessages() {
-            onValue(messagesRef, (snapshot) => {
-                const data = snapshot.val();
-                const messagesElement = document.getElementById('messages');
-                messagesElement.innerHTML = '';
-                for (const messageId in data) {
-                    const message = data[messageId];
-                    const messageElement = document.createElement('div');
-                    messageElement.classList.add('message');
-                    messageElement.innerHTML = `
-                        <div class="avatar">${message.username.charAt(0)}</div>
-                        <div class="text ${message.uid === currentUser.uid ? 'sent' : 'received'}">${message.text}</div>
-                    `;
-                    messagesElement.appendChild(messageElement);
-                    messagesElement.scrollTop = messagesElement.scrollHeight; // Scroll to the bottom
-                }
-            });
-        }
+    // Fonction pour charger les messages en temps réel
+    db.ref('messages').on('child_added', snapshot => {
+      const messageData = snapshot.val();
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("msg");
+      messageDiv.innerHTML = `
+        <div class="auteur">${messageData.userName}</div>
+        <div class="contenu">${messageData.message}</div>
+      `;
+      document.getElementById("messages").appendChild(messageDiv);
+    });
 
-        document.getElementById('send-btn').addEventListener('click', sendMessage);
-
-        function sendMessage() {
-            const messageInput = document.getElementById('message-input');
-            const messageText = messageInput.value.trim();
-            if (messageText !== '') {
-                const messageData = {
-                    text: messageText,
-                    username: currentUser.displayName,
-                    uid: currentUser.uid,
-                    timestamp: Date.now()
-                };
-                push(messagesRef, messageData);
-                messageInput.value = '';
-            }
-        }
-
-        function updateUserStatus(userId, status) {
-            const userStatusRef = ref(db, 'status/' + userId);
-            set(userStatusRef, {
-                status: status,
-                lastChanged: Date.now()
-            });
-        }
-
-    </script>
+    // Déconnexion
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    });
+  </script>
 </body>
 </html>
+
