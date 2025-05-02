@@ -70,7 +70,7 @@
       color: #fff;
     }
 
-    .container, .chat-container {
+    .container, .chat-container, .news-container {
       background-color: var(--bg-alt);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
@@ -80,7 +80,7 @@
       margin: 90px auto 20px auto;
     }
 
-    .container h1, .chat-container h2 {
+    .container h1, .chat-container h2, .news-container h2 {
       text-align: center;
       margin-bottom: 20px;
       color: var(--accent);
@@ -270,6 +270,50 @@
     body.dark .word-count {
       color: #aaa;
     }
+
+    /* News Section */
+    .news-container {
+      display: none;
+    }
+
+    .news-item {
+      background-color: var(--box);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .news-item h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .news-item p {
+      margin-bottom: 10px;
+    }
+
+    .news-item .date {
+      font-size: 0.8rem;
+      color: #666;
+      text-align: right;
+    }
+
+    body.dark .news-item .date {
+      color: #aaa;
+    }
+
+    .news-item img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .refresh-news {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+    }
   </style>
 </head>
 <body>
@@ -278,6 +322,7 @@
     <button onclick="showSearchPage()">🔍 Recherche</button>
     <button onclick="showChatPage()">💬 Discussion</button>
     <button onclick="showDissertationPage()">📝 Dissertation</button>
+    <button onclick="showNewsPage()">📰 Actualités</button>
     <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
     <button onclick="logout()">🚪 Déconnexion</button>
   </div>
@@ -333,23 +378,61 @@
     <div class="word-count" id="wordCount">0 mots</div>
   </div>
 
+  <div id="newsPage" class="news-container" style="display: none;">
+    <h2>Actualités</h2>
+    <div class="username-display" id="usernameDisplayNews"></div>
+    
+    <div id="newsContent">
+      <div class="news-item">
+        <h3>Nouvelle réforme éducative annoncée</h3>
+        <p>Le ministre de l'Éducation a dévoilé aujourd'hui une série de mesures visant à moderniser le système scolaire...</p>
+        <div class="date">15 mars 2023</div>
+      </div>
+      
+      <div class="news-item">
+        <h3>Découverte scientifique majeure</h3>
+        <p>Des chercheurs ont fait une avancée significative dans le domaine de l'intelligence artificielle qui pourrait révolutionner...</p>
+        <div class="date">10 mars 2023</div>
+      </div>
+      
+      <div class="news-item">
+        <h3>Conférence internationale sur le climat</h3>
+        <p>Les dirigeants mondiaux se réunissent cette semaine pour discuter des nouvelles mesures contre le changement climatique...</p>
+        <div class="date">5 mars 2023</div>
+      </div>
+    </div>
+    
+    <button class="refresh-news" onclick="chargerActualites()">Actualiser les nouvelles</button>
+  </div>
+
   <script>
     function showSearchPage() {
       document.getElementById("searchPage").style.display = "block";
       document.getElementById("chatPage").style.display = "none";
       document.getElementById("dissertationPage").style.display = "none";
+      document.getElementById("newsPage").style.display = "none";
     }
 
     function showChatPage() {
       document.getElementById("searchPage").style.display = "none";
       document.getElementById("chatPage").style.display = "block";
       document.getElementById("dissertationPage").style.display = "none";
+      document.getElementById("newsPage").style.display = "none";
     }
 
     function showDissertationPage() {
       document.getElementById("searchPage").style.display = "none";
       document.getElementById("chatPage").style.display = "none";
       document.getElementById("dissertationPage").style.display = "block";
+      document.getElementById("newsPage").style.display = "none";
+    }
+
+    function showNewsPage() {
+      document.getElementById("searchPage").style.display = "none";
+      document.getElementById("chatPage").style.display = "none";
+      document.getElementById("dissertationPage").style.display = "none";
+      document.getElementById("newsPage").style.display = "block";
+      chargerActualites();
     }
 
     function envoyerMessage() {
@@ -489,6 +572,31 @@
       document.getElementById("wordCount").textContent = `${wordCount} mots`;
     }
 
+    function chargerActualites() {
+      // En production, vous pourriez utiliser une API comme NewsAPI
+      // Ici nous simulons des données statiques
+      const newsContent = document.getElementById("newsContent");
+      newsContent.innerHTML = `
+        <div class="news-item">
+          <h3>Nouvelle réforme éducative annoncée</h3>
+          <p>Le ministre de l'Éducation a dévoilé aujourd'hui une série de mesures visant à moderniser le système scolaire...</p>
+          <div class="date">${new Date().toLocaleDateString()}</div>
+        </div>
+        
+        <div class="news-item">
+          <h3>Découverte scientifique majeure</h3>
+          <p>Des chercheurs ont fait une avancée significative dans le domaine de l'intelligence artificielle qui pourrait révolutionner...</p>
+          <div class="date">${new Date(Date.now() - 86400000).toLocaleDateString()}</div>
+        </div>
+        
+        <div class="news-item">
+          <h3>Conférence internationale sur le climat</h3>
+          <p>Les dirigeants mondiaux se réunissent cette semaine pour discuter des nouvelles mesures contre le changement climatique...</p>
+          <div class="date">${new Date(Date.now() - 172800000).toLocaleDateString()}</div>
+        </div>
+      `;
+    }
+
     document.getElementById("essayOutput").addEventListener("input", updateWordCount);
 
     window.onload = () => {
@@ -497,13 +605,14 @@
       }
 
       const username = localStorage.getItem("user");
-      if (!user) {
+      if (!username) {
         window.location.href = "center.html";
         return;
       }
 
       document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
+      document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
     };
   </script>
 
