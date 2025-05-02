@@ -56,7 +56,6 @@
         .user-menu {
             display: flex;
             align-items: center;
-            position: relative;
         }
 
         .user-avatar {
@@ -229,7 +228,6 @@
             border-radius: 12px;
             font-size: 12px;
             margin-left: 10px;
-            cursor: pointer;
         }
         
         .active-indicator {
@@ -323,8 +321,8 @@
 
         .users-list {
             position: absolute;
-            top: 50px;
-            right: 0;
+            bottom: 50px;
+            right: 10px;
             background: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -507,7 +505,6 @@
         let currentUsername = '';
         let currentUserStatusRef = null;
         let pressTimer = null;
-        let connectedUsersRef = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -522,7 +519,6 @@
                 } else {
                     currentUser = user;
                     checkUserProfile(user);
-                    setupPresenceTracking(user);
                 }
             });
         }
@@ -611,6 +607,9 @@
             // Mise à jour des infos utilisateur
             updateUserInfo(userData);
 
+            // Suivi des utilisateurs en ligne
+            setupPresenceTracking(user);
+
             // Gestion de la déconnexion
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
@@ -649,66 +648,73 @@
         }
 
         function setupPresenceTracking(user) {
-            // Référence pour le suivi des utilisateurs connectés
-            connectedUsersRef = ref(db, 'connectedUsers');
-            
-            // Référence pour l'utilisateur actuel
-            const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
-            
-            // Marquer l'utilisateur comme connecté
-            set(userStatusRef, {
-                uid: user.uid,
-                username: currentUsername || 'Utilisateur',
-                timestamp: Date.now()
+            currentUserStatusRef = ref(db, 'status/' + user.uid);
+            const usersRef = ref(db, 'status');
+
+            // Marquer l'utilisateur comme en ligne
+            set(currentUserStatusRef, {
+                online: true,
+                lastChanged: Date.now(),
+                currentPage: 'center',
+                username: currentUsername,
+                userId: user.uid,
+                lastSeen: Date.now()
             });
 
-            // Supprimer la présence lors de la déconnexion
-            onDisconnect(userStatusRef).remove();
+            // Gérer la déconnexion
+            onDisconnect(currentUserStatusRef).update({
+                online: false,
+                lastChanged: Date.now(),
+                lastSeen: Date.now()
+            });
 
-            // Écouter les changements dans la liste des utilisateurs connectés
-            onValue(connectedUsersRef, (snapshot) => {
-                const connectedUsers = snapshot.val() || {};
-                const onlineUsers = [];
+            // Suivi des autres utilisateurs
+            onValue(usersRef, (snapshot) => {
+                const users = snapshot.val() || {};
                 let onlineCount = 0;
+                let chatUsers = 0;
+                let onlineUsers = [];
 
-                // Compter les utilisateurs connectés et préparer la liste
-                Object.entries(connectedUsers).forEach(([uid, userData]) => {
-                    if (uid !== user.uid) { // Exclure l'utilisateur actuel
-                        onlineCount++;
+                Object.entries(users).forEach(([uid, data]) => {
+                    if (data.online) {
+                        if (data.userId !== user.uid) {
+                            onlineCount++;
+                            if (data.currentPage === 'chat') chatUsers++;
+                        }
+                        
                         onlineUsers.push({
-                            userId: uid,
-                            username: userData.username || 'Utilisateur',
-                            firstLetter: (userData.username || 'U').charAt(0).toUpperCase()
+                            userId: data.userId,
+                            username: data.username || 'Utilisateur',
+                            firstLetter: (data.username || 'U').charAt(0).toUpperCase(),
+                            currentPage: data.currentPage || 'center'
                         });
                     }
                 });
 
-                // Mettre à jour l'interface
-                updateOnlineUsersDisplay(onlineCount, onlineUsers);
+                // Mise à jour de l'interface
+                updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers);
             });
         }
 
-        function updateOnlineUsersDisplay(onlineCount, onlineUsers) {
-            // Mettre à jour le compteur
+        function updateOnlineUsersDisplay(onlineCount, chatUsers, onlineUsers) {
             document.getElementById('online-count').textContent = onlineCount;
+            document.getElementById('chat-users').textContent = chatUsers;
 
-            // Mettre à jour la liste des utilisateurs
+            // Indicateurs d'activité
+            document.getElementById('chat-active').style.display = chatUsers > 0 ? 'flex' : 'none';
+
+            // Liste des utilisateurs en ligne
             const container = document.getElementById('online-users-container');
-            container.innerHTML = '';
-
-            if (onlineUsers.length === 0) {
-                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">Aucun autre utilisateur en ligne</p>';
-            } else {
-                onlineUsers.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.className = 'user-item';
-                    userElement.innerHTML = `
-                        <div class="user-avatar-small">${user.firstLetter}</div>
+            container.innerHTML = onlineUsers
+                .filter(user => user.userId !== currentUser.uid)
+                .map(user => `
+                    <div class="user-item">
+                        <div class="user-avatar-small">
+                            ${user.firstLetter}
+                        </div>
                         <span>${user.username}</span>
-                    `;
-                    container.appendChild(userElement);
-                });
-            }
+                    </div>
+                `).join('');
         }
 
         function handleLogout() {
