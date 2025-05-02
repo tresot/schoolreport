@@ -359,7 +359,7 @@
 
       const chatBox = document.getElementById("chatBox");
       const newMsg = document.createElement("p");
-      const username = localStorage.getItem("user") || "Utilisateur";
+      const username = localStorage.getItem("user") || "user";
       newMsg.textContent = `${username} : ${message}`;
       chatBox.appendChild(newMsg);
       chatBox.scrollTop = chatBox.scrollHeight;
