@@ -99,20 +99,21 @@
   </div>
 </div>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-  import { getFirestore, doc, setDoc, addDoc, getDocs, collection, onSnapshot, serverTimestamp, query, orderBy, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAXfaVcBnRZvaSyH5fi2FKpy5m8gH3q504",
-    authDomain: "chat-schoolreport.firebaseapp.com",
-    projectId: "chat-schoolreport",
-    storageBucket: "chat-schoolreport.firebasestorage.app",
-    messagingSenderId: "987396717760",
-    appId: "1:987396717760:web:a23a454d940d67cce50125",
-    measurementId: "G-QQ7X987EW4"
-  };
+const firebaseConfig = {
+    apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+    authDomain: "schoolreport-f8db0.firebaseapp.com",
+    databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "schoolreport-f8db0",
+    storageBucket: "schoolreport-f8db0.firebasestorage.app",
+    messagingSenderId: "313069994450",
+    appId: "1:313069994450:web:37b009be4f1812fdca880b",
+    measurementId: "G-N8YF0VKWCD"
+};
+
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
