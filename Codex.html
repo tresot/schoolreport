@@ -384,28 +384,20 @@
     
     <div id="newsContent">
       <div class="news-item">
-        <h3>Nouvelle réforme éducative annoncée</h3>
-        <p>Le ministre de l'Éducation a dévoilé aujourd'hui une série de mesures visant à moderniser le système scolaire...</p>
-        <div class="date">15 mars 2023</div>
-      </div>
-      
-      <div class="news-item">
-        <h3>Découverte scientifique majeure</h3>
-        <p>Des chercheurs ont fait une avancée significative dans le domaine de l'intelligence artificielle qui pourrait révolutionner...</p>
-        <div class="date">10 mars 2023</div>
-      </div>
-      
-      <div class="news-item">
-        <h3>Conférence internationale sur le climat</h3>
-        <p>Les dirigeants mondiaux se réunissent cette semaine pour discuter des nouvelles mesures contre le changement climatique...</p>
-        <div class="date">5 mars 2023</div>
+        <h3>Chargement des actualités...</h3>
+        <p>Veuillez patienter pendant que nous récupérons les dernières nouvelles.</p>
       </div>
     </div>
     
     <button class="refresh-news" onclick="chargerActualites()">Actualiser les nouvelles</button>
   </div>
 
-  <script>
+  <script type="module">
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import { auth, db } from "./firebase/firebase-config.js";
+
+    // Fonctions existantes inchangées
     function showSearchPage() {
       document.getElementById("searchPage").style.display = "block";
       document.getElementById("chatPage").style.display = "none";
@@ -442,7 +434,7 @@
 
       const chatBox = document.getElementById("chatBox");
       const newMsg = document.createElement("p");
-      const username = localStorage.getItem("username") || "user";
+      const username = document.getElementById("usernameDisplayChat").textContent.replace("Connecté en tant que : ", "");
       newMsg.textContent = `${username} : ${message}`;
       chatBox.appendChild(newMsg);
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -489,9 +481,14 @@
       localStorage.setItem("darkMode", document.body.classList.contains("dark"));
     }
 
-    function logout() {
-      localStorage.clear();
-      window.location.href = "center.html";
+    async function logout() {
+      try {
+        await signOut(auth);
+        localStorage.clear();
+        window.location.href = "center.html";
+      } catch (error) {
+        console.error("Erreur lors de la déconnexion:", error);
+      }
     }
 
     function genererDissertation() {
@@ -564,42 +561,99 @@
       document.getElementById("wordCount").textContent = `${wordCount} mots`;
     }
 
-    function chargerActualites() {
+    async function chargerActualites() {
       const newsContent = document.getElementById("newsContent");
-      newsContent.innerHTML = `
-        <div class="news-item">
-          <h3>Nouvelle réforme éducative annoncée</h3>
-          <p>Le ministre de l'Éducation a dévoilé aujourd'hui une série de mesures visant à moderniser le système scolaire...</p>
-          <div class="date">${new Date().toLocaleDateString()}</div>
-        </div>
+      const refreshBtn = document.querySelector('.refresh-news');
+      
+      // Afficher l'état de chargement
+      newsContent.innerHTML = '<p style="text-align:center;">Chargement des actualités...</p>';
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = 'Actualisation en cours...';
+
+      try {
+        // Utilisation de l'API NewsAPI (vous devrez obtenir une clé API gratuite sur newsapi.org)
+        const apiKey = '050ee6676bae48a49b4d40b28970c04d'; // Remplacez par votre vraie clé API
+        const url = `https://newsapi.org/v2/top-headlines?country=fr&apiKey=${apiKey}`;
         
-        <div class="news-item">
-          <h3>Découverte scientifique majeure</h3>
-          <p>Des chercheurs ont fait une avancée significative dans le domaine de l'intelligence artificielle qui pourrait révolutionner...</p>
-          <div class="date">${new Date(Date.now() - 86400000).toLocaleDateString()}</div>
-        </div>
-        
-        <div class="news-item">
-          <h3>Conférence internationale sur le climat</h3>
-          <p>Les dirigeants mondiaux se réunissent cette semaine pour discuter des nouvelles mesures contre le changement climatique...</p>
-          <div class="date">${new Date(Date.now() - 172800000).toLocaleDateString()}</div>
-        </div>
-      `;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.articles && data.articles.length > 0) {
+          let htmlContent = '';
+          
+          // Afficher les 3 premiers articles
+          data.articles.slice(0, 3).forEach(article => {
+            const date = new Date(article.publishedAt).toLocaleDateString('fr-FR');
+            
+            htmlContent += `
+              <div class="news-item">
+                <h3>${article.title}</h3>
+                <p>${article.description || 'Aucune description disponible'}</p>
+                ${article.urlToImage ? `<img src="${article.urlToImage}" alt="${article.title}">` : ''}
+                <div class="date">${date} - ${article.source.name}</div>
+                <a href="${article.url}" target="_blank" style="color: var(--accent);">Lire la suite</a>
+              </div>
+            `;
+          });
+
+          newsContent.innerHTML = htmlContent;
+        } else {
+          newsContent.innerHTML = '<p>Aucune actualité disponible pour le moment.</p>';
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des actualités:", error);
+        newsContent.innerHTML = `
+          <p>Impossible de charger les actualités. Voici quelques exemples :</p>
+          <div class="news-item">
+            <h3>Actualité 1</h3>
+            <p>Contenu d'exemple d'actualité...</p>
+            <div class="date">${new Date().toLocaleDateString('fr-FR')}</div>
+          </div>
+        `;
+      } finally {
+        refreshBtn.textContent = 'Actualiser les nouvelles';
+        refreshBtn.disabled = false;
+      }
     }
 
-    document.getElementById("essayOutput").addEventListener("input", updateWordCount);
-
-    window.onload = () => {
+    // Initialisation de l'application
+    document.addEventListener('DOMContentLoaded', () => {
+      // Vérifier le mode sombre
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark");
       }
 
-      const username = localStorage.getItem("user") || "Invité";
-      document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
-      document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
-      document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
-    };
-  </script>
+      // Écouter les changements d'authentification
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Récupérer les infos utilisateur depuis la base de données
+          const userRef = ref(db, 'users/' + user.uid);
+          onValue(userRef, (snapshot) => {
+            const userData = snapshot.val();
+            if (userData && userData.username) {
+              // Afficher le nom d'utilisateur partout
+              document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${userData.username}`;
+              document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${userData.username}`;
+              document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${userData.username}`;
+            }
+          });
+        } else {
+          // Rediriger vers la page de connexion si non authentifié
+          window.location.href = 'center.html';
+        }
+      });
 
+      // Écouteur pour le comptage de mots
+      document.getElementById("essayOutput").addEventListener("input", updateWordCount);
+
+      // Permettre d'envoyer les messages avec la touche Entrée
+      document.getElementById("chatInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          envoyerMessage();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
