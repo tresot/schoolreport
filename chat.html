@@ -25,6 +25,7 @@
       display: flex;
       align-items: center;
       border-bottom: 1px solid #eee;
+      font-weight: bold;
     }
     .users-list {
       flex: 1;
@@ -111,12 +112,8 @@
 </head>
 <body>
   <div class="sidebar">
-    <div class="logo">
-      <strong>SchoolReport</strong>
-    </div>
-    <div class="users-list" id="usersList">
-      <!-- Utilisateurs en ligne ici -->
-    </div>
+    <div class="logo" id="currentUsernameDisplay">Utilisateur connecté</div>
+    <div class="users-list" id="usersList"></div>
   </div>
 
   <div class="chat-container">
@@ -157,17 +154,20 @@
 
     async function loadUsers() {
       const usersList = document.getElementById("usersList");
+      const currentUsernameDisplay = document.getElementById("currentUsernameDisplay");
       const usersSnapshot = await db.collection("users").get();
+      usersList.innerHTML = "";
       usersSnapshot.forEach(doc => {
-        if (doc.id !== currentUser.uid) {
-          const user = doc.data();
+        const user = doc.data();
+        if (doc.id === currentUser.uid) {
+          currentUsername = user.username || "Moi";
+          currentUsernameDisplay.textContent = "Connecté : " + currentUsername;
+        } else {
           const div = document.createElement("div");
           div.className = "user";
-          div.innerHTML = `<span>🟢</span><span>${user.username}</span>`;
-          div.onclick = () => openChatWith(doc.id, user.username);
+          div.innerHTML = `<span>🟢</span><span>${user.username || "Utilisateur"}</span>`;
+          div.onclick = () => openChatWith(doc.id, user.username || "Utilisateur");
           usersList.appendChild(div);
-        } else {
-          currentUsername = doc.data().username;
         }
       });
     }
@@ -181,8 +181,10 @@
     function listenForMessages() {
       const chatMessages = document.getElementById("chatMessages");
       const ids = [currentUser.uid, currentChatUserId].sort();
+      const conversationId = ids.join("_");
+
       db.collection("privateMessages")
-        .where("participants", "==", ids)
+        .where("conversationId", "==", conversationId)
         .orderBy("timestamp")
         .onSnapshot(snapshot => {
           chatMessages.innerHTML = "";
@@ -201,15 +203,28 @@
       const input = document.getElementById("messageInput");
       const content = input.value.trim();
       if (!content || !currentChatUserId) return;
+
       const ids = [currentUser.uid, currentChatUserId].sort();
+      const conversationId = ids.join("_");
+
       await db.collection("privateMessages").add({
-        content,
+        conversationId,
         senderId: currentUser.uid,
-        participants: ids,
+        receiverId: currentChatUserId,
+        content,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
+
       input.value = "";
     }
+
+    // Envoi avec la touche Entrée
+    document.getElementById("messageInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
