@@ -57,7 +57,6 @@
       gap: 0.75rem;
     }
 
-    /* Style inspiré du projet partagé */
     .message {
       background: #ffffff;
       padding: 0.8rem 1.2rem;
@@ -87,7 +86,6 @@
       color: white;
     }
 
-    /* Effet de bulle de BD */
     .message::after {
       content: "";
       position: absolute;
@@ -136,7 +134,6 @@
       color: var(--gray);
     }
 
-    /* Style du formulaire inspiré du projet partagé */
     #message-form {
       display: flex;
       gap: 0.75rem;
@@ -176,7 +173,6 @@
       font-weight: bold;
     }
 
-    /* Bouton inspiré du projet partagé */
     .send-button {
       width: 50px;
       height: 50px;
@@ -250,9 +246,12 @@
     const firebaseConfig = {
       apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
       authDomain: "schoolreport-f8db0.firebaseapp.com",
+      databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "schoolreport-f8db0",
+      storageBucket: "schoolreport-f8db0.firebasestorage.app",
       messagingSenderId: "313069994450",
-      appId: "1:313069994450:web:37b009be4f1812fdca880b"
+      appId: "1:313069994450:web:37b009be4f1812fdca880b",
+      measurementId: "G-N8YF0VKWCD"
     };
 
     // Initialisation Firebase
@@ -298,10 +297,27 @@
           initChat();
         } else {
           // Si les données utilisateur ne sont pas trouvées
-          console.error("Données utilisateur non trouvées");
+          console.log("Données utilisateur non trouvées, création du profil...");
+          createUserProfile(userId);
         }
       }).catch((error) => {
         console.error("Erreur lors du chargement des données utilisateur:", error);
+      });
+    }
+
+    function createUserProfile(userId) {
+      const userRef = db.collection('users').doc(userId);
+      
+      // Créer un profil par défaut
+      userRef.set({
+        username: `Utilisateur${Math.floor(Math.random() * 1000)}`,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        profileImage: null
+      }).then(() => {
+        // Recharger les données après création
+        loadUserData(userId);
+      }).catch((error) => {
+        console.error("Erreur lors de la création du profil:", error);
       });
     }
 
@@ -313,11 +329,9 @@
           const messagesContainer = document.getElementById('messages');
           messagesContainer.innerHTML = '';
           
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-              const message = change.doc.data();
-              displayMessage(message, change.doc.id);
-            }
+          snapshot.forEach((doc) => {
+            const message = doc.data();
+            displayMessage(message, doc.id);
           });
           
           // Faire défiler vers le dernier message
