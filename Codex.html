@@ -545,33 +545,60 @@
       refreshBtn.textContent = 'Actualisation en cours...';
 
       try {
-        // Remplacez cette partie par votre propre système de récupération d'actualités
-        // Voici un exemple factice en attendant
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Récupérer les actualités depuis Wikipedia (Portail:Actualité)
+        const response = await fetch('https://fr.wikipedia.org/api/rest_v1/page/html/Portail:Actualit%C3%A9');
+        const html = await response.text();
         
-        const exampleNews = [
-          {
-            title: "Exemple d'actualité 1",
-            description: "Ceci est un exemple de nouvelle. Dans une version réelle, vous devriez connecter une API d'actualités.",
-            date: new Date().toLocaleDateString('fr-FR')
-          },
-          {
-            title: "Exemple d'actualité 2",
-            description: "Une autre nouvelle d'exemple montrant comment les éléments s'affichent.",
-            date: new Date().toLocaleDateString('fr-FR')
+        // Créer un élément DOM temporaire pour parser le HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extraire les actualités (les éléments h2 et les paragraphes suivants)
+        const newsItems = [];
+        const sections = doc.querySelectorAll('h2');
+        
+        sections.forEach(section => {
+          const title = section.textContent.trim();
+          let content = '';
+          let nextElement = section.nextElementSibling;
+          
+          // Collecter le contenu jusqu'au prochain h2
+          while(nextElement && nextElement.tagName !== 'H2') {
+            if(nextElement.tagName === 'P') {
+              content += nextElement.textContent.trim() + ' ';
+            }
+            nextElement = nextElement.nextElementSibling;
           }
-        ];
+          
+          if(title && content) {
+            newsItems.push({
+              title: title.replace(/\[modifier\]/, ''),
+              description: content.trim(),
+              date: new Date().toLocaleDateString('fr-FR')
+            });
+          }
+        });
 
+        // Afficher les actualités
         let htmlContent = '';
-        exampleNews.forEach(article => {
-          htmlContent += `
+        if(newsItems.length > 0) {
+          newsItems.slice(0, 5).forEach(article => { // Limiter à 5 actualités
+            htmlContent += `
+              <div class="news-item">
+                <h3>${article.title}</h3>
+                <p>${article.description.substring(0, 200)}...</p>
+                <div class="date">${article.date}</div>
+              </div>
+            `;
+          });
+        } else {
+          htmlContent = `
             <div class="news-item">
-              <h3>${article.title}</h3>
-              <p>${article.description}</p>
-              <div class="date">${article.date}</div>
+              <h3>Aucune actualité trouvée</h3>
+              <p>Impossible de récupérer les actualités depuis Wikipedia.</p>
             </div>
           `;
-        });
+        }
 
         newsContent.innerHTML = htmlContent;
       } catch (error) {
