@@ -239,6 +239,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   
   <script>
@@ -257,7 +258,8 @@
     // Initialisation Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore();
+    const db = firebase.database();
+    const firestore = firebase.firestore();
 
     // Variables globales
     let currentUser = null;
@@ -282,12 +284,13 @@
     }
 
     function loadUserData(userId) {
-      const userRef = db.collection('users').doc(userId);
+      const userRef = db.ref('users/' + userId);
       
-      userRef.get().then((doc) => {
-        if (doc.exists) {
-          const userData = doc.data();
-          currentUsername = userData.username || 'Utilisateur';
+      userRef.once('value').then((snapshot) => {
+        const userData = snapshot.val();
+        
+        if (userData && userData.username) {
+          currentUsername = userData.username;
           currentUserAvatar = userData.profileImage || null;
           
           // Mettre à jour l'affichage du nom d'utilisateur
@@ -297,33 +300,18 @@
           initChat();
         } else {
           // Si les données utilisateur ne sont pas trouvées
-          console.log("Données utilisateur non trouvées, création du profil...");
-          createUserProfile(userId);
+          console.log("Données utilisateur non trouvées, redirection vers center...");
+          window.location.href = 'center.html';
         }
       }).catch((error) => {
         console.error("Erreur lors du chargement des données utilisateur:", error);
-      });
-    }
-
-    function createUserProfile(userId) {
-      const userRef = db.collection('users').doc(userId);
-      
-      // Créer un profil par défaut
-      userRef.set({
-        username: `Utilisateur${Math.floor(Math.random() * 1000)}`,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        profileImage: null
-      }).then(() => {
-        // Recharger les données après création
-        loadUserData(userId);
-      }).catch((error) => {
-        console.error("Erreur lors de la création du profil:", error);
+        window.location.href = 'center.html';
       });
     }
 
     function initChat() {
       // Écouter les nouveaux messages
-      db.collection("messages")
+      firestore.collection("messages")
         .orderBy("timestamp")
         .onSnapshot((snapshot) => {
           const messagesContainer = document.getElementById('messages');
@@ -372,7 +360,7 @@
       
       if (messageText && currentUser && currentUsername) {
         // Envoyer le message à Firestore
-        db.collection("messages").add({
+        firestore.collection("messages").add({
           text: messageText,
           userId: currentUser.uid,
           username: currentUsername,
