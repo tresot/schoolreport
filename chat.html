@@ -79,8 +79,8 @@
   </style>
   <script>
     // Récupérer le nom de l'utilisateur depuis sessionStorage
-    const userName = sessionStorage.getItem('userName');
-    if (!userName) {
+    const username = sessionStorage.getItem('username');
+    if (!username) {
       window.location.href = 'index.html'; // Si l'utilisateur n'est pas connecté, le rediriger vers la page de connexion
     }
 
@@ -115,7 +115,7 @@
 <body>
   <div id="chat-container">
     <header style="text-align: center; padding: 10px;">
-      <h1 id="userNameDisplay">Bienvenue, Utilisateur</h1>
+      <h1 id="usernameDisplay">Bienvenue, Utilisateur</h1>
     </header>
     
     <div id="messages">
