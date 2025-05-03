@@ -236,6 +236,10 @@
           
           // Initialiser le chat
           initChat();
+        } else {
+          // Si les données utilisateur ne sont pas trouvées
+          console.error("Données utilisateur non trouvées");
+          window.location.href = 'center.html'; // Rediriger vers center.html pour compléter le profil
         }
       }, { onlyOnce: true });
     }
@@ -292,13 +296,14 @@
       const messageInput = document.getElementById('message');
       const messageText = messageInput.value.trim();
       
-      if (messageText && currentUser) {
+      if (messageText && currentUser && currentUsername) {
         // Envoyer le message à Firebase
         push(messagesRef, {
           text: messageText,
           userId: currentUser.uid,
           username: currentUsername,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          profileImage: currentUserAvatar || null
         });
         
         // Effacer le champ de message
