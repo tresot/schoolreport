@@ -241,16 +241,29 @@
     </div>
   </div>
 
-  <script type="module">
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-    import { auth, db } from "./firebase/firebase-config.js";
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+      authDomain: "schoolreport-f8db0.firebaseapp.com",
+      projectId: "schoolreport-f8db0",
+      messagingSenderId: "313069994450",
+      appId: "1:313069994450:web:37b009be4f1812fdca880b"
+    };
+
+    // Initialisation Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
     // Variables globales
     let currentUser = null;
     let currentUsername = '';
     let currentUserAvatar = '';
-    let messagesRef = null;
 
     // Initialisation
     document.addEventListener('DOMContentLoaded', () => {
@@ -259,7 +272,7 @@
     });
 
     function initAuthState() {
-      onAuthStateChanged(auth, (user) => {
+      auth.onAuthStateChanged((user) => {
         if (!user) {
           window.location.href = 'index.html';
         } else {
@@ -270,11 +283,11 @@
     }
 
     function loadUserData(userId) {
-      const userRef = ref(db, 'users/' + userId);
+      const userRef = db.collection('users').doc(userId);
       
-      onValue(userRef, (snapshot) => {
-        const userData = snapshot.val();
-        if (userData) {
+      userRef.get().then((doc) => {
+        if (doc.exists) {
+          const userData = doc.data();
           currentUsername = userData.username || 'Utilisateur';
           currentUserAvatar = userData.profileImage || null;
           
@@ -288,54 +301,55 @@
           console.error("Données utilisateur non trouvées");
           window.location.href = 'center.html'; // Rediriger vers center.html pour compléter le profil
         }
-      }, { onlyOnce: true });
+      }).catch((error) => {
+        console.error("Erreur lors du chargement des données utilisateur:", error);
+      });
     }
 
     function initChat() {
-      messagesRef = ref(db, 'messages');
-      
       // Écouter les nouveaux messages
-      onValue(messagesRef, (snapshot) => {
-        const messages = snapshot.val() || {};
-        displayMessages(messages);
-      });
+      db.collection("messages")
+        .orderBy("timestamp")
+        .onSnapshot((snapshot) => {
+          const messagesContainer = document.getElementById('messages');
+          messagesContainer.innerHTML = '';
+          
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const message = change.doc.data();
+              displayMessage(message, change.doc.id);
+            }
+          });
+          
+          // Faire défiler vers le dernier message
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
     }
 
-    function displayMessages(messages) {
+    function displayMessage(message, messageId) {
       const messagesContainer = document.getElementById('messages');
-      messagesContainer.innerHTML = '';
+      const isCurrentUser = message.userId === currentUser.uid;
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
       
-      // Convertir l'objet messages en tableau et trier par timestamp
-      const messagesArray = Object.entries(messages).map(([id, message]) => ({
-        id,
-        ...message
-      })).sort((a, b) => a.timestamp - b.timestamp);
+      // Formater la date
+      const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
+      const formattedTime = formatTime(timestamp);
       
-      // Afficher chaque message
-      messagesArray.forEach(message => {
-        const isCurrentUser = message.userId === currentUser.uid;
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
-        
-        // Créer le contenu du message
-        let messageContent = `
-          <div class="message-info">
-            ${!isCurrentUser ? `<span class="message-sender">${message.username}</span>` : ''}
-            <span class="message-time">${formatTime(message.timestamp)}</span>
-          </div>
-          <div class="message-text">${message.text}</div>
-        `;
-        
-        messageDiv.innerHTML = messageContent;
-        messagesContainer.appendChild(messageDiv);
-      });
+      // Créer le contenu du message
+      let messageContent = `
+        <div class="message-info">
+          ${!isCurrentUser ? `<span class="message-sender">${message.username}</span>` : ''}
+          <span class="message-time">${formattedTime}</span>
+        </div>
+        <div class="message-text">${message.text}</div>
+      `;
       
-      // Faire défiler vers le dernier message
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      messageDiv.innerHTML = messageContent;
+      messagesContainer.appendChild(messageDiv);
     }
 
-    function formatTime(timestamp) {
-      const date = new Date(timestamp);
+    function formatTime(date) {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
@@ -344,16 +358,18 @@
       const messageText = messageInput.value.trim();
       
       if (messageText && currentUser && currentUsername) {
-        // Envoyer le message à Firebase (version Realtime Database)
-        push(messagesRef, {
+        // Envoyer le message à Firestore
+        db.collection("messages").add({
           text: messageText,
           userId: currentUser.uid,
           username: currentUsername,
-          timestamp: serverTimestamp()
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+          // Effacer le champ de message
+          messageInput.value = '';
+        }).catch((error) => {
+          console.error("Erreur lors de l'envoi du message:", error);
         });
-        
-        // Effacer le champ de message
-        messageInput.value = '';
       }
     }
 
