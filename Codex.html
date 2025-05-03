@@ -34,6 +34,7 @@
       background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      transition: background-color 0.3s ease;
     }
 
     .navbar {
@@ -78,6 +79,7 @@
       width: 90%;
       max-width: 800px;
       margin: 90px auto 20px auto;
+      transition: all 0.3s ease;
     }
 
     .container h1, .chat-container h2, .news-container h2 {
@@ -190,7 +192,6 @@
       font-weight: bold;
     }
 
-    /* Dissertation Section améliorée */
     #dissertationPage {
       background-color: var(--bg-alt);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -271,7 +272,6 @@
       color: #aaa;
     }
 
-    /* News Section */
     .news-container {
       display: none;
     }
@@ -319,12 +319,12 @@
 <body>
 
   <div class="navbar">
-    <button onclick="showSearchPage()">🔍 Recherche</button>
-    <button onclick="showChatPage()">💬 Discussion</button>
-    <button onclick="showDissertationPage()">📝 Dissertation</button>
-    <button onclick="showNewsPage()">📰 Actualités</button>
-    <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
-    <button onclick="logout()">🚪 Déconnexion</button>
+    <button id="searchBtn">🔍 Recherche</button>
+    <button id="chatBtn">💬 Discussion</button>
+    <button id="dissertationBtn">📝 Dissertation</button>
+    <button id="newsBtn">📰 Actualités</button>
+    <button id="darkModeBtn">🌙 Mode Sombre</button>
+    <button id="logoutBtn">🚪 Déconnexion</button>
   </div>
 
   <div class="container" id="searchPage">
@@ -332,7 +332,7 @@
     <div class="username-display" id="usernameDisplay"></div>
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Tape ta recherche ici...">
-      <button onclick="effectuerRecherche()">Rechercher</button>
+      <button id="searchButton">Rechercher</button>
     </div>
     <div class="results" id="results"></div>
   </div>
@@ -344,7 +344,7 @@
       <p><strong>Bienvenue ! Pose ta question ou partage ton idée !</strong></p>
     </div>
     <textarea id="chatInput" placeholder="Ton message..." rows="3"></textarea>
-    <button onclick="envoyerMessage()">Envoyer</button>
+    <button id="sendMessageBtn">Envoyer</button>
   </div>
 
   <div id="dissertationPage" class="container" style="display: none;">
@@ -367,7 +367,7 @@
         </select>
       </div>
       
-      <button onclick="genererDissertation()">Générer la dissertation</button>
+      <button id="generateEssayBtn">Générer la dissertation</button>
     </div>
     
     <div class="loading" id="loadingIndicator">
@@ -389,44 +389,30 @@
       </div>
     </div>
     
-    <button class="refresh-news" onclick="chargerActualites()">Actualiser les nouvelles</button>
+    <button class="refresh-news" id="refreshNewsBtn">Actualiser les nouvelles</button>
   </div>
 
-  <script type="module">
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-    import { auth, db } from "./firebase/firebase-config.js";
-
-    // Fonctions existantes inchangées
-    function showSearchPage() {
-      document.getElementById("searchPage").style.display = "block";
-      document.getElementById("chatPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "none";
+  <script>
+    // Fonctions de navigation
+    function showPage(pageId) {
+      const pages = ['searchPage', 'chatPage', 'dissertationPage', 'newsPage'];
+      pages.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.style.display = id === pageId ? 'block' : 'none';
+        }
+      });
     }
 
-    function showChatPage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("chatPage").style.display = "block";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "none";
-    }
-
-    function showDissertationPage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("chatPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "block";
-      document.getElementById("newsPage").style.display = "none";
-    }
-
-    function showNewsPage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("chatPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "block";
+    function showSearchPage() { showPage('searchPage'); }
+    function showChatPage() { showPage('chatPage'); }
+    function showDissertationPage() { showPage('dissertationPage'); }
+    function showNewsPage() { 
+      showPage('newsPage');
       chargerActualites();
     }
 
+    // Fonctions principales
     function envoyerMessage() {
       const input = document.getElementById("chatInput");
       const message = input.value.trim();
@@ -441,54 +427,43 @@
       input.value = "";
     }
 
-    function effectuerRecherche() {
+    async function effectuerRecherche() {
       const query = document.getElementById("searchInput").value.trim();
       if (!query) return alert("Entrez un terme de recherche");
 
       const url = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
 
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          const results = document.getElementById("results");
-          results.innerHTML = "";
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const results = document.getElementById("results");
+        results.innerHTML = "";
 
-          if (data.extract) {
-            results.innerHTML = `
-              <table>
-                <tr><th>Titre</th><th>Description</th></tr>
-                <tr>
-                  <td>
-                    <a href="${data.content_urls.desktop.page}" target="_blank">${data.title}</a>
-                    ${data.thumbnail ? `<br><img src="${data.thumbnail.source}" alt="${data.title}">` : ""}
-                  </td>
-                  <td>${data.extract}</td>
-                </tr>
-              </table>
-            `;
-          } else {
-            results.innerHTML = "<p>Aucun résultat trouvé.</p>";
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          alert("Erreur lors de la recherche");
-        });
+        if (data.extract) {
+          results.innerHTML = `
+            <table>
+              <tr><th>Titre</th><th>Description</th></tr>
+              <tr>
+                <td>
+                  <a href="${data.content_urls.desktop.page}" target="_blank">${data.title}</a>
+                  ${data.thumbnail ? `<br><img src="${data.thumbnail.source}" alt="${data.title}">` : ""}
+                </td>
+                <td>${data.extract}</td>
+              </tr>
+            </table>
+          `;
+        } else {
+          results.innerHTML = "<p>Aucun résultat trouvé.</p>";
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById("results").innerHTML = "<p>Erreur lors de la recherche</p>";
+      }
     }
 
     function toggleDarkMode() {
       document.body.classList.toggle("dark");
       localStorage.setItem("darkMode", document.body.classList.contains("dark"));
-    }
-
-    async function logout() {
-      try {
-        await signOut(auth);
-        localStorage.clear();
-        window.location.href = "center.html";
-      } catch (error) {
-        console.error("Erreur lors de la déconnexion:", error);
-      }
     }
 
     function genererDissertation() {
@@ -563,51 +538,48 @@
 
     async function chargerActualites() {
       const newsContent = document.getElementById("newsContent");
-      const refreshBtn = document.querySelector('.refresh-news');
+      const refreshBtn = document.getElementById('refreshNewsBtn');
       
-      // Afficher l'état de chargement
       newsContent.innerHTML = '<p style="text-align:center;">Chargement des actualités...</p>';
       refreshBtn.disabled = true;
       refreshBtn.textContent = 'Actualisation en cours...';
 
       try {
-        // Utilisation de l'API NewsAPI (vous devrez obtenir une clé API gratuite sur newsapi.org)
-        const apiKey = '050ee6676bae48a49b4d40b28970c04d'; // Remplacez par votre vraie clé API
-        const url = `https://newsapi.org/v2/top-headlines?country=fr&apiKey=${apiKey}`;
+        // Remplacez cette partie par votre propre système de récupération d'actualités
+        // Voici un exemple factice en attendant
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const response = await fetch(url);
-        const data = await response.json();
+        const exampleNews = [
+          {
+            title: "Exemple d'actualité 1",
+            description: "Ceci est un exemple de nouvelle. Dans une version réelle, vous devriez connecter une API d'actualités.",
+            date: new Date().toLocaleDateString('fr-FR')
+          },
+          {
+            title: "Exemple d'actualité 2",
+            description: "Une autre nouvelle d'exemple montrant comment les éléments s'affichent.",
+            date: new Date().toLocaleDateString('fr-FR')
+          }
+        ];
 
-        if (data.articles && data.articles.length > 0) {
-          let htmlContent = '';
-          
-          // Afficher les 3 premiers articles
-          data.articles.slice(0, 3).forEach(article => {
-            const date = new Date(article.publishedAt).toLocaleDateString('fr-FR');
-            
-            htmlContent += `
-              <div class="news-item">
-                <h3>${article.title}</h3>
-                <p>${article.description || 'Aucune description disponible'}</p>
-                ${article.urlToImage ? `<img src="${article.urlToImage}" alt="${article.title}">` : ''}
-                <div class="date">${date} - ${article.source.name}</div>
-                <a href="${article.url}" target="_blank" style="color: var(--accent);">Lire la suite</a>
-              </div>
-            `;
-          });
+        let htmlContent = '';
+        exampleNews.forEach(article => {
+          htmlContent += `
+            <div class="news-item">
+              <h3>${article.title}</h3>
+              <p>${article.description}</p>
+              <div class="date">${article.date}</div>
+            </div>
+          `;
+        });
 
-          newsContent.innerHTML = htmlContent;
-        } else {
-          newsContent.innerHTML = '<p>Aucune actualité disponible pour le moment.</p>';
-        }
+        newsContent.innerHTML = htmlContent;
       } catch (error) {
         console.error("Erreur lors du chargement des actualités:", error);
         newsContent.innerHTML = `
-          <p>Impossible de charger les actualités. Voici quelques exemples :</p>
           <div class="news-item">
-            <h3>Actualité 1</h3>
-            <p>Contenu d'exemple d'actualité...</p>
-            <div class="date">${new Date().toLocaleDateString('fr-FR')}</div>
+            <h3>Erreur de chargement</h3>
+            <p>Impossible de charger les actualités. Veuillez réessayer plus tard.</p>
           </div>
         `;
       } finally {
@@ -616,43 +588,43 @@
       }
     }
 
-    // Initialisation de l'application
+    // Initialisation
     document.addEventListener('DOMContentLoaded', () => {
-      // Vérifier le mode sombre
+      // Mode sombre
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark");
       }
 
-      // Écouter les changements d'authentification
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // Récupérer les infos utilisateur depuis la base de données
-          const userRef = ref(db, 'users/' + user.uid);
-          onValue(userRef, (snapshot) => {
-            const userData = snapshot.val();
-            if (userData && userData.username) {
-              // Afficher le nom d'utilisateur partout
-              document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${userData.username}`;
-              document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${userData.username}`;
-              document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${userData.username}`;
-            }
-          });
-        } else {
-          // Rediriger vers la page de connexion si non authentifié
-          window.location.href = 'center.html';
-        }
+      // Écouteurs d'événements
+      document.getElementById('searchBtn').addEventListener('click', showSearchPage);
+      document.getElementById('chatBtn').addEventListener('click', showChatPage);
+      document.getElementById('dissertationBtn').addEventListener('click', showDissertationPage);
+      document.getElementById('newsBtn').addEventListener('click', showNewsPage);
+      document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        alert('Fonction de déconnexion à implémenter');
       });
+      
+      document.getElementById('searchButton').addEventListener('click', effectuerRecherche);
+      document.getElementById('sendMessageBtn').addEventListener('click', envoyerMessage);
+      document.getElementById('generateEssayBtn').addEventListener('click', genererDissertation);
+      document.getElementById('refreshNewsBtn').addEventListener('click', chargerActualites);
 
-      // Écouteur pour le comptage de mots
-      document.getElementById("essayOutput").addEventListener("input", updateWordCount);
-
-      // Permettre d'envoyer les messages avec la touche Entrée
-      document.getElementById("chatInput").addEventListener("keypress", function(e) {
-        if (e.key === "Enter" && !e.shiftKey) {
+      // Envoi de message avec Entrée
+      document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           envoyerMessage();
         }
       });
+
+      // Comptage de mots
+      document.getElementById('essayOutput').addEventListener('input', updateWordCount);
+
+      // Simuler un utilisateur connecté (à remplacer par votre système d'authentification)
+      document.getElementById('usernameDisplay').textContent = 'Connecté en tant que : Utilisateur';
+      document.getElementById('usernameDisplayChat').textContent = 'Connecté en tant que : Utilisateur';
+      document.getElementById('usernameDisplayNews').textContent = 'Connecté en tant que : Utilisateur';
     });
   </script>
 </body>
