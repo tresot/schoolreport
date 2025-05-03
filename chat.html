@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat - SchoolReport</title>
   <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --danger: #e63946;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f5f7fa;
@@ -13,119 +24,296 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      justify-content: space-between;
+    }
+
+    header {
+      background-color: white;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      position: relative;
     }
 
     #chat-container {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 1rem;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
     }
 
     #messages {
       flex: 1;
       padding: 1rem;
       background-color: white;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--light-gray);
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 1rem;
       overflow-y: auto;
-      max-height: 70%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
 
     #message-form {
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
       align-items: center;
+      padding: 0.5rem;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    #message-form input {
+    #message {
       flex-grow: 1;
-      padding: 12px;
-      border: 1px solid #ddd;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--light-gray);
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    #message:focus {
+      border-color: var(--primary);
     }
 
     #message-form button {
-      padding: 12px 20px;
-      background-color: #4361ee;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary);
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 1rem;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
 
     #message-form button:hover {
-      background-color: #3f37c9;
+      background-color: var(--secondary);
     }
 
     .message {
-      background: #e9ecef;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
       max-width: 80%;
-      align-self: flex-start;
+      position: relative;
+      word-wrap: break-word;
+      line-height: 1.4;
     }
 
-    .message.self {
-      background-color: #4361ee;
+    .message.received {
+      background-color: var(--light-gray);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.sent {
+      background-color: var(--primary);
       color: white;
       align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .message-sender {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    .message-time {
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+
+    .sent .message-time {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .received .message-time {
+      color: var(--gray);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 0.5rem;
+      overflow: hidden;
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      #chat-container {
+        padding: 0.5rem;
+      }
+      
+      #messages {
+        padding: 0.75rem;
+      }
+      
+      .message {
+        max-width: 90%;
+      }
     }
   </style>
-  <script>
-    // Récupérer le nom de l'utilisateur depuis sessionStorage
-    const username = sessionStorage.getItem('username');
-    if (!username) {
-      window.location.href = 'index.html'; // Si l'utilisateur n'est pas connecté, le rediriger vers la page de connexion
-    }
-
-    // Afficher le nom de l'utilisateur dans l'interface
-    window.onload = () => {
-      document.getElementById('usernameDisplay').textContent = `Bienvenue, ${username}`;
-    };
-
-    // Fonction pour envoyer un message
-    function sendMessage() {
-      const message = document.getElementById('message').value.trim();
-      if (message) {
-        const messagesDiv = document.getElementById('messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.classList.add('self'); // Ajoute la classe pour identifier l'utilisateur
-        messageDiv.textContent = `${userName}: ${message}`;
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll vers le bas
-        document.getElementById('message').value = ''; // Réinitialise le champ de message
-      }
-    }
-
-    // Gérer l'envoi du message avec la touche Enter
-    document.getElementById('message').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendMessage();
-      }
-    });
-  </script>
 </head>
 <body>
+  <header>
+    <h1 id="usernameDisplay">Chat SchoolReport</h1>
+  </header>
+  
   <div id="chat-container">
-    <header style="text-align: center; padding: 10px;">
-      <h1 id="usernameDisplay">Bienvenue, Utilisateur</h1>
-    </header>
-    
     <div id="messages">
       <!-- Les messages seront affichés ici -->
     </div>
 
     <div id="message-form">
-      <input type="text" id="message" placeholder="Tapez votre message..." />
+      <input type="text" id="message" placeholder="Tapez votre message..." autocomplete="off" />
       <button onclick="sendMessage()">Envoyer</button>
     </div>
   </div>
+
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import { auth, db } from "./firebase/firebase-config.js";
+
+    // Variables globales
+    let currentUser = null;
+    let currentUsername = '';
+    let currentUserAvatar = '';
+    let messagesRef = null;
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+      initAuthState();
+      setupEventListeners();
+    });
+
+    function initAuthState() {
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = 'index.html';
+        } else {
+          currentUser = user;
+          loadUserData(user.uid);
+        }
+      });
+    }
+
+    function loadUserData(userId) {
+      const userRef = ref(db, 'users/' + userId);
+      
+      onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          currentUsername = userData.username || 'Utilisateur';
+          currentUserAvatar = userData.profileImage || null;
+          
+          // Mettre à jour l'affichage du nom d'utilisateur
+          document.getElementById('usernameDisplay').textContent = `Chat - ${currentUsername}`;
+          
+          // Initialiser le chat
+          initChat();
+        }
+      }, { onlyOnce: true });
+    }
+
+    function initChat() {
+      messagesRef = ref(db, 'messages');
+      
+      // Écouter les nouveaux messages
+      onValue(messagesRef, (snapshot) => {
+        const messages = snapshot.val() || {};
+        displayMessages(messages);
+      });
+    }
+
+    function displayMessages(messages) {
+      const messagesContainer = document.getElementById('messages');
+      messagesContainer.innerHTML = '';
+      
+      // Convertir l'objet messages en tableau et trier par timestamp
+      const messagesArray = Object.entries(messages).map(([id, message]) => ({
+        id,
+        ...message
+      })).sort((a, b) => a.timestamp - b.timestamp);
+      
+      // Afficher chaque message
+      messagesArray.forEach(message => {
+        const isCurrentUser = message.userId === currentUser.uid;
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
+        
+        // Créer le contenu du message
+        let messageContent = `
+          <div class="message-info">
+            ${!isCurrentUser ? `<span class="message-sender">${message.username}</span>` : ''}
+            <span class="message-time">${formatTime(message.timestamp)}</span>
+          </div>
+          <div class="message-text">${message.text}</div>
+        `;
+        
+        messageDiv.innerHTML = messageContent;
+        messagesContainer.appendChild(messageDiv);
+      });
+      
+      // Faire défiler vers le dernier message
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function sendMessage() {
+      const messageInput = document.getElementById('message');
+      const messageText = messageInput.value.trim();
+      
+      if (messageText && currentUser) {
+        // Envoyer le message à Firebase
+        push(messagesRef, {
+          text: messageText,
+          userId: currentUser.uid,
+          username: currentUsername,
+          timestamp: Date.now()
+        });
+        
+        // Effacer le champ de message
+        messageInput.value = '';
+      }
+    }
+
+    function setupEventListeners() {
+      // Envoyer le message avec la touche Entrée
+      document.getElementById('message').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+    }
+  </script>
 </body>
 </html>
