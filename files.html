@@ -794,20 +794,20 @@
                 }
                 
                 const configuration = {
-                    iceServers: [
-                        { urls: 'stun:stun.l.google.com:19302' },
-                        { urls: 'stun:stun1.l.google.com:19302' },
-                        { urls: 'stun:stun2.l.google.com:19302' },
-                        { 
-                            urls: 'turn:numb.viagenie.ca',
-                            credential: 'muazkh',
-                            username: 'webrtc@live.com'
-                        }
-                    ],
-                    iceTransportPolicy: 'all',
-                    bundlePolicy: 'max-bundle',
-                    rtcpMuxPolicy: 'require'
-                };
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        {
+            urls: 'turn:openrelay.metered.ca:80',
+            username: 'openrelayproject',
+            credential: 'openrelayproject'
+        }
+    ],
+    iceTransportPolicy: 'all',
+    bundlePolicy: 'max-bundle',
+    rtcpMuxPolicy: 'require'
+};
                 
                 peerConnection = new RTCPeerConnection(configuration);
                 
@@ -912,20 +912,20 @@
 
         async function initiateWebRTCConnection(code, isInitiator, remoteOffer) {
             const configuration = {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' },
-                    { urls: 'stun:stun2.l.google.com:19302' },
-                    { 
-                        urls: 'turn:numb.viagenie.ca',
-                        credential: 'muazkh',
-                        username: 'webrtc@live.com'
-                    }
-                ],
-                iceTransportPolicy: 'all',
-                bundlePolicy: 'max-bundle',
-                rtcpMuxPolicy: 'require'
-            };
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        {
+            urls: 'turn:openrelay.metered.ca:80',
+            username: 'openrelayproject',
+            credential: 'openrelayproject'
+        }
+    ],
+    iceTransportPolicy: 'all',
+    bundlePolicy: 'max-bundle',
+    rtcpMuxPolicy: 'require'
+};
             
             peerConnection = new RTCPeerConnection(configuration);
 
