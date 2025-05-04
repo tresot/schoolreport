@@ -783,6 +783,7 @@
             });
         }
 
+
         async function initiateFileTransfer() {
             if (!selectedFile) {
                 showModal('Aucun fichier sélectionné', 'Veuillez sélectionner un fichier à envoyer.');
@@ -832,17 +833,34 @@
                 setupDataChannel(dataChannel, true);
                 
                 // Gestion des candidats ICE
-                peerConnection.onicecandidate = event => {
+                peerConnection.onicecandidate = async (event) => {
                     if (event.candidate) {
                         // Stocker le candidat dans la session
-                        sessionRef.update({
-                            candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
+                        await sessionRef.update({
+                            senderCandidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
                         });
                     }
                 };
                 
+                // Écouter les candidats du receveur
+                const candidateUnsubscribe = sessionRef.onSnapshot(async (doc) => {
+                    const data = doc.data();
+                    if (data && data.receiverCandidates) {
+                        for (const candidate of data.receiverCandidates) {
+                            try {
+                                await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                            } catch (e) {
+                                console.error("Error adding received ice candidate", e);
+                            }
+                        }
+                    }
+                });
+                
                 // Créer une offre
-                const offer = await peerConnection.createOffer();
+                const offer = await peerConnection.createOffer({
+                    offerToReceiveAudio: false,
+                    offerToReceiveVideo: false
+                });
                 await peerConnection.setLocalDescription(offer);
                 
                 // Mettre à jour la session avec l'offre
@@ -852,20 +870,23 @@
                     senderId: currentUser.uid,
                     fileName: selectedFile.name,
                     fileSize: selectedFile.size,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    senderCandidates: [] // Initialiser le tableau
                 });
                 
                 document.getElementById('send-progress-text').textContent = 'En attente du destinataire...';
                 
                 // Écouter la réponse
-                sessionRef.onSnapshot(doc => {
+                const answerUnsubscribe = sessionRef.onSnapshot(async (doc) => {
                     const sessionData = doc.data();
                     if (sessionData && sessionData.answer) {
-                        peerConnection.setRemoteDescription(new RTCSessionDescription(sessionData.answer))
-                            .catch(error => {
-                                console.error("Erreur setRemoteDescription:", error);
-                                resetTransfer();
-                            });
+                        try {
+                            await peerConnection.setRemoteDescription(new RTCSessionDescription(sessionData.answer));
+                            answerUnsubscribe(); // Arrêter d'écouter une fois la réponse reçue
+                        } catch (error) {
+                            console.error("Erreur setRemoteDescription:", error);
+                            resetTransfer();
+                        }
                     }
                 });
                 
@@ -897,11 +918,11 @@
             peerConnection = new RTCPeerConnection(configuration);
             
             // Gestion des candidats ICE
-            peerConnection.onicecandidate = event => {
+            peerConnection.onicecandidate = async (event) => {
                 if (event.candidate) {
                     // Stocker le candidat dans Firestore
-                    fs.collection('sessions').doc(code).update({
-                        candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
+                    await fs.collection('sessions').doc(code).update({
+                        receiverCandidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
                     });
                 }
             };
@@ -918,6 +939,20 @@
                 // Configurer l'offre distante
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteOffer));
                 
+                // Écouter les candidats de l'expéditeur
+                const candidateUnsubscribe = fs.collection('sessions').doc(code).onSnapshot(async (doc) => {
+                    const data = doc.data();
+                    if (data && data.senderCandidates) {
+                        for (const candidate of data.senderCandidates) {
+                            try {
+                                await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                            } catch (e) {
+                                console.error("Error adding received ice candidate", e);
+                            }
+                        }
+                    }
+                });
+                
                 // Créer une réponse
                 const answer = await peerConnection.createAnswer();
                 await peerConnection.setLocalDescription(answer);
@@ -925,22 +960,14 @@
                 // Mettre à jour la session avec la réponse
                 await fs.collection('sessions').doc(code).update({
                     answer: answer,
+                    receiverCandidates: [], // Initialiser le tableau
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
-                // Ajouter les candidats ICE existants
-                const sessionDoc = await fs.collection('sessions').doc(code).get();
-                const sessionData = sessionDoc.data();
-                
-                if (sessionData.candidates) {
-                    for (const candidate of sessionData.candidates) {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-                    }
-                }
             }
             
             // Nettoyer après la connexion
             peerConnection.onconnectionstatechange = () => {
+                console.log('Connection state:', peerConnection.connectionState);
                 if (peerConnection.connectionState === 'disconnected' || 
                     peerConnection.connectionState === 'failed') {
                     resetTransfer();
