@@ -3,220 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat - SchoolReport</title>
+  <title>Messagerie | SchoolReport</title>
+  <link rel="stylesheet" href="theme.css">
   <style>
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f2f5;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
     }
-    .sidebar {
-      width: 280px;
-      background: white;
-      border-right: 1px solid #ddd;
-      display: flex;
-      flex-direction: column;
-    }
-    .logo {
+    #chat-container {
+      max-width: 700px;
+      margin: 40px auto;
       padding: 20px;
-      font-weight: bold;
-      border-bottom: 1px solid #eee;
-    }
-    .users-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-    }
-    .user {
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .user:hover {
-      background: #eaeaea;
-    }
-    .chat-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .chat-header {
-      padding: 15px;
-      border-bottom: 1px solid #ccc;
       background: #fff;
-      font-weight: bold;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
+    #top-bar {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
     }
-    .message {
-      max-width: 60%;
-      padding: 10px 15px;
-      border-radius: 15px;
+    #chat-box {
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: #fafafa;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 6px;
       font-size: 14px;
     }
-    .sent {
-      background-color: #0078fe;
-      color: white;
-      align-self: flex-end;
-    }
-    .received {
-      background-color: #e4e6eb;
-      color: black;
-      align-self: flex-start;
-    }
-    .chat-input {
-      display: flex;
-      padding: 10px;
-      background: white;
-      border-top: 1px solid #ccc;
-    }
-    .chat-input input {
-      flex: 1;
-      padding: 10px;
+    input {
+      width: calc(100% - 100px);
       border: 1px solid #ccc;
-      border-radius: 20px;
-      font-size: 15px;
+      margin-right: 10px;
     }
-    .chat-input button {
-      margin-left: 10px;
-      padding: 10px 20px;
-      background-color: #0078fe;
+    button {
+      background: #4361ee;
       color: white;
       border: none;
-      border-radius: 20px;
       cursor: pointer;
+    }
+    button:hover {
+      background: #3f37c9;
+    }
+    .message {
+      margin-bottom: 8px;
+    }
+    .message strong {
+      color: #3f37c9;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo" id="currentUsernameDisplay">Connecté : ...</div>
-    <div class="users-list" id="usersList"></div>
-  </div>
-
-  <div class="chat-container">
-    <div class="chat-header" id="chatHeader">Sélectionne un utilisateur</div>
-    <div class="chat-messages" id="chatMessages"></div>
-    <div class="chat-input">
-      <input type="text" id="messageInput" placeholder="Écrire un message..." />
-      <button onclick="sendMessage()">Envoyer</button>
+  <div id="chat-container">
+    <div id="top-bar">
+      <span id="username-display">Utilisateur</span>
+      <button id="logout-btn">Déconnexion</button>
+    </div>
+    <div id="chat-box"></div>
+    <div style="display: flex;">
+      <input type="text" id="message-input" placeholder="Tape ton message...">
+      <button id="send-btn">Envoyer</button>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-      authDomain: "schoolreport-f8db0.firebaseapp.com",
-      projectId: "schoolreport-f8db0",
-      databaseURL: "https://schoolreport-f8db0-default-rtdb.firebaseio.com",
-      storageBucket: "schoolreport-f8db0.appspot.com",
-      messagingSenderId: "313069994450",
-      appId: "1:313069994450:web:37b009be4f1812fdca880b"
-    };
+  <script type="module">
+    import { auth, rtdb, fsdb } from "./firebase-config.js";
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+      collection,
+      addDoc,
+      query,
+      orderBy,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import {
+      ref as dbRef,
+      child,
+      get
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const rtdb = firebase.database();
+    const chatBox = document.getElementById('chat-box');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const usernameDisplay = document.getElementById('username-display');
 
     let currentUser = null;
-    let currentChatUserId = null;
-    let currentUsername = "";
 
-    auth.onAuthStateChanged(user => {
-      if (!user) return window.location.href = "index.html";
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = 'index.html';
       currentUser = user;
-      loadUsersFromRealtimeDB();
+      await loadUsername(user.uid);
+      listenMessages();
     });
 
-    function loadUsersFromRealtimeDB() {
-      const usersRef = rtdb.ref("users");
-      usersRef.on("value", snapshot => {
-        const usersList = document.getElementById("usersList");
-        usersList.innerHTML = "";
-        const users = snapshot.val();
-        for (let uid in users) {
-          const user = users[uid];
-          if (uid === currentUser.uid) {
-            currentUsername = user.username;
-            document.getElementById("currentUsernameDisplay").textContent = "Connecté : " + currentUsername;
-            continue;
-          }
-          const div = document.createElement("div");
-          div.className = "user";
-          div.textContent = user.username + (user.online ? " 🟢" : " ⚪");
-          div.onclick = () => openChatWith(uid, user.username);
-          usersList.appendChild(div);
-        }
-      });
-    }
-
-    function openChatWith(userId, username) {
-      currentChatUserId = userId;
-      document.getElementById("chatHeader").textContent = "Conversation avec " + username;
-      listenForMessages();
-    }
-
-    function listenForMessages() {
-      const ids = [currentUser.uid, currentChatUserId].sort();
-      const conversationId = ids.join("_");
-      const chatMessages = document.getElementById("chatMessages");
-
-      db.collection("privateMessages")
-        .where("conversationId", "==", conversationId)
-        .orderBy("timestamp")
-        .onSnapshot(snapshot => {
-          chatMessages.innerHTML = "";
-          snapshot.forEach(doc => {
-            const msg = doc.data();
-            const div = document.createElement("div");
-            div.className = "message " + (msg.senderId === currentUser.uid ? "sent" : "received");
-            div.textContent = msg.content;
-            chatMessages.appendChild(div);
-          });
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        });
+    async function loadUsername(uid) {
+      const snap = await get(child(dbRef(rtdb), `users/${uid}`));
+      if (snap.exists()) {
+        const data = snap.val();
+        usernameDisplay.textContent = data.username || 'Utilisateur';
+      }
     }
 
     async function sendMessage() {
-      const input = document.getElementById("messageInput");
-      const content = input.value.trim();
-      if (!content || !currentChatUserId) return;
-
-      const ids = [currentUser.uid, currentChatUserId].sort();
-      const conversationId = ids.join("_");
-
-      await db.collection("privateMessages").add({
-        conversationId,
-        senderId: currentUser.uid,
-        receiverId: currentChatUserId,
-        content,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      const text = messageInput.value.trim();
+      if (!text) return;
+      await addDoc(collection(fsdb, 'messages'), {
+        uid: currentUser.uid,
+        username: usernameDisplay.textContent,
+        message: text,
+        timestamp: Date.now()
       });
-
-      input.value = "";
+      messageInput.value = '';
     }
 
-    document.getElementById("messageInput").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendMessage();
-      }
+    function listenMessages() {
+      const q = query(collection(fsdb, 'messages'), orderBy('timestamp'));
+      onSnapshot(q, (snapshot) => {
+        chatBox.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const div = document.createElement('div');
+          div.className = 'message';
+          div.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
+          chatBox.appendChild(div);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = 'index.html');
     });
   </script>
 </body>
