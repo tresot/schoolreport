@@ -392,7 +392,11 @@
     <button class="refresh-news" id="refreshNewsBtn">Actualiser les nouvelles</button>
   </div>
 
-  <script>
+  <script type="module">
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getDatabase, ref, set, onValue, update, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import { app, auth, db } from "./firebase/firebase-config.js";
+
     // Fonctions de navigation
     function showPage(pageId) {
       const pages = ['searchPage', 'chatPage', 'dissertationPage', 'newsPage'];
@@ -593,6 +597,40 @@
         document.body.classList.add("dark");
       }
 
+      // Gestion de l'authentification
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Utilisateur connecté
+          const username = user.email ? user.email.split('@')[0] : user.displayName || "Utilisateur";
+          
+          // Mettre à jour tous les affichages de nom d'utilisateur
+          const usernameDisplays = document.querySelectorAll('.username-display');
+          usernameDisplays.forEach(display => {
+            display.textContent = `Connecté en tant que : ${username}`;
+          });
+          
+          // Initialiser le chat en temps réel si nécessaire
+          initChat();
+        } else {
+          // Utilisateur non connecté, rediriger vers la page de login
+          window.location.href = 'center.html';
+        }
+      });
+
+      function initChat() {
+        // Ici vous pouvez initialiser la connexion à la base de données pour le chat
+        // Par exemple :
+        /*
+        const db = getDatabase();
+        const chatRef = ref(db, 'chat/messages');
+        onValue(chatRef, (snapshot) => {
+          const data = snapshot.val();
+          // Mettre à jour l'affichage du chat
+        });
+        */
+      }
+
       // Écouteurs d'événements
       document.getElementById('searchBtn').addEventListener('click', showSearchPage);
       document.getElementById('chatBtn').addEventListener('click', showChatPage);
@@ -600,12 +638,13 @@
       document.getElementById('newsBtn').addEventListener('click', showNewsPage);
       document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
       document.getElementById('logoutBtn').addEventListener('click', () => {
-        {
-          // Supprimer les données de session
-          localStorage.removeItem('userSession');
-          // Rediriger vers la page de login
+        const auth = getAuth();
+        signOut(auth).then(() => {
+          // Déconnexion réussie, rediriger vers la page de login
           window.location.href = 'center.html';
-        }
+        }).catch((error) => {
+          console.error("Erreur de déconnexion:", error);
+        });
       });
       
       document.getElementById('searchButton').addEventListener('click', effectuerRecherche);
@@ -623,11 +662,6 @@
 
       // Comptage de mots
       document.getElementById('essayOutput').addEventListener('input', updateWordCount);
-
-      // Simuler un utilisateur connecté (à remplacer par votre système d'authentification)
-      document.getElementById('usernameDisplay').textContent = 'Connecté en tant que : ${username}';
-      document.getElementById('usernameDisplayChat').textContent = 'Connecté en tant que : ${username}';
-      document.getElementById('usernameDisplayNews').textContent = 'Connecté en tant que : ${username}';
     });
   </script>
 </body>
