@@ -545,60 +545,31 @@
       refreshBtn.textContent = 'Actualisation en cours...';
 
       try {
-        // Récupérer les actualités depuis Wikipedia (Portail:Actualité)
-        const response = await fetch('https://fr.wikipedia.org/api/rest_v1/page/html/Portail:Actualit%C3%A9');
-        const html = await response.text();
-        
-        // Créer un élément DOM temporaire pour parser le HTML
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        
-        // Extraire les actualités (les éléments h2 et les paragraphes suivants)
-        const newsItems = [];
-        const sections = doc.querySelectorAll('h2');
-        
-        sections.forEach(section => {
-          const title = section.textContent.trim();
-          let content = '';
-          let nextElement = section.nextElementSibling;
-          
-          // Collecter le contenu jusqu'au prochain h2
-          while(nextElement && nextElement.tagName !== 'H2') {
-            if(nextElement.tagName === 'P') {
-              content += nextElement.textContent.trim() + ' ';
-            }
-            nextElement = nextElement.nextElementSibling;
+        // Utilisation d'une API d'actualités factice pour l'exemple
+        // En production, utilisez une vraie API comme NewsAPI
+        const actualites = [
+          {
+            title: "Nouvelle fonctionnalité disponible",
+            description: "Une nouvelle mise à jour de l'application est maintenant disponible avec des améliorations de performance.",
+            date: new Date().toLocaleDateString('fr-FR')
+          },
+          {
+            title: "Maintenance prévue ce week-end",
+            description: "Une maintenance est prévue ce week-end pour améliorer la stabilité du service. Merci de votre compréhension.",
+            date: new Date().toLocaleDateString('fr-FR')
           }
-          
-          if(title && content) {
-            newsItems.push({
-              title: title.replace(/\[modifier\]/, ''),
-              description: content.trim(),
-              date: new Date().toLocaleDateString('fr-FR')
-            });
-          }
-        });
-
-        // Afficher les actualités
+        ];
+        
         let htmlContent = '';
-        if(newsItems.length > 0) {
-          newsItems.slice(0, 5).forEach(article => { // Limiter à 5 actualités
-            htmlContent += `
-              <div class="news-item">
-                <h3>${article.title}</h3>
-                <p>${article.description.substring(0, 200)}...</p>
-                <div class="date">${article.date}</div>
-              </div>
-            `;
-          });
-        } else {
-          htmlContent = `
+        actualites.forEach(article => {
+          htmlContent += `
             <div class="news-item">
-              <h3>Aucune actualité trouvée</h3>
-              <p>Impossible de récupérer les actualités depuis Wikipedia.</p>
+              <h3>${article.title}</h3>
+              <p>${article.description}</p>
+              <div class="date">${article.date}</div>
             </div>
           `;
-        }
+        });
 
         newsContent.innerHTML = htmlContent;
       } catch (error) {
@@ -629,7 +600,12 @@
       document.getElementById('newsBtn').addEventListener('click', showNewsPage);
       document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
       document.getElementById('logoutBtn').addEventListener('click', () => {
-        alert('Fonction de déconnexion à implémenter');
+        if(confirm('Voulez-vous vraiment vous déconnecter ?')) {
+          // Supprimer les données de session
+          localStorage.removeItem('userSession');
+          // Rediriger vers la page de login
+          window.location.href = 'index.html';
+        }
       });
       
       document.getElementById('searchButton').addEventListener('click', effectuerRecherche);
