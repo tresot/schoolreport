@@ -602,7 +602,7 @@
       onAuthStateChanged(auth, (user) => {
         if (user) {
           // Utilisateur connecté
-          const username = user.email ? user.email.split('@')[0] : user.displayName || "Utilisateur";
+          const username = username: user.displayName || "Utilisateur";
           
           // Mettre à jour tous les affichages de nom d'utilisateur
           const usernameDisplays = document.querySelectorAll('.username-display');
