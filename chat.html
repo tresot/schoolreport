@@ -1,3 +1,4 @@
+// === chat.html (avec avatar, nom et détails dans l'en-tête du chat) ===
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,70 +8,117 @@
   <link rel="stylesheet" href="theme.css">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
       margin: 0;
-      padding: 0;
-    }
-    #chat-container {
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    #top-bar {
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
+      height: 100vh;
+      background: #f0f2f5;
     }
-    #chat-box {
-      height: 400px;
+    .sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid #ccc;
+      padding: 20px;
       overflow-y: auto;
-      border: 1px solid #ddd;
-      padding: 10px;
-      background: #fafafa;
+    }
+    .sidebar h2 {
+      font-size: 18px;
       margin-bottom: 10px;
-      border-radius: 8px;
+      color: #4361ee;
     }
-    input, button {
+    .user {
       padding: 10px;
-      border-radius: 6px;
-      font-size: 14px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
     }
-    input {
-      width: calc(100% - 100px);
+    .user.online {
+      background: #e0ffe0;
+    }
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: white;
+      border-bottom: 1px solid #ccc;
+    }
+    .chat-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .chat-header-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header-info span {
+      font-weight: bold;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      max-width: 60%;
+      padding: 10px;
+      border-radius: 12px;
+      background: #e6ecf0;
+      align-self: flex-start;
+    }
+    .message.self {
+      background: #4361ee;
+      color: white;
+      align-self: flex-end;
+    }
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      background: white;
+      border-top: 1px solid #ccc;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
       border: 1px solid #ccc;
       margin-right: 10px;
     }
-    button {
+    .chat-input button {
+      padding: 10px 20px;
       background: #4361ee;
       color: white;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
-    }
-    button:hover {
-      background: #3f37c9;
-    }
-    .message {
-      margin-bottom: 8px;
-    }
-    .message strong {
-      color: #3f37c9;
     }
   </style>
 </head>
 <body>
-  <div id="chat-container">
-    <div id="top-bar">
-      <span id="username-display">Utilisateur</span>
-      <button id="logout-btn">Déconnexion</button>
+  <div class="sidebar">
+    <h2>Utilisateurs en ligne</h2>
+    <div id="user-list"></div>
+  </div>
+  <div class="chat-area">
+    <div class="chat-header" id="chat-header">
+      <img src="" id="chat-avatar" alt="Avatar" style="display:none;">
+      <div class="chat-header-info">
+        <span id="chat-username">Choisis un utilisateur</span>
+        <small id="chat-status"></small>
+      </div>
     </div>
-    <div id="chat-box"></div>
-    <div style="display: flex;">
-      <input type="text" id="message-input" placeholder="Tape ton message...">
+    <div class="chat-messages" id="chat-box"></div>
+    <div class="chat-input">
+      <input type="text" id="message-input" placeholder="Tape ton message..." />
       <button id="send-btn">Envoyer</button>
     </div>
   </div>
@@ -82,75 +130,96 @@
       signOut
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import {
+      ref as dbRef,
+      onValue,
+      update
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import {
       collection,
       addDoc,
       query,
       orderBy,
-      onSnapshot
+      onSnapshot,
+      where
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import {
-      ref as dbRef,
-      child,
-      get
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
+    const userList = document.getElementById('user-list');
     const chatBox = document.getElementById('chat-box');
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const usernameDisplay = document.getElementById('username-display');
+    const chatUsername = document.getElementById('chat-username');
+    const chatAvatar = document.getElementById('chat-avatar');
+    const chatStatus = document.getElementById('chat-status');
 
     let currentUser = null;
+    let selectedUserId = null;
+    let selectedUserData = null;
 
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, user => {
       if (!user) return window.location.href = 'index.html';
       currentUser = user;
-      await loadUsername(user.uid);
-      listenMessages();
+      update(dbRef(rtdb, `users/${user.uid}`), { online: true });
+      listenUsers();
     });
 
-    async function loadUsername(uid) {
-      const snap = await get(child(dbRef(rtdb), `users/${uid}`));
-      if (snap.exists()) {
-        const data = snap.val();
-        usernameDisplay.textContent = data.username || 'Utilisateur';
-      }
-    }
-
-    async function sendMessage() {
-      const text = messageInput.value.trim();
-      if (!text) return;
-      await addDoc(collection(fsdb, 'messages'), {
-        uid: currentUser.uid,
-        username: usernameDisplay.textContent,
-        message: text,
-        timestamp: Date.now()
+    function listenUsers() {
+      const ref = dbRef(rtdb, 'users');
+      onValue(ref, snap => {
+        userList.innerHTML = '';
+        snap.forEach(child => {
+          const userData = child.val();
+          if (child.key !== currentUser.uid) {
+            const div = document.createElement('div');
+            div.className = 'user' + (userData.online ? ' online' : '');
+            div.textContent = userData.username || child.key;
+            div.onclick = () => {
+              selectedUserId = child.key;
+              selectedUserData = userData;
+              chatUsername.textContent = userData.username || 'Conversation';
+              chatAvatar.src = userData.avatar || 'https://via.placeholder.com/40';
+              chatAvatar.style.display = 'block';
+              chatStatus.textContent = userData.online ? 'En ligne' : 'Hors ligne';
+              listenMessages();
+            };
+            userList.appendChild(div);
+          }
+        });
       });
-      messageInput.value = '';
     }
 
     function listenMessages() {
-      const q = query(collection(fsdb, 'messages'), orderBy('timestamp'));
-      onSnapshot(q, (snapshot) => {
+      if (!selectedUserId) return;
+      const roomId = [currentUser.uid, selectedUserId].sort().join('_');
+      const q = query(collection(fsdb, 'messages'), where('room', '==', roomId), orderBy('timestamp'));
+      onSnapshot(q, snap => {
         chatBox.innerHTML = '';
-        snapshot.forEach((doc) => {
-          const data = doc.data();
+        snap.forEach(doc => {
+          const m = doc.data();
           const div = document.createElement('div');
-          div.className = 'message';
-          div.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
+          div.className = 'message' + (m.uid === currentUser.uid ? ' self' : '');
+          div.textContent = m.message;
           chatBox.appendChild(div);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
       });
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
+    async function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text || !selectedUserId) return;
+      const roomId = [currentUser.uid, selectedUserId].sort().join('_');
+      await addDoc(collection(fsdb, 'messages'), {
+        room: roomId,
+        uid: currentUser.uid,
+        message: text,
+        timestamp: Date.now()
+      });
+      messageInput.value = '';
+    }
 
-    logoutBtn.addEventListener('click', () => {
-      signOut(auth).then(() => window.location.href = 'index.html');
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
     });
   </script>
 </body>
