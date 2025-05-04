@@ -1,173 +1,1133 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SchoolReport - Fichiers partagés</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f7fa;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfert de Fichiers | SchoolReport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+        }
 
-    h1 {
-      text-align: center;
-      color: #3f37c9;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      text-align: center;
-    }
+        body {
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            color: var(--dark);
+        }
 
-    input, select {
-      margin: 10px 0;
-      padding: 10px;
-      width: 100%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    button {
-      background: #4361ee;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 40px;
+        }
 
-    .file-item {
-      background: white;
-      border-left: 5px solid #3f37c9;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
 
-    .file-item a {
-      text-decoration: none;
-      color: #4361ee;
-    }
+        .logo h1 {
+            color: var(--dark);
+            font-size: 24px;
+            margin-left: 10px;
+        }
 
-    .file-item small {
-      display: block;
-      color: #777;
-      margin-top: 5px;
-    }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
 
-    .error {
-      color: red;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-  </style>
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 14px;
+        }
+
+        .transfer-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .transfer-section {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 26px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--warning);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e07c0e;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c1121f;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            padding: 20px;
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .file-label:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .file-label i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-container.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .code-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .code-container.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .code-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 3px;
+            color: var(--primary);
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .code-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .users-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .user-item.selected {
+            background-color: rgba(67, 97, 238, 0.1);
+            border: 1px solid var(--primary);
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            overflow: hidden;
+        }
+
+        .user-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .status-online {
+            color: #2ecc71;
+        }
+
+        .status-offline {
+            color: #e63946;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .modal-message {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .transfer-container {
+                flex-direction: column;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-menu {
+                margin-top: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Fichiers partagés</h1>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>SchoolReport - Transfert de Fichiers</h1>
+            </div>
 
-  <form onsubmit="uploadFile(); return false;">
-    <input type="file" id="fileInput" required />
-    <select id="subjectSelect" required>
-      <option value="">Choisir une matière</option>
-      <option value="Maths">Maths</option>
-      <option value="SVT">SVT</option>
-      <option value="Physique">Physique</option>
-      <option value="Français">Français</option>
-      <option value="Anglais">Anglais</option>
-      <option value="Histoire">Histoire</option>
-    </select>
-    <div class="error" id="error"></div>
-    <button type="submit">Uploader</button>
-  </form>
+            <div class="user-menu">
+                <div class="user-avatar" id="user-avatar">
+                    <img id="profile-pic">
+                </div>
+                <span class="user-name" id="user-name">Utilisateur</span>
+                <button class="logout-btn" id="logout-btn">Déconnexion</button>
+            </div>
+        </header>
 
-  <div id="fileList"></div>
+        <div class="transfer-container">
+            <!-- Section Envoi -->
+            <div class="transfer-section animate__animated animate__fadeInLeft">
+                <h2 class="section-title"><i>📤</i> Envoyer un fichier</h2>
+                
+                <input type="file" id="file-input" class="file-input">
+                <label for="file-input" class="file-label" id="file-label">
+                    <i>📁</i>
+                    <span>Cliquez pour sélectionner un fichier ou glissez-déposez ici</span>
+                </label>
+                
+                <div class="file-info" id="file-info">
+                    <div class="file-name" id="file-name"></div>
+                    <div class="file-size" id="file-size"></div>
+                </div>
+                
+                <div class="users-list" id="users-list">
+                    <h3>Utilisateurs en ligne</h3>
+                    <div id="online-users-container"></div>
+                </div>
+                
+                <div class="code-container" id="receiver-code-container">
+                    <input type="text" class="code-input" id="receiver-code-input" placeholder="Entrez le code du destinataire">
+                    <button class="btn btn-secondary" id="send-file-btn">Envoyer le fichier</button>
+                </div>
+                
+                <div class="progress-container" id="send-progress-container">
+                    <div class="progress-bar">
+                        <div class="progress" id="send-progress-bar"></div>
+                    </div>
+                    <div class="progress-text" id="send-progress-text">Préparation du transfert...</div>
+                </div>
+            </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+            <!-- Section Réception -->
+            <div class="transfer-section animate__animated animate__fadeInRight">
+                <h2 class="section-title"><i>📥</i> Recevoir un fichier</h2>
+                
+                <button class="btn" id="generate-code-btn">Générer un code de réception</button>
+                
+                <div class="code-container" id="code-container">
+                    <div class="code-display" id="code-display"></div>
+                    <div class="progress-text">Donnez ce code à l'expéditeur pour recevoir le fichier</div>
+                </div>
+                
+                <div class="progress-container" id="receive-progress-container">
+                    <div class="progress-bar">
+                        <div class="progress" id="receive-progress-bar"></div>
+                    </div>
+                    <div class="progress-text" id="receive-progress-text">En attente de connexion...</div>
+                </div>
+                
+                <div class="file-info" id="receive-file-info">
+                    <div class="file-name" id="receive-file-name"></div>
+                    <div class="file-size" id="receive-file-size"></div>
+                    <button class="btn btn-success" id="download-btn" style="display: none; margin-top: 15px;">Télécharger le fichier</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-      authDomain: "schoolreport-f8db0.firebaseapp.com",
-      projectId: "schoolreport-f8db0",
-      storageBucket: "schoolreport-f8db0.appspot.com",
-      messagingSenderId: "313069994450",
-      appId: "1:313069994450:web:37b009be4f1812fdca880b"
-    };
+    <!-- Modal de confirmation -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Transfert terminé</h3>
+            <p class="modal-message" id="modal-message">Le fichier a été transféré avec succès!</p>
+            <div class="modal-actions">
+                <button class="btn" id="modal-ok-btn">OK</button>
+            </div>
+        </div>
+    </div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+            authDomain: "schoolreport-f8db0.firebaseapp.com",
+            databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "schoolreport-f8db0",
+            storageBucket: "schoolreport-f8db0.firebasestorage.app",
+            messagingSenderId: "313069994450",
+            appId: "1:313069994450:web:37b009be4f1812fdca880b",
+            measurementId: "G-N8YF0VKWCD"
+        };
 
-    let currentUser;
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
 
-    onAuthStateChanged(auth, user => {
-      if (!user) window.location.href = 'index.html';
-      currentUser = user;
-      loadFiles();
-    });
+        // Variables globales
+        let currentUser = null;
+        let selectedFile = null;
+        let peerConnection = null;
+        let dataChannel = null;
+        let currentCode = null;
+        let receivingFile = {
+            name: '',
+            size: 0,
+            received: 0,
+            chunks: []
+        };
+        let transferInProgress = false;
 
-    window.uploadFile = async function () {
-      const fileInput = document.getElementById('fileInput');
-      const subject = document.getElementById('subjectSelect').value;
-      const errorDiv = document.getElementById('error');
-      const file = fileInput.files[0];
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthState();
+            setupEventListeners();
+            setupDragAndDrop();
+        });
 
-      if (!file || !subject) return;
-      if (file.size > 20 * 1024 * 1024) {
-        errorDiv.textContent = "❌ Fichier trop volumineux. Limite de 20 Mo.";
-        return;
-      }
+        function checkAuthState() {
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.href = 'center.html';
+                } else {
+                    currentUser = user;
+                    loadUserProfile(user);
+                    setupPresenceTracking(user);
+                }
+            });
+        }
 
-      errorDiv.textContent = "";
-      const filePath = `shared_files/${subject}/${Date.now()}_${file.name}`;
-      const fileRef = ref(storage, filePath);
-      await uploadBytes(fileRef, file);
-      await addDoc(collection(db, "shared_files"), {
-        name: file.name,
-        subject,
-        path: filePath,
-        uploader: currentUser.email,
-        createdAt: Date.now()
-      });
+        function loadUserProfile(user) {
+            const userRef = db.ref('users/' + user.uid);
+            
+            userRef.once('value').then(snapshot => {
+                const userData = snapshot.val();
+                
+                if (userData) {
+                    document.getElementById('user-name').textContent = userData.username;
+                    
+                    const profilePic = document.getElementById('profile-pic');
+                    if (userData.profileImage) {
+                        profilePic.src = userData.profileImage;
+                        profilePic.style.display = 'block';
+                    } else {
+                        // Créer une initiale si pas d'image
+                        const avatar = document.getElementById('user-avatar');
+                        const initial = document.createElement('div');
+                        initial.textContent = userData.username.charAt(0).toUpperCase();
+                        initial.style.display = 'flex';
+                        initial.style.alignItems = 'center';
+                        initial.style.justifyContent = 'center';
+                        initial.style.width = '100%';
+                        initial.style.height = '100%';
+                        initial.style.fontSize = '18px';
+                        avatar.appendChild(initial);
+                    }
+                } else {
+                    window.location.href = 'center.html';
+                }
+            }).catch(error => {
+                console.error("Erreur de chargement du profil:", error);
+                window.location.href = 'center.html';
+            });
+        }
 
-      loadFiles();
-      fileInput.value = "";
-      document.getElementById('subjectSelect').value = "";
-    }
+        function setupPresenceTracking(user) {
+            const userStatusRef = db.ref('connectedUsers/' + user.uid);
+            
+            // Mettre à jour la présence
+            userStatusRef.set({
+                uid: user.uid,
+                username: document.getElementById('user-name').textContent,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                status: 'online'
+            });
 
-    async function loadFiles() {
-      const listDiv = document.getElementById('fileList');
-      listDiv.innerHTML = "";
-      const filesSnap = await getDocs(collection(db, "shared_files"));
-      const files = filesSnap.docs.map(doc => doc.data());
+            // Nettoyer en cas de déconnexion
+            userStatusRef.onDisconnect().remove();
 
-      files.sort((a, b) => b.createdAt - a.createdAt);
+            // Écouter les utilisateurs en ligne
+            const connectedUsersRef = db.ref('connectedUsers');
+            
+            connectedUsersRef.on('value', snapshot => {
+                const users = snapshot.val() || {};
+                const onlineUsersContainer = document.getElementById('online-users-container');
+                onlineUsersContainer.innerHTML = '';
+                
+                Object.entries(users).forEach(([uid, userData]) => {
+                    if (uid !== user.uid) {
+                        const userElement = document.createElement('div');
+                        userElement.className = 'user-item';
+                        userElement.dataset.uid = uid;
+                        
+                        userElement.innerHTML = `
+                            <div class="user-avatar-small">
+                                ${userData.profileImage ? 
+                                    `<img src="${userData.profileImage}">` : 
+                                    userData.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name">${userData.username}</div>
+                                <div class="user-status status-online">En ligne</div>
+                            </div>
+                        `;
+                        
+                        userElement.addEventListener('click', () => {
+                            document.querySelectorAll('.user-item').forEach(item => {
+                                item.classList.remove('selected');
+                            });
+                            userElement.classList.add('selected');
+                            document.getElementById('receiver-code-container').classList.add('show');
+                        });
+                        
+                        onlineUsersContainer.appendChild(userElement);
+                    }
+                });
+            });
+        }
 
-      for (const file of files) {
-        const url = await getDownloadURL(ref(storage, file.path));
-        const div = document.createElement('div');
-        div.className = 'file-item';
-        div.innerHTML = `
-          <a href="${url}" target="_blank">${file.name}</a>
-          <small>Matière: ${file.subject} | Partagé par: ${file.uploader}</small>
-        `;
-        listDiv.appendChild(div);
-      }
-    }
-  </script>
+        function setupEventListeners() {
+            // Gestion de la déconnexion
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                auth.signOut().then(() => {
+                    window.location.href = 'center.html';
+                });
+            });
+
+            // Gestion de la sélection de fichier
+            document.getElementById('file-input').addEventListener('change', handleFileSelect);
+
+            // Gestion du bouton d'envoi
+            document.getElementById('send-file-btn').addEventListener('click', initiateFileTransfer);
+
+            // Gestion du bouton de génération de code
+            document.getElementById('generate-code-btn').addEventListener('click', generateReceivingCode);
+
+            // Gestion du bouton de téléchargement
+            document.getElementById('download-btn').addEventListener('click', downloadReceivedFile);
+
+            // Gestion du modal
+            document.getElementById('modal-ok-btn').addEventListener('click', () => {
+                document.getElementById('confirmation-modal').classList.remove('show');
+            });
+        }
+
+        function setupDragAndDrop() {
+            const fileLabel = document.getElementById('file-label');
+            
+            fileLabel.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileLabel.style.borderColor = var(--primary);
+                fileLabel.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
+            });
+            
+            fileLabel.addEventListener('dragleave', () => {
+                fileLabel.style.borderColor = '#ced4da';
+                fileLabel.style.backgroundColor = 'transparent';
+            });
+            
+            fileLabel.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileLabel.style.borderColor = '#ced4da';
+                fileLabel.style.backgroundColor = 'transparent';
+                
+                if (e.dataTransfer.files.length) {
+                    document.getElementById('file-input').files = e.dataTransfer.files;
+                    handleFileSelect({ target: document.getElementById('file-input') });
+                }
+            });
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            selectedFile = file;
+            
+            // Afficher les infos du fichier
+            document.getElementById('file-info').classList.add('show');
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-size').textContent = formatFileSize(file.size);
+            
+            // Activer la section d'envoi
+            document.getElementById('users-list').style.display = 'block';
+        }
+
+        function generateReceivingCode() {
+            if (transferInProgress) {
+                showModal('Un transfert est déjà en cours', 'Veuillez attendre la fin du transfert actuel.');
+                return;
+            }
+            
+            // Générer un code aléatoire de 6 chiffres
+            currentCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Afficher le code
+            document.getElementById('code-display').textContent = currentCode;
+            document.getElementById('code-container').classList.add('show');
+            document.getElementById('generate-code-btn').textContent = 'Regénérer le code';
+            
+            // Préparer la réception
+            prepareFileReceiving();
+        }
+
+        function prepareFileReceiving() {
+            // Réinitialiser les données de réception
+            receivingFile = {
+                name: '',
+                size: 0,
+                received: 0,
+                chunks: []
+            };
+            
+            // Afficher la progression
+            const progressContainer = document.getElementById('receive-progress-container');
+            progressContainer.classList.add('show');
+            document.getElementById('receive-progress-text').textContent = 'En attente de connexion...';
+            
+            // Écouter les demandes de connexion pour ce code
+            const transferRef = db.ref('fileTransfers/' + currentCode);
+            
+            transferRef.on('value', snapshot => {
+                const transferData = snapshot.val();
+                
+                if (transferData && transferData.senderId && transferData.senderId !== currentUser.uid) {
+                    // Une demande de transfert a été faite pour ce code
+                    document.getElementById('receive-progress-text').textContent = 'Connexion en cours...';
+                    
+                    // Démarrer la connexion WebRTC
+                    initiateWebRTCConnection(transferData.senderId, false);
+                    
+                    // Supprimer la référence pour éviter les connexions multiples
+                    transferRef.remove();
+                }
+            });
+        }
+
+        function initiateFileTransfer() {
+            if (!selectedFile) {
+                showModal('Aucun fichier sélectionné', 'Veuillez sélectionner un fichier à envoyer.');
+                return;
+            }
+            
+            const receiverCode = document.getElementById('receiver-code-input').value.trim();
+            if (!receiverCode) {
+                showModal('Code manquant', 'Veuillez entrer le code du destinataire.');
+                return;
+            }
+            
+            if (transferInProgress) {
+                showModal('Transfert en cours', 'Un transfert est déjà en cours.');
+                return;
+            }
+            
+            transferInProgress = true;
+            
+            // Afficher la progression
+            const progressContainer = document.getElementById('send-progress-container');
+            progressContainer.classList.add('show');
+            document.getElementById('send-progress-text').textContent = 'Initialisation du transfert...';
+            
+            // Enregistrer la demande de transfert
+            const transferRef = db.ref('fileTransfers/' + receiverCode);
+            transferRef.set({
+                senderId: currentUser.uid,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                document.getElementById('send-progress-text').textContent = 'En attente du destinataire...';
+                
+                // Vérifier si le destinataire a accepté
+                transferRef.on('value', snapshot => {
+                    if (!snapshot.exists()) {
+                        // Le destinataire a accepté, démarrer WebRTC
+                        initiateWebRTCConnection(receiverCode, true);
+                    }
+                });
+                
+                // Timeout après 60 secondes
+                setTimeout(() => {
+                    if (transferInProgress) {
+                        transferRef.remove();
+                        transferInProgress = false;
+                        progressContainer.classList.remove('show');
+                        showModal('Délai dépassé', 'Le destinataire n\'a pas répondu dans le délai imparti.');
+                    }
+                }, 60000);
+            });
+        }
+
+        function initiateWebRTCConnection(targetId, isInitiator) {
+            // Configuration WebRTC
+            const configuration = {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            };
+            
+            peerConnection = new RTCPeerConnection(configuration);
+            
+            // Gestion des candidats ICE
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    // Envoyer le candidat à l'autre pair via Firebase
+                    const candidateRef = db.ref(`webrtcCandidates/${isInitiator ? targetId : currentCode}/${currentUser.uid}`);
+                    candidateRef.push({
+                        candidate: event.candidate.toJSON(),
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+            };
+            
+            if (isInitiator) {
+                // Créer un canal de données pour l'envoi
+                dataChannel = peerConnection.createDataChannel('fileTransfer');
+                setupDataChannel(dataChannel, true);
+                
+                // Créer une offre
+                peerConnection.createOffer()
+                    .then(offer => peerConnection.setLocalDescription(offer))
+                    .then(() => {
+                        // Envoyer l'offre au destinataire
+                        const offerRef = db.ref(`webrtcOffers/${targetId}`);
+                        offerRef.set({
+                            from: currentUser.uid,
+                            offer: peerConnection.localDescription.toJSON(),
+                            fileName: selectedFile.name,
+                            fileSize: selectedFile.size,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Erreur création offre:", error);
+                        resetTransfer();
+                    });
+                
+                // Écouter la réponse
+                const answerRef = db.ref(`webrtcAnswers/${currentUser.uid}/${targetId}`);
+                answerRef.on('value', snapshot => {
+                    const answerData = snapshot.val();
+                    if (answerData) {
+                        peerConnection.setRemoteDescription(new RTCSessionDescription(answerData.answer))
+                            .catch(error => {
+                                console.error("Erreur setRemoteDescription:", error);
+                                resetTransfer();
+                            });
+                        answerRef.off();
+                    }
+                });
+            } else {
+                // Écouter le canal de données
+                peerConnection.ondatachannel = event => {
+                    dataChannel = event.channel;
+                    setupDataChannel(dataChannel, false);
+                };
+                
+                // Écouter les offres
+                const offerRef = db.ref(`webrtcOffers/${currentCode}`);
+                offerRef.on('value', snapshot => {
+                    const offerData = snapshot.val();
+                    if (offerData && offerData.from !== currentUser.uid) {
+                        // Configurer les infos du fichier
+                        receivingFile.name = offerData.fileName;
+                        receivingFile.size = offerData.fileSize;
+                        
+                        document.getElementById('receive-file-name').textContent = offerData.fileName;
+                        document.getElementById('receive-file-size').textContent = formatFileSize(offerData.fileSize);
+                        document.getElementById('receive-progress-text').textContent = 'Connexion établie, transfert en cours...';
+                        
+                        peerConnection.setRemoteDescription(new RTCSessionDescription(offerData.offer))
+                            .then(() => peerConnection.createAnswer())
+                            .then(answer => peerConnection.setLocalDescription(answer))
+                            .then(() => {
+                                // Envoyer la réponse
+                                const answerRef = db.ref(`webrtcAnswers/${offerData.from}/${currentCode}`);
+                                answerRef.set({
+                                    answer: peerConnection.localDescription.toJSON(),
+                                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                                });
+                                offerRef.off();
+                            })
+                            .catch(error => {
+                                console.error("Erreur création réponse:", error);
+                                resetTransfer();
+                            });
+                    }
+                });
+            }
+            
+            // Écouter les candidats ICE
+            const candidatesRef = db.ref(`webrtcCandidates/${isInitiator ? currentUser.uid : currentCode}/${isInitiator ? targetId : currentUser.uid}`);
+            candidatesRef.on('child_added', snapshot => {
+                const candidateData = snapshot.val();
+                peerConnection.addIceCandidate(new RTCIceCandidate(candidateData.candidate))
+                    .catch(error => {
+                        console.error("Erreur addIceCandidate:", error);
+                    });
+            });
+            
+            // Nettoyer après la connexion
+            peerConnection.onconnectionstatechange = () => {
+                if (peerConnection.connectionState === 'disconnected' || 
+                    peerConnection.connectionState === 'failed') {
+                    resetTransfer();
+                }
+            };
+        }
+
+        function setupDataChannel(channel, isSender) {
+            channel.binaryType = 'arraybuffer';
+            
+            channel.onopen = () => {
+                if (isSender) {
+                    // Envoyer le fichier
+                    sendFile(channel);
+                } else {
+                    // Prêt à recevoir
+                    document.getElementById('receive-progress-text').textContent = 'Prêt à recevoir le fichier...';
+                }
+            };
+            
+            channel.onclose = () => {
+                resetTransfer();
+            };
+            
+            channel.onerror = error => {
+                console.error("Erreur DataChannel:", error);
+                resetTransfer();
+            };
+            
+            if (!isSender) {
+                channel.onmessage = event => {
+                    receiveFileChunk(event.data);
+                };
+            }
+        }
+
+        function sendFile(channel) {
+            const fileReader = new FileReader();
+            const chunkSize = 16384; // 16KB
+            let offset = 0;
+            let chunkIndex = 0;
+            
+            document.getElementById('send-progress-text').textContent = 'Transfert en cours...';
+            
+            fileReader.onload = event => {
+                if (channel.readyState !== 'open') {
+                    resetTransfer();
+                    return;
+                }
+                
+                const chunk = event.target.result;
+                channel.send(chunk);
+                
+                offset += chunk.byteLength;
+                chunkIndex++;
+                
+                // Mettre à jour la progression
+                const progress = (offset / selectedFile.size) * 100;
+                document.getElementById('send-progress-bar').style.width = `${progress}%`;
+                document.getElementById('send-progress-text').textContent = 
+                    `Transfert: ${Math.round(progress)}% (${formatFileSize(offset)}/${formatFileSize(selectedFile.size)})`;
+                
+                if (offset < selectedFile.size) {
+                    // Lire le prochain chunk
+                    readNextChunk(fileReader, offset, chunkSize);
+                } else {
+                    // Transfert terminé
+                    transferInProgress = false;
+                    document.getElementById('send-progress-text').textContent = 'Transfert terminé!';
+                    showModal('Transfert réussi', `Le fichier "${selectedFile.name}" a été envoyé avec succès.`);
+                    
+                    // Réinitialiser après un délai
+                    setTimeout(() => {
+                        document.getElementById('send-progress-container').classList.remove('show');
+                        document.getElementById('file-info').classList.remove('show');
+                        document.getElementById('file-input').value = '';
+                        selectedFile = null;
+                    }, 3000);
+                }
+            };
+            
+            fileReader.onerror = error => {
+                console.error("Erreur lecture fichier:", error);
+                resetTransfer();
+            };
+            
+            // Commencer la lecture
+            readNextChunk(fileReader, offset, chunkSize);
+        }
+
+        function readNextChunk(fileReader, offset, chunkSize) {
+            const file = selectedFile.slice(offset, offset + chunkSize);
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        function receiveFileChunk(chunk) {
+            if (!transferInProgress) {
+                // Premier chunk - contient les métadonnées
+                try {
+                    const metadata = JSON.parse(new TextDecoder().decode(chunk));
+                    receivingFile.name = metadata.name;
+                    receivingFile.size = metadata.size;
+                    
+                    document.getElementById('receive-file-name').textContent = metadata.name;
+                    document.getElementById('receive-file-size').textContent = formatFileSize(metadata.size);
+                    document.getElementById('receive-progress-text').textContent = 'Réception en cours...';
+                    
+                    transferInProgress = true;
+                    return;
+                } catch (e) {
+                    console.error("Erreur parsing metadata:", e);
+                }
+            }
+            
+            // Stocker le chunk
+            receivingFile.chunks.push(chunk);
+            receivingFile.received += chunk.byteLength;
+            
+            // Mettre à jour la progression
+            const progress = (receivingFile.received / receivingFile.size) * 100;
+            document.getElementById('receive-progress-bar').style.width = `${progress}%`;
+            document.getElementById('receive-progress-text').textContent = 
+                `Réception: ${Math.round(progress)}% (${formatFileSize(receivingFile.received)}/${formatFileSize(receivingFile.size)})`;
+            
+            if (receivingFile.received >= receivingFile.size) {
+                // Transfert terminé
+                transferInProgress = false;
+                document.getElementById('receive-progress-text').textContent = 'Réception terminée!';
+                document.getElementById('receive-file-info').classList.add('show');
+                document.getElementById('download-btn').style.display = 'block';
+                
+                showModal('Transfert réussi', `Le fichier "${receivingFile.name}" a été reçu avec succès.`);
+            }
+        }
+
+        function downloadReceivedFile() {
+            // Combiner tous les chunks
+            const blob = new Blob(receivingFile.chunks);
+            const url = URL.createObjectURL(blob);
+            
+            // Créer un lien de téléchargement
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = receivingFile.name;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Nettoyer
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+
+        function resetTransfer() {
+            if (transferInProgress) {
+                transferInProgress = false;
+                
+                // Fermer les connexions
+                if (dataChannel) {
+                    dataChannel.close();
+                    dataChannel = null;
+                }
+                
+                if (peerConnection) {
+                    peerConnection.close();
+                    peerConnection = null;
+                }
+                
+                // Réinitialiser l'interface
+                document.getElementById('send-progress-container').classList.remove('show');
+                document.getElementById('receive-progress-container').classList.remove('show');
+                
+                showModal('Transfert interrompu', 'La connexion a été interrompue. Veuillez réessayer.');
+            }
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('confirmation-modal').classList.add('show');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
 </body>
 </html>
