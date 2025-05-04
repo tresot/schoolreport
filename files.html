@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* [Tout le CSS original reste inchangé] */
+        /* [CSS complet inchangé comme demandé] */
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -711,7 +711,8 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     status: 'waiting',
                     receiverId: currentUser.uid,
-                    receiverCandidates: []
+                    receiverCandidates: [],
+                    joined: true
                 });
                 
                 prepareFileReceiving();
@@ -739,20 +740,15 @@
                 const sessionData = doc.data();
                 if (!sessionData) return;
                 
-                console.log("Session data:", sessionData); // Debug log
+                console.log("Session data update:", sessionData);
                 
                 if (sessionData.status === 'connected' && sessionData.offer) {
-                    console.log("Offer reçue:", sessionData.offer); // Debug log
-                    document.getElementById('receive-progress-text').textContent = 'Connexion en cours...';
-                    
-                    receivingFile.name = sessionData.fileName;
-                    receivingFile.size = sessionData.fileSize;
-                    
-                    document.getElementById('receive-file-name').textContent = sessionData.fileName;
-                    document.getElementById('receive-file-size').textContent = formatFileSize(sessionData.fileSize);
+                    console.log("Offer reçue, tentative de connexion...");
                     
                     try {
-                        await initiateWebRTCConnection(currentCode, false, sessionData.offer);
+                        if (!peerConnection) {
+                            await initiateWebRTCConnection(currentCode, false, sessionData.offer);
+                        }
                     } catch (error) {
                         console.error("Erreur lors de l'initiation WebRTC:", error);
                         resetTransfer();
@@ -789,31 +785,36 @@
                 const sessionRef = fs.collection('sessions').doc(receiverCode);
                 const sessionDoc = await sessionRef.get();
                 
-                if (!sessionDoc.exists || sessionDoc.data().status !== 'waiting') {
-                    throw new Error('Code invalide ou session expirée');
+                if (!sessionDoc.exists || !sessionDoc.data().joined) {
+                    throw new Error('Code invalide ou destinataire non prêt');
                 }
                 
                 const configuration = {
-    iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        {
-            urls: 'turn:openrelay.metered.ca:80',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
-        }
-    ],
-    iceTransportPolicy: 'all',
-    bundlePolicy: 'max-bundle',
-    rtcpMuxPolicy: 'require'
-};
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { 
+                            urls: 'turn:openrelay.metered.ca:80',
+                            username: 'openrelayproject',
+                            credential: 'openrelayproject'
+                        },
+                        {
+                            urls: 'turn:numb.viagenie.ca',
+                            credential: 'muazkh',
+                            username: 'webrtc@live.com'
+                        }
+                    ],
+                    iceTransportPolicy: 'all',
+                    bundlePolicy: 'max-bundle',
+                    rtcpMuxPolicy: 'require'
+                };
                 
                 peerConnection = new RTCPeerConnection(configuration);
                 
                 peerConnection.onicecandidate = async (event) => {
                     if (event.candidate) {
-                        console.log("Nouveau candidat ICE envoyé:", event.candidate); // Debug log
+                        console.log("Nouveau candidat ICE envoyé:", event.candidate);
                         await sessionRef.update({
                             senderCandidates: firebase.firestore.FieldValue.arrayUnion({
                                 candidate: event.candidate.candidate,
@@ -830,25 +831,28 @@
                         peerConnection.iceConnectionState === 'failed') {
                         setTimeout(() => {
                             if (peerConnection.iceConnectionState !== 'connected') {
+                                console.log("Connexion ICE échouée, réinitialisation...");
                                 resetTransfer();
                             }
                         }, 5000);
                     }
                 };
                 
-                dataChannel = peerConnection.createDataChannel('fileTransfer');
+                dataChannel = peerConnection.createDataChannel('fileTransfer', {
+                    ordered: true,
+                    maxRetransmits: 10
+                });
                 setupDataChannel(dataChannel, true);
                 
                 candidateUnsubscribe = sessionRef.onSnapshot(async (doc) => {
                     const data = doc.data();
-                    if (data && data.receiverCandidates) {
-                        console.log("Candidats ICE reçus:", data.receiverCandidates); // Debug log
+                    if (data && data.receiverCandidates && peerConnection) {
+                        console.log("Nouveaux candidats ICE reçus:", data.receiverCandidates.length);
                         for (const candidateData of data.receiverCandidates) {
                             try {
                                 await peerConnection.addIceCandidate(new RTCIceCandidate(candidateData));
-                                console.log("Candidat ICE ajouté avec succès"); // Debug log
                             } catch (e) {
-                                console.log("Non-fatal error adding ice candidate:", e);
+                                console.log("Erreur non fatale lors de l'ajout du candidat ICE:", e);
                             }
                         }
                     }
@@ -861,32 +865,36 @@
                     voiceActivityDetection: false
                 };
 
+                console.log("Création de l'offer...");
                 const offer = await peerConnection.createOffer(offerOptions);
-                console.log("Offer créée:", offer); // Debug log
                 
+                console.log("Définition de la local description...");
                 await peerConnection.setLocalDescription(offer);
-                console.log("Local description définie"); // Debug log
 
+                console.log("Enregistrement de l'offer dans Firestore...");
                 await sessionRef.update({
                     status: 'connected',
                     offer: offer,
                     senderId: currentUser.uid,
                     fileName: selectedFile.name,
                     fileSize: selectedFile.size,
-                    senderCandidates: [],
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                console.log("Offer enregistrée dans Firestore"); // Debug log
                 document.getElementById('send-progress-text').textContent = 'En attente du destinataire...';
                 
                 answerUnsubscribe = sessionRef.onSnapshot(async (doc) => {
                     const sessionData = doc.data();
-                    if (sessionData && sessionData.answer) {
-                        console.log("Answer reçue:", sessionData.answer); // Debug log
+                    if (sessionData && sessionData.answer && peerConnection) {
+                        console.log("Answer reçue:", sessionData.answer);
                         try {
+                            if (peerConnection.signalingState !== 'stable') {
+                                console.log("Signaling state n'est pas stable:", peerConnection.signalingState);
+                                return;
+                            }
+                            
                             await peerConnection.setRemoteDescription(new RTCSessionDescription(sessionData.answer));
-                            console.log("Remote description définie avec succès"); // Debug log
+                            console.log("Remote description définie avec succès");
                             answerUnsubscribe();
                         } catch (error) {
                             console.error("Erreur setRemoteDescription:", error);
@@ -896,8 +904,8 @@
                 });
                 
                 setTimeout(() => {
-                    if (transferInProgress) {
-                        console.log("Délai dépassé - Aucune réponse du destinataire"); // Debug log
+                    if (transferInProgress && peerConnection && peerConnection.iceConnectionState !== 'connected') {
+                        console.log("Délai dépassé - Aucune réponse du destinataire");
                         resetTransfer();
                         showModal('Délai dépassé', 'Le destinataire n\'a pas répondu dans le délai imparti.');
                     }
@@ -911,21 +919,28 @@
         }
 
         async function initiateWebRTCConnection(code, isInitiator, remoteOffer) {
+            console.log("Initialisation de la connexion WebRTC...");
+            
             const configuration = {
-    iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        {
-            urls: 'turn:openrelay.metered.ca:80',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
-        }
-    ],
-    iceTransportPolicy: 'all',
-    bundlePolicy: 'max-bundle',
-    rtcpMuxPolicy: 'require'
-};
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' },
+                    { 
+                        urls: 'turn:openrelay.metered.ca:80',
+                        username: 'openrelayproject',
+                        credential: 'openrelayproject'
+                    },
+                    {
+                        urls: 'turn:numb.viagenie.ca',
+                        credential: 'muazkh',
+                        username: 'webrtc@live.com'
+                    }
+                ],
+                iceTransportPolicy: 'all',
+                bundlePolicy: 'max-bundle',
+                rtcpMuxPolicy: 'require'
+            };
             
             peerConnection = new RTCPeerConnection(configuration);
 
@@ -938,7 +953,7 @@
 
             peerConnection.onicecandidate = async (event) => {
                 if (event.candidate) {
-                    console.log("Nouveau candidat ICE envoyé:", event.candidate); // Debug log
+                    console.log("Nouveau candidat ICE envoyé:", event.candidate);
                     await fs.collection('sessions').doc(code).update({
                         receiverCandidates: firebase.firestore.FieldValue.arrayUnion({
                             candidate: event.candidate.candidate,
@@ -951,47 +966,43 @@
 
             if (!isInitiator) {
                 try {
-                    console.log("Tentative de définition de remote description..."); // Debug log
+                    console.log("Tentative de définition de remote description...");
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteOffer));
-                    console.log("Remote description définie avec succès"); // Debug log
+                    console.log("Remote description définie avec succès");
                     
                     peerConnection.ondatachannel = event => {
-                        console.log("DataChannel reçu"); // Debug log
+                        console.log("DataChannel reçu");
                         dataChannel = event.channel;
                         setupDataChannel(dataChannel, false);
                     };
 
                     candidateUnsubscribe = fs.collection('sessions').doc(code).onSnapshot(async (doc) => {
                         const data = doc.data();
-                        if (data && data.senderCandidates) {
-                            console.log("Candidats ICE reçus:", data.senderCandidates); // Debug log
+                        if (data && data.senderCandidates && peerConnection) {
+                            console.log("Nouveaux candidats ICE reçus:", data.senderCandidates.length);
                             for (const candidateData of data.senderCandidates) {
                                 try {
                                     await peerConnection.addIceCandidate(new RTCIceCandidate(candidateData));
-                                    console.log("Candidat ICE ajouté avec succès"); // Debug log
                                 } catch (e) {
-                                    console.log("Non-fatal error adding ice candidate:", e);
+                                    console.log("Erreur non fatale lors de l'ajout du candidat ICE:", e);
                                 }
                             }
                         }
                     });
 
-                    console.log("Création de answer..."); // Debug log
+                    console.log("Création de answer...");
                     const answer = await peerConnection.createAnswer({
                         voiceActivityDetection: false
                     });
-                    console.log("Answer créée:", answer); // Debug log
                     
+                    console.log("Définition de la local description...");
                     await peerConnection.setLocalDescription(answer);
-                    console.log("Local description définie"); // Debug log
 
+                    console.log("Enregistrement de l'answer dans Firestore...");
                     await fs.collection('sessions').doc(code).update({
                         answer: answer,
-                        receiverCandidates: [],
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    
-                    console.log("Answer enregistrée dans Firestore"); // Debug log
 
                 } catch (error) {
                     console.error("Erreur lors de l'initiation WebRTC:", error);
@@ -1004,7 +1015,7 @@
             channel.binaryType = 'arraybuffer';
             
             channel.onopen = () => {
-                console.log("DataChannel ouvert"); // Debug log
+                console.log("DataChannel ouvert");
                 if (isSender) {
                     sendFile(channel);
                 } else {
@@ -1013,7 +1024,7 @@
             };
             
             channel.onclose = () => {
-                console.log("DataChannel fermé"); // Debug log
+                console.log("DataChannel fermé");
                 resetTransfer();
             };
             
@@ -1150,6 +1161,7 @@
 
         function resetTransfer() {
             if (transferInProgress) {
+                console.log("Réinitialisation du transfert...");
                 transferInProgress = false;
                 
                 if (answerUnsubscribe) answerUnsubscribe();
