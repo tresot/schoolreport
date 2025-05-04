@@ -509,7 +509,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
         // Configuration Firebase
         const firebaseConfig = {
@@ -526,7 +526,7 @@
         // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
+        const db = firebase.database();
 
         // Variables globales
         let currentUser = null;
@@ -564,11 +564,11 @@
         }
 
         function loadUserProfile(user) {
-            const userRef = db.collection('users').doc(user.uid);
+            const userRef = db.ref('users/' + user.uid);
             
-            userRef.get().then(doc => {
-                if (doc.exists) {
-                    const userData = doc.data();
+            userRef.once('value', (snapshot) => {
+                const userData = snapshot.val();
+                if (userData) {
                     document.getElementById('user-name').textContent = userData.username || 'Utilisateur';
                     
                     const profilePic = document.getElementById('profile-pic');
@@ -598,42 +598,42 @@
         }
 
         function setupPresenceTracking(user) {
-            const userStatusRef = db.collection('status').doc(user.uid);
+            const userStatusRef = db.ref('status/' + user.uid);
             
             // Marquer l'utilisateur comme en ligne
-            db.collection('users').doc(user.uid).update({
-                lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            db.ref('users/' + user.uid).update({
+                lastSeen: Date.now(),
                 status: 'online'
             });
 
             // Configurer le suivi de déconnexion
             userStatusRef.set({
                 status: 'online',
-                lastChanged: firebase.firestore.FieldValue.serverTimestamp()
+                lastChanged: Date.now()
             });
 
             userStatusRef.onDisconnect().set({
                 status: 'offline',
-                lastChanged: firebase.firestore.FieldValue.serverTimestamp()
+                lastChanged: Date.now()
             });
         }
 
         function setupSessionCleanup() {
             // Nettoyer les anciennes sessions toutes les 5 minutes
             sessionCleanupInterval = setInterval(async () => {
-                const now = new Date();
-                const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+                const now = Date.now();
+                const tenMinutesAgo = now - 10 * 60 * 1000;
                 
-                const oldSessions = await db.collection('sessions')
-                    .where('createdAt', '<', tenMinutesAgo)
-                    .get();
-                
-                const batch = db.batch();
-                oldSessions.forEach(doc => {
-                    batch.delete(doc.ref);
+                db.ref('sessions').orderByChild('createdAt').endAt(tenMinutesAgo).once('value', (snapshot) => {
+                    const oldSessions = snapshot.val();
+                    if (oldSessions) {
+                        const updates = {};
+                        Object.keys(oldSessions).forEach(key => {
+                            updates[`sessions/${key}`] = null;
+                        });
+                        db.ref().update(updates);
+                    }
                 });
-                
-                await batch.commit();
             }, 5 * 60 * 1000); // 5 minutes
         }
 
@@ -727,10 +727,10 @@
             document.getElementById('code-container').classList.add('show');
             document.getElementById('generate-code-btn').textContent = 'Regénérer le code';
             
-            // Créer la session dans Firestore
+            // Créer la session dans Realtime Database
             try {
-                await db.collection('sessions').doc(currentCode).set({
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                await db.ref('sessions/' + currentCode).set({
+                    createdAt: Date.now(),
                     status: 'waiting',
                     receiverId: currentUser.uid
                 });
@@ -758,10 +758,10 @@
             document.getElementById('receive-progress-text').textContent = 'En attente de connexion...';
             
             // Écouter les changements sur la session
-            const sessionRef = db.collection('sessions').doc(currentCode);
+            const sessionRef = db.ref('sessions/' + currentCode);
             
-            sessionRef.onSnapshot(doc => {
-                const sessionData = doc.data();
+            sessionRef.on('value', (snapshot) => {
+                const sessionData = snapshot.val();
                 if (!sessionData) return;
                 
                 if (sessionData.status === 'connected' && sessionData.offer) {
@@ -807,10 +807,11 @@
             
             try {
                 // Vérifier que la session existe
-                const sessionRef = db.collection('sessions').doc(receiverCode);
-                const sessionDoc = await sessionRef.get();
+                const sessionRef = db.ref('sessions/' + receiverCode);
+                const sessionSnapshot = await sessionRef.once('value');
+                const sessionData = sessionSnapshot.val();
                 
-                if (!sessionDoc.exists || sessionDoc.data().status !== 'waiting') {
+                if (!sessionData || sessionData.status !== 'waiting') {
                     throw new Error('Code invalide ou session expirée');
                 }
                 
@@ -834,8 +835,12 @@
                     if (event.candidate) {
                         // Stocker le candidat dans la session
                         sessionRef.update({
-                            candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
+                            candidates: firebase.database.ServerValue.increment(1) // Juste pour déclencher la mise à jour
                         });
+                        
+                        // Ajouter le candidat réel sous un ID unique
+                        const candidateId = db.ref('sessions/' + receiverCode + '/candidates').push().key;
+                        db.ref('sessions/' + receiverCode + '/candidates/' + candidateId).set(event.candidate.toJSON());
                     }
                 };
                 
@@ -850,16 +855,16 @@
                     senderId: currentUser.uid,
                     fileName: selectedFile.name,
                     fileSize: selectedFile.size,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: Date.now()
                 });
                 
                 document.getElementById('send-progress-text').textContent = 'En attente du destinataire...';
                 
                 // Écouter la réponse
-                sessionRef.onSnapshot(doc => {
-                    const sessionData = doc.data();
-                    if (sessionData && sessionData.answer) {
-                        peerConnection.setRemoteDescription(new RTCSessionDescription(sessionData.answer))
+                sessionRef.on('value', (snapshot) => {
+                    const updatedSessionData = snapshot.val();
+                    if (updatedSessionData && updatedSessionData.answer) {
+                        peerConnection.setRemoteDescription(new RTCSessionDescription(updatedSessionData.answer))
                             .catch(error => {
                                 console.error("Erreur setRemoteDescription:", error);
                                 resetTransfer();
@@ -898,9 +903,8 @@
             peerConnection.onicecandidate = event => {
                 if (event.candidate) {
                     // Stocker le candidat dans la session
-                    db.collection('sessions').doc(code).update({
-                        candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
-                    });
+                    const candidateId = db.ref('sessions/' + code + '/candidates').push().key;
+                    db.ref('sessions/' + code + '/candidates/' + candidateId).set(event.candidate.toJSON());
                 }
             };
             
@@ -921,20 +925,23 @@
                 await peerConnection.setLocalDescription(answer);
                 
                 // Mettre à jour la session avec la réponse
-                await db.collection('sessions').doc(code).update({
+                await db.ref('sessions/' + code).update({
                     answer: answer,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: Date.now()
                 });
                 
                 // Ajouter les candidats ICE existants
-                const sessionDoc = await db.collection('sessions').doc(code).get();
-                const sessionData = sessionDoc.data();
-                
-                if (sessionData.candidates) {
-                    for (const candidate of sessionData.candidates) {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                const sessionRef = db.ref('sessions/' + code + '/candidates');
+                sessionRef.once('value', (snapshot) => {
+                    const candidates = snapshot.val();
+                    if (candidates) {
+                        Object.values(candidates).forEach(candidate => {
+                            if (candidate) {
+                                peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                            }
+                        });
                     }
-                }
+                });
             }
             
             // Nettoyer après la connexion
@@ -1012,7 +1019,7 @@
                     
                     // Supprimer la session
                     if (currentCode) {
-                        db.collection('sessions').doc(currentCode).delete();
+                        db.ref('sessions/' + currentCode).remove();
                     }
                     
                     // Réinitialiser après un délai
@@ -1083,7 +1090,7 @@
                 
                 // Supprimer la session
                 if (currentCode) {
-                    db.collection('sessions').doc(currentCode).delete();
+                    db.ref('sessions/' + currentCode).remove();
                 }
                 
                 showModal('Transfert réussi', `Le fichier "${receivingFile.name}" a été reçu avec succès.`);
@@ -1126,7 +1133,7 @@
                 
                 // Supprimer la session
                 if (currentCode) {
-                    db.collection('sessions').doc(currentCode).delete();
+                    db.ref('sessions/' + currentCode).remove();
                 }
                 
                 // Réinitialiser l'interface
