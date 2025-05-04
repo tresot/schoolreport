@@ -507,7 +507,7 @@
     </div>
 
     <!-- Firebase SDK -->
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -602,7 +602,7 @@
         function setupPresenceTracking(user) {
             const userStatusRef = db.ref('status/' + user.uid);
             
-            // Marquer l'utilisateur comme en ligne dans Realtime Database
+            // Marquer l'utilisateur comme en ligne
             db.ref('users/' + user.uid).update({
                 lastSeen: Date.now(),
                 status: 'online'
@@ -621,7 +621,7 @@
         }
 
         function setupSessionCleanup() {
-            // Nettoyer les anciennes sessions toutes les 5 minutes (dans Firestore)
+            // Nettoyer les anciennes sessions toutes les 5 minutes
             sessionCleanupInterval = setInterval(async () => {
                 const now = new Date();
                 const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
@@ -759,7 +759,7 @@
             progressContainer.classList.add('show');
             document.getElementById('receive-progress-text').textContent = 'En attente de connexion...';
             
-            // Écouter les changements sur la session dans Firestore
+            // Écouter les changements sur la session
             const sessionRef = fs.collection('sessions').doc(currentCode);
             
             sessionRef.onSnapshot(doc => {
@@ -808,7 +808,7 @@
             document.getElementById('send-progress-text').textContent = 'Initialisation du transfert...';
             
             try {
-                // Vérifier que la session existe dans Firestore
+                // Vérifier que la session existe
                 const sessionRef = fs.collection('sessions').doc(receiverCode);
                 const sessionDoc = await sessionRef.get();
                 
@@ -834,7 +834,7 @@
                 // Gestion des candidats ICE
                 peerConnection.onicecandidate = event => {
                     if (event.candidate) {
-                        // Stocker le candidat dans la session Firestore
+                        // Stocker le candidat dans la session
                         sessionRef.update({
                             candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
                         });
@@ -845,7 +845,7 @@
                 const offer = await peerConnection.createOffer();
                 await peerConnection.setLocalDescription(offer);
                 
-                // Mettre à jour la session avec l'offre dans Firestore
+                // Mettre à jour la session avec l'offre
                 await sessionRef.update({
                     status: 'connected',
                     offer: offer,
@@ -857,7 +857,7 @@
                 
                 document.getElementById('send-progress-text').textContent = 'En attente du destinataire...';
                 
-                // Écouter la réponse dans Firestore
+                // Écouter la réponse
                 sessionRef.onSnapshot(doc => {
                     const sessionData = doc.data();
                     if (sessionData && sessionData.answer) {
@@ -922,13 +922,13 @@
                 const answer = await peerConnection.createAnswer();
                 await peerConnection.setLocalDescription(answer);
                 
-                // Mettre à jour la session avec la réponse dans Firestore
+                // Mettre à jour la session avec la réponse
                 await fs.collection('sessions').doc(code).update({
                     answer: answer,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Ajouter les candidats ICE existants depuis Firestore
+                // Ajouter les candidats ICE existants
                 const sessionDoc = await fs.collection('sessions').doc(code).get();
                 const sessionData = sessionDoc.data();
                 
@@ -949,203 +949,210 @@
         }
 
         function setupDataChannel(channel, isSender) {
+            channel.binaryType = 'arraybuffer';
+            
             channel.onopen = () => {
-                console.log('Canal de données ouvert');
-                if (isSender && selectedFile) {
-                    sendFileInChunks(selectedFile, channel);
-                } else if (!isSender) {
-                    document.getElementById('receive-progress-text').textContent = 'Connexion établie. Réception en cours...';
+                if (isSender) {
+                    // Envoyer le fichier
+                    sendFile(channel);
+                } else {
+                    // Prêt à recevoir
+                    document.getElementById('receive-progress-text').textContent = 'Prêt à recevoir le fichier...';
                 }
             };
-    
-            channel.onmessage = async event => {
-                if (isSender) return;
-    
-                try {
-                    const message = JSON.parse(event.data);
-    
-                    if (message.type === 'fileInfo') {
-                        receivingFile.name = message.name;
-                        receivingFile.size = message.size;
-                        document.getElementById('receive-file-name').textContent = receivingFile.name;
-                        document.getElementById('receive-file-size').textContent = formatFileSize(receivingFile.size);
-                    } else if (message.type === 'chunk') {
-                        receivingFile.chunks.push(message.data);
-                        receivingFile.received += message.data.byteLength;
-                        const progress = (receivingFile.received / receivingFile.size) * 100;
-                        document.getElementById('receive-progress-bar').value = progress;
-                        document.getElementById('receive-progress-text').textContent = `Réception: ${progress.toFixed(2)}%`;
-    
-                        if (receivingFile.received === receivingFile.size) {
-                            const blob = new Blob(receivingFile.chunks);
-                            const url = URL.createObjectURL(blob);
-                            document.getElementById('download-link').href = url;
-                            document.getElementById('download-link').download = receivingFile.name;
-                            document.getElementById('download-container').classList.add('show');
-                            document.getElementById('receive-progress-container').classList.remove('show');
-                            showModal('Téléchargement terminé', `Le fichier "${receivingFile.name}" a été reçu.`);
-                            resetTransfer();
-                        }
-                    }
-                } catch (e) {
-                    // Gérer les données binaires directement (anciens navigateurs)
-                    if (event.data instanceof ArrayBuffer) {
-                        receivingFile.chunks.push(event.data);
-                        receivingFile.received += event.data.byteLength;
-                        const progress = (receivingFile.received / receivingFile.size) * 100;
-                        document.getElementById('receive-progress-bar').value = progress;
-                        document.getElementById('receive-progress-text').textContent = `Réception: ${progress.toFixed(2)}%`;
-    
-                        if (receivingFile.received === receivingFile.size) {
-                            const blob = new Blob(receivingFile.chunks);
-                            const url = URL.createObjectURL(blob);
-                            document.getElementById('download-link').href = url;
-                            document.getElementById('download-link').download = receivingFile.name;
-                            document.getElementById('download-container').classList.add('show');
-                            document.getElementById('receive-progress-container').classList.remove('show');
-                            showModal('Téléchargement terminé', `Le fichier "${receivingFile.name}" a été reçu.`);
-                            resetTransfer();
-                        }
-                    } else {
-                        console.error('Erreur lors du traitement du message:', e, event.data);
-                    }
-                }
-            };
-    
+            
             channel.onclose = () => {
-                console.log('Canal de données fermé');
-                if (transferInProgress) {
-                    showModal('Connexion perdue', 'La connexion pour le transfert de fichier a été perdue.');
-                    resetTransfer();
-                }
-            };
-    
-            channel.onerror = error => {
-                console.error('Erreur de canal de données:', error);
-                showModal('Erreur de transfert', 'Une erreur est survenue lors du transfert de fichier.');
                 resetTransfer();
             };
-        }
-    
-        async function sendFileInChunks(file, channel) {
-            const chunkSize = 16384; // 16KB par chunk
-            const totalChunks = Math.ceil(file.size / chunkSize);
-            let offset = 0;
-            let chunkNumber = 0;
-    
-            channel.send(JSON.stringify({
-                type: 'fileInfo',
-                name: file.name,
-                size: file.size
-            }));
-    
-            while (offset < file.size && transferInProgress && channel.readyState === 'open') {
-                const chunk = file.slice(offset, offset + chunkSize);
-                const reader = new FileReader();
-    
-                reader.onload = (event) => {
-                    if (channel.readyState === 'open') {
-                        try {
-                            channel.send(JSON.stringify({
-                                type: 'chunk',
-                                data: event.target.result
-                            }));
-                        } catch (error) {
-                            console.error("Erreur lors de l'envoi du chunk:", error);
-                            resetTransfer();
-                        }
-                        const progress = ((offset + chunkSize) / file.size) * 100;
-                        document.getElementById('send-progress-bar').value = progress;
-                        document.getElementById('send-progress-text').textContent = `Envoi: ${progress.toFixed(2)}%`;
-                    }
+            
+            channel.onerror = error => {
+                console.error("Erreur DataChannel:", error);
+                resetTransfer();
+            };
+            
+            if (!isSender) {
+                channel.onmessage = event => {
+                    receiveFileChunk(event.data);
                 };
-    
-                reader.readAsArrayBuffer(chunk);
-                offset += chunkSize;
-                chunkNumber++;
-                await new Promise(resolve => setTimeout(resolve, 10)); // Petite pause pour éviter de surcharger
-            }
-    
-            if (offset >= file.size) {
-                console.log('Fichier envoyé complètement');
-                // Le nettoyage est géré par la fermeture du canal ou la réinitialisation
-            } else if (!transferInProgress) {
-                console.log('Transfert annulé');
             }
         }
-    
+
+        function sendFile(channel) {
+            const fileReader = new FileReader();
+            const chunkSize = 16384; // 16KB
+            let offset = 0;
+            let chunkIndex = 0;
+            
+            document.getElementById('send-progress-text').textContent = 'Transfert en cours...';
+            
+            fileReader.onload = event => {
+                if (channel.readyState !== 'open') {
+                    resetTransfer();
+                    return;
+                }
+                
+                const chunk = event.target.result;
+                channel.send(chunk);
+                
+                offset += chunk.byteLength;
+                chunkIndex++;
+                
+                // Mettre à jour la progression
+                const progress = (offset / selectedFile.size) * 100;
+                document.getElementById('send-progress-bar').style.width = `${progress}%`;
+                document.getElementById('send-progress-text').textContent = 
+                    `Transfert: ${Math.round(progress)}% (${formatFileSize(offset)}/${formatFileSize(selectedFile.size)})`;
+                
+                if (offset < selectedFile.size) {
+                    // Lire le prochain chunk
+                    readNextChunk(fileReader, offset, chunkSize);
+                } else {
+                    // Transfert terminé
+                    transferInProgress = false;
+                    document.getElementById('send-progress-text').textContent = 'Transfert terminé!';
+                    showModal('Transfert réussi', `Le fichier "${selectedFile.name}" a été envoyé avec succès.`);
+                    
+                    // Supprimer la session
+                    if (currentCode) {
+                        fs.collection('sessions').doc(currentCode).delete();
+                    }
+                    
+                    // Réinitialiser après un délai
+                    setTimeout(() => {
+                        document.getElementById('send-progress-container').classList.remove('show');
+                        document.getElementById('file-info').classList.remove('show');
+                        document.getElementById('file-input').value = '';
+                        selectedFile = null;
+                    }, 3000);
+                }
+            };
+            
+            fileReader.onerror = error => {
+                console.error("Erreur lecture fichier:", error);
+                resetTransfer();
+            };
+            
+            // Envoyer d'abord les métadonnées
+            channel.send(JSON.stringify({
+                name: selectedFile.name,
+                size: selectedFile.size
+            }));
+            
+            // Commencer la lecture
+            readNextChunk(fileReader, offset, chunkSize);
+        }
+
+        function readNextChunk(fileReader, offset, chunkSize) {
+            const file = selectedFile.slice(offset, offset + chunkSize);
+            fileReader.readAsArrayBuffer(file);
+        }
+
+        function receiveFileChunk(chunk) {
+            if (!transferInProgress) {
+                // Premier chunk - contient les métadonnées
+                try {
+                    const metadata = JSON.parse(new TextDecoder().decode(chunk));
+                    receivingFile.name = metadata.name;
+                    receivingFile.size = metadata.size;
+                    
+                    document.getElementById('receive-file-name').textContent = metadata.name;
+                    document.getElementById('receive-file-size').textContent = formatFileSize(metadata.size);
+                    document.getElementById('receive-progress-text').textContent = 'Réception en cours...';
+                    
+                    transferInProgress = true;
+                    return;
+                } catch (e) {
+                    console.error("Erreur parsing metadata:", e);
+                }
+            }
+            
+            // Stocker le chunk
+            receivingFile.chunks.push(chunk);
+            receivingFile.received += chunk.byteLength;
+            
+            // Mettre à jour la progression
+            const progress = (receivingFile.received / receivingFile.size) * 100;
+            document.getElementById('receive-progress-bar').style.width = `${progress}%`;
+            document.getElementById('receive-progress-text').textContent = 
+                `Réception: ${Math.round(progress)}% (${formatFileSize(receivingFile.received)}/${formatFileSize(receivingFile.size)})`;
+            
+            if (receivingFile.received >= receivingFile.size) {
+                // Transfert terminé
+                transferInProgress = false;
+                document.getElementById('receive-progress-text').textContent = 'Réception terminée!';
+                document.getElementById('receive-file-info').classList.add('show');
+                document.getElementById('download-btn').style.display = 'block';
+                
+                // Supprimer la session
+                if (currentCode) {
+                    fs.collection('sessions').doc(currentCode).delete();
+                }
+                
+                showModal('Transfert réussi', `Le fichier "${receivingFile.name}" a été reçu avec succès.`);
+            }
+        }
+
         function downloadReceivedFile() {
-            const link = document.getElementById('download-link');
-            link.click();
-            // Optionally, remove the URL object after download
-            // URL.revokeObjectURL(link.href);
-            document.getElementById('download-container').classList.remove('show');
+            // Combiner tous les chunks
+            const blob = new Blob(receivingFile.chunks);
+            const url = URL.createObjectURL(blob);
+            
+            // Créer un lien de téléchargement
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = receivingFile.name;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Nettoyer
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
         }
-    
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+
+        function resetTransfer() {
+            if (transferInProgress) {
+                transferInProgress = false;
+                
+                // Fermer les connexions
+                if (dataChannel) {
+                    dataChannel.close();
+                    dataChannel = null;
+                }
+                
+                if (peerConnection) {
+                    peerConnection.close();
+                    peerConnection = null;
+                }
+                
+                // Supprimer la session
+                if (currentCode) {
+                    fs.collection('sessions').doc(currentCode).delete();
+                }
+                
+                // Réinitialiser l'interface
+                document.getElementById('send-progress-container').classList.remove('show');
+                document.getElementById('receive-progress-container').classList.remove('show');
+                
+                showModal('Transfert interrompu', 'La connexion a été interrompue. Veuillez réessayer.');
+            }
         }
-    
+
         function showModal(title, message) {
             document.getElementById('modal-title').textContent = title;
             document.getElementById('modal-message').textContent = message;
             document.getElementById('confirmation-modal').classList.add('show');
         }
-    
-        function hideModal() {
-            document.getElementById('confirmation-modal').classList.remove('show');
-        }
-    
-        function resetTransfer() {
-            if (transferInProgress) {
-                transferInProgress = false;
-    
-                // Fermer les connexions
-                if (dataChannel) {
-                    try {
-                        dataChannel.close();
-                    } catch (e) {
-                        console.warn("Erreur lors de la fermeture du dataChannel:", e);
-                    }
-                    dataChannel = null;
-                }
-    
-                if (peerConnection) {
-                    try {
-                        peerConnection.close();
-                    } catch (e) {
-                        console.warn("Erreur lors de la fermeture de peerConnection:", e);
-                    }
-                    peerConnection = null;
-                }
-    
-                // Supprimer la session dans Firestore
-                if (currentCode) {
-                    fs.collection('sessions').doc(currentCode).delete().catch(error => {
-                        console.error("Erreur lors de la suppression de la session:", error);
-                    });
-                    currentCode = null;
-                }
-    
-                // Réinitialiser l'interface d'envoi
-                document.getElementById('send-progress-container').classList.remove('show');
-                document.getElementById('send-progress-bar').value = 0;
-                document.getElementById('send-progress-text').textContent = 'En attente de fichier...';
-                document.getElementById('receiver-code-input').value = '';
-    
-                // Réinitialiser l'interface de réception
-                document.getElementById('receive-progress-container').classList.remove('show');
-                document.getElementById('receive-progress-bar').value = 0;
-                document.getElementById('receive-progress-text').textContent = 'En attente de connexion...';
-                document.getElementById('code-container').classList.remove('show');
-                document.getElementById('generate-code-btn').textContent = 'Générer un code de réception';
-                document.getElementById('download-container').classList.remove('show');
-                receivingFile = { name: '', size: 0, received: 0, chunks: [] };
-            }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
     </script>
 </body>
