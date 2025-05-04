@@ -434,7 +434,7 @@
                 <div class="user-avatar" id="user-avatar">
                     <img id="profile-pic">
                 </div>
-                <span class="user-name" id="user-name">Utilisateur</span>
+                <span class="user-name" id="user-name">Chargement...</span>
                 <button class="logout-btn" id="logout-btn">Déconnexion</button>
             </div>
         </header>
@@ -453,11 +453,6 @@
                 <div class="file-info" id="file-info">
                     <div class="file-name" id="file-name"></div>
                     <div class="file-size" id="file-size"></div>
-                </div>
-                
-                <div class="users-list" id="users-list">
-                    <h3>Utilisateurs en ligne</h3>
-                    <div id="online-users-container"></div>
                 </div>
                 
                 <div class="code-container" id="receiver-code-container">
@@ -503,17 +498,18 @@
     <!-- Modal de confirmation -->
     <div class="modal" id="confirmation-modal">
         <div class="modal-content">
-            <h3 class="modal-title">Transfert terminé</h3>
-            <p class="modal-message" id="modal-message">Le fichier a été transféré avec succès!</p>
+            <h3 class="modal-title" id="modal-title">Titre</h3>
+            <p class="modal-message" id="modal-message">Message</p>
             <div class="modal-actions">
                 <button class="btn" id="modal-ok-btn">OK</button>
             </div>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script>
         // Configuration Firebase
         const firebaseConfig = {
@@ -521,7 +517,7 @@
             authDomain: "schoolreport-f8db0.firebaseapp.com",
             databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "schoolreport-f8db0",
-            storageBucket: "schoolreport-f8db0.firebasestorage.app",
+            storageBucket: "schoolreport-f8db0.appspot.com",
             messagingSenderId: "313069994450",
             appId: "1:313069994450:web:37b009be4f1812fdca880b",
             measurementId: "G-N8YF0VKWCD"
@@ -530,7 +526,7 @@
         // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.database();
+        const db = firebase.firestore();
 
         // Variables globales
         let currentUser = null;
@@ -545,6 +541,7 @@
             chunks: []
         };
         let transferInProgress = false;
+        let sessionCleanupInterval = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
@@ -561,18 +558,18 @@
                     currentUser = user;
                     loadUserProfile(user);
                     setupPresenceTracking(user);
+                    setupSessionCleanup();
                 }
             });
         }
 
         function loadUserProfile(user) {
-            const userRef = db.ref('users/' + user.uid);
+            const userRef = db.collection('users').doc(user.uid);
             
-            userRef.once('value').then(snapshot => {
-                const userData = snapshot.val();
-                
-                if (userData) {
-                    document.getElementById('user-name').textContent = userData.username;
+            userRef.get().then(doc => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    document.getElementById('user-name').textContent = userData.username || 'Utilisateur';
                     
                     const profilePic = document.getElementById('profile-pic');
                     if (userData.profileImage) {
@@ -582,7 +579,7 @@
                         // Créer une initiale si pas d'image
                         const avatar = document.getElementById('user-avatar');
                         const initial = document.createElement('div');
-                        initial.textContent = userData.username.charAt(0).toUpperCase();
+                        initial.textContent = (userData.username || 'U').charAt(0).toUpperCase();
                         initial.style.display = 'flex';
                         initial.style.alignItems = 'center';
                         initial.style.justifyContent = 'center';
@@ -601,57 +598,43 @@
         }
 
         function setupPresenceTracking(user) {
-            const userStatusRef = db.ref('connectedUsers/' + user.uid);
+            const userStatusRef = db.collection('status').doc(user.uid);
             
-            // Mettre à jour la présence
-            userStatusRef.set({
-                uid: user.uid,
-                username: document.getElementById('user-name').textContent,
-                timestamp: firebase.database.ServerValue.TIMESTAMP,
+            // Marquer l'utilisateur comme en ligne
+            db.collection('users').doc(user.uid).update({
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
                 status: 'online'
             });
 
-            // Nettoyer en cas de déconnexion
-            userStatusRef.onDisconnect().remove();
-
-            // Écouter les utilisateurs en ligne
-            const connectedUsersRef = db.ref('connectedUsers');
-            
-            connectedUsersRef.on('value', snapshot => {
-                const users = snapshot.val() || {};
-                const onlineUsersContainer = document.getElementById('online-users-container');
-                onlineUsersContainer.innerHTML = '';
-                
-                Object.entries(users).forEach(([uid, userData]) => {
-                    if (uid !== user.uid) {
-                        const userElement = document.createElement('div');
-                        userElement.className = 'user-item';
-                        userElement.dataset.uid = uid;
-                        
-                        userElement.innerHTML = `
-                            <div class="user-avatar-small">
-                                ${userData.profileImage ? 
-                                    `<img src="${userData.profileImage}">` : 
-                                    userData.username.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="user-details">
-                                <div class="user-name">${userData.username}</div>
-                                <div class="user-status status-online">En ligne</div>
-                            </div>
-                        `;
-                        
-                        userElement.addEventListener('click', () => {
-                            document.querySelectorAll('.user-item').forEach(item => {
-                                item.classList.remove('selected');
-                            });
-                            userElement.classList.add('selected');
-                            document.getElementById('receiver-code-container').classList.add('show');
-                        });
-                        
-                        onlineUsersContainer.appendChild(userElement);
-                    }
-                });
+            // Configurer le suivi de déconnexion
+            userStatusRef.set({
+                status: 'online',
+                lastChanged: firebase.firestore.FieldValue.serverTimestamp()
             });
+
+            userStatusRef.onDisconnect().set({
+                status: 'offline',
+                lastChanged: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        function setupSessionCleanup() {
+            // Nettoyer les anciennes sessions toutes les 5 minutes
+            sessionCleanupInterval = setInterval(async () => {
+                const now = new Date();
+                const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+                
+                const oldSessions = await db.collection('sessions')
+                    .where('createdAt', '<', tenMinutesAgo)
+                    .get();
+                
+                const batch = db.batch();
+                oldSessions.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+            }, 5 * 60 * 1000); // 5 minutes
         }
 
         function setupEventListeners() {
@@ -659,6 +642,9 @@
             document.getElementById('logout-btn').addEventListener('click', () => {
                 auth.signOut().then(() => {
                     window.location.href = 'center.html';
+                }).catch(error => {
+                    console.error("Erreur de déconnexion:", error);
+                    showModal('Erreur', 'Impossible de se déconnecter. Veuillez réessayer.');
                 });
             });
 
@@ -685,7 +671,7 @@
             
             fileLabel.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                fileLabel.style.borderColor = var(--primary);
+                fileLabel.style.borderColor = 'var(--primary)';
                 fileLabel.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
             });
             
@@ -718,25 +704,43 @@
             document.getElementById('file-size').textContent = formatFileSize(file.size);
             
             // Activer la section d'envoi
-            document.getElementById('users-list').style.display = 'block';
+            document.getElementById('receiver-code-container').classList.add('show');
         }
 
-        function generateReceivingCode() {
+        async function generateReceivingCode() {
             if (transferInProgress) {
-                showModal('Un transfert est déjà en cours', 'Veuillez attendre la fin du transfert actuel.');
+                showModal('Transfert en cours', 'Un transfert est déjà en cours. Veuillez attendre la fin du transfert actuel.');
                 return;
             }
             
-            // Générer un code aléatoire de 6 chiffres
-            currentCode = Math.floor(100000 + Math.random() * 900000).toString();
+            // Générer un code aléatoire de 6 caractères (chiffres et lettres majuscules)
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclure les caractères ambigus
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            currentCode = code;
             
             // Afficher le code
             document.getElementById('code-display').textContent = currentCode;
             document.getElementById('code-container').classList.add('show');
             document.getElementById('generate-code-btn').textContent = 'Regénérer le code';
             
-            // Préparer la réception
-            prepareFileReceiving();
+            // Créer la session dans Firestore
+            try {
+                await db.collection('sessions').doc(currentCode).set({
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'waiting',
+                    receiverId: currentUser.uid
+                });
+                
+                // Préparer la réception
+                prepareFileReceiving();
+            } catch (error) {
+                console.error("Erreur création session:", error);
+                showModal('Erreur', 'Impossible de créer la session. Veuillez réessayer.');
+            }
         }
 
         function prepareFileReceiving() {
@@ -753,34 +757,39 @@
             progressContainer.classList.add('show');
             document.getElementById('receive-progress-text').textContent = 'En attente de connexion...';
             
-            // Écouter les demandes de connexion pour ce code
-            const transferRef = db.ref('fileTransfers/' + currentCode);
+            // Écouter les changements sur la session
+            const sessionRef = db.collection('sessions').doc(currentCode);
             
-            transferRef.on('value', snapshot => {
-                const transferData = snapshot.val();
+            sessionRef.onSnapshot(doc => {
+                const sessionData = doc.data();
+                if (!sessionData) return;
                 
-                if (transferData && transferData.senderId && transferData.senderId !== currentUser.uid) {
-                    // Une demande de transfert a été faite pour ce code
+                if (sessionData.status === 'connected' && sessionData.offer) {
+                    // Une offre a été reçue, démarrer la connexion WebRTC
                     document.getElementById('receive-progress-text').textContent = 'Connexion en cours...';
                     
-                    // Démarrer la connexion WebRTC
-                    initiateWebRTCConnection(transferData.senderId, false);
+                    // Configurer les infos du fichier
+                    receivingFile.name = sessionData.fileName;
+                    receivingFile.size = sessionData.fileSize;
                     
-                    // Supprimer la référence pour éviter les connexions multiples
-                    transferRef.remove();
+                    document.getElementById('receive-file-name').textContent = sessionData.fileName;
+                    document.getElementById('receive-file-size').textContent = formatFileSize(sessionData.fileSize);
+                    
+                    // Démarrer la connexion WebRTC
+                    initiateWebRTCConnection(currentCode, false, sessionData.offer);
                 }
             });
         }
 
-        function initiateFileTransfer() {
+        async function initiateFileTransfer() {
             if (!selectedFile) {
                 showModal('Aucun fichier sélectionné', 'Veuillez sélectionner un fichier à envoyer.');
                 return;
             }
             
-            const receiverCode = document.getElementById('receiver-code-input').value.trim();
-            if (!receiverCode) {
-                showModal('Code manquant', 'Veuillez entrer le code du destinataire.');
+            const receiverCode = document.getElementById('receiver-code-input').value.trim().toUpperCase();
+            if (!receiverCode || receiverCode.length !== 6) {
+                showModal('Code invalide', 'Veuillez entrer un code valide de 6 caractères.');
                 return;
             }
             
@@ -796,35 +805,84 @@
             progressContainer.classList.add('show');
             document.getElementById('send-progress-text').textContent = 'Initialisation du transfert...';
             
-            // Enregistrer la demande de transfert
-            const transferRef = db.ref('fileTransfers/' + receiverCode);
-            transferRef.set({
-                senderId: currentUser.uid,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            }).then(() => {
+            try {
+                // Vérifier que la session existe
+                const sessionRef = db.collection('sessions').doc(receiverCode);
+                const sessionDoc = await sessionRef.get();
+                
+                if (!sessionDoc.exists || sessionDoc.data().status !== 'waiting') {
+                    throw new Error('Code invalide ou session expirée');
+                }
+                
+                // Configuration WebRTC
+                const configuration = {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' }
+                    ]
+                };
+                
+                peerConnection = new RTCPeerConnection(configuration);
+                
+                // Créer un canal de données pour l'envoi
+                dataChannel = peerConnection.createDataChannel('fileTransfer');
+                setupDataChannel(dataChannel, true);
+                
+                // Gestion des candidats ICE
+                peerConnection.onicecandidate = event => {
+                    if (event.candidate) {
+                        // Stocker le candidat dans la session
+                        sessionRef.update({
+                            candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
+                        });
+                    }
+                };
+                
+                // Créer une offre
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                
+                // Mettre à jour la session avec l'offre
+                await sessionRef.update({
+                    status: 'connected',
+                    offer: offer,
+                    senderId: currentUser.uid,
+                    fileName: selectedFile.name,
+                    fileSize: selectedFile.size,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
                 document.getElementById('send-progress-text').textContent = 'En attente du destinataire...';
                 
-                // Vérifier si le destinataire a accepté
-                transferRef.on('value', snapshot => {
-                    if (!snapshot.exists()) {
-                        // Le destinataire a accepté, démarrer WebRTC
-                        initiateWebRTCConnection(receiverCode, true);
+                // Écouter la réponse
+                sessionRef.onSnapshot(doc => {
+                    const sessionData = doc.data();
+                    if (sessionData && sessionData.answer) {
+                        peerConnection.setRemoteDescription(new RTCSessionDescription(sessionData.answer))
+                            .catch(error => {
+                                console.error("Erreur setRemoteDescription:", error);
+                                resetTransfer();
+                            });
                     }
                 });
                 
                 // Timeout après 60 secondes
                 setTimeout(() => {
                     if (transferInProgress) {
-                        transferRef.remove();
-                        transferInProgress = false;
-                        progressContainer.classList.remove('show');
+                        resetTransfer();
                         showModal('Délai dépassé', 'Le destinataire n\'a pas répondu dans le délai imparti.');
                     }
                 }, 60000);
-            });
+                
+            } catch (error) {
+                console.error("Erreur initiation transfert:", error);
+                resetTransfer();
+                showModal('Erreur', 'Impossible de démarrer le transfert. Vérifiez le code et réessayez.');
+            }
         }
 
-        function initiateWebRTCConnection(targetId, isInitiator) {
+        async function initiateWebRTCConnection(code, isInitiator, remoteOffer) {
             // Configuration WebRTC
             const configuration = {
                 iceServers: [
@@ -839,52 +897,15 @@
             // Gestion des candidats ICE
             peerConnection.onicecandidate = event => {
                 if (event.candidate) {
-                    // Envoyer le candidat à l'autre pair via Firebase
-                    const candidateRef = db.ref(`webrtcCandidates/${isInitiator ? targetId : currentCode}/${currentUser.uid}`);
-                    candidateRef.push({
-                        candidate: event.candidate.toJSON(),
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    // Stocker le candidat dans la session
+                    db.collection('sessions').doc(code).update({
+                        candidates: firebase.firestore.FieldValue.arrayUnion(event.candidate.toJSON())
                     });
                 }
             };
             
             if (isInitiator) {
-                // Créer un canal de données pour l'envoi
-                dataChannel = peerConnection.createDataChannel('fileTransfer');
-                setupDataChannel(dataChannel, true);
-                
-                // Créer une offre
-                peerConnection.createOffer()
-                    .then(offer => peerConnection.setLocalDescription(offer))
-                    .then(() => {
-                        // Envoyer l'offre au destinataire
-                        const offerRef = db.ref(`webrtcOffers/${targetId}`);
-                        offerRef.set({
-                            from: currentUser.uid,
-                            offer: peerConnection.localDescription.toJSON(),
-                            fileName: selectedFile.name,
-                            fileSize: selectedFile.size,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        });
-                    })
-                    .catch(error => {
-                        console.error("Erreur création offre:", error);
-                        resetTransfer();
-                    });
-                
-                // Écouter la réponse
-                const answerRef = db.ref(`webrtcAnswers/${currentUser.uid}/${targetId}`);
-                answerRef.on('value', snapshot => {
-                    const answerData = snapshot.val();
-                    if (answerData) {
-                        peerConnection.setRemoteDescription(new RTCSessionDescription(answerData.answer))
-                            .catch(error => {
-                                console.error("Erreur setRemoteDescription:", error);
-                                resetTransfer();
-                            });
-                        answerRef.off();
-                    }
-                });
+                // Déjà géré dans initiateFileTransfer
             } else {
                 // Écouter le canal de données
                 peerConnection.ondatachannel = event => {
@@ -892,48 +913,29 @@
                     setupDataChannel(dataChannel, false);
                 };
                 
-                // Écouter les offres
-                const offerRef = db.ref(`webrtcOffers/${currentCode}`);
-                offerRef.on('value', snapshot => {
-                    const offerData = snapshot.val();
-                    if (offerData && offerData.from !== currentUser.uid) {
-                        // Configurer les infos du fichier
-                        receivingFile.name = offerData.fileName;
-                        receivingFile.size = offerData.fileSize;
-                        
-                        document.getElementById('receive-file-name').textContent = offerData.fileName;
-                        document.getElementById('receive-file-size').textContent = formatFileSize(offerData.fileSize);
-                        document.getElementById('receive-progress-text').textContent = 'Connexion établie, transfert en cours...';
-                        
-                        peerConnection.setRemoteDescription(new RTCSessionDescription(offerData.offer))
-                            .then(() => peerConnection.createAnswer())
-                            .then(answer => peerConnection.setLocalDescription(answer))
-                            .then(() => {
-                                // Envoyer la réponse
-                                const answerRef = db.ref(`webrtcAnswers/${offerData.from}/${currentCode}`);
-                                answerRef.set({
-                                    answer: peerConnection.localDescription.toJSON(),
-                                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                                });
-                                offerRef.off();
-                            })
-                            .catch(error => {
-                                console.error("Erreur création réponse:", error);
-                                resetTransfer();
-                            });
-                    }
+                // Configurer l'offre distante
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteOffer));
+                
+                // Créer une réponse
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                
+                // Mettre à jour la session avec la réponse
+                await db.collection('sessions').doc(code).update({
+                    answer: answer,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                
+                // Ajouter les candidats ICE existants
+                const sessionDoc = await db.collection('sessions').doc(code).get();
+                const sessionData = sessionDoc.data();
+                
+                if (sessionData.candidates) {
+                    for (const candidate of sessionData.candidates) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                    }
+                }
             }
-            
-            // Écouter les candidats ICE
-            const candidatesRef = db.ref(`webrtcCandidates/${isInitiator ? currentUser.uid : currentCode}/${isInitiator ? targetId : currentUser.uid}`);
-            candidatesRef.on('child_added', snapshot => {
-                const candidateData = snapshot.val();
-                peerConnection.addIceCandidate(new RTCIceCandidate(candidateData.candidate))
-                    .catch(error => {
-                        console.error("Erreur addIceCandidate:", error);
-                    });
-            });
             
             // Nettoyer après la connexion
             peerConnection.onconnectionstatechange = () => {
@@ -1008,6 +1010,11 @@
                     document.getElementById('send-progress-text').textContent = 'Transfert terminé!';
                     showModal('Transfert réussi', `Le fichier "${selectedFile.name}" a été envoyé avec succès.`);
                     
+                    // Supprimer la session
+                    if (currentCode) {
+                        db.collection('sessions').doc(currentCode).delete();
+                    }
+                    
                     // Réinitialiser après un délai
                     setTimeout(() => {
                         document.getElementById('send-progress-container').classList.remove('show');
@@ -1022,6 +1029,12 @@
                 console.error("Erreur lecture fichier:", error);
                 resetTransfer();
             };
+            
+            // Envoyer d'abord les métadonnées
+            channel.send(JSON.stringify({
+                name: selectedFile.name,
+                size: selectedFile.size
+            }));
             
             // Commencer la lecture
             readNextChunk(fileReader, offset, chunkSize);
@@ -1068,6 +1081,11 @@
                 document.getElementById('receive-file-info').classList.add('show');
                 document.getElementById('download-btn').style.display = 'block';
                 
+                // Supprimer la session
+                if (currentCode) {
+                    db.collection('sessions').doc(currentCode).delete();
+                }
+                
                 showModal('Transfert réussi', `Le fichier "${receivingFile.name}" a été reçu avec succès.`);
             }
         }
@@ -1106,6 +1124,11 @@
                     peerConnection = null;
                 }
                 
+                // Supprimer la session
+                if (currentCode) {
+                    db.collection('sessions').doc(currentCode).delete();
+                }
+                
                 // Réinitialiser l'interface
                 document.getElementById('send-progress-container').classList.remove('show');
                 document.getElementById('receive-progress-container').classList.remove('show');
@@ -1115,6 +1138,7 @@
         }
 
         function showModal(title, message) {
+            document.getElementById('modal-title').textContent = title;
             document.getElementById('modal-message').textContent = message;
             document.getElementById('confirmation-modal').classList.add('show');
         }
