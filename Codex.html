@@ -600,7 +600,7 @@
       document.getElementById('newsBtn').addEventListener('click', showNewsPage);
       document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
       document.getElementById('logoutBtn').addEventListener('click', () => {
-        if(confirm('Voulez-vous vraiment vous déconnecter ?')) {
+        {
           // Supprimer les données de session
           localStorage.removeItem('userSession');
           // Rediriger vers la page de login
@@ -625,9 +625,9 @@
       document.getElementById('essayOutput').addEventListener('input', updateWordCount);
 
       // Simuler un utilisateur connecté (à remplacer par votre système d'authentification)
-      document.getElementById('usernameDisplay').textContent = 'Connecté en tant que : Utilisateur';
-      document.getElementById('usernameDisplayChat').textContent = 'Connecté en tant que : Utilisateur';
-      document.getElementById('usernameDisplayNews').textContent = 'Connecté en tant que : Utilisateur';
+      document.getElementById('usernameDisplay').textContent = 'Connecté en tant que : ${username}';
+      document.getElementById('usernameDisplayChat').textContent = 'Connecté en tant que : ${username}';
+      document.getElementById('usernameDisplayNews').textContent = 'Connecté en tant que : ${username}';
     });
   </script>
 </body>
