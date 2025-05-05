@@ -500,7 +500,7 @@
 
     <script type="module">
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, update, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, update, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
         import { app, auth, db } from "./firebase/firebase-config.js";
 
         // Variables globales
@@ -664,13 +664,13 @@
             connectedUsersRef = ref(db, 'connectedUsers');
             
             // Référence pour l'utilisateur actuel
-            const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
+            currentUserStatusRef = ref(db, 'connectedUsers/' + user.uid);
             
             // Récupérer l'image de profil depuis le stockage local ou la base de données
             const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
             
             // Marquer l'utilisateur comme connecté avec toutes ses infos
-            set(userStatusRef, {
+            set(currentUserStatusRef, {
                 uid: user.uid,
                 username: currentUsername,
                 profileImage: profileImage,
@@ -679,8 +679,8 @@
             });
 
             // Supprimer la présence lors de la déconnexion
-            onDisconnect(userStatusRef).remove();
-
+            onDisconnect(currentUserStatusRef).remove();
+            
             // Écouter les changements dans la liste des utilisateurs connectés
             onValue(connectedUsersRef, (snapshot) => {
                 const connectedUsers = snapshot.val() || {};
@@ -739,21 +739,21 @@
             }
         }
 
-        function handleLogout() {
-            if (connectedUsersRef) {
-                const userStatusRef = ref(db, 'connectedUsers/' + currentUser.uid);
-                update(userStatusRef, {
-                    online: false,
-                    lastSeen: Date.now()
-                }).then(() => {
-                    signOut(auth).then(() => {
-                        window.location.href = 'index.html';
-                    });
-                });
-            } else {
-                signOut(auth).then(() => {
-                    window.location.href = 'index.html';
-                });
+        async function handleLogout() {
+            try {
+                // Supprimer immédiatement la présence de l'utilisateur
+                if (currentUserStatusRef) {
+                    await remove(currentUserStatusRef);
+                }
+                
+                // Déconnecter l'utilisateur
+                await signOut(auth);
+                
+                // Rediriger vers la page de connexion
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Erreur lors de la déconnexion:", error);
+                alert("Une erreur est survenue lors de la déconnexion");
             }
         }
 
@@ -840,10 +840,11 @@
                 });
                 
                 // Mettre à jour dans la liste des utilisateurs connectés
-                const userStatusRef = ref(db, 'connectedUsers/' + currentUser.uid);
-                update(userStatusRef, {
-                    profileImage: imageUrl
-                });
+                if (currentUserStatusRef) {
+                    update(currentUserStatusRef, {
+                        profileImage: imageUrl
+                    });
+                }
                 
                 document.getElementById('image-input-modal').style.display = 'none';
             };
