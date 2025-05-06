@@ -1185,7 +1185,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   
-   <script>
+  <script>
     // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
@@ -1289,8 +1289,10 @@
       const connectedRef = db.ref('.info/connected');
       const presenceRef = db.ref('connectedUsers');
       
+      // Surveiller la connexion
       connectedRef.on('value', (snap) => {
         if (snap.val() === true) {
+          // Mettre à jour le statut lors de la connexion
           const statusUpdate = {
             uid: userId,
             username: currentUsername,
@@ -1303,11 +1305,13 @@
           userStatusRef.set(statusUpdate);
           presenceRef.child(userId).set(statusUpdate);
           
+          // Mettre à jour le statut lors de la déconnexion
           userStatusRef.onDisconnect().remove();
           presenceRef.child(userId).onDisconnect().remove();
         }
       });
       
+      // Surveiller les changements de présence
       presenceRef.on('value', (snapshot) => {
         onlineUsers = {};
         let onlineCount = 0;
@@ -1332,6 +1336,7 @@
     function loadChats() {
       updateDirectChats();
       
+      // Écouter les nouveaux messages pour les aperçus
       firestore.collection("messages")
         .orderBy("timestamp", "desc")
         .limit(50)
@@ -1427,8 +1432,36 @@
       }
     }
 
+    // Mise à jour des statuts dans la liste des chats
+    function updateChatListStatus() {
+      const chatItems = document.querySelectorAll('.chat-item');
+      
+      chatItems.forEach((item) => {
+        const userId = item.dataset.userId;
+        if (userId && onlineUsers[userId]) {
+          const user = onlineUsers[userId];
+          updateChatItemStatus(item, user);
+        }
+      });
+    }
+
+    function updateChatItemStatus(chatItem, user) {
+      const preview = chatItem.querySelector('.chat-preview');
+      const statusIndicator = chatItem.querySelector('.online-status');
+      
+      if (preview && !preview.textContent.startsWith('Vous:')) {
+        preview.textContent = user.status === 'online' ? 'En ligne' : 'Hors ligne';
+      }
+      
+      if (statusIndicator) {
+        statusIndicator.className = 'online-status';
+        statusIndicator.classList.add(user.status === 'online' ? 'pulse' : 'offline');
+      }
+    }
+
     // Ouverture d'une conversation
     function openChat(chatType, chatWith, chatName, chatAvatar) {
+      // Nettoyer l'écouteur précédent
       if (messageListener) {
         messageListener();
       }
@@ -1491,7 +1524,7 @@
       }
     }
 
-    // Chargement des messages - CORRIGÉ
+    // Chargement des messages
     function loadChatMessages() {
       const messagesContainer = document.getElementById('chat-messages');
       messagesContainer.innerHTML = '';
@@ -1501,30 +1534,30 @@
       const messagesQuery = buildMessagesQuery();
       
       messageListener = messagesQuery.onSnapshot((snapshot) => {
-        const messages = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          messages.push({
-            id: doc.id,
-            text: data.text,
-            userId: data.userId,
-            username: data.username,
-            userAvatar: data.userAvatar,
-            chatType: data.chatType,
-            chatId: data.chatId,
-            timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
-            status: data.status
-          });
-        });
-        
-        // Trier par timestamp croissant
-        messages.sort((a, b) => a.timestamp - b.timestamp);
-        
+        const messages = processMessagesSnapshot(snapshot);
         displayMessages(messages);
         scrollToBottom();
       }, (error) => {
         console.error("Erreur:", error);
       });
+    }
+
+    function addTypingIndicator() {
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'typing-indicator';
+      typingIndicator.id = 'typing-indicator';
+      typingIndicator.innerHTML = `
+        <div class="chat-avatar" id="typing-user-avatar">
+          <span id="typing-user-avatar-letter">U</span>
+          <img id="typing-user-avatar-img" style="display: none;">
+        </div>
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      document.getElementById('chat-messages').appendChild(typingIndicator);
     }
 
     function buildMessagesQuery() {
@@ -1542,66 +1575,129 @@
       }
     }
 
-    // Affichage des messages - CORRIGÉ
+    function processMessagesSnapshot(snapshot) {
+      const messages = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        messages.push({ 
+          id: doc.id,
+          text: data.text,
+          userId: data.userId,
+          username: data.username,
+          userAvatar: data.userAvatar,
+          chatType: data.chatType,
+          chatId: data.chatId,
+          timestamp: data.timestamp,
+          status: data.status
+        });
+      });
+      return messages;
+    }
+
+    // Affichage des messages
     function displayMessages(messages) {
       const messagesContainer = document.getElementById('chat-messages');
       messagesContainer.innerHTML = '';
+      messagesContainer.appendChild(document.getElementById('typing-indicator'));
       
-      // Garder l'indicateur de frappe
-      const typingIndicator = document.getElementById('typing-indicator');
-      if (typingIndicator) {
-        messagesContainer.appendChild(typingIndicator);
-      }
-      
+      let lastSender = null;
       let lastDate = null;
       
       messages.forEach((message) => {
-        const messageDate = message.timestamp.toLocaleDateString('fr-FR', { 
-          weekday: 'long', 
-          day: 'numeric', 
-          month: 'long' 
-        });
+        const messageElement = createMessageElement(message, lastSender, lastDate);
         
-        // Ajouter la date si elle a changé
-        if (messageDate !== lastDate) {
-          const dateDiv = document.createElement('div');
-          dateDiv.className = 'message-date';
-          dateDiv.style.textAlign = 'center';
-          dateDiv.style.margin = '15px 0';
-          dateDiv.style.color = 'var(--gray)';
-          dateDiv.style.fontSize = '12px';
-          dateDiv.textContent = messageDate;
-          messagesContainer.appendChild(dateDiv);
-          lastDate = messageDate;
+        if (messageElement.dateDiv) {
+          messagesContainer.appendChild(messageElement.dateDiv);
+          lastDate = messageElement.date;
         }
         
-        const messageElement = createMessageElement(message);
-        messagesContainer.appendChild(messageElement);
+        messagesContainer.appendChild(messageElement.div);
+        lastSender = message.userId;
       });
       
       scrollToBottom();
     }
 
-    function createMessageElement(message) {
+    function createMessageElement(message, lastSender, lastDate) {
       const isCurrentUser = message.userId === currentUser.uid;
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
-      messageDiv.dataset.messageId = message.id;
       
-      const formattedTime = formatTime(message.timestamp);
+      const timestamp = getMessageTimestamp(message);
+      const formattedTime = formatTime(timestamp);
+      const formattedDate = timestamp.toLocaleDateString('fr-FR', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long' 
+      });
       
-      messageDiv.innerHTML = `
+      const result = { div: messageDiv, date: formattedDate };
+      
+      // Ajouter la date si nécessaire
+      if (!lastDate || formattedDate !== lastDate) {
+        result.dateDiv = createDateDiv(formattedDate);
+      }
+      
+      // Contenu du message
+      messageDiv.innerHTML = buildMessageContent(message, isCurrentUser, lastSender, formattedTime);
+      
+      // ID du message
+      if (message.id) {
+        messageDiv.dataset.messageId = message.id;
+      }
+      
+      // Configuration des événements
+      setupMessageInteractions(messageDiv, message);
+      
+      return result;
+    }
+
+    function getMessageTimestamp(message) {
+      return message.timestamp ? 
+        (message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp)) : 
+        new Date();
+    }
+
+    function createDateDiv(dateText) {
+      const dateDiv = document.createElement('div');
+      dateDiv.className = 'message-date';
+      dateDiv.style.textAlign = 'center';
+      dateDiv.style.margin = '15px 0';
+      dateDiv.style.color = 'var(--gray)';
+      dateDiv.style.fontSize = '12px';
+      dateDiv.textContent = dateText;
+      return dateDiv;
+    }
+
+    function buildMessageContent(message, isCurrentUser, lastSender, formattedTime) {
+      return `
         <div class="message-info">
-          ${!isCurrentUser ? `<span class="message-sender">${message.username || 'Utilisateur'}</span>` : ''}
+          ${!isCurrentUser && message.userId !== lastSender ? 
+            `<span class="message-sender">${message.username || 'Utilisateur'}</span>` : ''}
           <span class="message-time">${formattedTime}</span>
         </div>
         <div class="message-text">${message.text || ''}</div>
       `;
-      
-      return messageDiv;
     }
 
-    // Envoi de message - CORRIGÉ
+    function setupMessageInteractions(messageDiv, message) {
+      setupMessageLongPress(messageDiv, message);
+      setupMessageHoverEffects(messageDiv);
+    }
+
+    function setupMessageHoverEffects(messageDiv) {
+      messageDiv.addEventListener('mouseenter', () => {
+        messageDiv.style.transform = 'translateY(-2px)';
+        messageDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+      });
+      
+      messageDiv.addEventListener('mouseleave', () => {
+        messageDiv.style.transform = '';
+        messageDiv.style.boxShadow = '';
+      });
+    }
+
+    // Envoi de message
     function sendMessage() {
       const messageInput = document.getElementById('message-input');
       const messageText = messageInput.value.trim();
@@ -1620,18 +1716,23 @@
         
         firestore.collection("messages").add(message)
           .then((docRef) => {
-            // Mettre à jour avec l'ID du document
-            return docRef.update({ id: docRef.id });
-          })
-          .then(() => {
+            updateMessageStatus(docRef);
             clearMessageInput();
             setTyping(false);
             scrollToBottom();
+            enforceMessageLimit();
           })
           .catch((error) => {
             console.error("Erreur:", error);
           });
       }
+    }
+
+    function updateMessageStatus(docRef) {
+      docRef.update({ 
+        status: 'delivered',
+        id: docRef.id 
+      });
     }
 
     function clearMessageInput() {
@@ -1645,11 +1746,271 @@
       }, 100);
     }
 
-    // [Les autres fonctions restent exactement les mêmes]
-    // ...
+    // Indicateur de saisie
+    function setupTypingIndicator() {
+      if (currentChatType === 'direct' && currentChatWith) {
+        db.ref('status/' + currentChatWith + '/typing').on('value', (snapshot) => {
+          updateTypingIndicator(snapshot.val());
+        });
+      }
+    }
 
-    // Initialisation complète
-    function setupEventListeners() {
+    function updateTypingIndicator(typingChatId) {
+      const typingBadge = document.getElementById('typing-indicator-badge');
+      const typingIndicator = document.getElementById('typing-indicator');
+      
+      if (typingChatId === currentChatId) {
+        typingBadge.style.display = 'inline-block';
+        typingIndicator.classList.add('active');
+        updateTypingUserAvatar();
+        scrollToBottom();
+      } else {
+        typingBadge.style.display = 'none';
+        typingIndicator.classList.remove('active');
+      }
+    }
+
+    function updateTypingUserAvatar() {
+      if (!currentChatWith || !onlineUsers[currentChatWith]) return;
+      
+      const user = onlineUsers[currentChatWith];
+      const typingAvatar = document.getElementById('typing-user-avatar-letter');
+      const typingAvatarImg = document.getElementById('typing-user-avatar-img');
+      
+      if (user.profileImage) {
+        typingAvatarImg.src = user.profileImage;
+        typingAvatarImg.style.display = 'block';
+        typingAvatar.style.display = 'none';
+      } else {
+        typingAvatar.textContent = user.firstLetter || (user.username ? user.username.charAt(0).toUpperCase() : 'U');
+        typingAvatar.style.display = 'flex';
+        typingAvatarImg.style.display = 'none';
+      }
+    }
+
+    function setTyping(typing) {
+      if (isTyping === typing || !currentChatWith) return;
+      
+      isTyping = typing;
+      const typingRef = db.ref('status/' + currentUser.uid + '/typing');
+      
+      if (typing) {
+        typingRef.set(currentChatId);
+        resetTypingTimeout();
+      } else {
+        typingRef.remove();
+        clearTypingTimeout();
+      }
+    }
+
+    function resetTypingTimeout() {
+      clearTypingTimeout();
+      typingTimeout = setTimeout(() => {
+        setTyping(false);
+      }, 5000);
+    }
+
+    function clearTypingTimeout() {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+        typingTimeout = null;
+      }
+    }
+
+    // Gestion du profil
+    function showProfile(userId) {
+      if (!userId || userId === currentUser.uid) {
+        showCurrentUserProfile();
+      } else if (onlineUsers[userId]) {
+        showOtherUserProfile(userId);
+      }
+      
+      document.getElementById('profile-modal').classList.add('active');
+    }
+
+    function showCurrentUserProfile() {
+      document.getElementById('profile-name').textContent = currentUsername;
+      document.getElementById('profile-status').textContent = 'En ligne';
+      document.getElementById('profile-email').textContent = currentUserEmail;
+      document.getElementById('profile-join-date').textContent = currentUserJoinDate;
+      document.getElementById('profile-last-seen').textContent = 'Maintenant';
+      
+      updateProfileAvatar(currentUserAvatar, currentUsername);
+    }
+
+    function showOtherUserProfile(userId) {
+      const user = onlineUsers[userId];
+      document.getElementById('profile-name').textContent = user.username || 'Utilisateur';
+      document.getElementById('profile-status').textContent = user.status === 'online' ? 'En ligne' : 'Hors ligne';
+      document.getElementById('profile-email').textContent = 'Non disponible';
+      document.getElementById('profile-join-date').textContent = 'Non disponible';
+      document.getElementById('profile-last-seen').textContent = user.status === 'online' ? 'Maintenant' : 'Dernière fois inconnue';
+      
+      updateProfileAvatar(user.profileImage, user.username);
+    }
+
+    function updateProfileAvatar(avatar, username) {
+      const profileAvatarImg = document.getElementById('profile-avatar-img');
+      const profileAvatarLetter = document.getElementById('profile-avatar-letter');
+      
+      if (avatar) {
+        profileAvatarImg.src = avatar;
+        profileAvatarImg.style.display = 'block';
+        profileAvatarLetter.style.display = 'none';
+      } else {
+        profileAvatarLetter.textContent = username ? username.charAt(0).toUpperCase() : 'U';
+        profileAvatarLetter.style.display = 'block';
+        profileAvatarImg.style.display = 'none';
+      }
+    }
+
+    // Sélecteur d'emoji
+    function setupEmojiPicker() {
+      const emojiPicker = document.getElementById('emoji-picker');
+      const emojiContainer = document.getElementById('emoji-container');
+      const emojiTabs = document.querySelectorAll('.emoji-tab');
+      const messageInput = document.getElementById('message-input');
+      
+      const emojiCategories = {
+        smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🥸', '🤩', '🥳'],
+        people: ['👋', '🤚', '🖐', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏'],
+        animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇'],
+        food: ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶', '🫒', '🌽', '🥕', '🫒', '🧄', '🧅'],
+        activities: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛼', '🛷'],
+        objects: ['⌚', '📱', '📲', '💻', '⌨️', '🖥', '🖨', '🖱', '🖲', '🕹', '🗜', '💽', '💾', '💿', '📀', '📼', '📷', '📸', '📹', '🎥', '📽', '🎞', '📞', '☎️', '📟', '📠', '📺', '📻', '🎙', '🎚']
+      };
+      
+      function loadEmojis(category) {
+        emojiContainer.innerHTML = '';
+        
+        const categoryTitle = document.createElement('div');
+        categoryTitle.className = 'emoji-category-title';
+        categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+        emojiContainer.appendChild(categoryTitle);
+        
+        const emojiGrid = document.createElement('div');
+        emojiGrid.className = 'emoji-grid';
+        
+        emojiCategories[category].forEach((emoji) => {
+          const emojiElement = document.createElement('div');
+          emojiElement.className = 'emoji';
+          emojiElement.textContent = emoji;
+          emojiElement.addEventListener('click', () => {
+            insertEmoji(emoji);
+          });
+          emojiGrid.appendChild(emojiElement);
+        });
+        
+        emojiContainer.appendChild(emojiGrid);
+      }
+      
+      function insertEmoji(emoji) {
+        const input = document.getElementById('message-input');
+        input.value += emoji;
+        input.focus();
+        emojiPicker.style.display = 'none';
+        setTyping(true);
+      }
+      
+      emojiTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          emojiTabs.forEach((t) => t.classList.remove('active'));
+          tab.classList.add('active');
+          loadEmojis(tab.dataset.category);
+        });
+      });
+      
+      loadEmojis('smileys');
+    }
+
+    // Menu contextuel
+    function setupContextMenu() {
+      document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        const messageElement = e.target.closest('.message');
+        if (messageElement) showContextMenu(e, messageElement);
+      });
+      
+      document.addEventListener('click', () => {
+        document.getElementById('context-menu').style.display = 'none';
+      });
+    }
+
+    function showContextMenu(e, messageElement) {
+      const contextMenu = document.getElementById('context-menu');
+      contextMenu.style.display = 'block';
+      positionContextMenu(e, contextMenu);
+      
+      selectedMessage = messageElement;
+      setupContextMenuActions(messageElement);
+    }
+
+    function positionContextMenu(e, contextMenu) {
+      contextMenu.style.left = `${e.pageX}px`;
+      contextMenu.style.top = `${e.pageY}px`;
+      
+      const rect = contextMenu.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        contextMenu.style.left = `${window.innerWidth - rect.width}px`;
+      }
+      if (rect.bottom > window.innerHeight) {
+        contextMenu.style.top = `${window.innerHeight - rect.height}px`;
+      }
+    }
+
+    function setupContextMenuActions(messageElement) {
+      document.getElementById('context-menu-copy').onclick = () => copyMessage(messageElement);
+      document.getElementById('context-menu-delete').onclick = () => deleteMessage(messageElement);
+      document.getElementById('context-menu-reply').onclick = () => replyToMessage(messageElement);
+    }
+
+    function copyMessage(messageElement) {
+      const messageText = messageElement.querySelector('.message-text').textContent;
+      navigator.clipboard.writeText(messageText);
+      document.getElementById('context-menu').style.display = 'none';
+    }
+
+    function deleteMessage(messageElement) {
+      const messageId = messageElement.dataset.messageId;
+      if (messageId) {
+        firestore.collection("messages").doc(messageId).delete()
+          .then(() => {
+            document.getElementById('context-menu').style.display = 'none';
+          })
+          .catch(error => {
+            console.error("Erreur:", error);
+          });
+      }
+    }
+
+    function replyToMessage(messageElement) {
+      const messageText = messageElement.querySelector('.message-text').textContent;
+      const messageInput = document.getElementById('message-input');
+      messageInput.value = `"${messageText}" `;
+      messageInput.focus();
+      document.getElementById('context-menu').style.display = 'none';
+    }
+
+    // Formatage des dates
+    function formatDate(dateString) {
+      const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
+      return date.toLocaleDateString('fr-FR', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+
+    function formatTime(dateString) {
+      const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
+      return date.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Gestion de la recherche
+    function setupSearch() {
       document.getElementById('search-input').addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const chatItems = document.querySelectorAll('.chat-item');
@@ -1659,6 +2020,11 @@
           item.style.display = chatName && chatName.includes(searchTerm) ? 'flex' : 'none';
         });
       });
+    }
+
+    // Initialisation complète
+    function setupEventListeners() {
+      setupSearch();
       
       document.getElementById('send-button').addEventListener('click', sendMessage);
       
