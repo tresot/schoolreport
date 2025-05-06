@@ -1250,7 +1250,7 @@
         if (userData) {
           currentUsername = userData.username || userData.displayName || 'Utilisateur';
           currentUserAvatar = userData.profileImage || null;
-          currentUserJoinDate = formatDate(userData.joinDate || new Date().toISOString());
+          currentUserJoinDate = formatDate(userData.createdAt || new Date().toISOString());
           
           // Initialiser le suivi de présence
           setupPresenceTracking(userId);
@@ -1269,7 +1269,7 @@
     }
 
     function formatDate(dateString) {
-      const date = new Date(dateString);
+      const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
       return date.toLocaleDateString('fr-FR', { 
         year: 'numeric', 
         month: 'long', 
@@ -1278,7 +1278,7 @@
     }
 
     function formatTime(dateString) {
-      const date = new Date(dateString);
+      const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
       return date.toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit'
@@ -1385,6 +1385,7 @@
             <div class="chat-info">
               <div class="chat-name">
                 <span>${user.username}</span>
+                <span class="chat-time"></span>
               </div>
               <div class="chat-preview">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
             </div>
@@ -1422,7 +1423,7 @@
         }
         
         if (time && message.timestamp) {
-          const timestamp = message.timestamp.toDate();
+          const timestamp = message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp);
           time.textContent = formatTime(timestamp);
         }
         
@@ -1444,7 +1445,7 @@
           const statusText = user.status === 'online' ? 'En ligne' : 'Hors ligne';
           
           const preview = item.querySelector('.chat-preview');
-          if (preview) {
+          if (preview && !preview.textContent.startsWith('Vous:')) {
             preview.textContent = statusText;
           }
           
@@ -1586,7 +1587,7 @@
       messagesQuery.onSnapshot((snapshot) => {
         const messages = [];
         
-        snapshot.forEach((doc) {
+        snapshot.forEach((doc) => {
           messages.push(doc.data());
         });
         
@@ -1621,7 +1622,7 @@
         messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
         
         // Formater la date
-        const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
+        const timestamp = message.timestamp ? (message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp)) : new Date();
         const formattedTime = formatTime(timestamp);
         const formattedDate = timestamp.toLocaleDateString('fr-FR', { 
           weekday: 'long', 
@@ -1927,7 +1928,7 @@
     }
 
     function showProfile(userId) {
-      if (!userId) {
+      if (!userId || userId === currentUser.uid) {
         // Afficher le profil de l'utilisateur actuel
         document.getElementById('profile-name').textContent = currentUsername;
         document.getElementById('profile-status').textContent = 'En ligne';
@@ -1935,14 +1936,17 @@
         document.getElementById('profile-join-date').textContent = currentUserJoinDate;
         document.getElementById('profile-last-seen').textContent = 'Maintenant';
         
+        const profileAvatarImg = document.getElementById('profile-avatar-img');
+        const profileAvatarLetter = document.getElementById('profile-avatar-letter');
+        
         if (currentUserAvatar) {
-          document.getElementById('profile-avatar-img').src = currentUserAvatar;
-          document.getElementById('profile-avatar-img').style.display = 'block';
-          document.getElementById('profile-avatar-letter').style.display = 'none';
+          profileAvatarImg.src = currentUserAvatar;
+          profileAvatarImg.style.display = 'block';
+          profileAvatarLetter.style.display = 'none';
         } else {
-          document.getElementById('profile-avatar-letter').textContent = currentUsername.charAt(0).toUpperCase();
-          document.getElementById('profile-avatar-letter').style.display = 'block';
-          document.getElementById('profile-avatar-img').style.display = 'none';
+          profileAvatarLetter.textContent = currentUsername.charAt(0).toUpperCase();
+          profileAvatarLetter.style.display = 'block';
+          profileAvatarImg.style.display = 'none';
         }
       } else if (onlineUsers[userId]) {
         // Afficher le profil d'un autre utilisateur
@@ -1953,14 +1957,17 @@
         document.getElementById('profile-join-date').textContent = 'Non disponible';
         document.getElementById('profile-last-seen').textContent = user.status === 'online' ? 'Maintenant' : 'Dernière fois inconnue';
         
+        const profileAvatarImg = document.getElementById('profile-avatar-img');
+        const profileAvatarLetter = document.getElementById('profile-avatar-letter');
+        
         if (user.avatar) {
-          document.getElementById('profile-avatar-img').src = user.avatar;
-          document.getElementById('profile-avatar-img').style.display = 'block';
-          document.getElementById('profile-avatar-letter').style.display = 'none';
+          profileAvatarImg.src = user.avatar;
+          profileAvatarImg.style.display = 'block';
+          profileAvatarLetter.style.display = 'none';
         } else {
-          document.getElementById('profile-avatar-letter').textContent = user.username.charAt(0).toUpperCase();
-          document.getElementById('profile-avatar-letter').style.display = 'block';
-          document.getElementById('profile-avatar-img').style.display = 'none';
+          profileAvatarLetter.textContent = user.username.charAt(0).toUpperCase();
+          profileAvatarLetter.style.display = 'block';
+          profileAvatarImg.style.display = 'none';
         }
       }
       
