@@ -1187,594 +1187,1091 @@
   
   <script>
     // Configuration Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-      authDomain: "schoolreport-f8db0.firebaseapp.com",
-      databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "schoolreport-f8db0",
-      storageBucket: "schoolreport-f8db0.appspot.com",
-      messagingSenderId: "313069994450",
-      appId: "1:313069994450:web:37b009be4f1812fdca880b",
-      measurementId: "G-N8YF0VKWCD"
-    };
+// Configuration Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+  authDomain: "schoolreport-f8db0.firebaseapp.com",
+  databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "schoolreport-f8db0",
+  storageBucket: "schoolreport-f8db0.appspot.com",
+  messagingSenderId: "313069994450",
+  appId: "1:313069994450:web:37b009be4f1812fdca880b",
+  measurementId: "G-N8YF0VKWCD"
+};
 
-    // Initialisation Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
-    const firestore = firebase.firestore();
+// Initialisation Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+const firestore = firebase.firestore();
 
-    // Variables globales
-    let currentUser = null;
-    let currentUsername = '';
-    let currentUserAvatar = '';
-    let currentUserEmail = '';
-    let currentUserJoinDate = '';
-    let currentChatId = null;
-    let currentChatType = null;
-    let currentChatWith = null;
-    let currentChatName = '';
-    let currentChatAvatar = '';
-    let typingTimeout = null;
-    let isTyping = false;
-    let onlineUsers = {};
-    let chatMessagesLimit = 100;
-    let selectedMessage = null;
+// Variables globales
+let currentUser = null;
+let currentUsername = '';
+let currentUserAvatar = '';
+let currentUserEmail = '';
+let currentUserJoinDate = '';
+let currentChatId = null;
+let currentChatType = null;
+let currentChatWith = null;
+let currentChatName = '';
+let currentChatAvatar = '';
+let typingTimeout = null;
+let isTyping = false;
+let onlineUsers = {};
+let chatMessagesLimit = 100;
+let selectedMessage = null;
+let messageListener = null;
 
-    // Initialisation
-    document.addEventListener('DOMContentLoaded', () => {
-      initAuthState();
-      setupEventListeners();
-      setupEmojiPicker();
-    });
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  initAuthState();
+  setupEventListeners();
+  setupEmojiPicker();
+  setupContextMenu();
+});
 
-    function initAuthState() {
-      auth.onAuthStateChanged((user) => {
-        if (!user) {
-          window.location.href = 'index.html';
-        } else {
-          currentUser = user;
-          currentUserEmail = user.email;
-          loadUserData(user.uid);
-        }
-      });
+// Gestion de l'authentification
+function initAuthState() {
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      window.location.href = 'index.html';
+    } else {
+      currentUser = user;
+      currentUserEmail = user.email;
+      loadUserData(user.uid);
     }
+  });
+}
 
-    function loadUserData(userId) {
-      const userRef = db.ref('users/' + userId);
+// Chargement des données utilisateur
+function loadUserData(userId) {
+  const userRef = db.ref('users/' + userId);
+  
+  userRef.once('value').then((snapshot) => {
+    const userData = snapshot.val();
+    
+    if (userData) {
+      currentUsername = userData.username || 'Utilisateur';
+      currentUserAvatar = userData.profileImage || '';
+      currentUserJoinDate = formatDate(userData.createdAt || new Date().toISOString());
       
-      userRef.once('value').then((snapshot) => {
-        const userData = snapshot.val();
-        
-        if (userData) {
-          currentUsername = userData.username || 'Utilisateur';
-          currentUserAvatar = userData.profileImage || '';
-          currentUserJoinDate = formatDate(userData.createdAt || new Date().toISOString());
-          
-          setupPresenceTracking(userId);
-          loadChats();
-        } else {
-          window.location.href = 'center.html';
-        }
-      }).catch((error) => {
-        console.error("Erreur:", error);
-        window.location.href = 'center.html';
-      });
+      setupPresenceTracking(userId);
+      loadChats();
+      updateUserInterface();
+    } else {
+      window.location.href = 'center.html';
     }
+  }).catch((error) => {
+    console.error("Erreur:", error);
+    window.location.href = 'center.html';
+  });
+}
 
-    function formatDate(dateString) {
-      const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
-      return date.toLocaleDateString('fr-FR', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-    }
+// Mise à jour de l'interface utilisateur
+function updateUserInterface() {
+  document.getElementById('user-name').textContent = currentUsername;
+  
+  const avatarImg = document.getElementById('profile-pic');
+  const avatarLetter = document.getElementById('avatar-letter');
+  
+  if (currentUserAvatar) {
+    avatarImg.src = currentUserAvatar;
+    avatarImg.style.display = 'block';
+    avatarLetter.style.display = 'none';
+  } else {
+    avatarLetter.textContent = currentUsername.charAt(0).toUpperCase();
+    avatarLetter.style.display = 'flex';
+    avatarImg.style.display = 'none';
+  }
+}
 
-    function formatTime(dateString) {
-      const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
-      return date.toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-
-    function setupPresenceTracking(userId) {
-      const userStatusRef = db.ref('status/' + userId);
-      const connectedRef = db.ref('.info/connected');
-      const presenceRef = db.ref('presence');
-      
-      connectedRef.on('value', (snap) => {
-        if (snap.val() === true) {
-          userStatusRef.set({
-            uid: userId,
-            username: currentUsername,
-            avatar: currentUserAvatar,
-            status: 'online',
-            lastChanged: firebase.database.ServerValue.TIMESTAMP
-          });
-          
-          userStatusRef.onDisconnect().set({
-            uid: userId,
-            username: currentUsername,
-            avatar: currentUserAvatar,
-            status: 'offline',
-            lastChanged: firebase.database.ServerValue.TIMESTAMP
-          });
-        }
-      });
-      
-      // Nouveau système de présence plus robuste
-      presenceRef.on('value', (snapshot) => {
-        onlineUsers = {};
-        let onlineCount = 0;
-        
-        snapshot.forEach((childSnapshot) => {
-          const user = childSnapshot.val();
-          if (user.status === 'online' && user.uid !== currentUser.uid) {
-            onlineUsers[user.uid] = user;
-            onlineCount++;
-          }
-        });
-        
-        document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
-        updateDirectChats();
-      });
-    }
-
-    function loadChats() {
-      updateDirectChats();
-      
-      firestore.collection("messages")
-        .orderBy("timestamp", "desc")
-        .limit(50)
-        .onSnapshot((snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-              updateChatPreview(change.doc.data());
-            }
-          });
-        });
-    }
-
-    function updateDirectChats() {
-      const directChatsContainer = document.getElementById('direct-chats');
-      directChatsContainer.innerHTML = '';
-      let directCount = 0;
-      
-      Object.values(onlineUsers).forEach((user) => {
-        if (user.uid !== currentUser.uid) {
-          directCount++;
-          
-          const chatItem = document.createElement('div');
-          chatItem.className = 'chat-item';
-          chatItem.dataset.userId = user.uid;
-          chatItem.dataset.chatType = 'direct';
-          
-          const avatarLetter = user.username ? user.username.charAt(0).toUpperCase() : 'U';
-          
-          chatItem.innerHTML = `
-            <div class="chat-avatar">
-              ${user.avatar ? `<img src="${user.avatar}">` : `<span>${avatarLetter}</span>`}
-              <div class="online-status pulse"></div>
-            </div>
-            <div class="chat-info">
-              <div class="chat-name">
-                <span>${user.username}</span>
-                <span class="chat-time"></span>
-              </div>
-              <div class="chat-preview">En ligne</div>
-            </div>
-          `;
-          
-          chatItem.addEventListener('click', () => openChat('direct', user.uid, user.username, user.avatar));
-          directChatsContainer.appendChild(chatItem);
-        }
-      });
-      
-      document.getElementById('direct-count').textContent = directCount;
-    }
-
-    function updateChatPreview(message) {
-      let chatItem = null;
-      
-      if (message.chatType === 'direct') {
-        const otherUserId = message.userId === currentUser.uid ? 
-          message.chatId.split('_')[1] : message.userId;
-        chatItem = document.querySelector(`.chat-item[data-user-id="${otherUserId}"]`);
-      } else if (message.chatType === 'general') {
-        chatItem = document.getElementById('general-chat-item');
-      }
-      
-      if (chatItem) {
-        const preview = chatItem.querySelector('.chat-preview');
-        const time = chatItem.querySelector('.chat-time');
-        
-        if (preview) {
-          const senderPrefix = message.userId === currentUser.uid ? 'Vous: ' : '';
-          preview.textContent = senderPrefix + (message.text || 'Pièce jointe');
-        }
-        
-        if (time && message.timestamp) {
-          const timestamp = message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp);
-          time.textContent = formatTime(timestamp);
-        }
-        
-        if (message.userId !== currentUser.uid) {
-          chatItem.classList.add('unread');
-        }
-      }
-    }
-
-    function openChat(chatType, chatWith, chatName, chatAvatar) {
-      currentChatType = chatType;
-      currentChatWith = chatWith;
-      currentChatName = chatName;
-      currentChatAvatar = chatAvatar;
-      currentChatId = chatType === 'general' ? 'general' : getChatId(currentUser.uid, chatWith);
-      
-      document.getElementById('empty-state').style.display = 'none';
-      document.getElementById('chat-header').style.display = 'flex';
-      document.getElementById('chat-messages').style.display = 'flex';
-      document.getElementById('chat-input-container').style.display = 'block';
-      
-      document.getElementById('current-chat-name').textContent = chatName;
-      
-      const avatarLetter = document.getElementById('current-chat-avatar-letter');
-      const avatarImg = document.getElementById('current-chat-avatar-img');
-      const statusIndicator = document.getElementById('current-chat-status');
-      
-      if (chatAvatar) {
-        avatarImg.src = chatAvatar;
-        avatarImg.style.display = 'block';
-        avatarLetter.style.display = 'none';
-      } else {
-        avatarLetter.textContent = chatName ? chatName.charAt(0).toUpperCase() : 'G';
-        avatarLetter.style.display = 'flex';
-        avatarImg.style.display = 'none';
-      }
-      
-      if (chatType === 'direct' && onlineUsers[chatWith]) {
-        document.getElementById('current-chat-status-text').textContent = 'En ligne';
-        statusIndicator.className = 'online-status pulse';
-      } else {
-        document.getElementById('current-chat-status-text').textContent = 'Groupe';
-        statusIndicator.className = 'online-status';
-        statusIndicator.style.backgroundColor = '#f8961e';
-      }
-      
-      loadChatMessages();
-      markMessagesAsRead();
-    }
-
-    function getChatId(userId1, userId2) {
-      return [userId1, userId2].sort().join('_');
-    }
-
-    function loadChatMessages() {
-      const messagesContainer = document.getElementById('chat-messages');
-      messagesContainer.innerHTML = '';
-      
-      const typingIndicator = document.createElement('div');
-      typingIndicator.className = 'typing-indicator';
-      typingIndicator.id = 'typing-indicator';
-      typingIndicator.innerHTML = `
-        <div class="chat-avatar" id="typing-user-avatar">
-          <span id="typing-user-avatar-letter">U</span>
-          <img id="typing-user-avatar-img" style="display: none;">
-        </div>
-        <div class="typing-dots">
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-        </div>
-      `;
-      messagesContainer.appendChild(typingIndicator);
-      
-      let messagesQuery;
-      
-      if (currentChatType === 'general') {
-        messagesQuery = firestore.collection("messages")
-          .where("chatType", "==", "general")
-          .orderBy("timestamp", "asc")
-          .limit(chatMessagesLimit);
-      } else {
-        messagesQuery = firestore.collection("messages")
-          .where("chatType", "==", "direct")
-          .where("chatId", "==", currentChatId)
-          .orderBy("timestamp", "asc")
-          .limit(chatMessagesLimit);
-      }
-      
-      messagesQuery.onSnapshot((snapshot) => {
-        const messages = [];
-        
-        snapshot.forEach((doc) => {
-          messages.push({ id: doc.id, ...doc.data() });
-        });
-        
-        displayMessages(messages);
-        
-        setTimeout(() => {
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
-      }, (error) => {
-        console.error("Erreur:", error);
-      });
-    }
-
-    function displayMessages(messages) {
-      const messagesContainer = document.getElementById('chat-messages');
-      const typingIndicator = document.getElementById('typing-indicator');
-      
-      messagesContainer.innerHTML = '';
-      messagesContainer.appendChild(typingIndicator);
-      
-      let lastSender = null;
-      let lastDate = null;
-      
-      messages.forEach((message) => {
-        const isCurrentUser = message.userId === currentUser.uid;
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
-        
-        const timestamp = message.timestamp ? (message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp)) : new Date();
-        const formattedTime = formatTime(timestamp);
-        const formattedDate = timestamp.toLocaleDateString('fr-FR', { 
-          weekday: 'long', 
-          day: 'numeric', 
-          month: 'long' 
-        });
-        
-        if (!lastDate || formattedDate !== lastDate) {
-          const dateDiv = document.createElement('div');
-          dateDiv.className = 'message-date';
-          dateDiv.style.textAlign = 'center';
-          dateDiv.style.margin = '15px 0';
-          dateDiv.style.color = 'var(--gray)';
-          dateDiv.style.fontSize = '12px';
-          dateDiv.textContent = formattedDate;
-          messagesContainer.appendChild(dateDiv);
-          lastDate = formattedDate;
-        }
-        
-        let messageContent = `
-          <div class="message-info">
-            ${!isCurrentUser && message.userId !== lastSender ? `<span class="message-sender">${message.username}</span>` : ''}
-            <span class="message-time">${formattedTime}</span>
-          </div>
-          <div class="message-text">${message.text || ''}</div>
-        `;
-        
-        if (message.reactions && Object.keys(message.reactions).length > 0) {
-          messageContent += `<div class="message-reactions">`;
-          
-          Object.entries(message.reactions).forEach(([emoji, users]) => {
-            const count = Object.keys(users).length;
-            const hasReacted = users[currentUser.uid] !== undefined;
-            
-            messageContent += `
-              <div class="reaction ${hasReacted ? 'reacted' : ''}" data-emoji="${emoji}">
-                ${emoji} <span class="reaction-count">${count}</span>
-              </div>
-            `;
-          });
-          
-          messageContent += `</div>`;
-        }
-        
-        messageDiv.innerHTML = messageContent;
-        
-        if (message.id) {
-          messageDiv.dataset.messageId = message.id;
-        }
-        
-        setupMessageLongPress(messageDiv, message);
-        messagesContainer.appendChild(messageDiv);
-        lastSender = message.userId;
-      });
-      
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function sendMessage() {
-      const messageInput = document.getElementById('message-input');
-      const messageText = messageInput.value.trim();
-      
-      if (messageText && currentUser && currentChatId) {
-        const message = {
-          text: messageText,
-          userId: currentUser.uid,
-          username: currentUsername,
-          userAvatar: currentUserAvatar,
-          chatType: currentChatType,
-          chatId: currentChatId,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          status: 'sent'
-        };
-        
-        firestore.collection("messages").add(message)
-          .then((docRef) => {
-            docRef.update({ 
-              status: 'delivered',
-              id: docRef.id 
-            });
-            
-            messageInput.value = '';
-            setTyping(false);
-            
-            setTimeout(() => {
-              document.getElementById('chat-messages').scrollTop = 
-                document.getElementById('chat-messages').scrollHeight;
-            }, 100);
-          })
-          .catch((error) => {
-            console.error("Erreur:", error);
-          });
-      }
-    }
-
-    function setupEventListeners() {
-      document.getElementById('send-button').addEventListener('click', sendMessage);
-      
-      document.getElementById('message-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          sendMessage();
-        }
-      });
-      
-      document.getElementById('message-input').addEventListener('input', () => {
-        if (document.getElementById('message-input').value.trim().length > 0) {
-          setTyping(true);
-        } else {
-          setTyping(false);
-        }
-      });
-      
-      document.getElementById('general-chat-item').addEventListener('click', () => {
-        openChat('general', null, 'Général', null);
-      });
-      
-      document.getElementById('profile-btn').addEventListener('click', () => {
-        showProfile(currentChatWith || currentUser.uid);
-      });
-      
-      document.getElementById('profile-close').addEventListener('click', () => {
-        document.getElementById('profile-modal').classList.remove('active');
-      });
-      
-      document.getElementById('emoji-btn').addEventListener('click', (e) => {
-        const picker = document.getElementById('emoji-picker');
-        picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
-        e.stopPropagation();
-      });
-      
-      document.addEventListener('click', () => {
-        document.getElementById('emoji-picker').style.display = 'none';
-      });
-    }
-
-    function showProfile(userId) {
-      if (!userId || userId === currentUser.uid) {
-        document.getElementById('profile-name').textContent = currentUsername;
-        document.getElementById('profile-status').textContent = 'En ligne';
-        document.getElementById('profile-email').textContent = currentUserEmail;
-        document.getElementById('profile-join-date').textContent = currentUserJoinDate;
-        document.getElementById('profile-last-seen').textContent = 'Maintenant';
-        
-        const profileAvatarImg = document.getElementById('profile-avatar-img');
-        const profileAvatarLetter = document.getElementById('profile-avatar-letter');
-        
-        if (currentUserAvatar) {
-          profileAvatarImg.src = currentUserAvatar;
-          profileAvatarImg.style.display = 'block';
-          profileAvatarLetter.style.display = 'none';
-        } else {
-          profileAvatarLetter.textContent = currentUsername.charAt(0).toUpperCase();
-          profileAvatarLetter.style.display = 'block';
-          profileAvatarImg.style.display = 'none';
-        }
-      } else if (onlineUsers[userId]) {
-        const user = onlineUsers[userId];
-        document.getElementById('profile-name').textContent = user.username;
-        document.getElementById('profile-status').textContent = 'En ligne';
-        document.getElementById('profile-email').textContent = 'Non disponible';
-        document.getElementById('profile-join-date').textContent = 'Non disponible';
-        document.getElementById('profile-last-seen').textContent = 'Maintenant';
-        
-        const profileAvatarImg = document.getElementById('profile-avatar-img');
-        const profileAvatarLetter = document.getElementById('profile-avatar-letter');
-        
-        if (user.avatar) {
-          profileAvatarImg.src = user.avatar;
-          profileAvatarImg.style.display = 'block';
-          profileAvatarLetter.style.display = 'none';
-        } else {
-          profileAvatarLetter.textContent = user.username.charAt(0).toUpperCase();
-          profileAvatarLetter.style.display = 'block';
-          profileAvatarImg.style.display = 'none';
-        }
-      }
-      
-      document.getElementById('profile-modal').classList.add('active');
-    }
-    function setupEmojiPicker() {
-      const emojiPicker = document.getElementById('emoji-picker');
-      const emojiContainer = document.getElementById('emoji-container');
-      const emojiTabs = document.querySelectorAll('.emoji-tab');
-      const messageInput = document.getElementById('message-input');
-      
-      // Catégories d'emojis
-      const emojiCategories = {
-        smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🥸', '🤩', '🥳'],
-        people: ['👋', '🤚', '🖐', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏'],
-        animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇'],
-        food: ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅'],
-        activities: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛼', '🛷'],
-        objects: ['⌚', '📱', '📲', '💻', '⌨️', '🖥', '🖨', '🖱', '🖲', '🕹', '🗜', '💽', '💾', '💿', '📀', '📼', '📷', '📸', '📹', '🎥', '📽', '🎞', '📞', '☎️', '📟', '📠', '📺', '📻', '🎙', '🎚']
+// Gestion de la présence en ligne
+function setupPresenceTracking(userId) {
+  const userStatusRef = db.ref('status/' + userId);
+  const connectedRef = db.ref('.info/connected');
+  const presenceRef = db.ref('presence');
+  
+  // Surveiller la connexion
+  connectedRef.on('value', (snap) => {
+    if (snap.val() === true) {
+      // Mettre à jour le statut lors de la connexion
+      const statusUpdate = {
+        uid: userId,
+        username: currentUsername,
+        avatar: currentUserAvatar,
+        status: 'online',
+        lastChanged: firebase.database.ServerValue.TIMESTAMP
       };
       
-      // Charger les emojis par catégorie
-      function loadEmojis(category) {
-        emojiContainer.innerHTML = '';
-        
-        const categoryTitle = document.createElement('div');
-        categoryTitle.className = 'emoji-category-title';
-        categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-        emojiContainer.appendChild(categoryTitle);
-        
-        const emojiGrid = document.createElement('div');
-        emojiGrid.className = 'emoji-grid';
-        
-        emojiCategories[category].forEach((emoji) => {
-          const emojiElement = document.createElement('div');
-          emojiElement.className = 'emoji';
-          emojiElement.textContent = emoji;
-          emojiElement.addEventListener('click', () => {
-            messageInput.value += emoji;
-            messageInput.focus();
-            emojiPicker.style.display = 'none';
-          });
-          emojiGrid.appendChild(emojiElement);
-        });
-        
-        emojiContainer.appendChild(emojiGrid);
-      }
+      userStatusRef.set(statusUpdate);
+      presenceRef.child(userId).set(statusUpdate);
       
-      // Gérer les onglets d'emojis
-      emojiTabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          emojiTabs.forEach((t) => t.classList.remove('active'));
-          tab.classList.add('active');
-          loadEmojis(tab.dataset.category);
+      // Mettre à jour le statut lors de la déconnexion
+      userStatusRef.onDisconnect().set({
+        uid: userId,
+        username: currentUsername,
+        avatar: currentUserAvatar,
+        status: 'offline',
+        lastChanged: firebase.database.ServerValue.TIMESTAMP
+      });
+      
+      presenceRef.child(userId).onDisconnect().update({
+        status: 'offline',
+        lastChanged: firebase.database.ServerValue.TIMESTAMP
+      });
+    }
+  });
+  
+  // Surveiller les changements de présence
+  presenceRef.on('value', (snapshot) => {
+    onlineUsers = {};
+    let onlineCount = 0;
+    
+    snapshot.forEach((childSnapshot) => {
+      const user = childSnapshot.val();
+      if (user.status === 'online' && user.uid !== currentUser.uid) {
+        onlineUsers[user.uid] = user;
+        onlineCount++;
+      }
+    });
+    
+    document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
+    updateDirectChats();
+    updateChatListStatus();
+  });
+}
+
+// Chargement des conversations
+function loadChats() {
+  updateDirectChats();
+  
+  // Écouter les nouveaux messages pour les aperçus
+  firestore.collection("messages")
+    .orderBy("timestamp", "desc")
+    .limit(50)
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          updateChatPreview(change.doc.data());
+        }
+      });
+    });
+}
+
+// Mise à jour des conversations directes
+function updateDirectChats() {
+  const directChatsContainer = document.getElementById('direct-chats');
+  directChatsContainer.innerHTML = '';
+  let directCount = 0;
+  
+  Object.values(onlineUsers).forEach((user) => {
+    if (user.uid !== currentUser.uid) {
+      directCount++;
+      createChatItem(user, 'direct');
+    }
+  });
+  
+  document.getElementById('direct-count').textContent = directCount;
+}
+
+// Création d'un élément de chat
+function createChatItem(user, chatType) {
+  const chatItem = document.createElement('div');
+  chatItem.className = 'chat-item';
+  chatItem.dataset.userId = user.uid;
+  chatItem.dataset.chatType = chatType;
+  
+  const avatarLetter = user.username ? user.username.charAt(0).toUpperCase() : 'U';
+  
+  chatItem.innerHTML = `
+    <div class="chat-avatar">
+      ${user.avatar ? `<img src="${user.avatar}">` : `<span>${avatarLetter}</span>`}
+      <div class="online-status ${user.status !== 'online' ? 'offline' : 'pulse'}"></div>
+    </div>
+    <div class="chat-info">
+      <div class="chat-name">
+        <span>${user.username}</span>
+        <span class="chat-time"></span>
+      </div>
+      <div class="chat-preview">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
+    </div>
+  `;
+  
+  chatItem.addEventListener('click', () => openChat(chatType, user.uid, user.username, user.avatar));
+  document.getElementById(`${chatType}-chats`).appendChild(chatItem);
+}
+
+// Mise à jour de l'aperçu du chat
+function updateChatPreview(message) {
+  let chatItem = null;
+  
+  if (message.chatType === 'direct') {
+    const otherUserId = getOtherUserId(message.chatId);
+    chatItem = document.querySelector(`.chat-item[data-user-id="${otherUserId}"]`);
+  } else if (message.chatType === 'general') {
+    chatItem = document.getElementById('general-chat-item');
+  }
+  
+  if (chatItem) {
+    updateChatItemPreview(chatItem, message);
+  }
+}
+
+function getOtherUserId(chatId) {
+  const userIds = chatId.split('_');
+  return userIds[0] === currentUser.uid ? userIds[1] : userIds[0];
+}
+
+function updateChatItemPreview(chatItem, message) {
+  const preview = chatItem.querySelector('.chat-preview');
+  const time = chatItem.querySelector('.chat-time');
+  
+  if (preview) {
+    const senderPrefix = message.userId === currentUser.uid ? 'Vous: ' : '';
+    preview.textContent = senderPrefix + (message.text || 'Pièce jointe');
+  }
+  
+  if (time && message.timestamp) {
+    const timestamp = message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp);
+    time.textContent = formatTime(timestamp);
+  }
+  
+  if (message.userId !== currentUser.uid) {
+    chatItem.classList.add('unread');
+  }
+}
+
+// Mise à jour des statuts dans la liste des chats
+function updateChatListStatus() {
+  const chatItems = document.querySelectorAll('.chat-item');
+  
+  chatItems.forEach((item) => {
+    const userId = item.dataset.userId;
+    if (userId && onlineUsers[userId]) {
+      const user = onlineUsers[userId];
+      updateChatItemStatus(item, user);
+    }
+  });
+}
+
+function updateChatItemStatus(chatItem, user) {
+  const preview = chatItem.querySelector('.chat-preview');
+  const statusIndicator = chatItem.querySelector('.online-status');
+  
+  if (preview && !preview.textContent.startsWith('Vous:')) {
+    preview.textContent = user.status === 'online' ? 'En ligne' : 'Hors ligne';
+  }
+  
+  if (statusIndicator) {
+    statusIndicator.className = 'online-status';
+    statusIndicator.classList.add(user.status === 'online' ? 'pulse' : 'offline');
+  }
+}
+
+// Ouverture d'une conversation
+function openChat(chatType, chatWith, chatName, chatAvatar) {
+  // Nettoyer l'écouteur précédent
+  if (messageListener) {
+    messageListener();
+  }
+  
+  currentChatType = chatType;
+  currentChatWith = chatWith;
+  currentChatName = chatName;
+  currentChatAvatar = chatAvatar;
+  currentChatId = chatType === 'general' ? 'general' : getChatId(currentUser.uid, chatWith);
+  
+  updateChatUI();
+  loadChatMessages();
+  setupTypingIndicator();
+  markMessagesAsRead();
+}
+
+function getChatId(userId1, userId2) {
+  return [userId1, userId2].sort().join('_');
+}
+
+function updateChatUI() {
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('chat-header').style.display = 'flex';
+  document.getElementById('chat-messages').style.display = 'flex';
+  document.getElementById('chat-input-container').style.display = 'block';
+  
+  document.getElementById('current-chat-name').textContent = currentChatName;
+  
+  updateChatAvatar();
+  updateChatStatus();
+}
+
+function updateChatAvatar() {
+  const avatarLetter = document.getElementById('current-chat-avatar-letter');
+  const avatarImg = document.getElementById('current-chat-avatar-img');
+  
+  if (currentChatAvatar) {
+    avatarImg.src = currentChatAvatar;
+    avatarImg.style.display = 'block';
+    avatarLetter.style.display = 'none';
+  } else {
+    avatarLetter.textContent = currentChatName ? currentChatName.charAt(0).toUpperCase() : 'G';
+    avatarLetter.style.display = 'flex';
+    avatarImg.style.display = 'none';
+  }
+}
+
+function updateChatStatus() {
+  const statusText = document.getElementById('current-chat-status-text');
+  const statusIndicator = document.getElementById('current-chat-status');
+  
+  if (currentChatType === 'direct' && onlineUsers[currentChatWith]) {
+    statusText.textContent = onlineUsers[currentChatWith].status === 'online' ? 'En ligne' : 'Hors ligne';
+    statusIndicator.className = 'online-status';
+    statusIndicator.classList.add(onlineUsers[currentChatWith].status === 'online' ? 'pulse' : 'offline');
+  } else {
+    statusText.textContent = 'Groupe';
+    statusIndicator.className = 'online-status';
+    statusIndicator.style.backgroundColor = '#f8961e';
+  }
+}
+
+// Chargement des messages
+function loadChatMessages() {
+  const messagesContainer = document.getElementById('chat-messages');
+  messagesContainer.innerHTML = '';
+  
+  addTypingIndicator();
+  
+  const messagesQuery = buildMessagesQuery();
+  
+  messageListener = messagesQuery.onSnapshot((snapshot) => {
+    const messages = processMessagesSnapshot(snapshot);
+    displayMessages(messages);
+    scrollToBottom();
+  }, (error) => {
+    console.error("Erreur:", error);
+  });
+}
+
+function addTypingIndicator() {
+  const typingIndicator = document.createElement('div');
+  typingIndicator.className = 'typing-indicator';
+  typingIndicator.id = 'typing-indicator';
+  typingIndicator.innerHTML = `
+    <div class="chat-avatar" id="typing-user-avatar">
+      <span id="typing-user-avatar-letter">U</span>
+      <img id="typing-user-avatar-img" style="display: none;">
+    </div>
+    <div class="typing-dots">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  `;
+  document.getElementById('chat-messages').appendChild(typingIndicator);
+}
+
+function buildMessagesQuery() {
+  if (currentChatType === 'general') {
+    return firestore.collection("messages")
+      .where("chatType", "==", "general")
+      .orderBy("timestamp", "asc")
+      .limit(chatMessagesLimit);
+  } else {
+    return firestore.collection("messages")
+      .where("chatType", "==", "direct")
+      .where("chatId", "==", currentChatId)
+      .orderBy("timestamp", "asc")
+      .limit(chatMessagesLimit);
+  }
+}
+
+function processMessagesSnapshot(snapshot) {
+  const messages = [];
+  snapshot.forEach((doc) => {
+    messages.push({ id: doc.id, ...doc.data() });
+  });
+  return messages;
+}
+
+// Affichage des messages
+function displayMessages(messages) {
+  const messagesContainer = document.getElementById('chat-messages');
+  messagesContainer.innerHTML = '';
+  messagesContainer.appendChild(document.getElementById('typing-indicator'));
+  
+  let lastSender = null;
+  let lastDate = null;
+  
+  messages.forEach((message) => {
+    const messageElement = createMessageElement(message, lastSender, lastDate);
+    
+    if (messageElement.dateDiv) {
+      messagesContainer.appendChild(messageElement.dateDiv);
+      lastDate = messageElement.date;
+    }
+    
+    messagesContainer.appendChild(messageElement.div);
+    lastSender = message.userId;
+  });
+  
+  scrollToBottom();
+}
+
+function createMessageElement(message, lastSender, lastDate) {
+  const isCurrentUser = message.userId === currentUser.uid;
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
+  
+  const timestamp = getMessageTimestamp(message);
+  const formattedTime = formatTime(timestamp);
+  const formattedDate = timestamp.toLocaleDateString('fr-FR', { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'long' 
+  });
+  
+  const result = { div: messageDiv, date: formattedDate };
+  
+  // Ajouter la date si nécessaire
+  if (!lastDate || formattedDate !== lastDate) {
+    result.dateDiv = createDateDiv(formattedDate);
+  }
+  
+  // Contenu du message
+  messageDiv.innerHTML = buildMessageContent(message, isCurrentUser, lastSender, formattedTime);
+  
+  // Réactions
+  if (message.reactions && Object.keys(message.reactions).length > 0) {
+    messageDiv.innerHTML += buildReactionsHTML(message.reactions);
+  }
+  
+  // ID du message
+  if (message.id) {
+    messageDiv.dataset.messageId = message.id;
+  }
+  
+  // Configuration des événements
+  setupMessageInteractions(messageDiv, message);
+  
+  return result;
+}
+
+function getMessageTimestamp(message) {
+  return message.timestamp ? 
+    (message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp)) : 
+    new Date();
+}
+
+function createDateDiv(dateText) {
+  const dateDiv = document.createElement('div');
+  dateDiv.className = 'message-date';
+  dateDiv.style.textAlign = 'center';
+  dateDiv.style.margin = '15px 0';
+  dateDiv.style.color = 'var(--gray)';
+  dateDiv.style.fontSize = '12px';
+  dateDiv.textContent = dateText;
+  return dateDiv;
+}
+
+function buildMessageContent(message, isCurrentUser, lastSender, formattedTime) {
+  return `
+    <div class="message-info">
+      ${!isCurrentUser && message.userId !== lastSender ? 
+        `<span class="message-sender">${message.username}</span>` : ''}
+      <span class="message-time">${formattedTime}</span>
+    </div>
+    <div class="message-text">${message.text || ''}</div>
+  `;
+}
+
+function buildReactionsHTML(reactions) {
+  let html = '<div class="message-reactions">';
+  
+  Object.entries(reactions).forEach(([emoji, users]) => {
+    const count = Object.keys(users).length;
+    const hasReacted = users[currentUser.uid] !== undefined;
+    
+    html += `
+      <div class="reaction ${hasReacted ? 'reacted' : ''}" data-emoji="${emoji}">
+        ${emoji} <span class="reaction-count">${count}</span>
+      </div>
+    `;
+  });
+  
+  html += '</div>';
+  return html;
+}
+
+function setupMessageInteractions(messageDiv, message) {
+  setupMessageLongPress(messageDiv, message);
+  setupMessageHoverEffects(messageDiv);
+}
+
+function setupMessageHoverEffects(messageDiv) {
+  messageDiv.addEventListener('mouseenter', () => {
+    messageDiv.style.transform = 'translateY(-2px)';
+    messageDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+  });
+  
+  messageDiv.addEventListener('mouseleave', () => {
+    messageDiv.style.transform = '';
+    messageDiv.style.boxShadow = '';
+  });
+}
+
+// Envoi de message
+function sendMessage() {
+  const messageInput = document.getElementById('message-input');
+  const messageText = messageInput.value.trim();
+  
+  if (messageText && currentUser && currentChatId) {
+    const message = {
+      text: messageText,
+      userId: currentUser.uid,
+      username: currentUsername,
+      userAvatar: currentUserAvatar,
+      chatType: currentChatType,
+      chatId: currentChatId,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'sent'
+    };
+    
+    firestore.collection("messages").add(message)
+      .then((docRef) => {
+        updateMessageStatus(docRef);
+        clearMessageInput();
+        setTyping(false);
+        scrollToBottom();
+        enforceMessageLimit();
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  }
+}
+
+function updateMessageStatus(docRef) {
+  docRef.update({ 
+    status: 'delivered',
+    id: docRef.id 
+  });
+}
+
+function clearMessageInput() {
+  document.getElementById('message-input').value = '';
+}
+
+function scrollToBottom() {
+  setTimeout(() => {
+    const messagesContainer = document.getElementById('chat-messages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }, 100);
+}
+
+// Limite de messages
+function enforceMessageLimit() {
+  if (currentChatType === 'general') {
+    enforceGeneralChatLimit();
+  } else if (currentChatType === 'direct') {
+    enforceDirectChatLimit();
+  }
+}
+
+function enforceGeneralChatLimit() {
+  firestore.collection("messages")
+    .where("chatType", "==", "general")
+    .orderBy("timestamp", "desc")
+    .get()
+    .then((snapshot) => {
+      if (snapshot.size > chatMessagesLimit) {
+        deleteOldMessages(snapshot);
+      }
+    });
+}
+
+function enforceDirectChatLimit() {
+  firestore.collection("messages")
+    .where("chatType", "==", "direct")
+    .where("chatId", "==", currentChatId)
+    .orderBy("timestamp", "desc")
+    .get()
+    .then((snapshot) => {
+      if (snapshot.size > chatMessagesLimit) {
+        deleteOldMessages(snapshot);
+      }
+    });
+}
+
+function deleteOldMessages(snapshot) {
+  const batch = firestore.batch();
+  const toDelete = snapshot.docs.slice(chatMessagesLimit);
+  
+  toDelete.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+  
+  batch.commit();
+}
+
+// Indicateur de saisie
+function setupTypingIndicator() {
+  if (currentChatType === 'direct' && currentChatWith) {
+    db.ref('status/' + currentChatWith + '/typing').on('value', (snapshot) => {
+      updateTypingIndicator(snapshot.val());
+    });
+  }
+}
+
+function updateTypingIndicator(typingChatId) {
+  const typingBadge = document.getElementById('typing-indicator-badge');
+  const typingIndicator = document.getElementById('typing-indicator');
+  
+  if (typingChatId === currentChatId) {
+    typingBadge.style.display = 'inline-block';
+    typingIndicator.classList.add('active');
+    updateTypingUserAvatar();
+    scrollToBottom();
+  } else {
+    typingBadge.style.display = 'none';
+    typingIndicator.classList.remove('active');
+  }
+}
+
+function updateTypingUserAvatar() {
+  if (!currentChatWith || !onlineUsers[currentChatWith]) return;
+  
+  const user = onlineUsers[currentChatWith];
+  const typingAvatar = document.getElementById('typing-user-avatar-letter');
+  const typingAvatarImg = document.getElementById('typing-user-avatar-img');
+  
+  if (user.avatar) {
+    typingAvatarImg.src = user.avatar;
+    typingAvatarImg.style.display = 'block';
+    typingAvatar.style.display = 'none';
+  } else {
+    typingAvatar.textContent = user.username ? user.username.charAt(0).toUpperCase() : 'U';
+    typingAvatar.style.display = 'flex';
+    typingAvatarImg.style.display = 'none';
+  }
+}
+
+function setTyping(typing) {
+  if (isTyping === typing || !currentChatWith) return;
+  
+  isTyping = typing;
+  const typingRef = db.ref('status/' + currentUser.uid + '/typing');
+  
+  if (typing) {
+    typingRef.set(currentChatId);
+    resetTypingTimeout();
+  } else {
+    typingRef.remove();
+    clearTypingTimeout();
+  }
+}
+
+function resetTypingTimeout() {
+  clearTypingTimeout();
+  typingTimeout = setTimeout(() => {
+    setTyping(false);
+  }, 5000);
+}
+
+function clearTypingTimeout() {
+  if (typingTimeout) {
+    clearTimeout(typingTimeout);
+    typingTimeout = null;
+  }
+}
+
+// Marquer les messages comme lus
+function markMessagesAsRead() {
+  if (!currentChatId) return;
+  
+  firestore.collection("messages")
+    .where("chatId", "==", currentChatId)
+    .where("userId", "!=", currentUser.uid)
+    .where("status", "==", "delivered")
+    .get()
+    .then((snapshot) => {
+      const batch = firestore.batch();
+      
+      snapshot.forEach((doc) => {
+        batch.update(doc.ref, {
+          status: "read",
+          readAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       });
       
-      // Charger la première catégorie par défaut
-      loadEmojis('smileys');
+      return batch.commit();
+    })
+    .then(() => {
+      markChatAsRead();
+    });
+}
+
+function markChatAsRead() {
+  if (currentChatType === 'direct') {
+    const chatItem = document.querySelector(`.chat-item[data-user-id="${currentChatWith}"]`);
+    if (chatItem) chatItem.classList.remove('unread');
+  } else if (currentChatType === 'general') {
+    document.getElementById('general-chat-item').classList.remove('unread');
+  }
+}
+
+// Gestion du profil
+function showProfile(userId) {
+  if (!userId || userId === currentUser.uid) {
+    showCurrentUserProfile();
+  } else if (onlineUsers[userId]) {
+    showOtherUserProfile(userId);
+  }
+  
+  document.getElementById('profile-modal').classList.add('active');
+}
+
+function showCurrentUserProfile() {
+  document.getElementById('profile-name').textContent = currentUsername;
+  document.getElementById('profile-status').textContent = 'En ligne';
+  document.getElementById('profile-email').textContent = currentUserEmail;
+  document.getElementById('profile-join-date').textContent = currentUserJoinDate;
+  document.getElementById('profile-last-seen').textContent = 'Maintenant';
+  
+  updateProfileAvatar(currentUserAvatar, currentUsername);
+}
+
+function showOtherUserProfile(userId) {
+  const user = onlineUsers[userId];
+  document.getElementById('profile-name').textContent = user.username;
+  document.getElementById('profile-status').textContent = user.status === 'online' ? 'En ligne' : 'Hors ligne';
+  document.getElementById('profile-email').textContent = 'Non disponible';
+  document.getElementById('profile-join-date').textContent = 'Non disponible';
+  document.getElementById('profile-last-seen').textContent = user.status === 'online' ? 'Maintenant' : 'Dernière fois inconnue';
+  
+  updateProfileAvatar(user.avatar, user.username);
+}
+
+function updateProfileAvatar(avatar, username) {
+  const profileAvatarImg = document.getElementById('profile-avatar-img');
+  const profileAvatarLetter = document.getElementById('profile-avatar-letter');
+  
+  if (avatar) {
+    profileAvatarImg.src = avatar;
+    profileAvatarImg.style.display = 'block';
+    profileAvatarLetter.style.display = 'none';
+  } else {
+    profileAvatarLetter.textContent = username.charAt(0).toUpperCase();
+    profileAvatarLetter.style.display = 'block';
+    profileAvatarImg.style.display = 'none';
+  }
+}
+
+// Sélecteur d'emoji
+function setupEmojiPicker() {
+  const emojiPicker = document.getElementById('emoji-picker');
+  const emojiContainer = document.getElementById('emoji-container');
+  const emojiTabs = document.querySelectorAll('.emoji-tab');
+  const messageInput = document.getElementById('message-input');
+  
+  const emojiCategories = {
+    smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🥸', '🤩', '🥳'],
+    people: ['👋', '🤚', '🖐', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏'],
+    animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇'],
+    food: ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅'],
+    activities: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛼', '🛷'],
+    objects: ['⌚', '📱', '📲', '💻', '⌨️', '🖥', '🖨', '🖱', '🖲', '🕹', '🗜', '💽', '💾', '💿', '📀', '📼', '📷', '📸', '📹', '🎥', '📽', '🎞', '📞', '☎️', '📟', '📠', '📺', '📻', '🎙', '🎚']
+  };
+  
+  function loadEmojis(category) {
+    emojiContainer.innerHTML = '';
+    
+    const categoryTitle = document.createElement('div');
+    categoryTitle.className = 'emoji-category-title';
+    categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+    emojiContainer.appendChild(categoryTitle);
+    
+    const emojiGrid = document.createElement('div');
+    emojiGrid.className = 'emoji-grid';
+    
+    emojiCategories[category].forEach((emoji) => {
+      const emojiElement = document.createElement('div');
+      emojiElement.className = 'emoji';
+      emojiElement.textContent = emoji;
+      emojiElement.addEventListener('click', () => {
+        insertEmoji(emoji);
+      });
+      emojiGrid.appendChild(emojiElement);
+    });
+    
+    emojiContainer.appendChild(emojiGrid);
+  }
+  
+  function insertEmoji(emoji) {
+    const input = document.getElementById('message-input');
+    input.value += emoji;
+    input.focus();
+    emojiPicker.style.display = 'none';
+    setTyping(true);
+  }
+  
+  emojiTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      emojiTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      loadEmojis(tab.dataset.category);
+    });
+  });
+  
+  loadEmojis('smileys');
+}
+
+// Menu contextuel
+function setupContextMenu() {
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const messageElement = e.target.closest('.message');
+    if (messageElement) showContextMenu(e, messageElement);
+  });
+  
+  document.addEventListener('click', () => {
+    document.getElementById('context-menu').style.display = 'none';
+  });
+}
+
+function showContextMenu(e, messageElement) {
+  const contextMenu = document.getElementById('context-menu');
+  contextMenu.style.display = 'block';
+  positionContextMenu(e, contextMenu);
+  
+  selectedMessage = messageElement;
+  setupContextMenuActions(messageElement);
+}
+
+function positionContextMenu(e, contextMenu) {
+  contextMenu.style.left = `${e.pageX}px`;
+  contextMenu.style.top = `${e.pageY}px`;
+  
+  const rect = contextMenu.getBoundingClientRect();
+  if (rect.right > window.innerWidth) {
+    contextMenu.style.left = `${window.innerWidth - rect.width}px`;
+  }
+  if (rect.bottom > window.innerHeight) {
+    contextMenu.style.top = `${window.innerHeight - rect.height}px`;
+  }
+}
+
+function setupContextMenuActions(messageElement) {
+  document.getElementById('context-menu-copy').onclick = () => copyMessage(messageElement);
+  document.getElementById('context-menu-delete').onclick = () => deleteMessage(messageElement);
+  document.getElementById('context-menu-reply').onclick = () => replyToMessage(messageElement);
+  document.getElementById('context-menu-react').onclick = () => reactToMessage(messageElement);
+}
+
+function copyMessage(messageElement) {
+  const messageText = messageElement.querySelector('.message-text').textContent;
+  navigator.clipboard.writeText(messageText);
+  document.getElementById('context-menu').style.display = 'none';
+}
+
+function deleteMessage(messageElement) {
+  const messageId = messageElement.dataset.messageId;
+  if (messageId) {
+    firestore.collection("messages").doc(messageId).delete()
+      .then(() => {
+        document.getElementById('context-menu').style.display = 'none';
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+      });
+  }
+}
+
+function replyToMessage(messageElement) {
+  const messageText = messageElement.querySelector('.message-text').textContent;
+  const messageInput = document.getElementById('message-input');
+  messageInput.value = `"${messageText}" `;
+  messageInput.focus();
+  document.getElementById('context-menu').style.display = 'none';
+}
+
+function reactToMessage(messageElement) {
+  const messageId = messageElement.dataset.messageId;
+  if (messageId) {
+    const picker = document.getElementById('reaction-picker');
+    positionReactionPicker(messageElement, picker);
+    setupReactionOptions(messageId, picker);
+  }
+}
+
+function positionReactionPicker(messageElement, picker) {
+  const messageRect = messageElement.getBoundingClientRect();
+  picker.style.display = 'flex';
+  picker.style.left = `${messageRect.left + messageRect.width / 2 - 100}px`;
+  picker.style.top = `${messageRect.top - 50}px`;
+}
+
+function setupReactionOptions(messageId, picker) {
+  const reactionOptions = picker.querySelectorAll('.reaction-option');
+  reactionOptions.forEach(option => {
+    option.onclick = () => {
+      toggleReaction(messageId, option.dataset.reaction);
+      picker.style.display = 'none';
+      document.getElementById('context-menu').style.display = 'none';
+    };
+  });
+}
+
+// Réactions aux messages
+function setupMessageLongPress(messageElement, messageData) {
+  let pressTimer;
+  
+  messageElement.addEventListener('mousedown', (e) => {
+    if (e.button === 0) {
+      pressTimer = setTimeout(() => {
+        showReactionPicker(e, messageElement, messageData);
+      }, 1000);
     }
-        function setTyping(typing) {
-      if (isTyping === typing) return;
+  });
+  
+  messageElement.addEventListener('mouseup', () => clearTimeout(pressTimer));
+  messageElement.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+  
+  messageElement.addEventListener('touchstart', (e) => {
+    pressTimer = setTimeout(() => {
+      showReactionPicker(e, messageElement, messageData);
+    }, 1000);
+  });
+  
+  messageElement.addEventListener('touchend', () => clearTimeout(pressTimer));
+}
+
+function showReactionPicker(e, messageElement, messageData) {
+  const picker = document.getElementById('reaction-picker');
+  picker.style.display = 'flex';
+  
+  const rect = messageElement.getBoundingClientRect();
+  picker.style.left = `${rect.left + rect.width / 2 - 100}px`;
+  picker.style.top = `${rect.top - 50}px`;
+  
+  setupReactionPickerOptions(picker, messageData.id);
+  setupPickerCloseHandler(picker);
+}
+
+function setupReactionPickerOptions(picker, messageId) {
+  const reactionOptions = picker.querySelectorAll('.reaction-option');
+  reactionOptions.forEach(option => {
+    option.onclick = () => {
+      toggleReaction(messageId, option.dataset.reaction);
+      picker.style.display = 'none';
+    };
+  });
+}
+
+function setupPickerCloseHandler(picker) {
+  const closePicker = () => {
+    picker.style.display = 'none';
+    document.removeEventListener('click', closePicker);
+  };
+  
+  setTimeout(() => {
+    document.addEventListener('click', closePicker);
+  }, 10);
+}
+
+function toggleReaction(messageId, emoji) {
+  if (!messageId || !currentUser || !emoji) return;
+  
+  const reactionRef = firestore.collection("messages").doc(messageId)
+    .collection("reactions").doc(emoji);
+  
+  reactionRef.get().then(doc => {
+    if (doc.exists) {
+      const reactions = doc.data();
       
-      isTyping = typing;
-      
-      if (currentChatType === 'direct' && currentChatWith) {
-        const typingRef = db.ref('status/' + currentUser.uid + '/typing');
-        
-        if (typing) {
-          typingRef.set(currentChatId);
-          
-          typingTimeout = setTimeout(() => {
-            setTyping(false);
-          }, 5000);
-        } else {
-          typingRef.remove();
-          if (typingTimeout) {
-            clearTimeout(typingTimeout);
-          }
-        }
+      if (reactions[currentUser.uid]) {
+        reactionRef.update({
+          [currentUser.uid]: firebase.firestore.FieldValue.delete()
+        });
+      } else {
+        reactionRef.update({
+          [currentUser.uid]: true
+        });
       }
+    } else {
+      reactionRef.set({
+        [currentUser.uid]: true
+      });
     }
+  });
+}
+
+// Formatage des dates
+function formatDate(dateString) {
+  const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
+  return date.toLocaleDateString('fr-FR', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+}
+
+function formatTime(dateString) {
+  const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
+  return date.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Gestion de la recherche
+function setupSearch() {
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const chatItems = document.querySelectorAll('.chat-item');
+    
+    chatItems.forEach((item) => {
+      const chatName = item.querySelector('.chat-name span')?.textContent.toLowerCase();
+      item.style.display = chatName && chatName.includes(searchTerm) ? 'flex' : 'none';
+    });
+  });
+}
+
+// Initialisation complète
+function setupEventListeners() {
+  setupSearch();
+  
+  document.getElementById('send-button').addEventListener('click', sendMessage);
+  
+  document.getElementById('message-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+  
+  document.getElementById('message-input').addEventListener('input', () => {
+    setTyping(document.getElementById('message-input').value.trim().length > 0);
+  });
+  
+  document.getElementById('general-chat-item').addEventListener('click', () => {
+    openChat('general', null, 'Général', null);
+  });
+  
+  document.getElementById('profile-btn').addEventListener('click', () => {
+    showProfile(currentChatWith || currentUser.uid);
+  });
+  
+  document.getElementById('profile-close').addEventListener('click', () => {
+    document.getElementById('profile-modal').classList.remove('active');
+  });
+  
+  document.getElementById('emoji-btn').addEventListener('click', (e) => {
+    const picker = document.getElementById('emoji-picker');
+    picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
+    e.stopPropagation();
+  });
+  
+  document.addEventListener('click', () => {
+    document.getElementById('emoji-picker').style.display = 'none';
+  });
+}
   </script>
 </body>
 </html>
