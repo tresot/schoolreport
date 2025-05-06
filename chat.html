@@ -1228,6 +1228,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   setupEmojiPicker();
   setupContextMenu();
+  setupMessageLongPress(); // Ajout de l'initialisation de la fonction manquante
 });
 
 // Gestion de l'authentification
@@ -1524,15 +1525,13 @@ function updateChatStatus() {
   }
 }
 
-// Chargement des messages - MODIFICATION PRINCIPALE
+// Chargement des messages
 function loadChatMessages() {
   const messagesContainer = document.getElementById('chat-messages');
   messagesContainer.innerHTML = '';
   
   // Ajout du fond en arrière-plan sans interférer avec les messages
   messagesContainer.style.position = 'relative';
-  
-  // Création du pseudo-élément pour le fond
   messagesContainer.style.backgroundImage = 'none';
   messagesContainer.style.backgroundColor = '#f8f9fa';
   
@@ -1547,6 +1546,10 @@ function loadChatMessages() {
     scrollToBottom();
   }, (error) => {
     console.error("Erreur:", error);
+    // Gestion de l'erreur d'index manquant
+    if (error.code === 'failed-precondition') {
+      console.warn("Index Firestore manquant. Veuillez créer l'index requis.");
+    }
   });
 }
 
@@ -1602,7 +1605,7 @@ function processMessagesSnapshot(snapshot) {
   return messages;
 }
 
-// Affichage des messages - MODIFICATION PRINCIPALE
+// Affichage des messages
 function displayMessages(messages) {
   const messagesContainer = document.getElementById('chat-messages');
   messagesContainer.innerHTML = '';
@@ -1697,8 +1700,58 @@ function buildMessageContent(message, isCurrentUser, lastSender, formattedTime) 
   `;
 }
 
+// Fonction manquante ajoutée pour résoudre l'erreur
+function setupMessageLongPress() {
+  // Implémentation de la détection de long press sur les messages
+  let pressTimer;
+  const longPressDuration = 500; // 0.5 secondes
+  
+  document.addEventListener('mousedown', (e) => {
+    const messageElement = e.target.closest('.message');
+    if (messageElement) {
+      pressTimer = setTimeout(() => {
+        showContextMenu(e, messageElement);
+      }, longPressDuration);
+    }
+  });
+  
+  document.addEventListener('mouseup', () => {
+    clearTimeout(pressTimer);
+  });
+  
+  document.addEventListener('mousemove', () => {
+    clearTimeout(pressTimer);
+  });
+  
+  // Gestion pour les écrans tactiles
+  document.addEventListener('touchstart', (e) => {
+    const messageElement = e.target.closest('.message');
+    if (messageElement) {
+      pressTimer = setTimeout(() => {
+        const touch = e.touches[0] || e.changedTouches[0];
+        const simulatedEvent = new MouseEvent('contextmenu', {
+          bubbles: true,
+          cancelable: true,
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        });
+        e.preventDefault();
+        showContextMenu(simulatedEvent, messageElement);
+      }, longPressDuration);
+    }
+  });
+  
+  document.addEventListener('touchend', () => {
+    clearTimeout(pressTimer);
+  });
+  
+  document.addEventListener('touchmove', () => {
+    clearTimeout(pressTimer);
+  });
+}
+
 function setupMessageInteractions(messageDiv, message) {
-  setupMessageLongPress(messageDiv, message);
+  // setupMessageLongPress est maintenant géré globalement
   setupMessageHoverEffects(messageDiv);
 }
 
@@ -1762,11 +1815,15 @@ function scrollToBottom() {
   }, 100);
 }
 
-// Indicateur de saisie
+// Indicateur de saisie avec gestion des erreurs
 function setupTypingIndicator() {
   if (currentChatType === 'direct' && currentChatWith) {
     db.ref('status/' + currentChatWith + '/typing').on('value', (snapshot) => {
-      updateTypingIndicator(snapshot.val());
+      try {
+        updateTypingIndicator(snapshot.val());
+      } catch (error) {
+        console.error("Erreur dans updateTypingIndicator:", error);
+      }
     });
   }
 }
@@ -1774,6 +1831,9 @@ function setupTypingIndicator() {
 function updateTypingIndicator(typingChatId) {
   const typingBadge = document.getElementById('typing-indicator-badge');
   const typingIndicator = document.getElementById('typing-indicator');
+  
+  // Vérification que les éléments existent avant de les manipuler
+  if (!typingBadge || !typingIndicator) return;
   
   if (typingChatId === currentChatId) {
     typingBadge.style.display = 'inline-block';
@@ -1792,6 +1852,8 @@ function updateTypingUserAvatar() {
   const user = onlineUsers[currentChatWith];
   const typingAvatar = document.getElementById('typing-user-avatar-letter');
   const typingAvatarImg = document.getElementById('typing-user-avatar-img');
+  
+  if (!typingAvatar || !typingAvatarImg) return;
   
   if (user.profileImage) {
     typingAvatarImg.src = user.profileImage;
