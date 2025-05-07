@@ -5,68 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SchoolReport - Connexion</title>
     <script type="module">
-        // [Votre code JavaScript existant reste inchangé]
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+            authDomain: "schoolreport-f8db0.firebaseapp.com",
+            projectId: "schoolreport-f8db0",
+            storageBucket: "schoolreport-f8db0.appspot.com",
+            messagingSenderId: "313069994450",
+            appId: "1:313069994450:web:37b009be4f1812fdca880b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Authentification - Inscription
+        window.signUp = async (email, password) => {
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                document.getElementById('error-message').textContent = "✅ Compte créé avec succès ! Redirection...";
+                setTimeout(() => window.location.href = 'center.html', 1500);
+            } catch (error) {
+                document.getElementById('error-message').textContent = "❌ " + error.message;
+            }
+        };
+
+        // Authentification - Connexion
+        window.signIn = async (email, password) => {
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('error-message').textContent = "✅ Connexion réussie ! Redirection...";
+                setTimeout(() => window.location.href = 'center.html', 1500);
+            } catch (error) {
+                document.getElementById('error-message').textContent = "❌ " + error.message;
+            }
+        };
+
+        // Bascule entre les formulaires
+        window.toggleForms = () => {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            loginForm.classList.toggle('hidden');
+            signupForm.classList.toggle('hidden');
+            document.getElementById('error-message').textContent = '';
+        };
     </script>
     <style>
-        /* Palette professionnelle raffinée */
-        :root {
-            --navy-blue: #1a365d;       /* Bleu marine profond */
-            --slate-gray: #4a5568;      /* Gris ardoise */
-            --soft-teal: #38b2ac;       /* Vert bleuté doux */
-            --light-gray: #f7fafc;      /* Gris très clair */
-            --off-white: #fffaf0;       /* Blanc cassé chaud */
-            --dark-charcoal: #1a202c;   /* Noir charbon pour texte */
-            --accent-blue: #3182ce;    /* Bleu d'accentuation */
+                :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--light-gray);
+            background-color: #f5f7fa;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 2rem;
-            color: var(--dark-charcoal);
+            padding: 20px;
         }
 
         .auth-container {
-            background: var(--off-white);
+            background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(26, 54, 93, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem;
-            border: 1px solid rgba(160, 174, 192, 0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
         }
 
         .logo {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 30px;
         }
 
         .logo h1 {
-            color: var(--navy-blue);
-            font-size: 1.75rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .logo p {
-            color: var(--slate-gray);
-            font-size: 0.875rem;
-            font-weight: 400;
+            color: #6c757d;
+            font-size: 14px;
         }
 
         .auth-form {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
         }
 
         .auth-form.hidden {
@@ -74,85 +123,80 @@
         }
 
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: var(--slate-gray);
+            margin-bottom: 8px;
+            color: var(--dark);
             font-weight: 500;
-            font-size: 0.875rem;
+            font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
             border-radius: 8px;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            background-color: white;
-            color: var(--dark-charcoal);
+            font-size: 15px;
+            transition: border 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+            border-color: var(--primary);
         }
 
         button {
             width: 100%;
-            padding: 0.875rem;
+            padding: 14px;
             border: none;
             border-radius: 8px;
-            background-color: var(--navy-blue);
+            background-color: var(--primary);
             color: white;
-            font-size: 0.9375rem;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 0.5rem;
-            letter-spacing: 0.25px;
+            transition: background 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
-            background-color: var(--accent-blue);
-            transform: translateY(-1px);
+            background-color: var(--secondary);
         }
 
         .toggle-form {
             text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.875rem;
-            color: var(--slate-gray);
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
         }
 
         .toggle-form a {
-            color: var(--soft-teal);
-            font-weight: 500;
+            color: var(--primary);
             text-decoration: none;
+            font-weight: 500;
             cursor: pointer;
-            transition: color 0.2s;
         }
 
         .toggle-form a:hover {
-            color: var(--accent-blue);
             text-decoration: underline;
         }
 
         #error-message {
-            color: #e53e3e;
-            font-size: 0.875rem;
+            color: #e63946;
+            font-size: 14px;
             text-align: center;
-            margin: 1rem 0;
-            min-height: 1.25rem;
-            font-weight: 500;
+            margin-top: 20px;
+            min-height: 20px;
         }
 
-        /* Ajout de la police Inter */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -164,7 +208,51 @@
 
         <div id="error-message"></div>
 
-        <!-- [Vos formulaires existants restent inchangés] -->
+        <!-- Formulaire de Connexion -->
+        <div id="login-form" class="auth-form">
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="votre@email.com">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Mot de passe</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <button onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
+                Se connecter
+            </button>
+            <div class="toggle-form">
+                Pas encore de compte ? <a onclick="toggleForms()">S'inscrire</a>
+            </div>
+        </div>
+
+        <!-- Formulaire d'Inscription -->
+        <div id="signup-form" class="auth-form hidden">
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="votre@email.com">
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Mot de passe</label>
+                <input type="password" id="signup-password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label for="signup-confirm">Confirmer le mot de passe</label>
+                <input type="password" id="signup-confirm" placeholder="••••••••">
+            </div>
+            <button onclick="
+                if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
+                    document.getElementById('error-message').textContent = '❌ Les mots de passe ne correspondent pas';
+                } else {
+                    signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
+                }
+            ">
+                Créer un compte
+            </button>
+            <div class="toggle-form">
+                Déjà inscrit ? <a onclick="toggleForms()">Se connecter</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
