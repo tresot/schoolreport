@@ -4,511 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SchoolReport - Connexion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Variables CSS Évoluées */
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #4cc9f0;
-            --light: #f8f9fa;
-            --dark: #0a1f44;
-            --space-gradient: linear-gradient(45deg, #0a1f44 0%, #1a365d 100%);
-            --neon-shadow: 0 0 15px rgba(76, 201, 240, 0.4);
-            --galaxy-bg: url('https://i.ibb.co/5sM4R0H/stars.png');
-        }
-
-        /* Reset Étendu */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            min-height: 100vh;
-            background: var(--space-gradient) fixed;
-            color: var(--light);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Arrière-plan Spatial Animé */
-        .space-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle var(--duration) infinite ease-in-out;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        /* Container Principal */
-        .auth-container {
-            background: rgba(10, 31, 68, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            box-shadow: var(--neon-shadow), 0 20px 50px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 500px;
-            padding: 3rem;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.5s ease;
-            border: 1px solid rgba(76, 201, 240, 0.2);
-        }
-
-        .auth-container:hover {
-            transform: translateY(-5px);
-        }
-
-        /* En-tête */
-        .logo {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            position: relative;
-        }
-
-        .logo h1 {
-            color: var(--accent);
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: var(--neon-shadow);
-            margin-bottom: 0.5rem;
-        }
-
-        .logo p {
-            color: rgba(248, 249, 250, 0.8);
-            font-size: 1.1rem;
-            font-weight: 300;
-            max-width: 80%;
-            margin: 0 auto;
-            line-height: 1.4;
-        }
-
-        /* Élément 3D Interactif */
-        .floating-astronaut {
-            position: absolute;
-            width: 120px;
-            right: -60px;
-            top: -60px;
-            animation: float 6s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px var(--accent));
-            opacity: 0.8;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .floating-astronaut:hover {
-            transform: rotate(-10deg) scale(1.1);
-            opacity: 1;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-
-        /* Bulle de Dialogue */
-        .speech-bubble {
-            position: absolute;
-            left: -200px;
-            top: 20%;
-            background: rgba(10, 31, 68, 0.9);
-            padding: 1.5rem;
-            border-radius: 15px;
-            width: 250px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            border: 2px solid var(--accent);
-            opacity: 0;
-            animation: bubbleAppear 10s infinite;
-            transition: all 0.3s ease;
-        }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            right: -20px;
-            top: 20px;
-            border-width: 10px;
-            border-style: solid;
-            border-color: transparent transparent transparent var(--accent);
-        }
-
-        @keyframes bubbleAppear {
-            0%, 100% { opacity: 0; transform: translateX(-20px); }
-            10%, 90% { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Formulaire */
-        .auth-form {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .form-group {
-            margin-bottom: 1.8rem;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.8rem;
-            color: var(--accent);
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: rgba(76, 201, 240, 0.1);
-            border: 2px solid rgba(76, 201, 240, 0.2);
-            border-radius: 12px;
-            color: var(--light);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: rgba(76, 201, 240, 0.05);
-            box-shadow: var(--neon-shadow);
-        }
-
-        .form-group i {
-            position: absolute;
-            right: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(76, 201, 240, 0.5);
-        }
-
-        /* Boutons */
-        button {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--primary);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, 
-                transparent 25%,
-                rgba(255,255,255,0.1) 50%,
-                transparent 75%);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        button:hover {
-            background: var(--secondary);
-            transform: scale(1.02);
-            box-shadow: var(--neon-shadow);
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        /* Basculer entre les formulaires */
-        .toggle-form {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.95rem;
-            color: rgba(248, 249, 250, 0.7);
-        }
-
-        .toggle-form a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-            position: relative;
-            padding-bottom: 2px;
-        }
-
-        .toggle-form a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        .toggle-form a:hover::after {
-            width: 100%;
-        }
-
-        /* Messages d'Erreur */
-        #error-message {
-            padding: 1rem;
-            margin: 1.5rem 0;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.9rem;
-            background: rgba(230, 57, 70, 0.1);
-            border: 1px solid rgba(230, 57, 70, 0.3);
-            color: #ff6b6b;
-            animation: errorShake 0.4s ease;
-        }
-
-        @keyframes errorShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-        }
-
-        /* Élément Météo Dynamique */
-        .time-indicator {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--accent);
-        }
-
-        .sun-icon {
-            font-size: 1.2rem;
-            animation: sunGlow 2s infinite alternate;
-        }
-
-        @keyframes sunGlow {
-            from { filter: drop-shadow(0 0 5px var(--accent)); }
-            to { filter: drop-shadow(0 0 15px var(--accent)); }
-        }
-
-        /* Animation de Chargement */
-        .loading-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: var(--accent);
-            animation: loading 2s infinite;
-            z-index: 1000;
-        }
-
-        @keyframes loading {
-            0% { width: 0; left: 0 }
-            50% { width: 100%; left: 0 }
-            100% { width: 0; left: 100% }
-        }
-
-        /* Chat Animé */
-        .cat-container {
-            position: fixed;
-            bottom: -50px;
-            left: -100px;
-            width: 200px;
-            transition: all 5s linear;
-            opacity: 0.3;
-        }
-
-        .cat-container:hover {
-            opacity: 0.8;
-        }
-
-        .cat {
-            width: 100%;
-            filter: drop-shadow(0 0 5px var(--accent));
-            animation: catWalk 20s infinite linear;
-        }
-
-        @keyframes catWalk {
-            0% { transform: translateX(-100vw) }
-            100% { transform: translateX(150vw) }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .auth-container {
-                padding: 2rem;
-                margin: 1rem;
-            }
-
-            .floating-astronaut {
-                display: none;
-            }
-
-            .speech-bubble {
-                position: static;
-                width: 100%;
-                margin: 1rem 0;
-                animation: none;
-                opacity: 1;
-            }
-        }
-
-        /* Effets de Surbrillance */
-        ::selection {
-            background: var(--accent);
-            color: var(--dark);
-        }
-
-        /* Scrollbar Personnalisée */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 4px;
-        }
-
-        /* Effet Parallaxe */
-        .parallax-layer {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .layer-1 { animation: parallax 50s infinite linear; }
-        .layer-2 { animation: parallax 30s infinite linear reverse; }
-
-        @keyframes parallax {
-            from { transform: translateY(0) }
-            to { transform: translateY(-100%) }
-        }
-
-        /* Dégradé Dynamique */
-        .dynamic-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, 
-                rgba(67, 97, 238, 0.1),
-                rgba(76, 201, 240, 0.1),
-                rgba(67, 97, 238, 0.1));
-            z-index: -1;
-            animation: gradientFlow 20s infinite alternate;
-        }
-
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50% }
-            100% { background-position: 100% 50% }
-        }
-    </style>
-</head>
-<body>
-    <div class="dynamic-gradient"></div>
-    <div class="loading-bar"></div>
-
-    <div class="auth-container">
-        <img src="https://i.ibb.co/0j7Z7Qy/astronaut.png" alt="Astronaute" class="floating-astronaut">
-        
-        <div class="speech-bubble" id="chat-bubble">
-            Bonjour ! Prêt à rejoindre la communauté spatiale des étudiants ?
-        </div>
-
-        <div class="logo">
-            <h1>SchoolReport</h1>
-            <p>Explorez l'univers de l'éducation collaborative</p>
-        </div>
-
-        <div class="time-indicator">
-            <i class="fas fa-sun sun-icon"></i>
-            <span id="local-time"></span>
-        </div>
-
-        <div id="error-message"></div>
-
-        <!-- Formulaire de Connexion -->
-        <div id="login-form" class="auth-form">
-            <!-- ... (contenu existant inchangé) ... -->
-        </div>
-
-        <!-- Formulaire d'Inscription -->
-        <div id="signup-form" class="auth-form hidden">
-            <!-- ... (contenu existant inchangé) ... -->
-        </div>
-    </div>
-
-    <div class="cat-container">
-        <img src="https://img.freepik.com/free-vector/astronaut_53876-26804.jpg?t=st=1746636817~exp=1746640417~hmac=55bee90922ac655776877654081464dec549cf4e6e7affb69759aad704f93463&w=740" alt="Chat spatial" class="cat">
-    </div>
-
-    <script>
-        // Scripts supplémentaires pour les interactions (sans modifier l'existant)
-        // Mise à jour de l'heure en temps réel
-        function updateTime() {
-            const options = { hour: '2-digit', minute: '2-digit' };
-            document.getElementById('local-time').textContent = new Date().toLocaleTimeString('fr-FR', options);
-        }
-        setInterval(updateTime, 1000);
-
-        // Messages aléatoires dans la bulle
-        const messages = [
-            "Saviez-vous que 73% des étudiants utilisent notre plateforme ?",
-            "Conseil du jour : révisez régulièrement !",
-            "Bienvenue dans notre communauté spatiale 🚀",
-            "Vos données sont sécurisées avec nous 🔒",
-            "Nouveautés à découvrir cette semaine !"
-        ];
-
-        setInterval(() => {
-            const bubble = document.getElementById('chat-bubble');
-            bubble.style.animation = 'none';
-            bubble.offsetHeight; // Déclenche le reflow
-            bubble.textContent = messages[Math.floor(Math.random() * messages.length)];
-            bubble.style.animation = 'bubbleAppear 10s infinite';
-        }, 15000);
-    </script>
-        <script type="module">
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
@@ -524,7 +20,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Authentification - Inscription
         window.signUp = async (email, password) => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
@@ -535,7 +30,6 @@
             }
         };
 
-        // Authentification - Connexion
         window.signIn = async (email, password) => {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
@@ -546,7 +40,6 @@
             }
         };
 
-        // Bascule entre les formulaires
         window.toggleForms = () => {
             const loginForm = document.getElementById('login-form');
             const signupForm = document.getElementById('signup-form');
@@ -554,6 +47,368 @@
             signupForm.classList.toggle('hidden');
             document.getElementById('error-message').textContent = '';
         };
+    </script>
+    <style>
+        :root {
+            --bgColor: #333333;
+            --inputColor: white;
+            --outlineColor: dodgerblue;
+            --beamColor: yellow;
+            --spacer: 1rem;
+            --mineShaft: #333333;
+            --tundora: #4A4A4A;
+            --dustyGray: #9B9B9B;
+            --gallery: #F0F0F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Open Sans', Helvetica;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--mineShaft);
+            padding: 20px;
+        }
+
+        body.show-password {
+            --bgColor: black;
+            --inputColor: white;
+            --outlineColor: var(--beamColor);
+        }
+
+        .auth-container {
+            background: var(--mineShaft);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: var(--dustyGray);
+            font-size: 1rem;
+        }
+
+        #error-message {
+            color: #e63946;
+            font-size: 14px;
+            text-align: center;
+            margin: 1rem 0;
+            min-height: 20px;
+        }
+
+        .auth-form {
+            transform: translate3d(0,0,0);
+            padding: var(--spacer);
+        }
+
+        .auth-form.hidden {
+            display: none;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 50px 15px 15px;
+            font-size: 1.2rem;
+            color: white;
+            background: transparent;
+            border: 2px solid var(--tundora);
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--outlineColor);
+        }
+
+        .password-input {
+            padding-right: 50px;
+            letter-spacing: 3px;
+            z-index: 2;
+        }
+
+        .password-input::placeholder {
+            letter-spacing: normal;
+        }
+
+        #eyeball, #eyeball-signup, #eyeball-confirm {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eye {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--inputColor);
+            border-radius: 10px 0;
+            transform: rotate(45deg);
+            position: relative;
+        }
+
+        .eye::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background-color: var(--inputColor);
+            border-radius: 50%;
+        }
+
+        #beam, #beam-signup, #beam-confirm {
+            position: absolute;
+            top: 50%;
+            right: 50px;
+            clip-path: polygon(100% 50%, 100% 50%, 0 0, 0 100%);
+            width: 100vw;
+            height: 25vw;
+            z-index: 1;
+            mix-blend-mode: multiply;
+            transition: transform 200ms ease-out;
+            transform-origin: 100% 50%;
+            transform: translateY(-50%) rotate(var(--beamDegrees, 0));
+            pointer-events: none;
+            display: none;
+        }
+
+        .show-password #beam,
+        .show-password #beam-signup,
+        .show-password #beam-confirm {
+            background: var(--beamColor);
+            display: block;
+        }
+
+        button.submit-btn {
+            background-color: var(--mineShaft);
+            border: 2px solid white;
+            border-radius: 27px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 12px 30px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        button.submit-btn:hover {
+            background-color: white;
+            color: var(--mineShaft);
+        }
+
+        .toggle-form {
+            color: var(--dustyGray);
+            margin-top: 2rem;
+        }
+
+        .toggle-form a {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">
+            <h1>SchoolReport</h1>
+            <p>Plateforme collaborative pour étudiants</p>
+        </div>
+
+        <div id="error-message"></div>
+
+        <!-- Formulaire de Connexion -->
+        <div id="login-form" class="auth-form">
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="password" id="login-password" class="password-input" placeholder="Mot de passe" required
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
+                    <button type="button" id="eyeball">
+                        <div class="eye"></div>
+                    </button>
+                    <div id="beam"></div>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
+                Se connecter
+            </button>
+            <div class="toggle-form">
+                Pas encore de compte ? <a onclick="toggleForms()">S'inscrire</a>
+            </div>
+        </div>
+
+        <!-- Formulaire d'Inscription -->
+        <div id="signup-form" class="auth-form hidden">
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="password" id="signup-password" class="password-input" placeholder="Mot de passe" required
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
+                    <button type="button" id="eyeball-signup">
+                        <div class="eye"></div>
+                    </button>
+                    <div id="beam-signup"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="password" id="signup-confirm" class="password-input" placeholder="Confirmer le mot de passe" required
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
+                    <button type="button" id="eyeball-confirm">
+                        <div class="eye"></div>
+                    </button>
+                    <div id="beam-confirm"></div>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="
+                if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
+                    document.getElementById('error-message').textContent = '❌ Les mots de passe ne correspondent pas';
+                } else {
+                    signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
+                }
+            ">
+                Créer un compte
+            </button>
+            <div class="toggle-form">
+                Déjà inscrit ? <a onclick="toggleForms()">Se connecter</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const root = document.documentElement;
+            const eyeball = document.getElementById('eyeball');
+            const eyeballSignup = document.getElementById('eyeball-signup');
+            const eyeballConfirm = document.getElementById('eyeball-confirm');
+            const beam = document.getElementById('beam');
+            const beamSignup = document.getElementById('beam-signup');
+            const beamConfirm = document.getElementById('beam-confirm');
+            const passwordInput = document.getElementById('login-password');
+            const signupPasswordInput = document.getElementById('signup-password');
+            const confirmPasswordInput = document.getElementById('signup-confirm');
+
+            function handleBeamMove(e, beamElement) {
+                if (!beamElement) return;
+                
+                const rect = beamElement.getBoundingClientRect();
+                const mouseX = rect.right + (rect.width / 2);
+                const mouseY = rect.top + (rect.height / 2);
+                const rad = Math.atan2(mouseX - e.pageX, mouseY - e.pageY);
+                const degrees = (rad * (20 / Math.PI) * -1) - 350;
+                
+                root.style.setProperty('--beamDegrees', `${degrees}deg`);
+            }
+
+            function togglePasswordVisibility(inputElement, beamElement) {
+                if (inputElement.type === 'password') {
+                    inputElement.type = 'text';
+                    document.body.classList.add('show-password');
+                    if (beamElement) beamElement.style.display = 'block';
+                } else {
+                    inputElement.type = 'password';
+                    document.body.classList.remove('show-password');
+                    if (beamElement) beamElement.style.display = 'none';
+                }
+                inputElement.focus();
+            }
+
+            // Gestion des événements pour le formulaire de connexion
+            if (eyeball && passwordInput) {
+                eyeball.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    togglePasswordVisibility(passwordInput, beam);
+                });
+            }
+
+            // Gestion des événements pour le formulaire d'inscription
+            if (eyeballSignup && signupPasswordInput) {
+                eyeballSignup.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    togglePasswordVisibility(signupPasswordInput, beamSignup);
+                });
+            }
+
+            if (eyeballConfirm && confirmPasswordInput) {
+                eyeballConfirm.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    togglePasswordVisibility(confirmPasswordInput, beamConfirm);
+                });
+            }
+
+            // Suivi de la souris pour le faisceau
+            document.addEventListener('mousemove', (e) => {
+                if (!document.body.classList.contains('show-password')) return;
+                
+                if (passwordInput.type === 'text' && beam) {
+                    handleBeamMove(e, beam);
+                }
+                if (signupPasswordInput && signupPasswordInput.type === 'text' && beamSignup) {
+                    handleBeamMove(e, beamSignup);
+                }
+                if (confirmPasswordInput && confirmPasswordInput.type === 'text' && beamConfirm) {
+                    handleBeamMove(e, beamConfirm);
+                }
+            });
+        });
     </script>
 </body>
 </html>
