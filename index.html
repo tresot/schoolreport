@@ -3,129 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connexion - SchoolReport</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #3f37c9;
-      --accent: #4cc9f0;
-      --background: #f6f9fc;
-      --white: #ffffff;
-      --gray: #adb5bd;
-      --text: #1c1c1e;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background-color: var(--background);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      background: var(--white);
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      animation: fadeIn 0.8s ease;
-    }
-
-    .container h1 {
-      color: var(--primary);
-      font-size: 26px;
-      margin-bottom: 8px;
-    }
-
-    .container p {
-      color: var(--gray);
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    button {
-      width: 100%;
-      background: var(--primary);
-      color: var(--white);
-      border: none;
-      padding: 14px;
-      font-size: 16px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background: #2a2fa6;
-    }
-
-    .link {
-      margin-top: 16px;
-      font-size: 14px;
-      color: var(--accent);
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .loader {
-      width: 40px;
-      height: 40px;
-      margin: 20px auto;
-      border: 4px solid #dee2e6;
-      border-top: 4px solid var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      display: none;
-    }
-
-    .loader.show {
-      display: block;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(30px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <title>Connexion</title>
 </head>
 <body>
-  <div class="container">
-    <h1>SchoolReport</h1>
-    <p>Connecte-toi pour continuer</p>
-
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Mot de passe">
-    <button onclick="login()">Connexion</button>
-    <div class="link" onclick="register()">Créer un compte</div>
-
-    <div class="loader" id="spinner"></div>
-  </div>
+  <h2>Connexion</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Mot de passe">
+  <button onclick="login()">Connexion</button>
+  <p>Pas encore de compte ? <a href="#" onclick="register()">Inscription</a></p>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -151,15 +36,13 @@
     async function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const spinner = document.getElementById("spinner");
-      spinner.classList.add("show");
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        alert("Connexion réussie !");
         window.location.href = "center.html";
       } catch (e) {
-        alert("Erreur : " + e.message);
-        spinner.classList.remove("show");
+        alert("Erreur de connexion : " + e.message);
       }
     }
 
@@ -169,17 +52,17 @@
       const pseudo = prompt("Pseudo");
       const nom = prompt("Prénom");
       const prenom = prompt("Nom");
-      const photo = prompt("Lien de la photo (facultatif)");
+      const photo = prompt("Photo URL (facultatif)");
 
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(cred.user, {
           displayName: `${nom} ${prenom} (${pseudo})`,
-          photoURL: photo || "https://i.imgur.com/3P0rJzY.png"
+          photoURL: photo || ""
         });
         alert("Inscription réussie !");
       } catch (e) {
-        alert("Erreur : " + e.message);
+        alert("Erreur d'inscription : " + e.message);
       }
     }
   </script>
