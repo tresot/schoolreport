@@ -3,81 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connexion Rétro - SchoolReport</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>Connexion - SchoolReport</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #3f37c9;
+      --accent: #4cc9f0;
+      --background: #f6f9fc;
+      --white: #ffffff;
+      --gray: #adb5bd;
+      --text: #1c1c1e;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
     body {
       margin: 0;
-      background: #c1d8e4;
-      font-family: 'Press Start 2P', cursive;
-      color: #1a1a1a;
-      height: 100vh;
+      background-color: var(--background);
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .login-screen {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.85);
-      border: 4px solid #3f37c9;
+    .container {
+      background: var(--white);
       padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .container h1 {
+      color: var(--primary);
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .container p {
+      color: var(--gray);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
       border-radius: 12px;
-      box-shadow: 8px 8px 0 #4cc9f0;
-    }
-
-    .title-area h1 {
-      font-size: 24px;
-      color: #3f37c9;
-      margin-bottom: 10px;
-    }
-
-    .title-area p {
-      color: #e63946;
-      font-size: 12px;
-      margin-bottom: 20px;
-    }
-
-    .login-box input {
-      font-family: 'Press Start 2P', cursive;
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      font-size: 12px;
-      border: 2px solid #1a1a1a;
-      width: 90%;
-      background: #f4f4f4;
+      font-size: 14px;
+      outline: none;
     }
 
     button {
-      font-family: 'Press Start 2P', cursive;
-      background: #3f37c9;
-      color: white;
-      padding: 10px 20px;
-      border: 2px solid #1a1a1a;
+      width: 100%;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 12px;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 12px;
-      margin-top: 15px;
-      box-shadow: 4px 4px 0 #000;
+      margin-top: 10px;
+      transition: background 0.3s ease;
     }
 
     button:hover {
-      background: #4cc9f0;
+      background: #2a2fa6;
     }
 
-    .register {
-      margin-top: 20px;
-      font-size: 10px;
+    .link {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--accent);
       cursor: pointer;
-      color: #457b9d;
+      text-decoration: underline;
     }
 
     .loader {
-      width: 30px;
-      height: 30px;
-      margin: 15px auto;
-      border: 4px dotted #3f37c9;
-      border-top: 4px solid #4cc9f0;
+      width: 40px;
+      height: 40px;
+      margin: 20px auto;
+      border: 4px solid #dee2e6;
+      border-top: 4px solid var(--accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
       display: none;
@@ -91,21 +107,24 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
-  <div class="login-screen">
-    <div class="title-area">
-      <h1>🧪 SCHOOLREPORT</h1>
-      <p>PRESS START TO LOGIN</p>
-    </div>
-    <div class="login-box">
-      <input type="email" id="email" placeholder="EMAIL">
-      <input type="password" id="password" placeholder="PASSWORD">
-      <button onclick="login()">▶ START</button>
-      <p class="register" onclick="register()">New Player? Create Account</p>
-      <div class="loader" id="spinner"></div>
-    </div>
+  <div class="container">
+    <h1>SchoolReport</h1>
+    <p>Connecte-toi pour continuer</p>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Mot de passe">
+    <button onclick="login()">Connexion</button>
+    <div class="link" onclick="register()">Créer un compte</div>
+
+    <div class="loader" id="spinner"></div>
   </div>
 
   <script type="module">
@@ -150,7 +169,7 @@
       const pseudo = prompt("Pseudo");
       const nom = prompt("Prénom");
       const prenom = prompt("Nom");
-      const photo = prompt("Lien image (facultatif)");
+      const photo = prompt("Lien de la photo (facultatif)");
 
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
