@@ -324,6 +324,12 @@
     .spell-search {
       margin-bottom: 20px;
     }
+    
+    /* Style pour le texte énochien */
+    .enochian {
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -334,7 +340,7 @@
     <button onclick="showNewsPage()">📰 Actualités</button>
     <button onclick="showGrimoirePage()">🔮 Grimoire</button>
     <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
-    <button onclick="logout()">🚪 Déconnexion</button>
+    <button id="logoutBtn" onclick="logout()">🚪 <span class="enochian">Sortie</span></button>
   </div>
 
   <div class="container" id="searchPage">
@@ -403,7 +409,6 @@
   </div>
 
   <div id="grimoirePage" class="grimoire-container" style="display: none;">
-   <div id="grimoirePage" class="grimoire-container" style="display: none;">
     <h2>🔮 Grimoire Magique</h2>
     <div class="username-display" id="usernameDisplayGrimoire"></div>
     
@@ -786,6 +791,11 @@
       document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayGrimoire").textContent = `Connecté en tant que : ${username}`;
+      
+      // Appliquer le style énochien au bouton de déconnexion
+      const logoutBtn = document.getElementById("logoutBtn");
+      const enochianText = logoutBtn.querySelector(".enochian");
+      enochianText.textContent = "Sortie";
     };
   </script>
 
