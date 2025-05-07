@@ -3,94 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connexion - SchoolReport</title>
+  <title>Connexion Rétro - SchoolReport</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #3f37c9;
-      --accent: #4cc9f0;
-      --bg: #e8f1ff;
-      --white: #fff;
-      --shadow: rgba(0, 0, 0, 0.1);
-    }
-
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #4cc9f0, #3f37c9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: #c1d8e4;
+      font-family: 'Press Start 2P', cursive;
+      color: #1a1a1a;
       height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .login-box {
-      background: var(--white);
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px var(--shadow);
-      width: 90%;
-      max-width: 400px;
+    .login-screen {
       text-align: center;
-      position: relative;
+      background: rgba(255, 255, 255, 0.85);
+      border: 4px solid #3f37c9;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 8px 8px 0 #4cc9f0;
     }
 
-    .logo {
-      margin-bottom: 30px;
-    }
-
-    .logo img {
-      width: 60px;
+    .title-area h1 {
+      font-size: 24px;
+      color: #3f37c9;
       margin-bottom: 10px;
     }
 
-    .logo h1 {
-      font-size: 24px;
-      color: #2c2c54;
-      margin: 0;
+    .title-area p {
+      color: #e63946;
+      font-size: 12px;
+      margin-bottom: 20px;
     }
 
-    input {
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
+    .login-box input {
+      font-family: 'Press Start 2P', cursive;
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      font-size: 12px;
+      border: 2px solid #1a1a1a;
+      width: 90%;
+      background: #f4f4f4;
     }
 
     button {
-      width: 100%;
-      background: var(--primary);
-      color: var(--white);
-      border: none;
-      padding: 14px;
-      font-size: 16px;
-      border-radius: 8px;
+      font-family: 'Press Start 2P', cursive;
+      background: #3f37c9;
+      color: white;
+      padding: 10px 20px;
+      border: 2px solid #1a1a1a;
       cursor: pointer;
-      margin-top: 10px;
-      transition: 0.3s ease;
+      font-size: 12px;
+      margin-top: 15px;
+      box-shadow: 4px 4px 0 #000;
     }
 
     button:hover {
-      background: #2b2ba0;
+      background: #4cc9f0;
     }
 
-    .link {
-      display: block;
-      margin-top: 15px;
-      color: var(--primary);
-      text-decoration: none;
-      font-size: 14px;
+    .register {
+      margin-top: 20px;
+      font-size: 10px;
+      cursor: pointer;
+      color: #457b9d;
     }
 
     .loader {
-      width: 50px;
-      height: 50px;
-      border: 6px solid #ddd;
-      border-top: 6px solid var(--accent);
+      width: 30px;
+      height: 30px;
+      margin: 15px auto;
+      border: 4px dotted #3f37c9;
+      border-top: 4px solid #4cc9f0;
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin: 20px auto 0;
       display: none;
     }
 
@@ -99,24 +88,24 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0); }
+      0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <div class="logo">
-      <img href="photos/logo.png" alt="SchoolReport">
-      <h1>SchoolReport</h1>
+  <div class="login-screen">
+    <div class="title-area">
+      <h1>🧪 SCHOOLREPORT</h1>
+      <p>PRESS START TO LOGIN</p>
     </div>
-
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Mot de passe" />
-    <button onclick="login()">Se connecter</button>
-    <a class="link" href="#" onclick="register()">S'inscrire</a>
-
-    <div class="loader" id="spinner"></div>
+    <div class="login-box">
+      <input type="email" id="email" placeholder="EMAIL">
+      <input type="password" id="password" placeholder="PASSWORD">
+      <button onclick="login()">▶ START</button>
+      <p class="register" onclick="register()">New Player? Create Account</p>
+      <div class="loader" id="spinner"></div>
+    </div>
   </div>
 
   <script type="module">
@@ -158,10 +147,10 @@
     async function register() {
       const email = prompt("Email");
       const password = prompt("Mot de passe");
-      const nom = prompt("Votre prénom");
-      const prenom = prompt("Votre nom");
       const pseudo = prompt("Pseudo");
-      const photo = prompt("URL de la photo (laisser vide pour avatar)");
+      const nom = prompt("Prénom");
+      const prenom = prompt("Nom");
+      const photo = prompt("Lien image (facultatif)");
 
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -169,7 +158,7 @@
           displayName: `${nom} ${prenom} (${pseudo})`,
           photoURL: photo || "https://i.imgur.com/3P0rJzY.png"
         });
-        alert("Compte créé avec succès !");
+        alert("Inscription réussie !");
       } catch (e) {
         alert("Erreur : " + e.message);
       }
