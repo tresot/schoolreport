@@ -70,7 +70,7 @@
       color: #fff;
     }
 
-    .container, .news-container {
+    .container, .news-container, .grimoire-container {
       background-color: var(--bg-alt);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
@@ -80,7 +80,7 @@
       margin: 90px auto 20px auto;
     }
 
-    .container h1, .news-container h2 {
+    .container h1, .news-container h2, .grimoire-container h2 {
       text-align: center;
       margin-bottom: 20px;
       color: var(--accent);
@@ -269,6 +269,61 @@
       margin: 20px auto;
       padding: 10px 20px;
     }
+
+    /* Grimoire Section */
+    .grimoire-container {
+      display: none;
+    }
+
+    .spell-item {
+      background-color: var(--box);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-left: 4px solid var(--accent);
+    }
+
+    .spell-item h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .spell-item h3::before {
+      content: "✧";
+      margin-right: 10px;
+      font-size: 1.2em;
+    }
+
+    .spell-item .spell-type {
+      display: inline-block;
+      padding: 3px 8px;
+      background-color: var(--accent);
+      color: white;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin-left: 10px;
+    }
+
+    .spell-item .spell-description {
+      margin-bottom: 10px;
+    }
+
+    .spell-item .spell-ingredients {
+      font-style: italic;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    body.dark .spell-item .spell-ingredients {
+      color: #aaa;
+    }
+
+    .spell-search {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -277,6 +332,7 @@
     <button onclick="showSearchPage()">🔍 Recherche</button>
     <button onclick="showDissertationPage()">📝 Dissertation</button>
     <button onclick="showNewsPage()">📰 Actualités</button>
+    <button onclick="showGrimoirePage()">🔮 Grimoire</button>
     <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
     <button onclick="logout()">🚪 Déconnexion</button>
   </div>
@@ -346,24 +402,106 @@
     <button class="refresh-news" onclick="chargerActualites()">Actualiser les nouvelles</button>
   </div>
 
+  <div id="grimoirePage" class="grimoire-container" style="display: none;">
+    <h2>🔮 Grimoire Magique</h2>
+    <div class="username-display" id="usernameDisplayGrimoire"></div>
+    
+    <div class="spell-search">
+      <div class="search-bar">
+        <input type="text" id="spellSearchInput" placeholder="Rechercher une formule...">
+        <button onclick="searchSpells()">Chercher</button>
+      </div>
+    </div>
+    
+    <div id="spellsContent">
+      <div class="spell-item">
+        <h3>Lumos <span class="spell-type">Lumière</span></h3>
+        <div class="spell-description">
+          <p>Crée une source de lumière magique au bout de votre baguette. Parfait pour éclairer les passages sombres.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Lumos"<br>
+          <strong>Mouvement:</strong> Petit mouvement circulaire
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Wingardium Leviosa <span class="spell-type">Lévitation</span></h3>
+        <div class="spell-description">
+          <p>Permet de faire léviter des objets. La prononciation correcte est cruciale pour le succès du sort.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Wingardium Leviosa"<br>
+          <strong>Mouvement:</strong> Mouvement en coup de fouet et en balayage
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Expecto Patronum <span class="spell-type">Défense</span></h3>
+        <div class="spell-description">
+          <p>Sortilège de défense contre les Détraqueurs. Nécessite un souvenir heureux puissant.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Expecto Patronum"<br>
+          <strong>Mouvement:</strong> Mouvement circulaire énergique
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Alohomora <span class="spell-type">Ouverture</span></h3>
+        <div class="spell-description">
+          <p>Ouvre les serrures et les portes verrouillées. Efficacité réduite sur les serrures enchantées.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Alohomora"<br>
+          <strong>Mouvement:</strong> Mouvement en S inversé
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     function showSearchPage() {
       document.getElementById("searchPage").style.display = "block";
       document.getElementById("dissertationPage").style.display = "none";
       document.getElementById("newsPage").style.display = "none";
+      document.getElementById("grimoirePage").style.display = "none";
     }
 
     function showDissertationPage() {
       document.getElementById("searchPage").style.display = "none";
       document.getElementById("dissertationPage").style.display = "block";
       document.getElementById("newsPage").style.display = "none";
+      document.getElementById("grimoirePage").style.display = "none";
     }
 
     function showNewsPage() {
       document.getElementById("searchPage").style.display = "none";
       document.getElementById("dissertationPage").style.display = "none";
       document.getElementById("newsPage").style.display = "block";
+      document.getElementById("grimoirePage").style.display = "none";
       chargerActualites();
+    }
+
+    function showGrimoirePage() {
+      document.getElementById("searchPage").style.display = "none";
+      document.getElementById("dissertationPage").style.display = "none";
+      document.getElementById("newsPage").style.display = "none";
+      document.getElementById("grimoirePage").style.display = "block";
+    }
+
+    function searchSpells() {
+      const query = document.getElementById("spellSearchInput").value.toLowerCase();
+      const spells = document.querySelectorAll(".spell-item");
+      
+      spells.forEach(spell => {
+        const spellName = spell.querySelector("h3").textContent.toLowerCase();
+        if (spellName.includes(query)) {
+          spell.style.display = "block";
+        } else {
+          spell.style.display = "none";
+        }
+      });
     }
 
     function effectuerRecherche() {
@@ -514,6 +652,7 @@
       const username = localStorage.getItem("user") || "Invité";
       document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
+      document.getElementById("usernameDisplayGrimoire").textContent = `Connecté en tant que : ${username}`;
     };
   </script>
 
