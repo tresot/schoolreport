@@ -282,6 +282,12 @@
       margin-bottom: 15px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       border-left: 4px solid var(--accent);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .spell-item:hover {
+      transform: translateY(-3px);
     }
 
     .spell-item h3 {
@@ -329,6 +335,18 @@
     .enochian {
       font-family: 'Times New Roman', serif;
       font-style: italic;
+    }
+
+    /* Illustrations de sorts */
+    .spell-illustration {
+      display: none;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .spell-illustration img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -430,6 +448,9 @@
           <strong>Incantation:</strong> "Lumos"<br>
           <strong>Mouvement:</strong> Petit mouvement circulaire
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/7vQwX9k.png" alt="Illustration du sort Lumos">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -440,6 +461,9 @@
         <div class="spell-ingredients">
           <strong>Incantation:</strong> "Wingardium Leviosa"<br>
           <strong>Mouvement:</strong> Mouvement en coup de fouet et en balayage
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/p9TZzLm.png" alt="Illustration du sort Wingardium Leviosa">
         </div>
       </div>
       
@@ -452,6 +476,9 @@
           <strong>Incantation:</strong> "Expecto Patronum"<br>
           <strong>Mouvement:</strong> Mouvement circulaire énergique
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/vVqQZzG.png" alt="Illustration du sort Expecto Patronum">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -462,6 +489,9 @@
         <div class="spell-ingredients">
           <strong>Incantation:</strong> "Alohomora"<br>
           <strong>Mouvement:</strong> Mouvement en S inversé
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/mN3kBhc.png" alt="Illustration du sort Alohomora">
         </div>
       </div>
       
@@ -475,6 +505,9 @@
           <strong>Incantation:</strong> "Accio [nom de l'objet]"<br>
           <strong>Mouvement:</strong> Mouvement de rappel vers soi
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/JqYeZvL.png" alt="Illustration du sort Accio">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -485,6 +518,9 @@
         <div class="spell-ingredients">
           <strong>Incantation:</strong> "Episkey"<br>
           <strong>Mouvement:</strong> Pointer la baguette vers la blessure
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/pQ5vX9T.png" alt="Illustration du sort Episkey">
         </div>
       </div>
       
@@ -497,6 +533,9 @@
           <strong>Incantation:</strong> "Protego"<br>
           <strong>Mouvement:</strong> Mouvement circulaire rapide
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/KLQqWYx.png" alt="Illustration du sort Protego">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -507,6 +546,9 @@
         <div class="spell-ingredients">
           <strong>Incantation:</strong> "Reparo"<br>
           <strong>Mouvement:</strong> Pointer la baguette vers l'objet en traçant ses contours
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/7vQwX9k.png" alt="Illustration du sort Reparo">
         </div>
       </div>
       
@@ -526,6 +568,9 @@
           </ul>
           <strong>Préparation:</strong> Mélanger dans l'ordre en remuant 7 fois dans le sens inverse des aiguilles d'une montre.
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/p9TZzLm.png" alt="Illustration de la Potion de Ratatinage">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -542,6 +587,9 @@
             <li>5 cl de jus de limace</li>
           </ul>
           <strong>Préparation:</strong> Laisser mijoter pendant 30 minutes à feu doux après avoir ajouté le cheveu.
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/vVqQZzG.png" alt="Illustration de la Potion Polynectar">
         </div>
       </div>
       
@@ -560,6 +608,9 @@
           </ul>
           <strong>Préparation:</strong> Mélanger pendant la pleine lune en récitant l'incantation "Resurgam".
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/mN3kBhc.png" alt="Illustration de la Potion de Mort Vivant">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -577,6 +628,9 @@
           </ul>
           <strong>Préparation:</strong> Infuser les feuilles pendant 24 heures avant d'ajouter les autres ingrédients.
         </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/JqYeZvL.png" alt="Illustration de la Potion de Vérité">
+        </div>
       </div>
       
       <div class="spell-item">
@@ -593,6 +647,86 @@
             <li>1 étoile filante broyée</li>
           </ul>
           <strong>Préparation:</strong> Mélanger à minuit en chantant une berceuse.
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/pQ5vX9T.png" alt="Illustration de la Potion de Sommeil Éternel">
+        </div>
+      </div>
+      
+      <!-- Nouvelles formules ajoutées -->
+      <div class="spell-item">
+        <h3>Incendio <span class="spell-type">Feu</span></h3>
+        <div class="spell-description">
+          <p>Crée un jet de flammes depuis la baguette. Utilisé pour allumer des feux ou comme sort défensif.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Incendio"<br>
+          <strong>Mouvement:</strong> Mouvement brusque vers l'avant
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/JqYeZvL.png" alt="Illustration du sort Incendio">
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Aguamenti <span class="spell-type">Eau</span></h3>
+        <div class="spell-description">
+          <p>Fait jaillir un jet d'eau de la baguette. Utile pour éteindre des incendies ou remplir des récipients.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Aguamenti"<br>
+          <strong>Mouvement:</strong> Mouvement fluide en S
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/pQ5vX9T.png" alt="Illustration du sort Aguamenti">
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Petrificus Totalus <span class="spell-type">Immobilisation</span></h3>
+        <div class="spell-description">
+          <p>Immobilise complètement la cible, la figant dans sa position actuelle.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Petrificus Totalus"<br>
+          <strong>Mouvement:</strong> Mouvement brusque vers la cible
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/mN3kBhc.png" alt="Illustration du sort Petrificus Totalus">
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Riddikulus <span class="spell-type">Défense</span></h3>
+        <div class="spell-description">
+          <p>Transforme un épouvantard en une forme comique pour neutraliser sa peur.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Riddikulus"<br>
+          <strong>Mouvement:</strong> Mouvement circulaire suivi d'un coup sec
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/vVqQZzG.png" alt="Illustration du sort Riddikulus">
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Potion d'Invisibilité <span class="spell-type">Potion</span></h3>
+        <div class="spell-description">
+          <p>Rend invisible celui qui la boit pendant une durée limitée.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Ingrédients:</strong> 
+          <ul>
+            <li>1 plume de Demiguise</li>
+            <li>2 feuilles de caméléon séchées</li>
+            <li>5 gouttes de rosée lunaire</li>
+            <li>1 œil de poisson transparent</li>
+          </ul>
+          <strong>Préparation:</strong> Mélanger pendant la nouvelle lune en chantant à voix basse.
+        </div>
+        <div class="spell-illustration">
+          <img src="https://i.imgur.com/KLQqWYx.png" alt="Illustration de la Potion d'Invisibilité">
         </div>
       </div>
     </div>
@@ -779,6 +913,29 @@
         </div>
       `;
     }
+
+    // Gestion des illustrations de sorts
+    document.querySelectorAll('.spell-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const illustration = this.querySelector('.spell-illustration');
+        if (illustration) {
+          // Masquer toutes les autres illustrations
+          document.querySelectorAll('.spell-illustration').forEach(el => {
+            if (el !== illustration) el.style.display = 'none';
+          });
+          
+          // Basculer l'affichage de l'illustration actuelle
+          illustration.style.display = illustration.style.display === 'block' ? 'none' : 'block';
+        }
+      });
+    });
+
+    // Empêcher la propagation du clic sur les illustrations
+    document.querySelectorAll('.spell-illustration').forEach(illustration => {
+      illustration.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
 
     document.getElementById("essayOutput").addEventListener("input", updateWordCount);
 
