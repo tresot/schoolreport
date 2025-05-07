@@ -70,7 +70,7 @@
       color: #fff;
     }
 
-    .container, .chat-container, .news-container {
+    .container, .news-container {
       background-color: var(--bg-alt);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
@@ -80,7 +80,7 @@
       margin: 90px auto 20px auto;
     }
 
-    .container h1, .chat-container h2, .news-container h2 {
+    .container h1, .news-container h2 {
       text-align: center;
       margin-bottom: 20px;
       color: var(--accent);
@@ -143,51 +143,6 @@
       margin-top: 10px;
       border-radius: 8px;
       max-width: 100px;
-    }
-
-    .chat-box {
-      max-height: 300px;
-      overflow-y: auto;
-      background-color: var(--box);
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ddd;
-    }
-
-    .chat-box p {
-      margin-bottom: 10px;
-    }
-
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      resize: none;
-      margin-bottom: 10px;
-      background-color: var(--box);
-      color: var(--text);
-    }
-
-    button {
-      padding: 10px 15px;
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: var(--hover);
-    }
-
-    .username-display {
-      text-align: center;
-      margin: 10px 0;
-      font-weight: bold;
     }
 
     /* Dissertation Section améliorée */
@@ -320,7 +275,6 @@
 
   <div class="navbar">
     <button onclick="showSearchPage()">🔍 Recherche</button>
-    <button onclick="showChatPage()">💬 Discussion</button>
     <button onclick="showDissertationPage()">📝 Dissertation</button>
     <button onclick="showNewsPage()">📰 Actualités</button>
     <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
@@ -335,16 +289,6 @@
       <button onclick="effectuerRecherche()">Rechercher</button>
     </div>
     <div class="results" id="results"></div>
-  </div>
-
-  <div id="chatPage" class="chat-container" style="display: none;">
-    <h2>Discussion</h2>
-    <div class="username-display" id="usernameDisplayChat"></div>
-    <div class="chat-box" id="chatBox">
-      <p><strong>Bienvenue ! Pose ta question ou partage ton idée !</strong></p>
-    </div>
-    <textarea id="chatInput" placeholder="Ton message..." rows="3"></textarea>
-    <button onclick="envoyerMessage()">Envoyer</button>
   </div>
 
   <div id="dissertationPage" class="container" style="display: none;">
@@ -405,45 +349,21 @@
   <script>
     function showSearchPage() {
       document.getElementById("searchPage").style.display = "block";
-      document.getElementById("chatPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "none";
-    }
-
-    function showChatPage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("chatPage").style.display = "block";
       document.getElementById("dissertationPage").style.display = "none";
       document.getElementById("newsPage").style.display = "none";
     }
 
     function showDissertationPage() {
       document.getElementById("searchPage").style.display = "none";
-      document.getElementById("chatPage").style.display = "none";
       document.getElementById("dissertationPage").style.display = "block";
       document.getElementById("newsPage").style.display = "none";
     }
 
     function showNewsPage() {
       document.getElementById("searchPage").style.display = "none";
-      document.getElementById("chatPage").style.display = "none";
       document.getElementById("dissertationPage").style.display = "none";
       document.getElementById("newsPage").style.display = "block";
       chargerActualites();
-    }
-
-    function envoyerMessage() {
-      const input = document.getElementById("chatInput");
-      const message = input.value.trim();
-      if (!message) return;
-
-      const chatBox = document.getElementById("chatBox");
-      const newMsg = document.createElement("p");
-      const username = localStorage.getItem("user") || "user";
-      newMsg.textContent = `${username} : ${message}`;
-      chatBox.appendChild(newMsg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      input.value = "";
     }
 
     function effectuerRecherche() {
@@ -593,7 +513,6 @@
 
       const username = localStorage.getItem("user") || "Invité";
       document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
-      document.getElementById("usernameDisplayChat").textContent = `Connecté en tant que : ${username}`;
       document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
     };
   </script>
