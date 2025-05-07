@@ -403,17 +403,19 @@
   </div>
 
   <div id="grimoirePage" class="grimoire-container" style="display: none;">
+   <div id="grimoirePage" class="grimoire-container" style="display: none;">
     <h2>🔮 Grimoire Magique</h2>
     <div class="username-display" id="usernameDisplayGrimoire"></div>
     
     <div class="spell-search">
       <div class="search-bar">
-        <input type="text" id="spellSearchInput" placeholder="Rechercher une formule...">
+        <input type="text" id="spellSearchInput" placeholder="Rechercher une formule ou potion...">
         <button onclick="searchSpells()">Chercher</button>
       </div>
     </div>
     
     <div id="spellsContent">
+      <!-- Formules existantes -->
       <div class="spell-item">
         <h3>Lumos <span class="spell-type">Lumière</span></h3>
         <div class="spell-description">
@@ -457,8 +459,139 @@
           <strong>Mouvement:</strong> Mouvement en S inversé
         </div>
       </div>
+      
+      <!-- Nouvelles formules -->
+      <div class="spell-item">
+        <h3>Accio <span class="spell-type">Invocation</span></h3>
+        <div class="spell-description">
+          <p>Fait venir à soi un objet éloigné. Plus efficace sur les objets que vous connaissez bien.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Accio [nom de l'objet]"<br>
+          <strong>Mouvement:</strong> Mouvement de rappel vers soi
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Episkey <span class="spell-type">Soin</span></h3>
+        <div class="spell-description">
+          <p>Soigne les blessures mineures comme les nez saignants ou les petites coupures.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Episkey"<br>
+          <strong>Mouvement:</strong> Pointer la baguette vers la blessure
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Protego <span class="spell-type">Défense</span></h3>
+        <div class="spell-description">
+          <p>Crée un bouclier magique qui repousse les sorts et les objets lancés.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Protego"<br>
+          <strong>Mouvement:</strong> Mouvement circulaire rapide
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Reparo <span class="spell-type">Réparation</span></h3>
+        <div class="spell-description">
+          <p>Répare les objets cassés. Plus efficace sur les récents dommages.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Incantation:</strong> "Reparo"<br>
+          <strong>Mouvement:</strong> Pointer la baguette vers l'objet en traçant ses contours
+        </div>
+      </div>
+      
+      <!-- Potions -->
+      <div class="spell-item">
+        <h3>Potion de Ratatinage <span class="spell-type">Potion</span></h3>
+        <div class="spell-description">
+          <p>Fait rétrécir la personne ou l'animal qui la boit. Effet temporaire.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Ingrédients:</strong> 
+          <ul>
+            <li>3 chenilles séchées</li>
+            <li>1 gramme de peau de serpent</li>
+            <li>2 gouttes d'essence de pétunia</li>
+            <li>10 cl d'eau distillée</li>
+          </ul>
+          <strong>Préparation:</strong> Mélanger dans l'ordre en remuant 7 fois dans le sens inverse des aiguilles d'une montre.
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Potion Polynectar <span class="spell-type">Potion</span></h3>
+        <div class="spell-description">
+          <p>Permet de prendre l'apparence d'une autre personne pendant une heure.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Ingrédients:</strong> 
+          <ul>
+            <li>1 cheveu de la personne à imiter</li>
+            <li>2 feuilles de menthe sauvage</li>
+            <li>3 écailles de dragon</li>
+            <li>5 cl de jus de limace</li>
+          </ul>
+          <strong>Préparation:</strong> Laisser mijoter pendant 30 minutes à feu doux après avoir ajouté le cheveu.
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Potion de Mort Vivant <span class="spell-type">Potion</span></h3>
+        <div class="spell-description">
+          <p>Ressuscite temporairement les morts sous forme de zombies dociles.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Ingrédients:</strong> 
+          <ul>
+            <li>1 os du défunt</li>
+            <li>3 larmes de phénix</li>
+            <li>1 pincée de poussière de tombe</li>
+            <li>1 verre de sang de vampire</li>
+          </ul>
+          <strong>Préparation:</strong> Mélanger pendant la pleine lune en récitant l'incantation "Resurgam".
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Potion de Vérité <span class="spell-type">Potion</span></h3>
+        <div class="spell-description">
+          <p>Force la personne qui la boit à dire la vérité pendant 10 minutes.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Ingrédients:</strong> 
+          <ul>
+            <li>2 feuilles de véridicium</li>
+            <li>1 œil de triton</li>
+            <li>5 gouttes de rosée du matin</li>
+            <li>1 pincée de sel pur</li>
+          </ul>
+          <strong>Préparation:</strong> Infuser les feuilles pendant 24 heures avant d'ajouter les autres ingrédients.
+        </div>
+      </div>
+      
+      <div class="spell-item">
+        <h3>Potion de Sommeil Éternel <span class="spell-type">Potion</span></h3>
+        <div class="spell-description">
+          <p>Plonge la personne dans un sommeil profond jusqu'à l'administration de l'antidote.</p>
+        </div>
+        <div class="spell-ingredients">
+          <strong>Ingrédients:</strong> 
+          <ul>
+            <li>3 pétales de pavot noir</li>
+            <li>1 gramme de poudre de valériane</li>
+            <li>1 larme de sirène</li>
+            <li>1 étoile filante broyée</li>
+          </ul>
+          <strong>Préparation:</strong> Mélanger à minuit en chantant une berceuse.
+        </div>
+      </div>
     </div>
-  </div>
+  </div> rajoute des incantation de supernatural en enochien la langue des anges
 
   <script>
     function showSearchPage() {
