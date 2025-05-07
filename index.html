@@ -52,51 +52,27 @@
         };
     </script>
     <style>
-        /* Style pixelisé rétro */
-        :root {
-            --primary: #2d5bef;
-            --secondary: #1a3cc7;
-            --dark: #0a0a12;
-            --light: #f0f0f0;
-            --pixel-size: 2px;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            image-rendering: pixelated;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         }
 
         body {
-            background-color: #e0e0e0;
-            font-family: 'Courier New', monospace;
+            background-color: #f5f7fa;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 16px;
-            background-image: 
-                linear-gradient(#ccc 1px, transparent 1px),
-                linear-gradient(90deg, #ccc 1px, transparent 1px);
-            background-size: 20px 20px;
+            padding: 20px;
         }
 
         .auth-container {
-            background: white;
-            border: 4px solid var(--dark);
-            box-shadow: 8px 8px 0 var(--dark);
             width: 100%;
-            max-width: 320px;
-            padding: 20px;
-            position: relative;
-            animation: pixelAppear 0.6s steps(4);
-        }
-
-        @keyframes pixelAppear {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
+            max-width: 450px;
+            transition: all 0.3s ease;
         }
 
         .logo {
@@ -105,22 +81,29 @@
         }
 
         .logo h1 {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--dark);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-            text-shadow: 3px 3px 0 #ccc;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
 
         .logo p {
-            font-size: 12px;
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
         }
 
         .auth-form {
-            transition: all 0.4s steps(4);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: linear-gradient(45deg, #4361ee, #3f37c9);
+            padding: 30px;
+            border-radius: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .auth-form:hover {
+            background: linear-gradient(45deg, #3f37c9, #4361ee);
         }
 
         .auth-form.hidden {
@@ -128,143 +111,145 @@
         }
 
         .form-group {
-            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--dark);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-container {
+            border: 1.5px solid #ecedec;
+            border-radius: 10em;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            transition: 0.2s ease-in-out;
+            background-color: white;
+        }
+
+        .input-container svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
         }
 
         .form-group input {
+            border: none;
             width: 100%;
-            padding: 8px;
-            border: 3px solid var(--dark);
-            background: var(--light);
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+            height: 100%;
+            padding-right: 15px;
+            background: transparent;
         }
 
         .form-group input:focus {
             outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 3px var(--primary);
         }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
+        .input-container:focus-within {
+            border: 1.5px solid orange;
+        }
+
+        #error-message {
+            color: #ffcccb;
             font-size: 14px;
-            cursor: pointer;
-            border: 3px solid var(--dark);
-            box-shadow: 4px 4px 0 var(--dark);
-            margin-top: 10px;
-            transition: all 0.2s;
+            text-align: center;
+            margin: 10px 0;
+            min-height: 20px;
+            font-weight: 500;
         }
 
-        button:hover {
-            background: var(--secondary);
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0 var(--dark);
+        .auth-button {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            text-align: center;
+            letter-spacing: 1px;
+            text-decoration: none;
+            background: transparent;
+            transition: ease-out 0.5s;
+            border: 2px solid white;
+            border-radius: 10em;
+            box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0.3);
+            margin: 10px 0;
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            height: 50px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .auth-button:hover {
+            box-shadow: inset 0 -100px 0 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-button:active {
+            transform: scale(0.9);
         }
 
         .toggle-form {
             text-align: center;
-            margin-top: 16px;
-            font-size: 12px;
-            color: #666;
+            color: white;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         .toggle-form a {
-            color: var(--primary);
-            font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .toggle-form a:hover {
+            color: white;
+            font-weight: 600;
             text-decoration: underline;
+            cursor: pointer;
+            margin-left: 5px;
         }
 
-        #error-message {
-            font-size: 12px;
-            text-align: center;
-            margin: 10px 0;
-            min-height: 20px;
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        /* Sablier pixelisé */
-        #loading-spinner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .pixel-hourglass {
-            width: 32px;
-            height: 32px;
-            background: #fff;
-            position: relative;
-            animation: pixelSpin 1.5s steps(4) infinite;
-            box-shadow: 0 0 0 4px #000;
-        }
-
-        @keyframes pixelSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .terms {
-            font-size: 10px;
-            color: #666;
-            text-align: center;
-            margin-top: 16px;
-            line-height: 1.4;
+        @media (max-width: 480px) {
+            .auth-form {
+                padding: 25px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loading-spinner">
-        <div class="pixel-hourglass"></div>
-    </div>
-
     <div class="auth-container">
         <div class="logo">
             <h1>SchoolReport</h1>
             <p>Plateforme collaborative pour étudiants</p>
         </div>
 
-        <div id="error-message"></div>
-
         <!-- Formulaire de Connexion -->
         <div id="login-form" class="auth-form">
             <div class="form-group">
                 <label for="login-email">Email</label>
-                <input type="email" id="login-email" placeholder="votre@email.com">
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
+                        <g data-name="Layer 3" id="Layer_3">
+                            <path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path>
+                        </g>
+                    </svg>
+                    <input type="email" id="login-email" placeholder="votre@email.com">
+                </div>
             </div>
             <div class="form-group">
                 <label for="login-password">Mot de passe</label>
-                <input type="password" id="login-password" placeholder="••••••••">
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="-64 0 512 512" height="20">
+                        <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
+                        <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
+                    </svg>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                </div>
             </div>
-            <button onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
-                CONNEXION
+            
+            <div id="error-message"></div>
+            
+            <button class="auth-button" onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
+                Se connecter
             </button>
             <div class="toggle-form">
                 Pas encore de compte ? <a onclick="toggleForms()">S'inscrire</a>
@@ -275,28 +260,47 @@
         <div id="signup-form" class="auth-form hidden">
             <div class="form-group">
                 <label for="signup-email">Email</label>
-                <input type="email" id="signup-email" placeholder="votre@email.com">
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
+                        <g data-name="Layer 3" id="Layer_3">
+                            <path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path>
+                        </g>
+                    </svg>
+                    <input type="email" id="signup-email" placeholder="votre@email.com">
+                </div>
             </div>
             <div class="form-group">
                 <label for="signup-password">Mot de passe</label>
-                <input type="password" id="signup-password" placeholder="••••••••">
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="-64 0 512 512" height="20">
+                        <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
+                        <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
+                    </svg>
+                    <input type="password" id="signup-password" placeholder="••••••••">
+                </div>
             </div>
             <div class="form-group">
                 <label for="signup-confirm">Confirmer le mot de passe</label>
-                <input type="password" id="signup-confirm" placeholder="••••••••">
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="-64 0 512 512" height="20">
+                        <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
+                        <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
+                    </svg>
+                    <input type="password" id="signup-confirm" placeholder="••••••••">
+                </div>
             </div>
-            <button onclick="
+            
+            <div id="error-message"></div>
+            
+            <button class="auth-button" onclick="
                 if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
                     document.getElementById('error-message').textContent = '❌ Les mots de passe ne correspondent pas';
                 } else {
                     signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
                 }
             ">
-                INSCRIPTION
+                Créer un compte
             </button>
-            <div class="terms">
-                En vous inscrivant, vous acceptez nos conditions.
-            </div>
             <div class="toggle-form">
                 Déjà inscrit ? <a onclick="toggleForms()">Se connecter</a>
             </div>
