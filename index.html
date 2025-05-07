@@ -1,330 +1,179 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>SchoolReport - Connexion</title>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion - SchoolReport</title>
+  <style>
+    :root {
+      --primary: #3f37c9;
+      --accent: #4cc9f0;
+      --bg: #e8f1ff;
+      --white: #fff;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
-            authDomain: "schoolreport-f8db0.firebaseapp.com",
-            projectId: "schoolreport-f8db0",
-            storageBucket: "schoolreport-f8db0.appspot.com",
-            messagingSenderId: "313069994450",
-            appId: "1:313069994450:web:37b009be4f1812fdca880b"
-        };
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4cc9f0, #3f37c9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+    .login-box {
+      background: var(--white);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px var(--shadow);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
 
-        // Authentification - Inscription
-        window.signUp = async (email, password) => {
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                document.getElementById('error-message').textContent = "✅ Compte créé avec succès ! Redirection...";
-                setTimeout(() => window.location.href = 'center.html', 1500);
-            } catch (error) {
-                document.getElementById('error-message').textContent = "❌ " + error.message;
-            }
-        };
+    .logo {
+      margin-bottom: 30px;
+    }
 
-        // Authentification - Connexion
-        window.signIn = async (email, password) => {
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('error-message').textContent = "✅ Connexion réussie ! Redirection...";
-                setTimeout(() => window.location.href = 'center.html', 1500);
-            } catch (error) {
-                document.getElementById('error-message').textContent = "❌ " + error.message;
-            }
-        };
+    .logo img {
+      width: 60px;
+      margin-bottom: 10px;
+    }
 
-        // Bascule entre les formulaires
-        window.toggleForms = () => {
-            const loginForm = document.getElementById('login-form');
-            const signupForm = document.getElementById('signup-form');
-            loginForm.classList.toggle('hidden');
-            signupForm.classList.toggle('hidden');
-            document.getElementById('error-message').textContent = '';
-        };
-    </script>
-    <style>
-        /* Palette rétro gaming */
-        :root {
-            --navy-blue: #1a1f71;       /* Bleu marine */
-            --electric-blue: #00a8e8;   /* Bleu électrique */
-            --mint-green: #8bffb2;      /* Vert menthe clair */
-            --off-white: #f5f5dc;       /* Blanc cassé */
-            --hot-pink: #ff2d7e;        /* Rose fluo */
-            --purple: #9c27ff;          /* Violet */
-            --dark: #0a0a12;            /* Noir profond */
-            --pixel-size: 2px;
-        }
+    .logo h1 {
+      font-size: 24px;
+      color: #2c2c54;
+      margin: 0;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            image-rendering: pixelated;
-        }
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
 
-        body {
-            background-color: var(--navy-blue);
-            font-family: 'Press Start 2P', 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-            background-image: 
-                linear-gradient(rgba(0, 168, 232, 0.2) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 168, 232, 0.2) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
+    button {
+      width: 100%;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s ease;
+    }
 
-        .auth-container {
-            background: var(--off-white);
-            border: 4px solid var(--dark);
-            box-shadow: 8px 8px 0 var(--hot-pink);
-            width: 100%;
-            max-width: 320px;
-            padding: 20px;
-            position: relative;
-            animation: pixelAppear 0.6s steps(4);
-        }
+    button:hover {
+      background: #2b2ba0;
+    }
 
-        @keyframes pixelAppear {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
-        }
+    .link {
+      display: block;
+      margin-top: 15px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+    }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 6px solid #ddd;
+      border-top: 6px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto 0;
+      display: none;
+    }
 
-        .logo h1 {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--navy-blue);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            text-shadow: 3px 3px 0 var(--mint-green);
-        }
+    .loader.show {
+      display: block;
+    }
 
-        .logo p {
-            font-size: 12px;
-            color: var(--navy-blue);
-        }
-
-        .auth-form {
-            transition: all 0.4s steps(4);
-        }
-
-        .auth-form.hidden {
-            display: none;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--navy-blue);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 3px solid var(--dark);
-            background: white;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            background: white;
-            box-shadow: 0 0 0 3px var(--electric-blue);
-            border-color: var(--purple);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            background: var(--electric-blue);
-            color: white;
-            font-family: 'Press Start 2P', 'Courier New', monospace;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            border: 3px solid var(--dark);
-            box-shadow: 4px 4px 0 var(--purple);
-            margin-top: 10px;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        button:hover {
-            background: var(--navy-blue);
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0 var(--purple);
-        }
-
-        .toggle-form {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 10px;
-            color: var(--navy-blue);
-        }
-
-        .toggle-form a {
-            color: var(--hot-pink);
-            font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .toggle-form a:hover {
-            text-decoration: underline;
-            color: var(--purple);
-        }
-
-        #error-message {
-            font-size: 10px;
-            text-align: center;
-            margin: 10px 0;
-            min-height: 20px;
-            color: var(--hot-pink);
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        /* Animation de chargement arcade */
-        #loading-spinner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(26, 31, 113, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .pixel-loader {
-            width: 40px;
-            height: 40px;
-            position: relative;
-        }
-
-        .pixel-loader::before,
-        .pixel-loader::after {
-            content: "";
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--mint-green);
-            animation: pixelLoad 1.5s infinite ease-in-out;
-        }
-
-        .pixel-loader::after {
-            animation-delay: 0.75s;
-        }
-
-        @keyframes pixelLoad {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(30px, 0); }
-            50% { transform: translate(30px, 30px); }
-            75% { transform: translate(0, 30px); }
-        }
-
-        .terms {
-            font-size: 8px;
-            color: var(--navy-blue);
-            text-align: center;
-            margin-top: 16px;
-            line-height: 1.4;
-        }
-
-        /* Ajout de la police Press Start 2P pour le style arcade */
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    </style>
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div id="loading-spinner">
-        <div class="pixel-loader"></div>
+  <div class="login-box">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/School_icon.svg/2048px-School_icon.svg.png" alt="SchoolReport">
+      <h1>SchoolReport</h1>
     </div>
 
-    <div class="auth-container">
-        <div class="logo">
-            <h1>SchoolReport</h1>
-            <p>PLATEFORME ÉTUDIANTE</p>
-        </div>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Mot de passe" />
+    <button onclick="login()">Se connecter</button>
+    <a class="link" href="#" onclick="register()">S'inscrire</a>
 
-        <div id="error-message"></div>
+    <div class="loader" id="spinner"></div>
+  </div>
 
-        <!-- Formulaire de Connexion -->
-        <div id="login-form" class="auth-form">
-            <div class="form-group">
-                <label for="login-email">EMAIL</label>
-                <input type="email" id="login-email" placeholder="EMAIL@EXEMPLE.COM">
-            </div>
-            <div class="form-group">
-                <label for="login-password">MOT DE PASSE</label>
-                <input type="password" id="login-password" placeholder="••••••••">
-            </div>
-            <button onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
-                CONNEXION
-            </button>
-            <div class="toggle-form">
-                PAS DE COMPTE ? <a onclick="toggleForms()">S'INSCRIRE</a>
-            </div>
-        </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        <!-- Formulaire d'Inscription -->
-        <div id="signup-form" class="auth-form hidden">
-            <div class="form-group">
-                <label for="signup-email">EMAIL</label>
-                <input type="email" id="signup-email" placeholder="EMAIL@EXEMPLE.COM">
-            </div>
-            <div class="form-group">
-                <label for="signup-password">MOT DE PASSE</label>
-                <input type="password" id="signup-password" placeholder="••••••••">
-            </div>
-            <div class="form-group">
-                <label for="signup-confirm">CONFIRMATION</label>
-                <input type="password" id="signup-confirm" placeholder="••••••••">
-            </div>
-            <button onclick="
-                if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
-                    document.getElementById('error-message').textContent = 'ERREUR: MOTS DE PASSE DIFFÉRENTS';
-                } else {
-                    signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
-                }
-            ">
-                INSCRIPTION
-            </button>
-            <div class="terms">
-                EN VOUS INSCRIVANT, VOUS ACCEPTEZ NOS CONDITIONS D'UTILISATION.
-            </div>
-            <div class="toggle-form">
-                DÉJÀ INSCRIT ? <a onclick="toggleForms()">SE CONNECTER</a>
-            </div>
-        </div>
-    </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+      authDomain: "schoolreport-f8db0.firebaseapp.com",
+      projectId: "schoolreport-f8db0",
+      storageBucket: "schoolreport-f8db0.appspot.com",
+      messagingSenderId: "313069994450",
+      appId: "1:313069994450:web:37b009be4f1812fdca880b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const spinner = document.getElementById("spinner");
+      spinner.classList.add("show");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "center.html";
+      } catch (e) {
+        alert("Erreur : " + e.message);
+        spinner.classList.remove("show");
+      }
+    }
+
+    async function register() {
+      const email = prompt("Email");
+      const password = prompt("Mot de passe");
+      const nom = prompt("Votre prénom");
+      const prenom = prompt("Votre nom");
+      const pseudo = prompt("Pseudo");
+      const photo = prompt("URL de la photo (laisser vide pour avatar)");
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, {
+          displayName: `${nom} ${prenom} (${pseudo})`,
+          photoURL: photo || "https://i.imgur.com/3P0rJzY.png"
+        });
+        alert("Compte créé avec succès !");
+      } catch (e) {
+        alert("Erreur : " + e.message);
+      }
+    }
+  </script>
 </body>
 </html>
