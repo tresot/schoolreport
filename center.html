@@ -6,13 +6,16 @@
     <title>SchoolReport</title>
     <style>
         :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --success: #4cc9f0;
+            --primary: #2E8B57; /* Vert pomme */
+            --secondary: #1a5c38; /* Vert pomme plus foncé */
+            --light: #F8F4E6; /* Blanc cassé */
+            --dark: #0A192F; /* Bleu marine foncé */
+            --success: #64FFDA; /* Vert menthe */
             --warning: #f8961e;
             --danger: #e63946;
+            --text-primary: #CCD6F6; /* Texte principal */
+            --text-secondary: #8892B0; /* Texte secondaire */
+            --input-bg: #112240; /* Fond des inputs */
         }
 
         * {
@@ -23,8 +26,9 @@
         }
 
         body {
-            background-color: #f5f7fa;
+            background-color: var(--dark);
             min-height: 100vh;
+            color: var(--text-primary);
         }
 
         .container {
@@ -38,7 +42,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
             margin-bottom: 40px;
         }
 
@@ -48,7 +52,7 @@
         }
 
         .logo h1 {
-            color: var(--dark);
+            color: var(--primary);
             font-size: 24px;
             margin-left: 10px;
         }
@@ -64,7 +68,7 @@
             height: 40px;
             border-radius: 50%;
             background-color: var(--primary);
-            color: white;
+            color: var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,12 +105,12 @@
 
         .welcome-section h2 {
             font-size: 28px;
-            color: var(--dark);
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
 
         .welcome-section p {
-            color: #6c757d;
+            color: var(--text-secondary);
             font-size: 16px;
             max-width: 600px;
             margin: 0 auto;
@@ -120,19 +124,20 @@
         }
 
         .action-card {
-            background: white;
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(5px);
             border-radius: 12px;
             padding: 30px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-            border: 1px solid #e9ecef;
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
 
         .action-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .action-icon {
@@ -144,7 +149,7 @@
             align-items: center;
             justify-content: center;
             font-size: 30px;
-            color: white;
+            color: var(--light);
         }
 
         .chat-icon {
@@ -166,11 +171,11 @@
         .action-card h3 {
             font-size: 20px;
             margin-bottom: 10px;
-            color: var(--dark);
+            color: var(--text-primary);
         }
 
         .action-card p {
-            color: #6c757d;
+            color: var(--text-secondary);
             font-size: 14px;
             margin-bottom: 20px;
         }
@@ -179,7 +184,7 @@
             display: inline-block;
             padding: 10px 20px;
             background-color: var(--primary);
-            color: white;
+            color: var(--light);
             border-radius: 6px;
             text-decoration: none;
             font-weight: 500;
@@ -219,12 +224,12 @@
             height: 12px;
             border-radius: 50%;
             background-color: #2ecc71;
-            border: 2px solid white;
+            border: 2px solid var(--light);
         }
         
         .user-count {
             background-color: var(--primary);
-            color: white;
+            color: var(--light);
             padding: 3px 8px;
             border-radius: 12px;
             font-size: 12px;
@@ -237,7 +242,7 @@
             top: -5px;
             right: -5px;
             background-color: var(--danger);
-            color: white;
+            color: var(--light);
             width: 20px;
             height: 20px;
             border-radius: 50%;
@@ -261,26 +266,29 @@
         }
 
         .setup-container {
-            background: white;
+            background: var(--dark);
             padding: 30px;
             border-radius: 12px;
             width: 90%;
             max-width: 500px;
             text-align: center;
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
 
         .setup-container h2 {
             margin-bottom: 20px;
-            color: var(--dark);
+            color: var(--text-primary);
         }
 
         .setup-container input {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(100, 255, 218, 0.2);
             border-radius: 8px;
             font-size: 16px;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
         .profile-preview {
@@ -289,7 +297,7 @@
             border-radius: 50%;
             margin: 15px auto;
             background-color: var(--primary);
-            color: white;
+            color: var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -307,7 +315,7 @@
 
         .setup-btn {
             background-color: var(--primary);
-            color: white;
+            color: var(--light);
             border: none;
             padding: 12px 25px;
             border-radius: 8px;
@@ -325,13 +333,14 @@
             position: absolute;
             top: 50px;
             right: 0;
-            background: white;
+            background: var(--dark);
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             padding: 15px;
             width: 200px;
             display: none;
             z-index: 100;
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
 
         .user-item {
@@ -345,7 +354,7 @@
             height: 30px;
             border-radius: 50%;
             background-color: var(--primary);
-            color: white;
+            color: var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -377,16 +386,20 @@
         }
 
         .image-input-container {
-            background: white;
+            background: var(--dark);
             padding: 20px;
             border-radius: 10px;
             width: 300px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
 
         .image-input-container input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
+            background: var(--input-bg);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            color: var(--text-primary);
         }
     </style>
 </head>
@@ -714,7 +727,7 @@
             container.innerHTML = '';
 
             if (onlineUsers.length === 0) {
-                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">Aucun autre utilisateur en ligne</p>';
+                container.innerHTML = '<p style="color: var(--text-secondary); font-size: 14px;">Aucun autre utilisateur en ligne</p>';
             } else {
                 onlineUsers.forEach(user => {
                     const userElement = document.createElement('div');
