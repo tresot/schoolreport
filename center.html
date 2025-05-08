@@ -19,13 +19,12 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             background-color: #f5f7fa;
             min-height: 100vh;
-            color: #333;
         }
 
         .container {
@@ -38,7 +37,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px 0;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
             margin-bottom: 40px;
         }
 
@@ -48,13 +48,9 @@
         }
 
         .logo h1 {
-            color: #333;
-            font-size: 28px;
-            font-weight: 700;
+            color: var(--dark);
+            font-size: 24px;
             margin-left: 10px;
-            background: linear-gradient(90deg, #4361ee, #3a0ca3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .user-menu {
@@ -64,8 +60,8 @@
         }
 
         .user-avatar {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background-color: var(--primary);
             color: white;
@@ -73,11 +69,9 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 15px;
+            margin-right: 10px;
             position: relative;
             overflow: hidden;
-            border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .user-avatar img {
@@ -88,9 +82,7 @@
         }
 
         .user-name {
-            font-weight: 600;
-            color: #333;
-            margin-right: 15px;
+            font-weight: 500;
         }
 
         .logout-btn {
@@ -100,129 +92,102 @@
             cursor: pointer;
             margin-left: 15px;
             font-size: 14px;
-            font-weight: 500;
-            transition: opacity 0.3s;
-        }
-
-        .logout-btn:hover {
-            opacity: 0.8;
         }
 
         .welcome-section {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 50px;
         }
 
         .welcome-section h2 {
-            font-size: 36px;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 700;
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 10px;
         }
 
         .welcome-section p {
-            color: #666;
-            font-size: 18px;
-            max-width: 700px;
+            color: #6c757d;
+            font-size: 16px;
+            max-width: 600px;
             margin: 0 auto;
-            line-height: 1.6;
         }
 
         .actions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
+            gap: 25px;
+            margin-top: 40px;
         }
 
         .action-card {
             background: white;
-            border-radius: 16px;
-            padding: 35px 30px;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .action-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            border: 1px solid #e9ecef;
         }
 
         .action-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .action-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 30px;
             color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .chat-icon {
-            background: linear-gradient(135deg, #4cc9f0, #4895ef);
+            background-color: var(--success);
         }
 
         .workspace-icon {
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            background-color: var(--primary);
         }
 
         .homework-icon {
-            background: linear-gradient(135deg, #f8961e, #f3722c);
+            background-color: var(--warning);
         }
 
         .files-icon {
-            background: linear-gradient(135deg, #e63946, #ef233c);
+            background-color: var(--danger);
         }
 
         .action-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #333;
-            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
         }
 
         .action-card p {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 25px;
-            line-height: 1.6;
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
 
         .action-btn {
             display: inline-block;
-            padding: 12px 25px;
-            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            padding: 10px 20px;
+            background-color: var(--primary);
             color: white;
-            border-radius: 8px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: 500;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            transition: background 0.3s;
         }
 
         .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+            background-color: var(--secondary);
         }
 
         @media (max-width: 768px) {
@@ -232,15 +197,11 @@
             }
 
             .user-menu {
-                margin-top: 20px;
+                margin-top: 15px;
             }
 
             .actions-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .welcome-section h2 {
-                font-size: 28px;
             }
         }
 
@@ -252,31 +213,23 @@
         
         .online-status {
             position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 14px;
-            height: 14px;
+            bottom: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background-color: #2ecc71;
             border: 2px solid white;
-            z-index: 2;
         }
         
         .user-count {
-            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            background-color: var(--primary);
             color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
             margin-left: 10px;
             cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.2);
-            transition: transform 0.3s;
-        }
-        
-        .user-count:hover {
-            transform: scale(1.05);
         }
         
         .active-indicator {
@@ -285,16 +238,13 @@
             right: -5px;
             background-color: var(--danger);
             color: white;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1;
+            font-size: 10px;
         }
 
         #setup-modal {
@@ -312,52 +262,40 @@
 
         .setup-container {
             background: white;
-            padding: 40px;
-            border-radius: 16px;
+            padding: 30px;
+            border-radius: 12px;
             width: 90%;
             max-width: 500px;
             text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
         .setup-container h2 {
-            margin-bottom: 25px;
-            color: #333;
-            font-size: 28px;
-            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
         }
 
         .setup-container input {
             width: 100%;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            margin: 10px 0;
             border: 1px solid #ddd;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
-            transition: border 0.3s;
-        }
-
-        .setup-container input:focus {
-            border-color: #4361ee;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
         .profile-preview {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            margin: 20px auto;
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            margin: 15px auto;
+            background-color: var(--primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
+            font-size: 40px;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 5px solid white;
         }
 
         .profile-preview img {
@@ -368,76 +306,54 @@
         }
 
         .setup-btn {
-            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            padding: 12px 25px;
+            border-radius: 8px;
             font-size: 16px;
-            margin-top: 20px;
+            margin-top: 15px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-            width: 100%;
+            transition: background 0.3s;
         }
 
         .setup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+            background-color: var(--secondary);
         }
 
         .users-list {
             position: absolute;
-            top: 60px;
+            top: 50px;
             right: 0;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 15px;
+            width: 200px;
             display: none;
             z-index: 100;
-        }
-
-        .users-list h4 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 18px;
-            font-weight: 600;
-            text-align: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
         }
 
         .user-item {
             display: flex;
             align-items: center;
-            margin: 12px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .user-item:last-child {
-            border-bottom: none;
+            margin: 8px 0;
         }
 
         .user-avatar-small {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            background-color: var(--primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 12px;
-            font-size: 16px;
+            margin-right: 10px;
+            font-size: 14px;
             overflow: hidden;
             position: relative;
-            border: 2px solid white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         .user-avatar-small img {
@@ -462,70 +378,16 @@
 
         .image-input-container {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 350px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-
-        .image-input-container h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .image-input-container p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
         }
 
         .image-input-container input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.3s;
         }
-
-        .image-input-container input:focus {
-            border-color: #4361ee;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-group button {
-            flex: 1;
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .action-card {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .action-card:nth-child(1) { animation-delay: 0.1s; }
-        .action-card:nth-child(2) { animation-delay: 0.2s; }
-        .action-card:nth-child(3) { animation-delay: 0.3s; }
-        .action-card:nth-child(4) { animation-delay: 0.4s; }
-
-        /* Ajout de la police Poppins */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
     </style>
 </head>
 <body>
@@ -541,7 +403,7 @@
             
             <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
-            <p id="username-info" style="color: #666; font-size: 14px; margin-bottom: 20px;">
+            <p id="username-info">
                 Ce nom ne pourra pas être changé avant 48 heures
             </p>
 
@@ -555,10 +417,8 @@
             <h3>Importer une photo</h3>
             <p>Entrez le nom de l'image (ex: monimage.jpg)</p>
             <input type="text" id="image-name-input" placeholder="nomdelimage.jpg">
-            <div class="btn-group">
-                <button class="setup-btn" id="confirm-image-btn">Valider</button>
-                <button class="logout-btn" style="margin: 0; flex: 1; border: 1px solid #ddd; background: #f5f5f5; color: #333;" id="cancel-image-btn">Annuler</button>
-            </div>
+            <button class="setup-btn" id="confirm-image-btn">Valider</button>
+            <button class="logout-btn" style="margin-top: 10px;" id="cancel-image-btn">Annuler</button>
         </div>
     </div>
 
@@ -567,11 +427,6 @@
         <div class="container">
             <header>
                 <div class="logo">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#4361ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 8V16" stroke="#4361ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 12H16" stroke="#4361ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
                     <h1>SchoolReport</h1>
                 </div>
 
@@ -859,7 +714,7 @@
             container.innerHTML = '';
 
             if (onlineUsers.length === 0) {
-                container.innerHTML = '<p style="color: #6c757d; font-size: 14px; text-align: center;">Aucun autre utilisateur en ligne</p>';
+                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">Aucun autre utilisateur en ligne</p>';
             } else {
                 onlineUsers.forEach(user => {
                     const userElement = document.createElement('div');
@@ -963,25 +818,7 @@
             const imageName = document.getElementById('image-name-input').value.trim();
             if (!imageName) return;
 
-            // Utilisation d'images de profil par défaut de Pinterest
-            const defaultImages = [
-                "profile1.jpg",
-                "profile2.jpg",
-                "profile3.jpg",
-                "profile4.jpg",
-                "profile5.jpg"
-            ];
-
-            // Vérifier si le nom correspond à une image par défaut
-            if (defaultImages.includes(imageName)) {
-                const imageUrl = `https://i.pinimg.com/236x/${Math.floor(Math.random() * 100)}/${Math.floor(Math.random() * 100)}/${imageName}`;
-                updateProfileImage(imageUrl);
-            } else {
-                alert("Veuillez utiliser un nom d'image valide parmi : " + defaultImages.join(", "));
-            }
-        }
-
-        function updateProfileImage(imageUrl) {
+            const imageUrl = `photos/${imageName}`;
             const img = new Image();
             
             img.onload = function() {
