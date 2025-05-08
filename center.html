@@ -13,6 +13,7 @@
             --success: #64FFDA; /* Vert menthe */
             --warning: #f8961e;
             --danger: #e63946;
+            --calendar: #3B82F6; /* Bleu clair pour le calendrier */
             --text-primary: #CCD6F6; /* Texte principal */
             --text-secondary: #8892B0; /* Texte secondaire */
             --input-bg: #112240; /* Fond des inputs */
@@ -164,8 +165,8 @@
             background-color: var(--warning);
         }
 
-        .files-icon {
-            background-color: var(--danger);
+        .calendar-icon {
+            background-color: var(--calendar);
         }
 
         .action-card h3 {
@@ -499,13 +500,14 @@
                     <a class="action-btn">Voir les devoirs</a>
                 </div>
 
-                <div class="action-card" onclick="window.location.href='files.html'">
-                    <div class="action-icon files-icon">
-                        📁
+                <div class="action-card" onclick="window.location.href='calendar.html'">
+                    <div class="action-icon calendar-icon" style="position: relative;">
+                        📅
+                        <div class="active-indicator" id="calendar-active" style="display: none;">0</div>
                     </div>
-                    <h3>Fichiers partagés</h3>
-                    <p>Accédez à tous les documents partagés par vos professeurs et camarades.</p>
-                    <a class="action-btn">Explorer les fichiers</a>
+                    <h3>Calendrier et Planning</h3>
+                    <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre.</p>
+                    <a class="action-btn">Voir le planning</a>
                 </div>
             </div>
         </div>
@@ -628,6 +630,9 @@
             // Suivi des utilisateurs en ligne
             setupPresenceTracking(user);
 
+            // Vérifier les devoirs urgents
+            checkUrgentHomeworks(user);
+
             // Gestion de la déconnexion
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
@@ -670,6 +675,35 @@
                 document.getElementById('username-change-date').textContent = 
                     changeDate.toLocaleDateString() + ' à ' + changeDate.toLocaleTimeString();
             }
+        }
+
+        function checkUrgentHomeworks(user) {
+            const homeworksRef = ref(db, `homeworks/${user.uid}`);
+            const calendarActive = document.getElementById('calendar-active');
+            const now = new Date();
+            const twoDaysFromNow = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+
+            onValue(homeworksRef, (snapshot) => {
+                let urgentCount = 0;
+                const homeworks = snapshot.val();
+                if (homeworks) {
+                    Object.values(homeworks).forEach((dateHomeworks) => {
+                        Object.values(dateHomeworks).forEach((homework) => {
+                            const dueDate = new Date(homework.dueDate);
+                            if (dueDate <= twoDaysFromNow && !homework.completed) {
+                                urgentCount++;
+                            }
+                        });
+                    });
+                }
+
+                if (urgentCount > 0) {
+                    calendarActive.textContent = urgentCount;
+                    calendarActive.style.display = 'flex';
+                } else {
+                    calendarActive.style.display = 'none';
+                }
+            });
         }
 
         function setupPresenceTracking(user) {
