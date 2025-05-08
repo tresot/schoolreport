@@ -50,15 +50,15 @@
     </script>
     <style>
         :root {
-            --bgColor: #333333;
-            --inputColor: white;
-            --outlineColor: dodgerblue;
-            --beamColor: yellow;
+            --bgColor: #0A192F; /* Bleu marine foncé */
+            --primaryColor: #2E8B57; /* Vert pomme */
+            --secondaryColor: #F8F4E6; /* Blanc cassé */
+            --accentColor: #64FFDA; /* Vert menthe pour accents */
+            --textColor: #CCD6F6; /* Texte principal */
+            --textSecondary: #8892B0; /* Texte secondaire */
+            --errorColor: #FF5555; /* Rouge d'erreur */
+            --inputBg: #112240; /* Fond des inputs */
             --spacer: 1rem;
-            --mineShaft: grey;
-            --tundora: #4A4A4A;
-            --dustyGray: #9B9B9B;
-            --gallery: #F0F0F0;
         }
 
         * {
@@ -69,48 +69,54 @@
 
         html, body {
             height: 100%;
-            font-family: 'Open Sans', Helvetica;
+            font-family: 'Open Sans', Helvetica, sans-serif;
         }
 
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--mineShaft);
+            background: var(--bgColor);
             padding: 20px;
+            color: var(--textColor);
         }
 
         body.show-password {
-            --bgColor: black;
-            --inputColor: white;
-            --outlineColor: var(--beamColor);
+            --bgColor: #0A192F;
+            --inputColor: var(--secondaryColor);
+            --outlineColor: var(--accentColor);
         }
 
         .auth-container {
-            background: var(--mineShaft);
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(5px);
             width: 100%;
             max-width: 500px;
-            padding: 2rem;
-            text-align: center;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
 
         .logo {
             margin-bottom: 2rem;
+            text-align: center;
         }
 
         .logo h1 {
-            color: white;
+            color: var(--primaryColor);
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
+            font-weight: 700;
         }
 
         .logo p {
-            color: var(--dustyGray);
+            color: var(--textSecondary);
             font-size: 1rem;
         }
 
         #error-message {
-            color: #e63946;
+            color: var(--errorColor);
             font-size: 14px;
             text-align: center;
             margin: 1rem 0;
@@ -128,7 +134,7 @@
 
         .form-group {
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
         }
 
         .input-wrapper {
@@ -141,24 +147,24 @@
         input {
             width: 100%;
             padding: 15px 50px 15px 15px;
-            font-size: 1.2rem;
-            color: black;
-            background: transparent;
-            border: 2px solid var(--tundora);
+            font-size: 1rem;
+            color: var(--secondaryColor);
+            background: var(--inputBg);
+            border: 1px solid rgba(100, 255, 218, 0.2);
             border-radius: 5px;
             outline: none;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         input:focus {
-            border-color: var(--outlineColor);
+            border-color: var(--primaryColor);
+            box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.3);
         }
 
         .password-input {
             padding-right: 50px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             z-index: 2;
-            color : black;
         }
 
         .password-input::placeholder {
@@ -183,7 +189,7 @@
         .eye {
             width: 20px;
             height: 20px;
-            border: 2px solid var(--inputColor);
+            border: 2px solid var(--primaryColor);
             border-radius: 10px 0;
             transform: rotate(45deg);
             position: relative;
@@ -197,7 +203,7 @@
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background-color: var(--inputColor);
+            background-color: var(--primaryColor);
             border-radius: 50%;
         }
 
@@ -220,59 +226,71 @@
         .show-password #beam,
         .show-password #beam-signup,
         .show-password #beam-confirm {
-            background: var(--beamColor);
+            background: var(--accentColor);
             display: block;
         }
 
         button.submit-btn {
-            background-color: var(--mineShaft);
-            border: 2px solid white;
+            background-color: var(--primaryColor);
+            border: none;
             border-radius: 27px;
-            color: white;
+            color: var(--secondaryColor);
             cursor: pointer;
             font-size: 1rem;
             padding: 12px 30px;
             margin-top: 20px;
             text-transform: uppercase;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 400px;
         }
 
         button.submit-btn:hover {
-            background-color: white;
-            color: var(--mineShaft);
+            background-color: var(--accentColor);
+            color: var(--bgColor);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 139, 87, 0.4);
         }
 
         .toggle-form {
-            color: var(--dustyGray);
+            color: var(--textSecondary);
             margin-top: 2rem;
+            font-size: 0.9rem;
+            text-align: center;
         }
 
         .toggle-form a {
-            color: white;
+            color: var(--accentColor);
             text-decoration: none;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
         .toggle-form a:hover {
+            color: var(--primaryColor);
             text-decoration: underline;
         }
-        /* Correction du style d'autocomplétion */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: white;
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
-  transition: background-color 5000s ease-in-out 0s;
-}
 
-/* Pour Firefox */
-input:-moz-autofill,
-input:-moz-autofill:hover,
-input:-moz-autofill:focus {
-  filter: none; /* Désactive le fond jaune */
-  background-color: transparent !important;
-  color: black !important;
-}
+        /* Correction du style d'autocomplétion */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: var(--secondaryColor);
+            -webkit-box-shadow: 0 0 0px 1000px var(--inputBg) inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Pour Firefox */
+        input:-moz-autofill,
+        input:-moz-autofill:hover,
+        input:-moz-autofill:focus {
+            filter: none;
+            background-color: var(--inputBg) !important;
+            color: var(--secondaryColor) !important;
+        }
     </style>
 </head>
 <body>
