@@ -491,6 +491,19 @@
                 font-size: 2.5rem;
             }
         }
+                html, body {
+            height: 200vh; 
+        }
+        
+        .intro-screen {
+            height: 100vh; 
+            position: fixed;
+        }
+        
+        .container {
+            margin-top: 100vh; 
+            position: absolute;
+        }
     </style>
 </head>
 <body>
@@ -608,6 +621,37 @@
                 document.body.style.backgroundImage = `url('photos/background${currentBg}.jpg')`;
             }, 300000); // 300000 ms = 5 minutes
         }
+                window.addEventListener('scroll', function() {
+            const introScreen = document.querySelector('.intro-screen');
+            const loginContainer = document.getElementById('login-container');
+            const scrollPosition = window.scrollY;
+            
+            // Ajustez cette valeur selon quand vous voulez que l'animation se déclenche
+            if (scrollPosition > 50) { 
+                introScreen.style.opacity = 1 - (scrollPosition / 100);
+                introScreen.style.pointerEvents = 'none';
+                loginContainer.style.opacity = (scrollPosition - 50) / 100;
+                loginContainer.style.transform = `translateY(${Math.max(0, 100 - scrollPosition)}px)`;
+                
+                if (scrollPosition > 150) {
+                    loginContainer.classList.add('visible');
+                } else {
+                    loginContainer.classList.remove('visible');
+                }
+            } else {
+                introScreen.style.opacity = '1';
+                introScreen.style.pointerEvents = 'auto';
+                loginContainer.style.opacity = '0';
+                loginContainer.style.transform = 'translateY(100px)';
+            }
+        });
+
+        // Ajoutez ceci pour forcer le scroll initial sur mobile
+        setTimeout(() => {
+            if (window.innerWidth <= 768) {
+                window.scrollTo({ top: 1, behavior: 'smooth' });
+            }
+        }, 1000);
 
         // Fonction pour basculer entre les formulaires
         function showLoginForm() {
@@ -839,12 +883,6 @@
                 }
             });
             
-            // Forcer un petit défilement initial pour les appareils mobiles
-            setTimeout(() => {
-                if (window.innerWidth <= 768) {
-                    window.scrollTo(0, 1);
-                }
-            }, 500);
         });
     </script>
 </body>
