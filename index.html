@@ -11,6 +11,7 @@
     <link rel="preload" href="photos/background5.jpg" as="image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -65,8 +66,9 @@
             --dark-color: #212529;
             --success-color: #4cc9f0;
             --error-color: #f72585;
-            --glass-color: rgba(255, 255, 255, 0.15);
+            --glass-color: rgba(0, 0, 0, 0.6);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --glow-color: rgba(67, 97, 238, 0.6);
         }
 
         * {
@@ -97,8 +99,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 0;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .intro-screen {
@@ -113,7 +123,7 @@
             align-items: center;
             color: white;
             z-index: 100;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.8);
             transition: opacity 0.5s ease-out;
             will-change: opacity;
         }
@@ -168,9 +178,9 @@
             z-index: 1;
             width: 100%;
             max-width: 450px;
-            background: rgba(0, 0, 0, 0.7);
+            background: var(--glass-color);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 30px rgba(0, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             padding: 40px;
             margin: 20px;
             border: 1px solid var(--glass-border);
@@ -178,16 +188,33 @@
             opacity: 0;
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
             will-change: transform, opacity;
-            animation: pulseShadow 4s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
-        /* Amélioration du fallback pour backdrop-filter */
-        @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
-            .container {
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                background: rgba(0, 0, 0, 0.5);
-            }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                          var(--primary-blue), 
+                          var(--primary-green), 
+                          var(--secondary-color));
+            background-size: 400%;
+            z-index: -1;
+            border-radius: 22px;
+            opacity: 0;
+            transition: opacity 0.3s, box-shadow 0.3s;
+            animation: glowBorder 8s linear infinite;
+        }
+
+        .container.visible::before {
+            opacity: 0.8;
+            box-shadow: 0 0 20px var(--glow-color);
         }
 
         .container.visible {
@@ -287,8 +314,12 @@
             border-color: var(--primary-blue);
             outline: none;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(0, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group input:valid {
+            border-color: var(--primary-green);
         }
 
         .password-container {
@@ -452,7 +483,7 @@
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.7);
             transform: scale(0);
             animation: ripple 0.6s linear;
             pointer-events: none;
@@ -462,6 +493,18 @@
             to {
                 transform: scale(4);
                 opacity: 0;
+            }
+        }
+
+        @keyframes glowBorder {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
             }
         }
 
@@ -504,11 +547,6 @@
             }
         }
 
-        @keyframes pulseShadow {
-            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
-            50% { box-shadow: 0 0 35px rgba(0, 255, 255, 0.4); }
-        }
-
         @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
@@ -540,6 +578,8 @@
     </style>
 </head>
 <body>
+    <div id="particles-js"></div>
+    
     <div class="intro-screen">
         <h1 class="animate__animated animate__fadeIn">SchoolReport</h1>
         <div class="scroll-hint animate__animated animate__fadeIn animate__delay-1s">
@@ -554,7 +594,7 @@
         <div class="logo">
             <div class="current-time" id="current-time"></div>
             <h1><span class="school">School</span><span class="report">Report</span></h1>
-            <p>Plateforme collaborative pour étudiants</p>
+            <p id="welcome-text">Plateforme collaborative pour étudiants</p>
         </div>
 
         <div class="nav-tabs">
@@ -591,7 +631,7 @@
                     <a href="#">Mot de passe oublié ?</a>
                 </div>
             </div>
-            <button class="submit-btn" id="login-btn" onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
+            <button class="submit-btn" onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
                 <span>Se connecter</span>
             </button>
         </div>
@@ -626,7 +666,7 @@
                     </button>
                 </div>
             </div>
-            <button class="submit-btn" id="signup-btn" onclick="
+            <button class="submit-btn" onclick="
                 if (document.getElementById('signup-password').value !== document.getElementById('signup-confirm').value) {
                     document.getElementById('error-message').textContent = '❌ Les mots de passe ne correspondent pas';
                 } else {
@@ -642,10 +682,118 @@
     </div>
 
     <script>
+        // Initialisation des particules (optimisé pour performance)
+        function initParticles() {
+            if (window.innerWidth > 768) { // Seulement sur desktop pour performance
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": {
+                            "value": 60,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#ffffff"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.3,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true,
+                            "anim": {
+                                "enable": false,
+                                "speed": 40,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#ffffff",
+                            "opacity": 0.2,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 2,
+                            "direction": "none",
+                            "random": true,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": false,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": false,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": false,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 1
+                                }
+                            },
+                            "bubble": {
+                                "distance": 400,
+                                "size": 40,
+                                "duration": 2,
+                                "opacity": 8,
+                                "speed": 3
+                            },
+                            "repulse": {
+                                "distance": 200,
+                                "duration": 0.4
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            },
+                            "remove": {
+                                "particles_nb": 2
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            }
+        }
+
         // Fonction pour changer le fond d'écran toutes les 5 minutes
         function changeBackground() {
             let currentBg = 1;
-            const totalBgs = 5; // Nombre total d'images de fond
+            const totalBgs = 5;
             
             // Précharger toutes les images de fond
             for (let i = 1; i <= totalBgs; i++) {
@@ -656,7 +804,7 @@
             setInterval(() => {
                 currentBg = currentBg % totalBgs + 1;
                 document.body.style.backgroundImage = `url('photos/background${currentBg}.jpg')`;
-            }, 300000); // 300000 ms = 5 minutes
+            }, 300000);
         }
 
         // Gestion optimisée du scroll
@@ -665,14 +813,12 @@
             const loginContainer = document.getElementById('login-container');
             const scrollPosition = window.scrollY;
             
-            // Utilisation de requestAnimationFrame pour des animations fluides
             requestAnimationFrame(() => {
-                // Ajustez cette valeur selon quand vous voulez que l'animation se déclenche
                 if (scrollPosition > 50) { 
                     introScreen.style.opacity = 1 - (scrollPosition / 100);
                     introScreen.style.pointerEvents = 'none';
                     loginContainer.style.opacity = (scrollPosition - 50) / 100;
-                    loginContainer.style.transform = `translateY(${Math.max(0, 100 - scrollPosition)}px)`;
+                    loginContainer.style.transform = `translateY(${Math.max(0, 100 - scrollPosition)}px`;
                     
                     if (scrollPosition > 150) {
                         loginContainer.classList.add('visible');
@@ -736,12 +882,10 @@
             let scale = 1;
             let isInteractive = false;
             
-            // Fonction optimisée pour le mouvement du curseur
             function moveCursor() {
                 const dx = mouseX - lastX;
                 const dy = mouseY - lastY;
                 
-                // Interpolation pour un mouvement plus fluide
                 lastX += dx * 0.2;
                 lastY += dy * 0.2;
                 
@@ -756,7 +900,6 @@
                 mouseX = e.clientX;
                 mouseY = e.clientY;
                 
-                // Détection des éléments interactifs une seule fois
                 if (!isInteractive) {
                     const interactiveElements = document.querySelectorAll('button, a, input, .nav-tab');
                     isInteractive = Array.from(interactiveElements).some(el => el.matches(':hover'));
@@ -771,12 +914,10 @@
                 }
             });
             
-            // Réinitialiser l'état interactif pour permettre une nouvelle vérification
             document.addEventListener('mouseout', () => {
                 isInteractive = false;
             });
             
-            // Effet de clic
             document.addEventListener('mousedown', () => {
                 scale = 0.8;
             });
@@ -797,22 +938,39 @@
         function initRippleEffect() {
             document.querySelectorAll('.submit-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    const rect = btn.getBoundingClientRect();
+                    const rect = this.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    const ripple = document.createElement('span');
-                    ripple.classList.add('ripple');
-                    ripple.style.left = `${x}px`;
-                    ripple.style.top = `${y}px`;
+                    const circle = document.createElement('span');
+                    circle.classList.add('ripple');
+                    circle.style.left = `${x}px`;
+                    circle.style.top = `${y}px`;
                     
-                    this.appendChild(ripple);
-                    setTimeout(() => ripple.remove(), 600);
+                    this.appendChild(circle);
+                    setTimeout(() => circle.remove(), 600);
                 });
             });
         }
 
+        // Réponse visuelle en temps réel
+        function initInputFeedback() {
+            const emailInput = document.getElementById('login-email');
+            const welcomeText = document.getElementById('welcome-text');
+            
+            emailInput.addEventListener('input', () => {
+                if (emailInput.value) {
+                    welcomeText.textContent = `Bienvenue, ${emailInput.value.split('@')[0]}`;
+                } else {
+                    welcomeText.textContent = 'Plateforme collaborative pour étudiants';
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser les particules
+            initParticles();
+            
             // Initialiser le changement de fond d'écran avec préchargement
             changeBackground();
             
@@ -830,6 +988,9 @@
             // Initialiser l'effet ripple
             initRippleEffect();
             
+            // Initialiser le feedback des inputs
+            initInputFeedback();
+            
             // Mettre à jour l'heure
             updateTime();
             setInterval(updateTime, 1000);
@@ -838,7 +999,7 @@
             let isScrolling;
             window.addEventListener('scroll', function() {
                 window.clearTimeout(isScrolling);
-                isScrolling = setTimeout(handleScroll, 16); // ~60fps
+                isScrolling = setTimeout(handleScroll, 16);
             }, { passive: true });
             
             // Forcer le scroll initial sur mobile
@@ -847,27 +1008,6 @@
                     window.scrollTo({ top: 1, behavior: 'smooth' });
                 }
             }, 1000);
-            
-            // Personnalisation du message de bienvenue
-            const emailInput = document.getElementById('login-email');
-            const greeting = document.createElement('div');
-            greeting.style.color = 'white';
-            greeting.style.marginBottom = '10px';
-            greeting.style.opacity = '0';
-            greeting.style.transition = 'opacity 0.3s';
-            
-            emailInput.parentNode.insertBefore(greeting, emailInput.nextSibling);
-            
-            emailInput.addEventListener('input', () => {
-                const email = emailInput.value.trim();
-                if (email) {
-                    const username = email.split('@')[0];
-                    greeting.textContent = `Bienvenue, ${username}`;
-                    greeting.style.opacity = '1';
-                } else {
-                    greeting.style.opacity = '0';
-                }
-            });
         });
     </script>
 </body>
