@@ -65,8 +65,9 @@
             --dark-color: #212529;
             --success-color: #4cc9f0;
             --error-color: #f72585;
-            --glass-color: rgba(255, 255, 255, 0.15);
+            --glass-color: rgba(0, 0, 0, 0.5);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -88,6 +89,7 @@
             position: relative;
             overflow-x: hidden;
             will-change: background-image;
+            transition: background-image 1.5s ease-in-out;
         }
 
         body::before {
@@ -97,7 +99,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
             z-index: 0;
         }
 
@@ -113,19 +115,20 @@
             align-items: center;
             color: white;
             z-index: 100;
-            background-color: rgba(0, 0, 0, 0.8);
-            transition: opacity 0.5s ease-out;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: opacity;
         }
 
         .intro-screen h1 {
-            font-size: 4rem;
+            font-size: clamp(2.5rem, 8vw, 4rem);
             margin-bottom: 2rem;
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: pulse 2s infinite;
+            animation: pulse 2.5s infinite ease-in-out;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .scroll-hint {
@@ -134,18 +137,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: bounce 2s infinite;
+            animation: bounce 2.5s infinite ease-in-out;
         }
 
         .scroll-hint span {
             margin-bottom: 10px;
             font-size: 1rem;
+            opacity: 0.8;
         }
 
         .scroll-arrow {
             width: 30px;
             height: 50px;
-            border: 2px solid white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
             border-radius: 15px;
             position: relative;
         }
@@ -158,9 +162,9 @@
             transform: translateX(-50%);
             width: 6px;
             height: 6px;
-            background: white;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
-            animation: scrollDown 2s infinite;
+            animation: scrollDown 2s infinite ease-out;
         }
 
         .container {
@@ -170,22 +174,40 @@
             max-width: 450px;
             background: var(--glass-color);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             padding: 40px;
             margin: 20px;
             border: 1px solid var(--glass-border);
             transform: translateY(100px);
             opacity: 0;
-            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform, opacity;
+            overflow: hidden;
+        }
+
+        /* Effet de verre moderne avec fallback */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--glass-highlight);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: -1;
+            border-radius: inherit;
         }
 
         /* Fallback pour les navigateurs sans backdrop-filter */
-        @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+        @supports not ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
             .container {
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(0, 0, 0, 0.65);
+            }
+            .container::before {
+                display: none;
             }
         }
 
@@ -201,24 +223,28 @@
         }
 
         .logo h1 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
             font-weight: 700;
             margin-bottom: 5px;
             display: inline-block;
+            letter-spacing: -0.5px;
         }
 
         .logo h1 span.school {
             color: var(--primary-blue);
+            text-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
         }
 
         .logo h1 span.report {
             color: var(--primary-green);
+            text-shadow: 0 2px 8px rgba(76, 201, 240, 0.3);
         }
 
         .logo p {
             color: var(--light-color);
             font-size: 14px;
             opacity: 0.8;
+            letter-spacing: 0.5px;
         }
 
         .current-time {
@@ -227,9 +253,12 @@
             right: 0;
             color: white;
             font-size: 0.9rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             padding: 5px 10px;
             border-radius: 20px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #error-message {
@@ -238,10 +267,11 @@
             text-align: center;
             margin-bottom: 20px;
             min-height: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
             animation: fadeIn 0.5s ease-out;
+            border-left: 3px solid var(--error-color);
         }
 
         .auth-form {
@@ -255,7 +285,7 @@
         .form-group {
             margin-bottom: 20px;
             position: relative;
-            animation: fadeInUp 0.5s ease-out;
+            animation: fadeInUp 0.6s ease-out;
         }
 
         .form-group label {
@@ -264,29 +294,33 @@
             color: var(--light-color);
             font-size: 14px;
             font-weight: 500;
+            letter-spacing: 0.3px;
         }
 
         .form-group input {
             width: 100%;
             padding: 15px 45px 15px 15px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             font-size: 14px;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease-out;
+            background: rgba(255, 255, 255, 0.08);
             color: white;
             will-change: transform, box-shadow;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .form-group input:focus {
             border-color: var(--primary-blue);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
-            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
         }
 
         .password-container {
@@ -301,12 +335,19 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease-out;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
         .toggle-password:hover {
             color: white;
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -327,12 +368,15 @@
         .remember-me input {
             margin-right: 5px;
             accent-color: var(--primary-blue);
+            width: 15px;
+            height: 15px;
         }
 
         .forgot-password a {
             color: var(--light-color);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s ease-out;
+            font-weight: 500;
         }
 
         .forgot-password a:hover {
@@ -342,49 +386,51 @@
 
         .submit-btn {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(45deg, var(--primary-blue), var(--secondary-color));
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-color));
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
             box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
             position: relative;
             overflow: hidden;
             will-change: transform, box-shadow;
+            z-index: 1;
         }
 
         .submit-btn:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
         }
 
         .submit-btn:active {
-            transform: translateY(1px);
+            transform: translateY(0);
         }
 
-        .submit-btn::after {
+        .submit-btn::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, var(--secondary-color), var(--primary-blue));
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-blue));
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s ease-out;
+            z-index: -1;
         }
 
-        .submit-btn:hover::after {
+        .submit-btn:hover::before {
             opacity: 1;
         }
 
         .submit-btn span {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .toggle-form {
@@ -398,7 +444,8 @@
             color: var(--primary-blue);
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s ease-out;
+            margin-left: 5px;
         }
 
         .toggle-form a:hover {
@@ -419,7 +466,7 @@
             cursor: pointer;
             color: rgba(255, 255, 255, 0.6);
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s ease-out;
             border-bottom: 3px solid transparent;
             position: relative;
         }
@@ -433,6 +480,26 @@
             color: white;
         }
 
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s ease-out;
+        }
+
+        .nav-tab:hover::after {
+            transform: scaleX(1);
+        }
+
+        .nav-tab.active::after {
+            transform: scaleX(1);
+        }
+
         .cursor-effect {
             position: fixed;
             width: 20px;
@@ -443,7 +510,7 @@
             transform: translate(-50%, -50%);
             z-index: 999;
             mix-blend-mode: screen;
-            transition: transform 0.1s ease;
+            transition: transform 0.15s ease-out, width 0.3s ease-out, height 0.3s ease-out;
             will-change: transform;
         }
 
@@ -455,7 +522,7 @@
         @keyframes fadeInUp {
             from { 
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(15px);
             }
             to { 
                 opacity: 1;
@@ -465,14 +532,14 @@
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
         }
 
         @keyframes scrollDown {
@@ -486,18 +553,37 @@
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
                 border-radius: 15px;
+                margin: 15px;
+            }
+
+            .logo h1 {
+                font-size: 2.2rem;
+            }
+
+            .intro-screen h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 15px;
             }
 
             .logo h1 {
                 font-size: 2rem;
             }
 
-            .intro-screen h1 {
-                font-size: 2.5rem;
+            .form-group input {
+                padding: 12px 40px 12px 12px;
+            }
+
+            .submit-btn {
+                padding: 14px;
             }
         }
         
@@ -535,8 +621,8 @@
         </div>
 
         <div class="nav-tabs">
-            <div class="nav-tab active" onclick="showLoginForm()">Login</div>
-            <div class="nav-tab" onclick="showSignupForm()">Register</div>
+            <div class="nav-tab active" onclick="showLoginForm()">Connexion</div>
+            <div class="nav-tab" onclick="showSignupForm()">Inscription</div>
         </div>
 
         <div id="error-message"></div>
@@ -619,53 +705,59 @@
     </div>
 
     <script>
-        // Fonction pour changer le fond d'écran toutes les 5 minutes
+        // Fonction pour changer le fond d'écran avec effet de fondu
         function changeBackground() {
             let currentBg = 1;
-            const totalBgs = 5; // Nombre total d'images de fond
+            const totalBgs = 5;
             
             // Précharger toutes les images de fond
+            const bgImages = [];
             for (let i = 1; i <= totalBgs; i++) {
                 const img = new Image();
                 img.src = `photos/background${i}.jpg`;
+                bgImages.push(img);
             }
             
             setInterval(() => {
                 currentBg = currentBg % totalBgs + 1;
                 document.body.style.backgroundImage = `url('photos/background${currentBg}.jpg')`;
-            }, 300000); // 300000 ms = 5 minutes
+                
+                // Augmenter légèrement la luminosité après le scroll
+                if (window.scrollY > 100) {
+                    document.body.style.filter = 'brightness(1.05)';
+                }
+            }, 300000);
         }
 
-        // Gestion optimisée du scroll
-        function handleScroll() {
+        // Gestion optimisée du scroll avec intersection observer
+        function initScrollObserver() {
             const introScreen = document.querySelector('.intro-screen');
             const loginContainer = document.getElementById('login-container');
-            const scrollPosition = window.scrollY;
             
-            // Utilisation de requestAnimationFrame pour des animations fluides
-            requestAnimationFrame(() => {
-                // Ajustez cette valeur selon quand vous voulez que l'animation se déclenche
-                if (scrollPosition > 50) { 
-                    introScreen.style.opacity = 1 - (scrollPosition / 100);
-                    introScreen.style.pointerEvents = 'none';
-                    loginContainer.style.opacity = (scrollPosition - 50) / 100;
-                    loginContainer.style.transform = `translateY(${Math.max(0, 100 - scrollPosition)}px)`;
-                    
-                    if (scrollPosition > 150) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
                         loginContainer.classList.add('visible');
+                        introScreen.style.opacity = '0';
+                        introScreen.style.pointerEvents = 'none';
+                        
+                        // Légère augmentation de luminosité
+                        document.body.style.filter = 'brightness(1.05)';
                     } else {
                         loginContainer.classList.remove('visible');
+                        introScreen.style.opacity = '1';
+                        introScreen.style.pointerEvents = 'auto';
+                        document.body.style.filter = 'brightness(1)';
                     }
-                } else {
-                    introScreen.style.opacity = '1';
-                    introScreen.style.pointerEvents = 'auto';
-                    loginContainer.style.opacity = '0';
-                    loginContainer.style.transform = 'translateY(100px)';
-                }
+                });
+            }, {
+                threshold: 0.1
             });
+            
+            observer.observe(loginContainer);
         }
 
-        // Fonction pour basculer entre les formulaires
+        // Fonctions pour basculer entre les formulaires
         function showLoginForm() {
             document.getElementById('login-form').classList.remove('hidden');
             document.getElementById('signup-form').classList.add('hidden');
@@ -711,19 +803,15 @@
             let mouseX = 0;
             let mouseY = 0;
             let scale = 1;
-            let isInteractive = false;
             
-            // Fonction optimisée pour le mouvement du curseur
             function moveCursor() {
                 const dx = mouseX - lastX;
                 const dy = mouseY - lastY;
                 
-                // Interpolation pour un mouvement plus fluide
-                lastX += dx * 0.2;
-                lastY += dy * 0.2;
+                lastX += dx * 0.15;
+                lastY += dy * 0.15;
                 
                 cursor.style.transform = `translate(${lastX}px, ${lastY}px) scale(${scale})`;
-                
                 requestAnimationFrame(moveCursor);
             }
             
@@ -733,33 +821,24 @@
                 mouseX = e.clientX;
                 mouseY = e.clientY;
                 
-                // Détection des éléments interactifs une seule fois
-                if (!isInteractive) {
-                    const interactiveElements = document.querySelectorAll('button, a, input, .nav-tab');
-                    isInteractive = Array.from(interactiveElements).some(el => el.matches(':hover'));
-                    
-                    if (isInteractive) {
-                        scale = 2;
-                        cursor.style.background = 'rgba(67, 97, 238, 0.3)';
-                    } else {
-                        scale = 1;
-                        cursor.style.background = 'rgba(67, 97, 238, 0.5)';
-                    }
-                }
+                const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+                const isInteractive = hoveredElement && (
+                    hoveredElement.tagName === 'BUTTON' || 
+                    hoveredElement.tagName === 'A' || 
+                    hoveredElement.tagName === 'INPUT' || 
+                    hoveredElement.classList.contains('nav-tab')
+                );
+                
+                scale = isInteractive ? 1.8 : 1;
+                cursor.style.background = isInteractive ? 'rgba(67, 97, 238, 0.3)' : 'rgba(67, 97, 238, 0.5)';
             });
             
-            // Réinitialiser l'état interactif pour permettre une nouvelle vérification
-            document.addEventListener('mouseout', () => {
-                isInteractive = false;
-            });
-            
-            // Effet de clic
             document.addEventListener('mousedown', () => {
-                scale = 0.8;
+                cursor.style.transform = `translate(${lastX}px, ${lastY}px) scale(0.7)`;
             });
             
             document.addEventListener('mouseup', () => {
-                scale = isInteractive ? 2 : 1;
+                cursor.style.transform = `translate(${lastX}px, ${lastY}px) scale(${scale})`;
             });
         }
 
@@ -770,29 +849,12 @@
             document.getElementById('current-time').textContent = timeString;
         }
 
-        // Détection du support de backdrop-filter
-        function checkBackdropFilterSupport() {
-            const testEl = document.createElement('div');
-            testEl.style.backdropFilter = 'blur(10px)';
-            testEl.style.webkitBackdropFilter = 'blur(10px)';
-            document.body.appendChild(testEl);
-            const supportsBackdrop = !!window.CSS.supports && 
-                                 (CSS.supports('backdrop-filter', 'blur(10px)') || 
-                                 CSS.supports('-webkit-backdrop-filter', 'blur(10px)'));
-            document.body.removeChild(testEl);
-            
-            if (!supportsBackdrop) {
-                const container = document.querySelector('.container');
-                container.style.background = 'rgba(0, 0, 0, 0.6)';
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Vérifier le support de backdrop-filter
-            checkBackdropFilterSupport();
-            
             // Initialiser le changement de fond d'écran avec préchargement
             changeBackground();
+            
+            // Initialiser l'observateur de scroll
+            initScrollObserver();
             
             // Ajouter les écouteurs d'événements pour les boutons de visibilité du mot de passe
             document.querySelectorAll('.toggle-password').forEach(button => {
@@ -808,13 +870,6 @@
             // Mettre à jour l'heure
             updateTime();
             setInterval(updateTime, 1000);
-            
-            // Gestion optimisée du scroll avec debounce
-            let isScrolling;
-            window.addEventListener('scroll', function() {
-                window.clearTimeout(isScrolling);
-                isScrolling = setTimeout(handleScroll, 16); // ~60fps
-            }, { passive: true });
             
             // Forcer le scroll initial sur mobile
             setTimeout(() => {
