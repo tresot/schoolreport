@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SchoolReport - Connexion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -50,82 +52,184 @@
     </script>
     <style>
         :root {
-            --bgColor: #0A192F; /* Bleu marine foncé */
-            --primaryColor: #2E8B57; /* Vert pomme */
-            --secondaryColor: #F8F4E6; /* Blanc cassé */
-            --accentColor: #64FFDA; /* Vert menthe pour accents */
-            --textColor: #CCD6F6; /* Texte principal */
-            --textSecondary: #8892B0; /* Texte secondaire */
-            --errorColor: #FF5555; /* Rouge d'erreur */
-            --inputBg: #112240; /* Fond des inputs */
-            --spacer: 1rem;
+            --primary-blue: #4361ee;
+            --primary-green: #4cc9f0;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --error-color: #f72585;
+            --glass-color: rgba(255, 255, 255, 0.15);
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-
-        html, body {
-            height: 100%;
-            font-family: 'Open Sans', Helvetica, sans-serif;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--bgColor);
-            padding: 20px;
-            color: var(--textColor);
+            background-image: url('photos/background1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 1s ease-in-out;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        body.show-password {
-            --bgColor: #0A192F;
-            --inputColor: var(--secondaryColor);
-            --outlineColor: var(--accentColor);
-        }
-
-        .auth-container {
-            background: rgba(10, 25, 47, 0.85);
-            backdrop-filter: blur(5px);
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 500px;
-            padding: 2.5rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(100, 255, 218, 0.1);
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 0;
         }
 
-        .logo {
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.8);
+            transition: opacity 1s ease-out;
+        }
+
+        .intro-screen h1 {
+            font-size: 4rem;
             margin-bottom: 2rem;
-            text-align: center;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulse 2s infinite;
         }
 
-        .logo h1 {
-            color: var(--primaryColor);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
+        .scroll-hint {
+            position: absolute;
+            bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: bounce 2s infinite;
         }
 
-        .logo p {
-            color: var(--textSecondary);
+        .scroll-hint span {
+            margin-bottom: 10px;
             font-size: 1rem;
         }
 
+        .scroll-arrow {
+            width: 30px;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .scroll-arrow::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: scrollDown 2s infinite;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-color);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            margin: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 1s ease-out, opacity 1s ease-out;
+        }
+
+        .container.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .logo h1 span.school {
+            color: var(--primary-blue);
+        }
+
+        .logo h1 span.report {
+            color: var(--primary-green);
+        }
+
+        .logo p {
+            color: var(--light-color);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .current-time {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: white;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
         #error-message {
-            color: var(--errorColor);
+            color: var(--error-color);
             font-size: 14px;
             text-align: center;
-            margin: 1rem 0;
+            margin-bottom: 20px;
             min-height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .auth-form {
-            transform: translate3d(0,0,0);
-            padding: var(--spacer);
+            width: 100%;
         }
 
         .auth-form.hidden {
@@ -133,45 +237,46 @@
         }
 
         .form-group {
+            margin-bottom: 20px;
             position: relative;
-            margin-bottom: 1.8rem;
+            animation: fadeInUp 0.5s ease-out;
         }
 
-        .input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            max-width: 400px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light-color);
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        input {
+        .form-group input {
             width: 100%;
-            padding: 15px 50px 15px 15px;
-            font-size: 1rem;
-            color: var(--secondaryColor);
-            background: var(--inputBg);
-            border: 1px solid rgba(100, 255, 218, 0.2);
-            border-radius: 5px;
+            padding: 15px 45px 15px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-blue);
             outline: none;
-            transition: all 0.3s ease;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        input:focus {
-            border-color: var(--primaryColor);
-            box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.3);
+        .password-container {
+            position: relative;
         }
 
-        .password-input {
-            padding-right: 50px;
-            letter-spacing: 2px;
-            z-index: 2;
-        }
-
-        .password-input::placeholder {
-            letter-spacing: normal;
-        }
-
-        #eyeball, #eyeball-signup, #eyeball-confirm {
+        .toggle-password {
             position: absolute;
             right: 15px;
             top: 50%;
@@ -179,125 +284,237 @@
             background: none;
             border: none;
             cursor: pointer;
-            width: 30px;
-            height: 30px;
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--light-color);
+        }
+
+        .remember-me {
             display: flex;
             align-items: center;
-            justify-content: center;
         }
 
-        .eye {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primaryColor);
-            border-radius: 10px 0;
-            transform: rotate(45deg);
-            position: relative;
+        .remember-me input {
+            margin-right: 5px;
+            accent-color: var(--primary-blue);
         }
 
-        .eye::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background-color: var(--primaryColor);
-            border-radius: 50%;
-        }
-
-        #beam, #beam-signup, #beam-confirm {
-            position: absolute;
-            top: 50%;
-            right: 50px;
-            clip-path: polygon(100% 50%, 100% 50%, 0 0, 0 100%);
-            width: 100vw;
-            height: 25vw;
-            z-index: 1;
-            mix-blend-mode: multiply;
-            transition: transform 200ms ease-out;
-            transform-origin: 100% 50%;
-            transform: translateY(-50%) rotate(var(--beamDegrees, 0));
-            pointer-events: none;
-            display: none;
-        }
-
-        .show-password #beam,
-        .show-password #beam-signup,
-        .show-password #beam-confirm {
-            background: var(--accentColor);
-            display: block;
-        }
-
-        button.submit-btn {
-            background-color: var(--primaryColor);
-            border: none;
-            border-radius: 27px;
-            color: var(--secondaryColor);
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 12px 30px;
-            margin-top: 20px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            letter-spacing: 1px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        button.submit-btn:hover {
-            background-color: var(--accentColor);
-            color: var(--bgColor);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 139, 87, 0.4);
-        }
-
-        .toggle-form {
-            color: var(--textSecondary);
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        .toggle-form a {
-            color: var(--accentColor);
+        .forgot-password a {
+            color: var(--light-color);
             text-decoration: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
+            transition: color 0.3s;
         }
 
-        .toggle-form a:hover {
-            color: var(--primaryColor);
+        .forgot-password a:hover {
+            color: var(--primary-blue);
             text-decoration: underline;
         }
 
-        /* Correction du style d'autocomplétion */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus {
-            -webkit-text-fill-color: var(--secondaryColor);
-            -webkit-box-shadow: 0 0 0px 1000px var(--inputBg) inset;
-            transition: background-color 5000s ease-in-out 0s;
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary-blue), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Pour Firefox */
-        input:-moz-autofill,
-        input:-moz-autofill:hover,
-        input:-moz-autofill:focus {
-            filter: none;
-            background-color: var(--inputBg) !important;
-            color: var(--secondaryColor) !important;
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:hover::after {
+            opacity: 1;
+        }
+
+        .submit-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--light-color);
+        }
+
+        .toggle-form a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .toggle-form a:hover {
+            color: var(--primary-green);
+            text-decoration: underline;
+        }
+
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: var(--primary-blue);
+        }
+
+        .nav-tab:hover {
+            color: white;
+        }
+
+        .cursor-effect {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.5);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            mix-blend-mode: screen;
+            transition: transform 0.1s ease;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes scrollDown {
+            0% { 
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(-50%, 15px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                border-radius: 15px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .intro-screen h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="intro-screen">
+        <h1 class="animate__animated animate__fadeIn">SchoolReport</h1>
+        <div class="scroll-hint animate__animated animate__fadeIn animate__delay-1s">
+            <span>Scroll down</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </div>
+
+    <div class="particles" id="particles-js"></div>
+    <div class="cursor-effect" id="cursor-effect"></div>
+
+    <div class="container" id="login-container">
         <div class="logo">
-            <h1>SchoolReport</h1>
+            <div class="current-time" id="current-time"></div>
+            <h1><span class="school">School</span><span class="report">Report</span></h1>
             <p>Plateforme collaborative pour étudiants</p>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showLoginForm()">Login</div>
+            <div class="nav-tab" onclick="showSignupForm()">Register</div>
         </div>
 
         <div id="error-message"></div>
@@ -305,53 +522,63 @@
         <!-- Formulaire de Connexion -->
         <div id="login-form" class="auth-form">
             <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="email" id="login-email" placeholder="Email" required>
-                </div>
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="Entrez votre email" required>
             </div>
             <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="password" id="login-password" class="password-input" placeholder="Mot de passe" required
-                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
-                    <button type="button" id="eyeball">
-                        <div class="eye"></div>
+                <label for="login-password">Mot de passe</label>
+                <div class="password-container">
+                    <input type="password" id="login-password" placeholder="Entrez votre mot de passe" required>
+                    <button type="button" class="toggle-password">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
                     </button>
-                    <div id="beam"></div>
+                </div>
+            </div>
+            <div class="remember-forgot">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Se souvenir de moi</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Mot de passe oublié ?</a>
                 </div>
             </div>
             <button class="submit-btn" onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
-                Se connecter
+                <span>Se connecter</span>
             </button>
-            <div class="toggle-form">
-                Pas encore de compte ? <a onclick="toggleForms()">S'inscrire</a>
-            </div>
         </div>
 
         <!-- Formulaire d'Inscription -->
         <div id="signup-form" class="auth-form hidden">
             <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="email" id="signup-email" placeholder="Email" required>
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="Entrez votre email" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Mot de passe</label>
+                <div class="password-container">
+                    <input type="password" id="signup-password" placeholder="Créez un mot de passe" required>
+                    <button type="button" class="toggle-password">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
                 </div>
             </div>
             <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="password" id="signup-password" class="password-input" placeholder="Mot de passe" required
-                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
-                    <button type="button" id="eyeball-signup">
-                        <div class="eye"></div>
+                <label for="signup-confirm">Confirmer le mot de passe</label>
+                <div class="password-container">
+                    <input type="password" id="signup-confirm" placeholder="Confirmez votre mot de passe" required>
+                    <button type="button" class="toggle-password">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
                     </button>
-                    <div id="beam-signup"></div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="password" id="signup-confirm" class="password-input" placeholder="Confirmer le mot de passe" required
-                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
-                    <button type="button" id="eyeball-confirm">
-                        <div class="eye"></div>
-                    </button>
-                    <div id="beam-confirm"></div>
                 </div>
             </div>
             <button class="submit-btn" onclick="
@@ -361,7 +588,7 @@
                     signUp(document.getElementById('signup-email').value, document.getElementById('signup-password').value);
                 }
             ">
-                Créer un compte
+                <span>Créer un compte</span>
             </button>
             <div class="toggle-form">
                 Déjà inscrit ? <a onclick="toggleForms()">Se connecter</a>
@@ -369,81 +596,255 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const root = document.documentElement;
-            const eyeball = document.getElementById('eyeball');
-            const eyeballSignup = document.getElementById('eyeball-signup');
-            const eyeballConfirm = document.getElementById('eyeball-confirm');
-            const beam = document.getElementById('beam');
-            const beamSignup = document.getElementById('beam-signup');
-            const beamConfirm = document.getElementById('beam-confirm');
-            const passwordInput = document.getElementById('login-password');
-            const signupPasswordInput = document.getElementById('signup-password');
-            const confirmPasswordInput = document.getElementById('signup-confirm');
+        // Fonction pour changer le fond d'écran toutes les 5 minutes
+        function changeBackground() {
+            let currentBg = 1;
+            const totalBgs = 5; // Nombre total d'images de fond
+            
+            setInterval(() => {
+                currentBg = currentBg % totalBgs + 1;
+                document.body.style.backgroundImage = `url('photos/background${currentBg}.jpg')`;
+            }, 300000); // 300000 ms = 5 minutes
+        }
 
-            function handleBeamMove(e, beamElement) {
-                if (!beamElement) return;
-                
-                const rect = beamElement.getBoundingClientRect();
-                const mouseX = rect.right + (rect.width / 2);
-                const mouseY = rect.top + (rect.height / 2);
-                const rad = Math.atan2(mouseX - e.pageX, mouseY - e.pageY);
-                const degrees = (rad * (20 / Math.PI) * -1) - 350;
-                
-                root.style.setProperty('--beamDegrees', `${degrees}deg`);
+        // Fonction pour basculer entre les formulaires
+        function showLoginForm() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            document.querySelector('.nav-tabs .nav-tab:nth-child(1)').classList.add('active');
+            document.querySelector('.nav-tabs .nav-tab:nth-child(2)').classList.remove('active');
+            document.getElementById('error-message').textContent = '';
+        }
+
+        function showSignupForm() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.remove('hidden');
+            document.querySelector('.nav-tabs .nav-tab:nth-child(1)').classList.remove('active');
+            document.querySelector('.nav-tabs .nav-tab:nth-child(2)').classList.add('active');
+            document.getElementById('error-message').textContent = '';
+        }
+
+        // Fonction pour basculer la visibilité du mot de passe
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.parentElement.querySelector('svg');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                `;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                `;
             }
+            input.focus();
+        }
 
-            function togglePasswordVisibility(inputElement, beamElement) {
-                if (inputElement.type === 'password') {
-                    inputElement.type = 'text';
-                    document.body.classList.add('show-password');
-                    if (beamElement) beamElement.style.display = 'block';
-                } else {
-                    inputElement.type = 'password';
-                    document.body.classList.remove('show-password');
-                    if (beamElement) beamElement.style.display = 'none';
-                }
-                inputElement.focus();
-            }
-
-            // Gestion des événements pour le formulaire de connexion
-            if (eyeball && passwordInput) {
-                eyeball.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    togglePasswordVisibility(passwordInput, beam);
-                });
-            }
-
-            // Gestion des événements pour le formulaire d'inscription
-            if (eyeballSignup && signupPasswordInput) {
-                eyeballSignup.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    togglePasswordVisibility(signupPasswordInput, beamSignup);
-                });
-            }
-
-            if (eyeballConfirm && confirmPasswordInput) {
-                eyeballConfirm.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    togglePasswordVisibility(confirmPasswordInput, beamConfirm);
-                });
-            }
-
-            // Suivi de la souris pour le faisceau
+        // Effet de curseur personnalisé
+        function initCursorEffect() {
+            const cursor = document.getElementById('cursor-effect');
+            
             document.addEventListener('mousemove', (e) => {
-                if (!document.body.classList.contains('show-password')) return;
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
                 
-                if (passwordInput.type === 'text' && beam) {
-                    handleBeamMove(e, beam);
-                }
-                if (signupPasswordInput && signupPasswordInput.type === 'text' && beamSignup) {
-                    handleBeamMove(e, beamSignup);
-                }
-                if (confirmPasswordInput && confirmPasswordInput.type === 'text' && beamConfirm) {
-                    handleBeamMove(e, beamConfirm);
+                // Effet sur les éléments interactifs
+                const interactiveElements = document.querySelectorAll('button, a, input, .nav-tab');
+                let isInteractive = false;
+                
+                interactiveElements.forEach(el => {
+                    if (el.matches(':hover')) {
+                        isInteractive = true;
+                    }
+                });
+                
+                if (isInteractive) {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+                    cursor.style.background = 'rgba(67, 97, 238, 0.3)';
+                } else {
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursor.style.background = 'rgba(67, 97, 238, 0.5)';
                 }
             });
+            
+            // Effet de clic
+            document.addEventListener('mousedown', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            });
+            
+            document.addEventListener('mouseup', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+        }
+
+        // Animation des particules
+        function initParticles() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        }
+
+        // Mise à jour de l'heure
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser le changement de fond d'écran
+            changeBackground();
+            
+            // Ajouter les écouteurs d'événements pour les boutons de visibilité du mot de passe
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const inputId = this.parentElement.querySelector('input').id;
+                    togglePasswordVisibility(inputId);
+                });
+            });
+            
+            // Initialiser l'effet de curseur
+            initCursorEffect();
+            
+            // Initialiser les particules
+            initParticles();
+            
+            // Mettre à jour l'heure
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Animation au scroll
+            window.addEventListener('scroll', function() {
+                const introScreen = document.querySelector('.intro-screen');
+                const loginContainer = document.getElementById('login-container');
+                const scrollPosition = window.scrollY;
+                
+                if (scrollPosition > 100) {
+                    introScreen.style.opacity = '0';
+                    introScreen.style.pointerEvents = 'none';
+                    loginContainer.classList.add('visible');
+                } else {
+                    introScreen.style.opacity = '1';
+                    introScreen.style.pointerEvents = 'auto';
+                    loginContainer.classList.remove('visible');
+                }
+            });
+            
+            // Forcer un petit défilement initial pour les appareils mobiles
+            setTimeout(() => {
+                if (window.innerWidth <= 768) {
+                    window.scrollTo(0, 1);
+                }
+            }, 500);
         });
     </script>
 </body>
