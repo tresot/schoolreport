@@ -1,907 +1,231 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SchoolReport</title>
-    <style>
-        :root {
-            --primary: #2E8B57; /* Vert pomme */
-            --secondary: #1a5c38; /* Vert pomme plus foncé */
-            --light: #F8F4E6; /* Blanc cassé */
-            --dark: #0A192F; /* Bleu marine foncé */
-            --success: #64FFDA; /* Vert menthe */
-            --warning: #f8961e;
-            --danger: #e63946;
-            --calendar: #3B82F6; /* Bleu clair pour le calendrier */
-            --text-primary: #CCD6F6; /* Texte principal */
-            --text-secondary: #8892B0; /* Texte secondaire */
-            --input-bg: #112240; /* Fond des inputs */
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CommandHub | SchoolReport</title>
+  <link rel="preload" href="photos/background1.webp" as="image">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <style>
+    :root {
+      --primary-blue: rgba(67, 97, 238, 0.8);
+      --primary-green: rgba(76, 201, 240, 0.8);
+      --glass-color: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --text-light: #f8f9fa;
+      --text-dark: #212529;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        body {
-            background-color: var(--dark);
-            min-height: 100vh;
-            color: var(--text-primary);
-        }
+    body {
+      min-height: 100vh;
+      background-image: url('photos/background1.webp');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      color: var(--text-light);
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            margin-bottom: 40px;
-        }
+    .intro-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-        }
+    .intro-screen h1 {
+      font-size: 3.5rem;
+      background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: pulse 2s infinite;
+    }
 
-        .logo h1 {
-            color: var(--primary);
-            font-size: 24px;
-            margin-left: 10px;
-        }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
 
-        .user-menu {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 100px auto;
+      padding: 20px;
+      background: var(--glass-color);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-            position: relative;
-            overflow: hidden;
-        }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 40px;
+    }
 
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
+    .logo h1 {
+      color: var(--primary-blue);
+      font-size: 28px;
+    }
 
-        .user-name {
-            font-weight: 500;
-        }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            margin-left: 15px;
-            font-size: 14px;
-        }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--primary-blue);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+    }
 
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-        .welcome-section h2 {
-            font-size: 28px;
-            color: var(--text-primary);
-            margin-bottom: 10px;
-        }
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
 
-        .welcome-section p {
-            color: var(--text-secondary);
-            font-size: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    .action-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      transition: all 0.3s;
+      color: white;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
 
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
+    .action-card:hover {
+      transform: translateY(-5px);
+      background-color: rgba(255, 255, 255, 0.15);
+    }
 
-        .action-card {
-            background: rgba(10, 25, 47, 0.85);
-            backdrop-filter: blur(5px);
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-        }
+    .action-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: var(--primary-blue);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .action-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: var(--light);
-        }
-
-        .chat-icon {
-            background-color: var(--success);
-        }
-
-        .workspace-icon {
-            background-color: var(--primary);
-        }
-
-        .homework-icon {
-            background-color: var(--warning);
-        }
-
-        .calendar-icon {
-            background-color: var(--calendar);
-        }
-
-        .action-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        .action-card p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .action-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: var(--primary);
-            color: var(--light);
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--secondary);
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .user-menu {
-                margin-top: 15px;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .profile-badge {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .online-status {
-            position: absolute;
-            bottom: -3px;
-            right: -3px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #2ecc71;
-            border: 2px solid var(--light);
-        }
-        
-        .user-count {
-            background-color: var(--primary);
-            color: var(--light);
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-        
-        .active-indicator {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger);
-            color: var(--light);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-
-        #setup-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .setup-container {
-            background: var(--dark);
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-        }
-
-        .setup-container h2 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .setup-container input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid rgba(100, 255, 218, 0.2);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--input-bg);
-            color: var(--text-primary);
-        }
-
-        .profile-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 15px auto;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .setup-btn {
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .setup-btn:hover {
-            background-color: var(--secondary);
-        }
-
-        .users-list {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background: var(--dark);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            padding: 15px;
-            width: 200px;
-            display: none;
-            z-index: 100;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-        }
-
-        .user-avatar-small {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-            font-size: 14px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .user-avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        #image-input-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-        }
-
-        .image-input-container {
-            background: var(--dark);
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-        }
-
-        .image-input-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: var(--input-bg);
-            border: 1px solid rgba(100, 255, 218, 0.2);
-            color: var(--text-primary);
-        }
-    </style>
+    .action-btn:hover {
+      background-color: var(--primary-green);
+    }
+  </style>
 </head>
 <body>
-    <!-- Modal de configuration du profil -->
-    <div id="setup-modal" style="display: none;">
-        <div class="setup-container">
-            <h2>Configuration du profil</h2>
-            
-            <div class="profile-preview" id="profile-preview">
-                <span id="profile-letter">?</span>
-                <img id="profile-preview-img">
-            </div>
-            
-            <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
+  <div id="particles-js"></div>
+  <div class="intro-screen" id="intro">
+    <h1 class="animate__animated animate__fadeInDown">Welcome to CommandHub</h1>
+  </div>
 
-            <p id="username-info">
-                Ce nom ne pourra pas être changé avant 48 heures
-            </p>
+  <div class="container animate__animated animate__fadeInUp" id="dashboard" style="display:none;">
+    <header>
+      <div class="logo"><h1>SchoolReport</h1></div>
+      <div class="user-menu">
+        <div class="user-avatar">U</div>
+        <button class="action-btn" onclick="logout()">Déconnexion</button>
+      </div>
+    </header>
 
-            <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
-        </div>
+    <div class="welcome-section">
+      <h2>Bienvenue sur votre espace de travail</h2>
+      <p>Choisissez une action ci-dessous pour commencer.</p>
     </div>
 
-    <!-- Modal pour saisir le nom de l'image -->
-    <div id="image-input-modal">
-        <div class="image-input-container">
-            <h3>Importer une photo</h3>
-            <p>Entrez le nom de l'image (ex: monimage.jpg)</p>
-            <input type="text" id="image-name-input" placeholder="nomdelimage.jpg">
-            <button class="setup-btn" id="confirm-image-btn">Valider</button>
-            <button class="logout-btn" style="margin-top: 10px;" id="cancel-image-btn">Annuler</button>
-        </div>
+    <div class="actions-grid">
+      <div class="action-card">
+        <h3>Messagerie</h3>
+        <p>Accédez à vos discussions</p>
+        <a class="action-btn" href="chat.html">Ouvrir</a>
+      </div>
+      <div class="action-card">
+        <h3>Calendrier</h3>
+        <p>Consultez votre emploi du temps</p>
+        <a class="action-btn" href="calendar.html">Voir</a>
+      </div>
+      <div class="action-card">
+        <h3>Devoirs</h3>
+        <p>Gérez vos tâches à faire</p>
+        <a class="action-btn" href="homework.html">Accéder</a>
+      </div>
+      <div class="action-card">
+        <h3>Codex</h3>
+        <p>Créez ou consultez vos dissertations</p>
+        <a class="action-btn" href="Codex.html">Ouvrir</a>
+      </div>
+      <div class="action-card">
+        <h3>Transfert de fichiers</h3>
+        <p>Partagez des fichiers avec vos collègues</p>
+        <a class="action-btn" href="files.html">Accéder</a>
+      </div>
+      <div class="action-card">
+        <h3>Bloc Notes</h3>
+        <p>Organisez vos notes quotidiennes</p>
+        <a class="action-btn" href="bloc note.html">Ouvrir</a>
+      </div>
     </div>
+  </div>
 
-    <!-- Interface principale -->
-    <div id="main-interface" style="display: none;">
-        <div class="container">
-            <header>
-                <div class="logo">
-                    <h1>SchoolReport</h1>
-                </div>
+  <script>
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById('intro').style.opacity = 0;
+        setTimeout(() => {
+          document.getElementById('intro').style.display = 'none';
+          document.getElementById('dashboard').style.display = 'block';
+        }, 500);
+      }, 1800);
+    };
 
-                <div class="user-menu">
-                    <div class="profile-badge">
-                        <div class="user-avatar" id="user-avatar">
-                            <img id="profile-pic">
-                            <span id="avatar-letter">U</span>
-                        </div>
-                        <div class="online-status" id="online-status"></div>
-                    </div>
-
-                    <span class="user-name" id="user-name">Utilisateur</span>
-                    <span class="user-count" id="online-count">0</span>
-                    <button class="logout-btn" id="logout-btn">Déconnexion</button>
-
-                    <div class="users-list" id="users-list">
-                        <h4>Utilisateurs en ligne</h4>
-                        <div id="online-users-container"></div>
-                    </div>
-                </div>
-            </header>
-
-            <div class="welcome-section">
-                <h2 id="welcome-title">Bienvenue sur SchoolReport</h2>
-                <p id="username-change-info" style="display: none;">
-                    Vous pourrez changer votre nom le <span id="username-change-date"></span>
-                </p>
-            </div>
-
-            <div class="actions-grid">
-                <div class="action-card" onclick="window.location.href='chat.html'">
-                    <div class="action-icon chat-icon" style="position: relative;">
-                        💬
-                        <div class="active-indicator" id="chat-active" style="display: none;">!</div>
-                    </div>
-                    <h3>Messagerie</h3>
-                    <p>Discutez en temps réel avec vos amis et vos groupes de travail.</p>
-                    <a class="action-btn">Accéder au chat</a>
-                </div>
-
-                <div class="action-card" onclick="window.location.href='Codex.html'">
-                    <div class="action-icon workspace-icon">
-                        📝
-                    </div>
-                    <h3>Espace de travail</h3>
-                    <p>Collaborez sur des documents en temps réel avec votre équipe.</p>
-                    <a class="action-btn">Ouvrir l'espace</a>
-                </div>
-
-                <div class="action-card" onclick="window.location.href='homework.html'">
-                    <div class="action-icon homework-icon">
-                        📚
-                    </div>
-                    <h3>Gestion des devoirs</h3>
-                    <p>Organisez vos devoirs et projets avec des échéances claires.</p>
-                    <a class="action-btn">Voir les devoirs</a>
-                </div>
-
-                <div class="action-card" onclick="window.location.href='calendar.html'">
-                    <div class="action-icon calendar-icon" style="position: relative;">
-                        📅
-                        <div class="active-indicator" id="calendar-active" style="display: none;">0</div>
-                    </div>
-                    <h3>Calendrier et Planning</h3>
-                    <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre.</p>
-                    <a class="action-btn">Voir le planning</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, update, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-        import { app, auth, db } from "./firebase/firebase-config.js";
-
-        // Variables globales
-        let currentUser = null;
-        let currentUsername = '';
-        let currentUserStatusRef = null;
-        let pressTimer = null;
-        let connectedUsersRef = null;
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            initAuthState();
-            setupEventListeners();
-        });
-
-        function initAuthState() {
-            onAuthStateChanged(auth, (user) => {
-                if (!user) {
-                    window.location.href = 'index.html';
-                } else {
-                    currentUser = user;
-                    checkUserProfile(user);
-                }
-            });
-        }
-
-        function checkUserProfile(user) {
-            const userRef = ref(db, 'users/' + user.uid);
-            
-            onValue(userRef, (snapshot) => {
-                const userData = snapshot.val();
-                
-                if (userData && userData.username) {
-                    // Profil existant
-                    currentUsername = userData.username;
-                    setupMainInterface(user, userData);
-                } else {
-                    // Nouvel utilisateur
-                    setupProfileConfiguration(user);
-                }
-            }, { onlyOnce: true });
-        }
-
-        function setupProfileConfiguration(user) {
-            const setupModal = document.getElementById('setup-modal');
-            const usernameInput = document.getElementById('username-input');
-            const saveBtn = document.getElementById('save-profile-btn');
-            const profileLetter = document.getElementById('profile-letter');
-
-            setupModal.style.display = 'flex';
-
-            // Mise à jour de l'initiale
-            usernameInput.addEventListener('input', () => {
-                const username = usernameInput.value.trim();
-                profileLetter.textContent = username.length > 0 ? username.charAt(0).toUpperCase() : '?';
-            });
-
-            // Gestion de l'enregistrement
-            saveBtn.addEventListener('click', async () => {
-                const username = usernameInput.value.trim();
-                
-                if (username.length < 3 || username.length > 20) {
-                    alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
-                    return;
-                }
-
-                saveBtn.disabled = true;
-                saveBtn.textContent = 'Enregistrement...';
-
-                try {
-                    await saveUserProfile(user, username);
-                    setupModal.style.display = 'none';
-                    
-                    // Recharger les données utilisateur
-                    const userRef = ref(db, 'users/' + user.uid);
-                    onValue(userRef, (snapshot) => {
-                        const userData = snapshot.val();
-                        setupMainInterface(user, userData);
-                    }, { onlyOnce: true });
-                    
-                } catch (error) {
-                    console.error("Erreur lors de l'enregistrement:", error);
-                    alert("Une erreur est survenue lors de l'enregistrement");
-                } finally {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'Enregistrer';
-                }
-            });
-        }
-
-        async function saveUserProfile(user, username) {
-            const userRef = ref(db, 'users/' + user.uid);
-            
-            await set(userRef, {
-                username,
-                createdAt: Date.now(),
-                canChangeUsername: false,
-                lastSeen: Date.now(),
-                profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null
-            });
-
-            currentUsername = username;
-        }
-
-        function setupMainInterface(user, userData) {
-            const mainInterface = document.getElementById('main-interface');
-            mainInterface.style.display = 'block';
-
-            // Mise à jour des infos utilisateur
-            updateUserInfo(userData);
-
-            // Suivi des utilisateurs en ligne
-            setupPresenceTracking(user);
-
-            // Vérifier les devoirs urgents
-            checkUrgentHomeworks(user);
-
-            // Gestion de la déconnexion
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
-
-            // Gestion du clic long sur l'avatar
-            setupLongPressAvatar();
-        }
-
-        function updateUserInfo(userData) {
-            document.getElementById('user-name').textContent = userData.username;
-            
-            const avatarLetter = document.getElementById('avatar-letter');
-            const profilePic = document.getElementById('profile-pic');
-            
-            avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
-            
-            // Vérifier si une image existe déjà
-            if (userData.profileImage) {
-                profilePic.src = userData.profileImage;
-                profilePic.style.display = 'block';
-                avatarLetter.style.display = 'none';
-                localStorage.setItem(`profileImage_${currentUser.uid}`, userData.profileImage);
-            } else {
-                const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
-                if (savedImage) {
-                    profilePic.src = savedImage;
-                    profilePic.style.display = 'block';
-                    avatarLetter.style.display = 'none';
-                } else {
-                    profilePic.style.display = 'none';
-                    avatarLetter.style.display = 'flex';
-                }
-            }
-
-            document.getElementById('welcome-title').textContent = `Bienvenue, ${userData.username}`;
-
-            // Gestion de la date de changement de nom
-            if (userData.canChangeUsername === false && userData.createdAt) {
-                const changeDate = new Date(userData.createdAt + 48*60*60*1000);
-                document.getElementById('username-change-info').style.display = 'block';
-                document.getElementById('username-change-date').textContent = 
-                    changeDate.toLocaleDateString() + ' à ' + changeDate.toLocaleTimeString();
-            }
-        }
-
-        function checkUrgentHomeworks(user) {
-            const homeworksRef = ref(db, `homeworks/${user.uid}`);
-            const calendarActive = document.getElementById('calendar-active');
-            const now = new Date();
-            const twoDaysFromNow = new Date(now.getTime() + 48 * 60 * 60 * 1000);
-
-            onValue(homeworksRef, (snapshot) => {
-                let urgentCount = 0;
-                const homeworks = snapshot.val();
-                if (homeworks) {
-                    Object.values(homeworks).forEach((dateHomeworks) => {
-                        Object.values(dateHomeworks).forEach((homework) => {
-                            const dueDate = new Date(homework.dueDate);
-                            if (dueDate <= twoDaysFromNow && !homework.completed) {
-                                urgentCount++;
-                            }
-                        });
-                    });
-                }
-
-                if (urgentCount > 0) {
-                    calendarActive.textContent = urgentCount;
-                    calendarActive.style.display = 'flex';
-                } else {
-                    calendarActive.style.display = 'none';
-                }
-            });
-        }
-
-        function setupPresenceTracking(user) {
-            // Référence pour le suivi des utilisateurs connectés
-            connectedUsersRef = ref(db, 'connectedUsers');
-            
-            // Référence pour l'utilisateur actuel
-            currentUserStatusRef = ref(db, 'connectedUsers/' + user.uid);
-            
-            // Récupérer l'image de profil depuis le stockage local ou la base de données
-            const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
-            
-            // Marquer l'utilisateur comme connecté avec toutes ses infos
-            set(currentUserStatusRef, {
-                uid: user.uid,
-                username: currentUsername,
-                profileImage: profileImage,
-                timestamp: Date.now(),
-                firstLetter: currentUsername.charAt(0).toUpperCase()
-            });
-
-            // Supprimer la présence lors de la déconnexion
-            onDisconnect(currentUserStatusRef).remove();
-            
-            // Écouter les changements dans la liste des utilisateurs connectés
-            onValue(connectedUsersRef, (snapshot) => {
-                const connectedUsers = snapshot.val() || {};
-                const onlineUsers = [];
-                let onlineCount = 0;
-
-                // Compter les utilisateurs connectés et préparer la liste
-                Object.entries(connectedUsers).forEach(([uid, userData]) => {
-                    if (uid !== user.uid) { // Exclure l'utilisateur actuel
-                        onlineCount++;
-                        onlineUsers.push({
-                            userId: uid,
-                            username: userData.username || 'Utilisateur',
-                            firstLetter: userData.firstLetter || (userData.username || 'U').charAt(0).toUpperCase(),
-                            profileImage: userData.profileImage || null
-                        });
-                    }
-                });
-
-                // Mettre à jour l'interface
-                updateOnlineUsersDisplay(onlineCount, onlineUsers);
-            });
-        }
-
-        function updateOnlineUsersDisplay(onlineCount, onlineUsers) {
-            // Mettre à jour le compteur
-            document.getElementById('online-count').textContent = onlineCount;
-
-            // Mettre à jour la liste des utilisateurs
-            const container = document.getElementById('online-users-container');
-            container.innerHTML = '';
-
-            if (onlineUsers.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); font-size: 14px;">Aucun autre utilisateur en ligne</p>';
-            } else {
-                onlineUsers.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.className = 'user-item';
-                    
-                    // Créer le contenu de l'avatar
-                    let avatarContent = '';
-                    if (user.profileImage) {
-                        avatarContent = `<img src="${user.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-                    } else {
-                        avatarContent = user.firstLetter;
-                    }
-                    
-                    userElement.innerHTML = `
-                        <div class="user-avatar-small">
-                            ${avatarContent}
-                        </div>
-                        <span>${user.username}</span>
-                    `;
-                    container.appendChild(userElement);
-                });
-            }
-        }
-
-        async function handleLogout() {
-            try {
-                // Supprimer immédiatement la présence de l'utilisateur
-                if (currentUserStatusRef) {
-                    await remove(currentUserStatusRef);
-                }
-                
-                // Déconnecter l'utilisateur
-                await signOut(auth);
-                
-                // Rediriger vers la page de connexion
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error("Erreur lors de la déconnexion:", error);
-                alert("Une erreur est survenue lors de la déconnexion");
-            }
-        }
-
-        function setupEventListeners() {
-            // Gestion de l'affichage de la liste des utilisateurs
-            document.getElementById('online-count').addEventListener('click', (e) => {
-                e.stopPropagation();
-                const usersList = document.getElementById('users-list');
-                usersList.style.display = usersList.style.display === 'block' ? 'none' : 'block';
-            });
-
-            // Fermer la liste quand on clique ailleurs
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.user-count') && !e.target.closest('.users-list')) {
-                    document.getElementById('users-list').style.display = 'none';
-                }
-            });
-
-            // Gestion du modal d'import d'image
-            document.getElementById('confirm-image-btn').addEventListener('click', handleImageImport);
-            document.getElementById('cancel-image-btn').addEventListener('click', () => {
-                document.getElementById('image-input-modal').style.display = 'none';
-            });
-        }
-
-        function setupLongPressAvatar() {
-            const avatar = document.getElementById('user-avatar');
-
-            avatar.addEventListener('mousedown', () => {
-                pressTimer = setTimeout(() => {
-                    showImageInputModal();
-                }, 1000); // 1 seconde pour un clic long
-            });
-
-            avatar.addEventListener('mouseup', () => {
-                clearTimeout(pressTimer);
-            });
-
-            avatar.addEventListener('mouseleave', () => {
-                clearTimeout(pressTimer);
-            });
-
-            // Pour les appareils tactiles
-            avatar.addEventListener('touchstart', () => {
-                pressTimer = setTimeout(() => {
-                    showImageInputModal();
-                }, 1000);
-            });
-
-            avatar.addEventListener('touchend', () => {
-                clearTimeout(pressTimer);
-            });
-        }
-
-        function showImageInputModal() {
-            document.getElementById('image-input-modal').style.display = 'flex';
-            document.getElementById('image-name-input').value = '';
-            document.getElementById('image-name-input').focus();
-        }
-
-        function handleImageImport() {
-            const imageName = document.getElementById('image-name-input').value.trim();
-            if (!imageName) return;
-
-            const imageUrl = `photos/${imageName}`;
-            const img = new Image();
-            
-            img.onload = function() {
-                // L'image existe, on peut l'utiliser
-                const profilePic = document.getElementById('profile-pic');
-                const avatarLetter = document.getElementById('avatar-letter');
-                
-                profilePic.src = imageUrl;
-                profilePic.style.display = 'block';
-                avatarLetter.style.display = 'none';
-                
-                // Sauvegarder dans le stockage local
-                localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
-                
-                // Mettre à jour dans la base de données
-                const userRef = ref(db, 'users/' + currentUser.uid);
-                update(userRef, {
-                    profileImage: imageUrl
-                });
-                
-                // Mettre à jour dans la liste des utilisateurs connectés
-                if (currentUserStatusRef) {
-                    update(currentUserStatusRef, {
-                        profileImage: imageUrl
-                    });
-                }
-                
-                document.getElementById('image-input-modal').style.display = 'none';
-            };
-            
-            img.onerror = function() {
-                alert("Image non trouvée. Vérifiez le nom et l'extension (ex: photo.jpg)");
-            };
-            
-            img.src = imageUrl;
-        }
-    </script>
+    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/particles.json');
+    function logout() {
+      window.location.href = 'index.html';
+    }
+  </script>
 </body>
 </html>
