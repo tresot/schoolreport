@@ -34,16 +34,17 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px;
         }
 
         .overlay {
-            background-color: rgba(10, 25, 47, 0.85);
+            background-color: rgba(10, 25, 47, 0.9);
             min-height: 100vh;
         }
 
@@ -53,7 +54,7 @@
             align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .logo {
@@ -63,7 +64,7 @@
 
         .logo h1 {
             color: var(--primary);
-            font-size: 24px;
+            font-size: 28px;
             margin-left: 10px;
         }
 
@@ -75,9 +76,9 @@
 
         .time {
             background: rgba(16, 36, 69, 0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
             border: 1px solid rgba(100, 255, 218, 0.1);
         }
 
@@ -88,8 +89,8 @@
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background-color: var(--primary);
             color: var(--light);
@@ -97,7 +98,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 10px;
+            margin-right: 15px;
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -117,6 +118,7 @@
 
         .user-name {
             font-weight: 500;
+            font-size: 18px;
         }
 
         .logout-btn {
@@ -124,13 +126,16 @@
             border: none;
             color: var(--danger);
             cursor: pointer;
-            margin-left: 15px;
-            font-size: 14px;
+            margin-left: 20px;
+            font-size: 16px;
             transition: opacity 0.3s;
+            padding: 8px 15px;
+            border-radius: 5px;
         }
 
         .logout-btn:hover {
             opacity: 0.8;
+            background: rgba(230, 57, 70, 0.1);
         }
 
         /* Main content layout */
@@ -138,36 +143,44 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
         /* Profile card */
         .profile-card {
             background: rgba(16, 36, 69, 0.7);
-            border-radius: 15px;
-            padding: 30px;
-            width: 300px;
+            border-radius: 20px;
+            padding: 40px;
+            width: 350px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: transform 0.5s, box-shadow 0.5s;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .profile-image {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
             overflow: hidden;
-            border: 3px solid var(--primary);
+            border: 4px solid var(--primary);
             position: relative;
+            transition: all 0.5s;
         }
 
         .profile-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: opacity 0.5s;
         }
 
         .profile-image .initials {
@@ -181,122 +194,217 @@
             justify-content: center;
             background-color: var(--primary);
             color: white;
-            font-size: 40px;
+            font-size: 50px;
             font-weight: bold;
+            transition: opacity 0.5s;
         }
 
         .profile-card h2 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--text-primary);
+            font-size: 24px;
         }
 
         .profile-card p {
             color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            margin-bottom: 25px;
         }
 
         /* Description card */
         .description-card {
             background: rgba(16, 36, 69, 0.7);
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 40px;
             width: 100%;
-            max-width: 600px;
-            margin-bottom: 30px;
+            max-width: 700px;
+            margin-bottom: 40px;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: center;
         }
 
         .description-card h3 {
             color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 20px;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
 
         .description-card p {
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 30px;
         }
 
         /* Mini cards container */
         .mini-cards-container {
             width: 100%;
             overflow-x: auto;
-            padding: 20px 0;
-            margin-bottom: 30px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) var(--dark);
-        }
-
-        .mini-cards-container::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .mini-cards-container::-webkit-scrollbar-track {
-            background: var(--dark);
-            border-radius: 10px;
-        }
-
-        .mini-cards-container::-webkit-scrollbar-thumb {
-            background-color: var(--primary);
-            border-radius: 10px;
-        }
-
-        .mini-cards {
-            display: flex;
-            gap: 15px;
-            padding: 10px;
-        }
-
-        .mini-card {
-            width: 100px;
-            height: 100px;
-            border-radius: 15px;
-            overflow: hidden;
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 2px solid rgba(100, 255, 218, 0.2);
+            padding: 30px 0;
+            margin-bottom: 50px;
+            scrollbar-width: none;
             position: relative;
         }
 
+        .mini-cards-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .mini-cards-track {
+            display: flex;
+            gap: 25px;
+            padding: 15px;
+            transition: transform 0.5s ease-out;
+        }
+
+        .mini-card {
+            width: 150px;
+            height: 150px;
+            border-radius: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(100, 255, 218, 0.3);
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
         .mini-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
         .mini-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: opacity 0.5s;
         }
 
         .mini-card.active {
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 15px rgba(46, 139, 87, 0.5);
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 25px rgba(46, 139, 87, 0.7);
+            transform: scale(1.1);
+        }
+
+        .mini-card .card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 25, 47, 0.8);
+            color: var(--text-primary);
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+            opacity: 0;
+        }
+
+        .mini-card:hover .card-title {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .active-indicator {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--danger);
+            color: var(--light);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Navigation arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(16, 36, 69, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .nav-arrow:hover {
+            opacity: 1;
+            background: rgba(16, 36, 69, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.left {
+            left: 20px;
+        }
+
+        .nav-arrow.right {
+            right: 20px;
         }
 
         /* Responsive layout */
-        @media (min-width: 768px) {
+        @media (min-width: 992px) {
             .profile-section {
                 display: flex;
                 justify-content: center;
-                gap: 30px;
+                align-items: flex-start;
+                gap: 40px;
                 width: 100%;
-                max-width: 1000px;
-                margin-bottom: 40px;
+                max-width: 1200px;
+                margin-bottom: 60px;
             }
 
             .profile-card {
                 margin-bottom: 0;
-                width: 250px;
+                width: 350px;
             }
 
             .description-card {
                 margin-bottom: 0;
                 flex: 1;
+                max-width: 800px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .time-online {
+                order: 3;
+                margin-top: 20px;
+            }
+
+            .profile-card, .description-card {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .mini-card {
+                width: 120px;
+                height: 120px;
             }
         }
 
@@ -311,41 +419,28 @@
             position: absolute;
             bottom: -3px;
             right: -3px;
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             background-color: #2ecc71;
             border: 2px solid var(--light);
+            z-index: 1;
         }
         
         .user-count {
             background-color: var(--primary);
             color: var(--light);
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 15px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
 
         .user-count:hover {
             background-color: var(--secondary);
-        }
-        
-        .active-indicator {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger);
-            color: var(--light);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
+            transform: scale(1.05);
         }
 
         /* Modals */
@@ -355,52 +450,76 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        #setup-modal.show {
+            opacity: 1;
+            pointer-events: all;
         }
 
         .setup-container {
             background: var(--dark);
-            padding: 30px;
-            border-radius: 12px;
+            padding: 40px;
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
             text-align: center;
             border: 1px solid rgba(100, 255, 218, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        #setup-modal.show .setup-container {
+            transform: scale(1);
         }
 
         .setup-container h2 {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: var(--text-primary);
+            font-size: 28px;
         }
 
         .setup-container input {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid rgba(100, 255, 218, 0.2);
-            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 10px;
             font-size: 16px;
             background: var(--input-bg);
             color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .setup-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
+            outline: none;
         }
 
         .profile-preview {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            margin: 15px auto;
+            margin: 25px auto;
             background-color: var(--primary);
             color: var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 50px;
             overflow: hidden;
             position: relative;
+            border: 3px solid rgba(100, 255, 218, 0.3);
         }
 
         .profile-preview img {
@@ -414,41 +533,63 @@
             background-color: var(--primary);
             color: var(--light);
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 15px 30px;
+            border-radius: 10px;
             font-size: 16px;
-            margin-top: 15px;
+            margin-top: 20px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
         .setup-btn:hover {
             background-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .users-list {
             position: absolute;
-            top: 50px;
+            top: 60px;
             right: 0;
             background: var(--dark);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            padding: 15px;
-            width: 200px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            width: 250px;
             display: none;
             z-index: 100;
             border: 1px solid rgba(100, 255, 218, 0.1);
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .users-list.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .users-list h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            padding-bottom: 10px;
         }
 
         .user-item {
             display: flex;
             align-items: center;
-            margin: 8px 0;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
         }
 
         .user-avatar-small {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background-color: var(--primary);
             color: var(--light);
@@ -456,10 +597,11 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 10px;
-            font-size: 14px;
+            margin-right: 15px;
+            font-size: 18px;
             overflow: hidden;
             position: relative;
+            flex-shrink: 0;
         }
 
         .user-avatar-small img {
@@ -475,49 +617,149 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #image-input-modal.show {
+            display: flex;
+            opacity: 1;
         }
 
         .image-input-container {
             background: var(--dark);
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
             border: 1px solid rgba(100, 255, 218, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        #image-input-modal.show .image-input-container {
+            transform: scale(1);
+        }
+
+        .image-input-container h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .image-input-container p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
         }
 
         .image-input-container input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 15px;
+            margin: 15px 0;
             background: var(--input-bg);
-            border: 1px solid rgba(100, 255, 218, 0.2);
+            border: 1px solid rgba(100, 255, 218, 0.3);
             color: var(--text-primary);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
         }
 
-        /* Animation for cards */
+        .image-input-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
+            outline: none;
+        }
+
+        .image-input-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideInFromRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInFromLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutToRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes slideOutToLeft {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-100%); opacity: 0; }
+        }
+
+        @keyframes cardGrow {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        @keyframes cardShrink {
+            from { transform: scale(1.05); }
+            to { transform: scale(1); }
+        }
+
         .profile-card, .description-card {
-            animation: fadeIn 0.5s ease-out forwards;
+            animation: fadeIn 0.8s ease-out forwards;
         }
 
         .mini-card {
-            animation: fadeIn 0.5s ease-out forwards;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .slide-in-right {
+            animation: slideInFromRight 0.5s ease-out forwards;
+        }
+
+        .slide-in-left {
+            animation: slideInFromLeft 0.5s ease-out forwards;
+        }
+
+        .slide-out-right {
+            animation: slideOutToRight 0.5s ease-out forwards;
+        }
+
+        .slide-out-left {
+            animation: slideOutToLeft 0.5s ease-out forwards;
+        }
+
+        .grow-card {
+            animation: cardGrow 0.3s ease-out forwards;
+        }
+
+        .shrink-card {
+            animation: cardShrink 0.3s ease-out forwards;
         }
     </style>
 </head>
 <body>
     <div class="overlay">
         <!-- Modal de configuration du profil -->
-        <div id="setup-modal" style="display: none;">
+        <div id="setup-modal">
             <div class="setup-container">
                 <h2>Configuration du profil</h2>
                 
@@ -528,7 +770,7 @@
                 
                 <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
-                <p id="username-info">
+                <p id="username-info" style="color: var(--text-secondary);">
                     Ce nom ne pourra pas être changé avant 48 heures
                 </p>
 
@@ -539,20 +781,13 @@
         <!-- Modal pour saisir le nom de l'image -->
         <div id="image-input-modal">
             <div class="image-input-container">
-                <h3>Importer une photo</h3>
-                <p>Choisissez une photo de profil :</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
-                    <div class="mini-card" data-img="photo1.webp">
-                        <img src="photos/photo1.webp" alt="Photo 1">
-                    </div>
-                    <div class="mini-card" data-img="photo2.webp">
-                        <img src="photos/photo2.webp" alt="Photo 2">
-                    </div>
-                    <div class="mini-card" data-img="photo3.webp">
-                        <img src="photos/photo3.webp" alt="Photo 3">
-                    </div>
+                <h3>Changer la photo de profil</h3>
+                <p>Entrez le nom de la photo (format .webp)</p>
+                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off">
+                <div class="image-input-buttons">
+                    <button class="logout-btn" id="cancel-image-btn">Annuler</button>
+                    <button class="setup-btn" id="confirm-image-btn">Valider</button>
                 </div>
-                <button class="logout-btn" style="margin-top: 10px;" id="cancel-image-btn">Annuler</button>
             </div>
         </div>
 
@@ -599,7 +834,7 @@
                             <p>Membre depuis <span id="member-since">aujourd'hui</span></p>
                         </div>
 
-                        <div class="description-card">
+                        <div class="description-card" id="main-description-card">
                             <h3>Messagerie</h3>
                             <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe.</p>
                             <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
@@ -607,21 +842,37 @@
                     </div>
 
                     <div class="mini-cards-container">
-                        <div class="mini-cards">
-                            <div class="mini-card" data-target="workspace">
+                        <div class="nav-arrow left" id="nav-left">←</div>
+                        <div class="nav-arrow right" id="nav-right">→</div>
+                        
+                        <div class="mini-cards-track" id="mini-cards-track">
+                            <div class="mini-card active" data-target="workspace">
                                 <img src="photos/workspace.webp" alt="Espace de travail">
+                                <div class="card-title">Espace de travail</div>
                             </div>
                             <div class="mini-card" data-target="homework">
                                 <img src="photos/homework.webp" alt="Devoirs">
+                                <div class="card-title">Gestion des devoirs</div>
                             </div>
                             <div class="mini-card" data-target="calendar">
                                 <img src="photos/calendar.webp" alt="Calendrier">
+                                <div class="card-title">Calendrier</div>
                             </div>
                             <div class="mini-card" data-target="grades">
                                 <img src="photos/grades.webp" alt="Notes">
+                                <div class="card-title">Notes</div>
                             </div>
                             <div class="mini-card" data-target="resources">
                                 <img src="photos/resources.webp" alt="Ressources">
+                                <div class="card-title">Ressources</div>
+                            </div>
+                            <div class="mini-card" data-target="chat">
+                                <img src="photos/chat.webp" alt="Messagerie">
+                                <div class="card-title">Messagerie</div>
+                            </div>
+                            <div class="mini-card" data-target="settings">
+                                <img src="photos/settings.webp" alt="Paramètres">
+                                <div class="card-title">Paramètres</div>
                             </div>
                         </div>
                     </div>
@@ -640,7 +891,10 @@
             let currentUserStatusRef = null;
             let pressTimer = null;
             let connectedUsersRef = null;
-            let currentDescriptionCard = 'chat';
+            let currentCardIndex = 5; // Commence par la carte "Messagerie"
+            let isAnimating = false;
+            const cardWidth = 150 + 25; // Largeur de la carte + gap
+            const cardTargets = ['workspace', 'homework', 'calendar', 'grades', 'resources', 'chat', 'settings'];
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
@@ -690,7 +944,10 @@
                 const saveBtn = document.getElementById('save-profile-btn');
                 const profileLetter = document.getElementById('profile-letter');
 
-                setupModal.style.display = 'flex';
+                // Afficher le modal avec animation
+                setTimeout(() => {
+                    setupModal.classList.add('show');
+                }, 100);
 
                 // Mise à jour de l'initiale
                 usernameInput.addEventListener('input', () => {
@@ -712,7 +969,7 @@
 
                     try {
                         await saveUserProfile(user, username);
-                        setupModal.style.display = 'none';
+                        setupModal.classList.remove('show');
                         
                         // Recharger les données utilisateur
                         const userRef = ref(db, 'users/' + user.uid);
@@ -764,8 +1021,8 @@
                 // Gestion du clic long sur l'avatar
                 setupLongPressAvatar();
 
-                // Gestion des mini-cards
-                setupMiniCards();
+                // Initialiser les mini-cards
+                initMiniCards();
             }
 
             function updateUserInfo(userData) {
@@ -962,27 +1219,26 @@
                 document.getElementById('online-count').addEventListener('click', (e) => {
                     e.stopPropagation();
                     const usersList = document.getElementById('users-list');
-                    usersList.style.display = usersList.style.display === 'block' ? 'none' : 'block';
+                    usersList.classList.toggle('show');
                 });
 
                 // Fermer la liste quand on clique ailleurs
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.user-count') && !e.target.closest('.users-list')) {
-                        document.getElementById('users-list').style.display = 'none';
+                        document.getElementById('users-list').classList.remove('show');
                     }
                 });
 
                 // Gestion du modal d'import d'image
                 document.getElementById('cancel-image-btn').addEventListener('click', () => {
-                    document.getElementById('image-input-modal').style.display = 'none';
+                    document.getElementById('image-input-modal').classList.remove('show');
                 });
 
-                // Gestion de la sélection d'image dans le modal
-                document.querySelectorAll('#image-input-modal .mini-card').forEach(card => {
-                    card.addEventListener('click', function() {
-                        const imgName = this.getAttribute('data-img');
-                        handleImageImport(`photos/${imgName}`);
-                    });
+                document.getElementById('confirm-image-btn').addEventListener('click', () => {
+                    const imageName = document.getElementById('image-name-input').value.trim();
+                    if (!imageName) return;
+                    
+                    handleImageImport(`photos/${imageName}.webp`);
                 });
             }
 
@@ -1016,7 +1272,10 @@
             }
 
             function showImageInputModal() {
-                document.getElementById('image-input-modal').style.display = 'flex';
+                const modal = document.getElementById('image-input-modal');
+                modal.classList.add('show');
+                document.getElementById('image-name-input').value = '';
+                document.getElementById('image-name-input').focus();
             }
 
             function handleImageImport(imageUrl) {
@@ -1053,87 +1312,200 @@
                         });
                     }
                     
-                    document.getElementById('image-input-modal').style.display = 'none';
+                    document.getElementById('image-input-modal').classList.remove('show');
                 };
                 
                 img.onerror = function() {
-                    alert("Erreur de chargement de l'image");
+                    alert("Image non trouvée. Vérifiez le nom et assurez-vous qu'elle est au format .webp");
                 };
                 
                 img.src = imageUrl;
             }
 
-            function setupMiniCards() {
+            function initMiniCards() {
                 const miniCards = document.querySelectorAll('.mini-card');
-                const descriptionCard = document.querySelector('.description-card');
+                const track = document.getElementById('mini-cards-track');
+                const leftArrow = document.getElementById('nav-left');
+                const rightArrow = document.getElementById('nav-right');
                 
-                miniCards.forEach(card => {
+                // Positionner initialement la track pour que la carte active soit au centre
+                updateTrackPosition();
+                
+                // Gestion du clic sur les mini-cards
+                miniCards.forEach((card, index) => {
                     card.addEventListener('click', function() {
-                        // Enlever la classe active de toutes les cartes
-                        miniCards.forEach(c => c.classList.remove('active'));
+                        if (isAnimating) return;
                         
-                        // Ajouter la classe active à la carte cliquée
-                        this.classList.add('active');
+                        const targetIndex = Array.from(miniCards).indexOf(this);
+                        if (targetIndex === currentCardIndex) return;
                         
-                        // Mettre à jour la description card en fonction de la carte sélectionnée
-                        const target = this.getAttribute('data-target');
-                        updateDescriptionCard(target);
+                        navigateToCard(targetIndex);
                     });
                 });
+                
+                // Gestion des flèches de navigation
+                leftArrow.addEventListener('click', () => {
+                    if (isAnimating) return;
+                    navigateToCard((currentCardIndex - 1 + miniCards.length) % miniCards.length);
+                });
+                
+                rightArrow.addEventListener('click', () => {
+                    if (isAnimating) return;
+                    navigateToCard((currentCardIndex + 1) % miniCards.length);
+                });
+                
+                // Gestion du scroll horizontal
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                
+                track.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    startX = e.pageX - track.offsetLeft;
+                    scrollLeft = track.scrollLeft;
+                });
+                
+                track.addEventListener('mouseleave', () => {
+                    isDown = false;
+                });
+                
+                track.addEventListener('mouseup', () => {
+                    isDown = false;
+                });
+                
+                track.addEventListener('mousemove', (e) => {
+                    if(!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - track.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    track.scrollLeft = scrollLeft - walk;
+                });
+                
+                // Pour les appareils tactiles
+                track.addEventListener('touchstart', (e) => {
+                    isDown = true;
+                    startX = e.touches[0].pageX - track.offsetLeft;
+                    scrollLeft = track.scrollLeft;
+                });
+                
+                track.addEventListener('touchend', () => {
+                    isDown = false;
+                });
+                
+                track.addEventListener('touchmove', (e) => {
+                    if(!isDown) return;
+                    e.preventDefault();
+                    const x = e.touches[0].pageX - track.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    track.scrollLeft = scrollLeft - walk;
+                });
             }
-
+            
+            function navigateToCard(targetIndex) {
+                if (isAnimating) return;
+                isAnimating = true;
+                
+                const miniCards = document.querySelectorAll('.mini-card');
+                const descriptionCard = document.getElementById('main-description-card');
+                const currentCard = miniCards[currentCardIndex];
+                const targetCard = miniCards[targetIndex];
+                
+                // Animation de sortie de la carte actuelle
+                descriptionCard.classList.add('slide-out-left');
+                
+                // Animation de la mini-card actuelle qui devient inactive
+                currentCard.classList.remove('active');
+                currentCard.classList.add('shrink-card');
+                
+                // Animation de la mini-card cible qui devient active
+                targetCard.classList.add('grow-card');
+                
+                setTimeout(() => {
+                    // Mettre à jour l'index courant
+                    currentCardIndex = targetIndex;
+                    
+                    // Mettre à jour la position de la track
+                    updateTrackPosition();
+                    
+                    // Mettre à jour la description card
+                    updateDescriptionCard(targetCard.getAttribute('data-target'));
+                    
+                    // Animation d'entrée de la nouvelle carte
+                    descriptionCard.classList.remove('slide-out-left');
+                    descriptionCard.classList.add('slide-in-right');
+                    
+                    // Retirer les classes d'animation
+                    setTimeout(() => {
+                        targetCard.classList.add('active');
+                        targetCard.classList.remove('grow-card');
+                        currentCard.classList.remove('shrink-card');
+                        descriptionCard.classList.remove('slide-in-right');
+                        isAnimating = false;
+                    }, 500);
+                }, 300);
+            }
+            
+            function updateTrackPosition() {
+                const track = document.getElementById('mini-cards-track');
+                const containerWidth = document.querySelector('.mini-cards-container').offsetWidth;
+                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
+                
+                track.style.transform = `translateX(${targetPosition}px)`;
+            }
+            
             function updateDescriptionCard(target) {
-                const descriptionCard = document.querySelector('.description-card');
+                const descriptionCard = document.getElementById('main-description-card');
                 
                 switch(target) {
                     case 'workspace':
                         descriptionCard.innerHTML = `
                             <h3>Espace de travail</h3>
-                            <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants.</p>
+                            <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants. L'espace de travail vous permet de garder tous vos documents scolaires organisés et accessibles où que vous soyez.</p>
                             <a href="Codex.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir l'espace</a>
                         `;
                         break;
                     case 'homework':
                         descriptionCard.innerHTML = `
                             <h3>Gestion des devoirs</h3>
-                            <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires.</p>
+                            <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires. Le système de gestion des devoirs vous aide à rester organisé et à ne rien oublier.</p>
                             <a href="homework.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les devoirs</a>
                         `;
                         break;
                     case 'calendar':
                         descriptionCard.innerHTML = `
                             <h3>Calendrier et Planning</h3>
-                            <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante.</p>
+                            <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante. Le calendrier intégré synchronise tous vos événements scolaires et personnels.</p>
                             <a href="calendar.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir le planning</a>
                         `;
                         break;
                     case 'grades':
                         descriptionCard.innerHTML = `
                             <h3>Notes et Évaluations</h3>
-                            <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe.</p>
+                            <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe. Analysez vos forces et vos faiblesses pour améliorer vos résultats.</p>
                             <a href="grades.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
                         `;
                         break;
                     case 'resources':
                         descriptionCard.innerHTML = `
                             <h3>Ressources pédagogiques</h3>
-                            <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions.</p>
+                            <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
                             <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
                         `;
                         break;
-                    default:
-                        // Par défaut, on montre la messagerie
+                    case 'settings':
+                        descriptionCard.innerHTML = `
+                            <h3>Paramètres du compte</h3>
+                            <p>Personnalisez votre expérience en modifiant vos préférences, votre profil et les paramètres de notification. Configurez SchoolReport selon vos besoins.</p>
+                            <a href="settings.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir les paramètres</a>
+                        `;
+                        break;
+                    default: // 'chat'
                         descriptionCard.innerHTML = `
                             <h3>Messagerie</h3>
-                            <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe.</p>
+                            <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe. La communication simplifiée pour votre réussite scolaire.</p>
                             <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
                         `;
                 }
-                
-                // Animation de fondu
-                descriptionCard.style.animation = 'none';
-                descriptionCard.offsetHeight; // Trigger reflow
-                descriptionCard.style.animation = 'fadeIn 0.5s ease-out forwards';
             }
         </script>
     </div>
