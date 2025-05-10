@@ -6,17 +6,17 @@
     <title>SchoolReport</title>
     <style>
         :root {
-            --primary: #2E8B57; /* Vert pomme */
-            --secondary: #1a5c38; /* Vert pomme plus foncé */
-            --light: #F8F4E6; /* Blanc cassé */
-            --dark: #0A192F; /* Bleu marine foncé */
-            --success: #64FFDA; /* Vert menthe */
+            --primary: #2E8B57;
+            --secondary: #1a5c38;
+            --light: #F8F4E6;
+            --dark: #0A192F;
+            --success: #64FFDA;
             --warning: #f8961e;
             --danger: #e63946;
-            --calendar: #3B82F6; /* Bleu clair pour le calendrier */
-            --text-primary: #CCD6F6; /* Texte principal */
-            --text-secondary: #8892B0; /* Texte secondaire */
-            --input-bg: #112240; /* Fond des inputs */
+            --calendar: #3B82F6;
+            --text-primary: #CCD6F6;
+            --text-secondary: #8892B0;
+            --input-bg: #112240;
         }
 
         * {
@@ -138,7 +138,6 @@
             background: rgba(230, 57, 70, 0.1);
         }
 
-        /* Main content layout */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -146,7 +145,6 @@
             margin-bottom: 60px;
         }
 
-        /* Profile card */
         .profile-card {
             background: rgba(16, 36, 69, 0.7);
             border-radius: 20px;
@@ -157,12 +155,6 @@
             border: 1px solid rgba(100, 255, 218, 0.1);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            transition: transform 0.5s, box-shadow 0.5s;
-        }
-
-        .profile-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .profile-image {
@@ -173,14 +165,12 @@
             overflow: hidden;
             border: 4px solid var(--primary);
             position: relative;
-            transition: all 0.5s;
         }
 
         .profile-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.5s;
         }
 
         .profile-image .initials {
@@ -196,7 +186,6 @@
             color: white;
             font-size: 50px;
             font-weight: bold;
-            transition: opacity 0.5s;
         }
 
         .profile-card h2 {
@@ -211,7 +200,6 @@
             margin-bottom: 25px;
         }
 
-        /* Description card */
         .description-card {
             background: rgba(16, 36, 69, 0.7);
             border-radius: 20px;
@@ -222,8 +210,7 @@
             border: 1px solid rgba(100, 255, 218, 0.1);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-origin: center;
+            transition: transform 0.5s, width 0.5s, height 0.5s;
         }
 
         .description-card h3 {
@@ -239,7 +226,6 @@
             margin-bottom: 30px;
         }
 
-        /* Mini cards container */
         .mini-cards-container {
             width: 100%;
             overflow-x: auto;
@@ -257,7 +243,7 @@
             display: flex;
             gap: 25px;
             padding: 15px;
-            transition: transform 0.5s ease-out;
+            transition: transform 0.5s;
         }
 
         .mini-card {
@@ -267,28 +253,16 @@
             overflow: hidden;
             flex-shrink: 0;
             cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.5s;
             border: 3px solid rgba(100, 255, 218, 0.3);
             position: relative;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .mini-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
         .mini-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.5s;
-        }
-
-        .mini-card.active {
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 25px rgba(46, 139, 87, 0.7);
-            transform: scale(1.1);
         }
 
         .mini-card .card-title {
@@ -301,14 +275,6 @@
             padding: 10px;
             text-align: center;
             font-size: 14px;
-            transform: translateY(100%);
-            transition: transform 0.3s;
-            opacity: 0;
-        }
-
-        .mini-card:hover .card-title {
-            transform: translateY(0);
-            opacity: 1;
         }
 
         .active-indicator {
@@ -329,7 +295,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        /* Responsive layout */
         @media (min-width: 992px) {
             .profile-section {
                 display: flex;
@@ -375,7 +340,6 @@
             }
         }
 
-        /* Online users dropdown */
         .profile-badge {
             position: relative;
             display: flex;
@@ -405,116 +369,6 @@
             transition: all 0.3s;
         }
 
-        .user-count:hover {
-            background-color: var(--secondary);
-            transform: scale(1.05);
-        }
-
-        /* Modals */
-        #setup-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        #setup-modal.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .setup-container {
-            background: var(--dark);
-            padding: 40px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.3s;
-        }
-
-        #setup-modal.show .setup-container {
-            transform: scale(1);
-        }
-
-        .setup-container h2 {
-            margin-bottom: 25px;
-            color: var(--text-primary);
-            font-size: 28px;
-        }
-
-        .setup-container input {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            border-radius: 10px;
-            font-size: 16px;
-            background: var(--input-bg);
-            color: var(--text-primary);
-            transition: all 0.3s;
-        }
-
-        .setup-container input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
-            outline: none;
-        }
-
-        .profile-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 25px auto;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            overflow: hidden;
-            position: relative;
-            border: 3px solid rgba(100, 255, 218, 0.3);
-        }
-
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .setup-btn {
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-
-        .setup-btn:hover {
-            background-color: var(--secondary);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
         .users-list {
             position: absolute;
             top: 60px;
@@ -527,55 +381,39 @@
             display: none;
             z-index: 100;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            transform: translateY(10px);
-            opacity: 0;
-            transition: all 0.3s;
         }
 
         .users-list.show {
             display: block;
-            transform: translateY(0);
-            opacity: 1;
         }
 
-        .users-list h4 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            padding-bottom: 10px;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            margin: 12px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
-        }
-
-        .user-avatar-small {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-            font-size: 18px;
-            overflow: hidden;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .user-avatar-small img {
+        #setup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
             display: none;
+        }
+
+        #setup-modal.show {
+            display: flex;
+        }
+
+        .setup-container {
+            background: var(--dark);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
         #image-input-modal {
@@ -589,13 +427,10 @@
             justify-content: center;
             align-items: center;
             z-index: 1001;
-            opacity: 0;
-            transition: opacity 0.3s;
         }
 
         #image-input-modal.show {
             display: flex;
-            opacity: 1;
         }
 
         .image-input-container {
@@ -606,119 +441,78 @@
             max-width: 400px;
             border: 1px solid rgba(100, 255, 218, 0.1);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.3s;
-        }
-
-        #image-input-modal.show .image-input-container {
-            transform: scale(1);
-        }
-
-        .image-input-container h3 {
-            color: var(--text-primary);
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-
-        .image-input-container p {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-
-        .image-input-container input {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            background: var(--input-bg);
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            color: var(--text-primary);
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .image-input-container input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
-            outline: none;
-        }
-
-        .image-input-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
         }
 
         /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes miniToMain {
+            0% { 
+                transform: scale(1) translateY(0);
+                width: 150px;
+                height: 150px;
+            }
+            100% { 
+                transform: scale(1.1) translateY(-50px);
+                width: 100%;
+                height: auto;
+            }
         }
 
-        @keyframes cardToMain {
-            0% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.2) translateY(-50px); }
-            100% { transform: scale(1.1) translateY(0); }
+        @keyframes mainToMini {
+            0% { 
+                transform: scale(1.1) translateY(-50px);
+                width: 100%;
+                height: auto;
+            }
+            100% { 
+                transform: scale(1) translateY(0);
+                width: 150px;
+                height: 150px;
+            }
         }
 
-        @keyframes mainToCard {
-            0% { transform: scale(1.1) translateY(0); }
-            50% { transform: scale(0.8) translateY(50px); }
-            100% { transform: scale(1) translateY(0); }
+        @keyframes slideOutRight {
+            to { transform: translateX(100%); }
         }
 
-        @keyframes slideOutToRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+        @keyframes slideOutLeft {
+            to { transform: translateX(-100%); }
         }
 
-        @keyframes slideOutToLeft {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-100%); opacity: 0; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
         }
 
-        @keyframes slideInFromRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
         }
 
-        @keyframes slideInFromLeft {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .profile-card, .description-card {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-
-        .mini-card {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-
-        .card-to-main {
-            animation: cardToMain 0.5s ease-out forwards;
+        .mini-to-main {
+            animation: miniToMain 0.5s forwards;
             z-index: 10;
+            position: relative;
         }
 
-        .main-to-card {
-            animation: mainToCard 0.5s ease-out forwards;
+        .main-to-mini {
+            animation: mainToMini 0.5s forwards;
             z-index: 5;
         }
 
         .slide-out-right {
-            animation: slideOutToRight 0.5s ease-out forwards;
+            animation: slideOutRight 0.5s forwards;
         }
 
         .slide-out-left {
-            animation: slideOutToLeft 0.5s ease-out forwards;
+            animation: slideOutLeft 0.5s forwards;
         }
 
         .slide-in-right {
-            animation: slideInFromRight 0.5s ease-out forwards;
+            animation: slideInRight 0.5s forwards;
         }
 
         .slide-in-left {
-            animation: slideInFromLeft 0.5s ease-out forwards;
+            animation: slideInLeft 0.5s forwards;
         }
     </style>
 </head>
@@ -856,9 +650,8 @@
             let connectedUsersRef = null;
             let currentCardIndex = 5; // Commence par la carte "Messagerie"
             let isAnimating = false;
-            const cardWidth = 150 + 25; // Largeur de la carte + gap
+            let lastScrollDirection = 'right';
             const cardTargets = ['workspace', 'homework', 'calendar', 'grades', 'resources', 'chat', 'settings'];
-            let lastScrollDirection = 'right'; // 'left' ou 'right'
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
@@ -892,11 +685,9 @@
                     const userData = snapshot.val();
                     
                     if (userData && userData.username) {
-                        // Profil existant
                         currentUsername = userData.username;
                         setupMainInterface(user, userData);
                     } else {
-                        // Nouvel utilisateur
                         setupProfileConfiguration(user);
                     }
                 }, { onlyOnce: true });
@@ -908,18 +699,13 @@
                 const saveBtn = document.getElementById('save-profile-btn');
                 const profileLetter = document.getElementById('profile-letter');
 
-                // Afficher le modal avec animation
-                setTimeout(() => {
-                    setupModal.classList.add('show');
-                }, 100);
+                setupModal.classList.add('show');
 
-                // Mise à jour de l'initiale
                 usernameInput.addEventListener('input', () => {
                     const username = usernameInput.value.trim();
                     profileLetter.textContent = username.length > 0 ? username.charAt(0).toUpperCase() : '?';
                 });
 
-                // Gestion de l'enregistrement
                 saveBtn.addEventListener('click', async () => {
                     const username = usernameInput.value.trim();
                     
@@ -935,7 +721,6 @@
                         await saveUserProfile(user, username);
                         setupModal.classList.remove('show');
                         
-                        // Recharger les données utilisateur
                         const userRef = ref(db, 'users/' + user.uid);
                         onValue(userRef, (snapshot) => {
                             const userData = snapshot.val();
@@ -970,22 +755,11 @@
                 const mainInterface = document.getElementById('main-interface');
                 mainInterface.style.display = 'block';
 
-                // Mise à jour des infos utilisateur
                 updateUserInfo(userData);
-
-                // Suivi des utilisateurs en ligne
                 setupPresenceTracking(user);
-
-                // Vérifier les devoirs urgents
                 checkUrgentHomeworks(user);
-
-                // Gestion de la déconnexion
                 document.getElementById('logout-btn').addEventListener('click', handleLogout);
-
-                // Gestion du clic long sur l'avatar
                 setupLongPressAvatar();
-
-                // Initialiser les mini-cards
                 initMiniCards();
             }
 
@@ -1001,14 +775,12 @@
                 avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
                 profileInitials.textContent = userData.username.charAt(0).toUpperCase();
                 
-                // Format member since date
                 if (userData.createdAt) {
                     const joinDate = new Date(userData.createdAt);
                     const options = { year: 'numeric', month: 'long', day: 'numeric' };
                     document.getElementById('member-since').textContent = joinDate.toLocaleDateString('fr-FR', options);
                 }
                 
-                // Vérifier si une image existe déjà
                 if (userData.profileImage) {
                     profilePic.src = userData.profileImage;
                     profilePic.style.display = 'block';
@@ -1058,7 +830,6 @@
                         });
                     }
 
-                    // Mettre à jour l'indicateur sur la mini-card calendrier
                     const calendarCards = document.querySelectorAll('.mini-card[data-target="calendar"]');
                     calendarCards.forEach(card => {
                         if (urgentCount > 0) {
@@ -1081,16 +852,10 @@
             }
 
             function setupPresenceTracking(user) {
-                // Référence pour le suivi des utilisateurs connectés
                 connectedUsersRef = ref(db, 'connectedUsers');
-                
-                // Référence pour l'utilisateur actuel
                 currentUserStatusRef = ref(db, 'connectedUsers/' + user.uid);
-                
-                // Récupérer l'image de profil depuis le stockage local ou la base de données
                 const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
                 
-                // Marquer l'utilisateur comme connecté avec toutes ses infos
                 set(currentUserStatusRef, {
                     uid: user.uid,
                     username: currentUsername,
@@ -1099,18 +864,15 @@
                     firstLetter: currentUsername.charAt(0).toUpperCase()
                 });
 
-                // Supprimer la présence lors de la déconnexion
                 onDisconnect(currentUserStatusRef).remove();
                 
-                // Écouter les changements dans la liste des utilisateurs connectés
                 onValue(connectedUsersRef, (snapshot) => {
                     const connectedUsers = snapshot.val() || {};
                     const onlineUsers = [];
                     let onlineCount = 0;
 
-                    // Compter les utilisateurs connectés et préparer la liste
                     Object.entries(connectedUsers).forEach(([uid, userData]) => {
-                        if (uid !== user.uid) { // Exclure l'utilisateur actuel
+                        if (uid !== user.uid) {
                             onlineCount++;
                             onlineUsers.push({
                                 userId: uid,
@@ -1121,16 +883,12 @@
                         }
                     });
 
-                    // Mettre à jour l'interface
                     updateOnlineUsersDisplay(onlineCount, onlineUsers);
                 });
             }
 
             function updateOnlineUsersDisplay(onlineCount, onlineUsers) {
-                // Mettre à jour le compteur
                 document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
-
-                // Mettre à jour la liste des utilisateurs
                 const container = document.getElementById('online-users-container');
                 container.innerHTML = '';
 
@@ -1141,7 +899,6 @@
                         const userElement = document.createElement('div');
                         userElement.className = 'user-item';
                         
-                        // Créer le contenu de l'avatar
                         let avatarContent = '';
                         if (user.profileImage) {
                             avatarContent = `<img src="${user.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
@@ -1162,15 +919,11 @@
 
             async function handleLogout() {
                 try {
-                    // Supprimer immédiatement la présence de l'utilisateur
                     if (currentUserStatusRef) {
                         await remove(currentUserStatusRef);
                     }
                     
-                    // Déconnecter l'utilisateur
                     await signOut(auth);
-                    
-                    // Rediriger vers la page de connexion
                     window.location.href = 'index.html';
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
@@ -1179,21 +932,18 @@
             }
 
             function setupEventListeners() {
-                // Gestion de l'affichage de la liste des utilisateurs
                 document.getElementById('online-count').addEventListener('click', (e) => {
                     e.stopPropagation();
                     const usersList = document.getElementById('users-list');
                     usersList.classList.toggle('show');
                 });
 
-                // Fermer la liste quand on clique ailleurs
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.user-count') && !e.target.closest('.users-list')) {
                         document.getElementById('users-list').classList.remove('show');
                     }
                 });
 
-                // Gestion du modal d'import d'image
                 document.getElementById('cancel-image-btn').addEventListener('click', () => {
                     document.getElementById('image-input-modal').classList.remove('show');
                 });
@@ -1205,7 +955,6 @@
                     handleImageImport(`photos/${imageName}.webp`);
                 });
 
-                // Gestion des touches du clavier
                 document.addEventListener('keydown', (e) => {
                     if (isAnimating) return;
                     
@@ -1225,7 +974,7 @@
                 avatar.addEventListener('mousedown', () => {
                     pressTimer = setTimeout(() => {
                         showImageInputModal();
-                    }, 1000); // 1 seconde pour un clic long
+                    }, 1000);
                 });
 
                 avatar.addEventListener('mouseup', () => {
@@ -1236,7 +985,6 @@
                     clearTimeout(pressTimer);
                 });
 
-                // Pour les appareils tactiles
                 avatar.addEventListener('touchstart', () => {
                     pressTimer = setTimeout(() => {
                         showImageInputModal();
@@ -1259,7 +1007,6 @@
                 const img = new Image();
                 
                 img.onload = function() {
-                    // L'image existe, on peut l'utiliser
                     const profilePic = document.getElementById('profile-pic');
                     const avatarLetter = document.getElementById('avatar-letter');
                     const mainProfilePic = document.getElementById('main-profile-pic');
@@ -1273,16 +1020,13 @@
                     mainProfilePic.style.display = 'block';
                     profileInitials.style.display = 'none';
                     
-                    // Sauvegarder dans le stockage local
                     localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
                     
-                    // Mettre à jour dans la base de données
                     const userRef = ref(db, 'users/' + currentUser.uid);
                     update(userRef, {
                         profileImage: imageUrl
                     });
                     
-                    // Mettre à jour dans la liste des utilisateurs connectés
                     if (currentUserStatusRef) {
                         update(currentUserStatusRef, {
                             profileImage: imageUrl
@@ -1301,13 +1045,19 @@
 
             function initMiniCards() {
                 const miniCards = document.querySelectorAll('.mini-card');
-                const track = document.getElementById('mini-cards-track');
                 const container = document.getElementById('mini-cards-container');
+                const track = document.getElementById('mini-cards-track');
                 
-                // Positionner initialement la track pour que la carte active soit au centre
+                // Calcul dynamique de la largeur des cartes
+                const cardWidth = () => {
+                    if (window.innerWidth < 768) return 120 + 25; // mobile
+                    return 150 + 25; // desktop
+                };
+                
+                // Position initiale
                 updateTrackPosition();
                 
-                // Gestion du clic sur les mini-cards
+                // Gestion du clic
                 miniCards.forEach((card, index) => {
                     card.addEventListener('click', function() {
                         if (isAnimating) return;
@@ -1315,10 +1065,8 @@
                         const targetIndex = Array.from(miniCards).indexOf(this);
                         if (targetIndex === currentCardIndex) return;
                         
-                        // Déterminer la direction du scroll
                         lastScrollDirection = targetIndex > currentCardIndex ? 'right' : 'left';
                         if (Math.abs(targetIndex - currentCardIndex) > 3) {
-                            // Cas spécial pour le "loop"
                             lastScrollDirection = targetIndex > currentCardIndex ? 'left' : 'right';
                         }
                         
@@ -1326,7 +1074,7 @@
                     });
                 });
                 
-                // Gestion du scroll horizontal
+                // Gestion du scroll
                 let isDown = false;
                 let startX;
                 let scrollLeft;
@@ -1345,7 +1093,6 @@
                 
                 container.addEventListener('mouseup', () => {
                     isDown = false;
-                    // Détecter un swipe rapide
                     if (Date.now() - lastScrollTime < 200) {
                         const delta = container.scrollLeft - scrollLeft;
                         if (Math.abs(delta) > 50) {
@@ -1368,7 +1115,7 @@
                     container.scrollLeft = scrollLeft - walk;
                 });
                 
-                // Pour les appareils tactiles
+                // Touch events
                 container.addEventListener('touchstart', (e) => {
                     isDown = true;
                     startX = e.touches[0].pageX - container.offsetLeft;
@@ -1378,7 +1125,6 @@
                 
                 container.addEventListener('touchend', () => {
                     isDown = false;
-                    // Détecter un swipe rapide
                     if (Date.now() - lastScrollTime < 200) {
                         const delta = container.scrollLeft - scrollLeft;
                         if (Math.abs(delta) > 50) {
@@ -1400,6 +1146,11 @@
                     const walk = (x - startX) * 2;
                     container.scrollLeft = scrollLeft - walk;
                 });
+                
+                // Mise à jour responsive
+                window.addEventListener('resize', () => {
+                    updateTrackPosition();
+                });
             }
             
             function navigateToCard(targetIndex) {
@@ -1411,28 +1162,20 @@
                 const currentCard = miniCards[currentCardIndex];
                 const targetCard = miniCards[targetIndex];
                 
-                // Animation de la mini-card actuelle qui redevient normale
+                // Animation de transition
                 currentCard.classList.remove('active');
-                currentCard.classList.add('main-to-card');
-                
-                // Animation de la mini-card cible qui devient principale
-                targetCard.classList.add('card-to-main');
+                targetCard.classList.add('mini-to-main');
+                currentCard.classList.add('main-to-mini');
                 
                 setTimeout(() => {
-                    // Mettre à jour l'index courant
                     currentCardIndex = targetIndex;
-                    
-                    // Mettre à jour la position de la track
                     updateTrackPosition();
-                    
-                    // Mettre à jour la description card
                     updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
                     
-                    // Finaliser les animations
                     setTimeout(() => {
+                        targetCard.classList.remove('mini-to-main');
                         targetCard.classList.add('active');
-                        targetCard.classList.remove('card-to-main');
-                        currentCard.classList.remove('main-to-card');
+                        currentCard.classList.remove('main-to-mini');
                         isAnimating = false;
                     }, 500);
                 }, 300);
@@ -1440,8 +1183,9 @@
             
             function updateTrackPosition() {
                 const track = document.getElementById('mini-cards-track');
-                const containerWidth = document.querySelector('.mini-cards-container').offsetWidth;
-                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
+                const container = document.getElementById('mini-cards-container');
+                const cardWidthValue = window.innerWidth < 768 ? 120 + 25 : 150 + 25;
+                const targetPosition = (container.offsetWidth / 2) - (cardWidthValue / 2) - (currentCardIndex * cardWidthValue);
                 
                 track.style.transform = `translateX(${targetPosition}px)`;
             }
@@ -1449,63 +1193,66 @@
             function updateDescriptionCard(target, direction) {
                 const descriptionCard = document.getElementById('main-description-card');
                 
-                // Animation de sortie
+                // Nouveau contenu
+                let newContent = '';
+                switch(target) {
+                    case 'workspace':
+                        newContent = `
+                            <h3>Espace de travail</h3>
+                            <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants.</p>
+                            <a href="Codex.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir l'espace</a>
+                        `;
+                        break;
+                    case 'homework':
+                        newContent = `
+                            <h3>Gestion des devoirs</h3>
+                            <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires.</p>
+                            <a href="homework.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les devoirs</a>
+                        `;
+                        break;
+                    case 'calendar':
+                        newContent = `
+                            <h3>Calendrier et Planning</h3>
+                            <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante.</p>
+                            <a href="calendar.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir le planning</a>
+                        `;
+                        break;
+                    case 'grades':
+                        newContent = `
+                            <h3>Notes et Évaluations</h3>
+                            <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe.</p>
+                            <a href="grades.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
+                        `;
+                        break;
+                    case 'resources':
+                        newContent = `
+                            <h3>Ressources pédagogiques</h3>
+                            <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions.</p>
+                            <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
+                        `;
+                        break;
+                    case 'settings':
+                        newContent = `
+                            <h3>Paramètres du compte</h3>
+                            <p>Personnalisez votre expérience en modifiant vos préférences, votre profil et les paramètres de notification.</p>
+                            <a href="settings.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir les paramètres</a>
+                        `;
+                        break;
+                    default: // 'chat'
+                        newContent = `
+                            <h3>Messagerie</h3>
+                            <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe.</p>
+                            <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
+                        `;
+                }
+                
+                // Animation de transition
+                descriptionCard.style.animation = 'none';
+                descriptionCard.offsetHeight; // Trigger reflow
+                
                 descriptionCard.classList.add(direction === 'right' ? 'slide-out-left' : 'slide-out-right');
                 
                 setTimeout(() => {
-                    // Mettre à jour le contenu
-                    let newContent = '';
-                    switch(target) {
-                        case 'workspace':
-                            newContent = `
-                                <h3>Espace de travail</h3>
-                                <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants. L'espace de travail vous permet de garder tous vos documents scolaires organisés et accessibles où que vous soyez.</p>
-                                <a href="Codex.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir l'espace</a>
-                            `;
-                            break;
-                        case 'homework':
-                            newContent = `
-                                <h3>Gestion des devoirs</h3>
-                                <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires. Le système de gestion des devoirs vous aide à rester organisé et à ne rien oublier.</p>
-                                <a href="homework.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les devoirs</a>
-                            `;
-                            break;
-                        case 'calendar':
-                            newContent = `
-                                <h3>Calendrier et Planning</h3>
-                                <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante. Le calendrier intégré synchronise tous vos événements scolaires et personnels.</p>
-                                <a href="calendar.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir le planning</a>
-                            `;
-                            break;
-                        case 'grades':
-                            newContent = `
-                                <h3>Notes et Évaluations</h3>
-                                <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe. Analysez vos forces et vos faiblesses pour améliorer vos résultats.</p>
-                                <a href="grades.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
-                            `;
-                            break;
-                        case 'resources':
-                            newContent = `
-                                <h3>Ressources pédagogiques</h3>
-                                <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
-                                <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
-                            `;
-                            break;
-                        case 'settings':
-                            newContent = `
-                                <h3>Paramètres du compte</h3>
-                                <p>Personnalisez votre expérience en modifiant vos préférences, votre profil et les paramètres de notification. Configurez SchoolReport selon vos besoins.</p>
-                                <a href="settings.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir les paramètres</a>
-                            `;
-                            break;
-                        default: // 'chat'
-                            newContent = `
-                                <h3>Messagerie</h3>
-                                <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe. La communication simplifiée pour votre réussite scolaire.</p>
-                                <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
-                            `;
-                    }
-                    
                     descriptionCard.innerHTML = newContent;
                     descriptionCard.classList.remove('slide-out-left', 'slide-out-right');
                     descriptionCard.classList.add(direction === 'right' ? 'slide-in-right' : 'slide-in-left');
