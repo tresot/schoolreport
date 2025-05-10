@@ -66,20 +66,23 @@
             color: var(--primary);
             font-size: 28px;
             margin-left: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .time-online {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .time {
             background: rgba(16, 36, 69, 0.5);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
             border: 1px solid rgba(100, 255, 218, 0.1);
+            font-weight: 500;
         }
 
         .user-menu {
@@ -89,8 +92,8 @@
         }
 
         .user-avatar {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background-color: var(--primary);
             color: var(--light);
@@ -98,15 +101,17 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 15px;
+            margin-right: 12px;
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            border: 2px solid rgba(100, 255, 218, 0.3);
         }
 
         .user-avatar:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(46, 139, 87, 0.5);
         }
 
         .user-avatar img {
@@ -118,7 +123,8 @@
 
         .user-name {
             font-weight: 500;
-            font-size: 18px;
+            font-size: 16px;
+            color: var(--text-primary);
         }
 
         .logout-btn {
@@ -126,15 +132,15 @@
             border: none;
             color: var(--danger);
             cursor: pointer;
-            margin-left: 20px;
-            font-size: 16px;
-            transition: opacity 0.3s;
-            padding: 8px 15px;
+            margin-left: 15px;
+            font-size: 15px;
+            transition: all 0.3s;
+            padding: 6px 12px;
             border-radius: 5px;
+            font-weight: 500;
         }
 
         .logout-btn:hover {
-            opacity: 0.8;
             background: rgba(230, 57, 70, 0.1);
         }
 
@@ -142,35 +148,55 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
+        }
+
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .profile-section {
+                flex-direction: row;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 30px;
+                max-width: 1200px;
+            }
         }
 
         .profile-card {
             background: rgba(16, 36, 69, 0.7);
-            border-radius: 20px;
-            padding: 40px;
-            width: 350px;
+            border-radius: 18px;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            transition: transform 0.5s, box-shadow 0.5s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s;
         }
 
         .profile-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
 
         .profile-image {
-            width: 150px;
-            height: 150px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            margin: 0 auto 25px;
+            margin: 0 auto 20px;
             overflow: hidden;
-            border: 4px solid var(--primary);
+            border: 3px solid var(--primary);
             position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .profile-image img {
@@ -190,52 +216,61 @@
             justify-content: center;
             background-color: var(--primary);
             color: white;
-            font-size: 50px;
+            font-size: 48px;
             font-weight: bold;
         }
 
         .profile-card h2 {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             color: var(--text-primary);
-            font-size: 24px;
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .profile-card p {
             color: var(--text-secondary);
-            font-size: 16px;
-            margin-bottom: 25px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
         .description-card {
             background: rgba(16, 36, 69, 0.7);
-            border-radius: 20px;
-            padding: 40px;
+            border-radius: 18px;
+            padding: 30px;
             width: 100%;
             max-width: 700px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s;
+        }
+
+        .description-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
         }
 
         .description-card h3 {
             color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .description-card p {
             color: var(--text-secondary);
-            line-height: 1.8;
-            font-size: 16px;
-            margin-bottom: 30px;
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 25px;
         }
 
         .mini-cards-container {
             width: 100%;
             overflow-x: auto;
-            padding: 30px 0;
-            margin-bottom: 50px;
+            padding: 20px 0;
+            margin-bottom: 40px;
             scrollbar-width: none;
             position: relative;
             -webkit-overflow-scrolling: touch;
@@ -247,33 +282,46 @@
 
         .mini-cards-track {
             display: flex;
-            gap: 25px;
-            padding: 15px;
+            gap: 15px;
+            padding: 10px;
             width: max-content;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .mini-card {
-            width: 150px;
-            height: 150px;
-            border-radius: 20px;
+            width: 140px;
+            height: 140px;
+            border-radius: 16px;
             overflow: hidden;
             flex-shrink: 0;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 2px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .mini-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            border-color: rgba(100, 255, 218, 0.4);
         }
 
         .mini-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s;
         }
 
         .mini-card.active {
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 25px rgba(46, 139, 87, 0.7);
-            transform: scale(1.1);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(46, 139, 87, 0.6);
+            transform: scale(1.08);
+        }
+
+        .mini-card.active:hover {
+            transform: scale(1.08) translateY(-3px);
         }
 
         .mini-card .card-title {
@@ -281,11 +329,12 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 25, 47, 0.8);
+            background: rgba(10, 25, 47, 0.85);
             color: var(--text-primary);
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 500;
             transform: translateY(100%);
             transition: transform 0.3s;
             opacity: 0;
@@ -298,65 +347,20 @@
 
         .active-indicator {
             position: absolute;
-            top: -10px;
-            right: -10px;
+            top: -8px;
+            right: -8px;
             background-color: var(--danger);
             color: var(--light);
-            width: 30px;
-            height: 30px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             z-index: 2;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        @media (min-width: 992px) {
-            .profile-section {
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-                gap: 40px;
-                width: 100%;
-                max-width: 1200px;
-                margin-bottom: 60px;
-            }
-
-            .profile-card {
-                margin-bottom: 0;
-                width: 350px;
-            }
-
-            .description-card {
-                margin-bottom: 0;
-                flex: 1;
-                max-width: 800px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .time-online {
-                order: 3;
-                margin-top: 20px;
-            }
-
-            .profile-card, .description-card {
-                width: 100%;
-                max-width: 100%;
-            }
-
-            .mini-card {
-                width: 120px;
-                height: 120px;
-            }
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         }
 
         .profile-badge {
@@ -367,32 +371,35 @@
         
         .online-status {
             position: absolute;
-            bottom: -3px;
-            right: -3px;
-            width: 15px;
-            height: 15px;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background-color: #2ecc71;
-            border: 2px solid var(--light);
+            border: 2px solid var(--dark);
             z-index: 1;
         }
         
         .user-count {
             background-color: var(--primary);
             color: var(--light);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            margin-left: 15px;
+            padding: 4px 10px;
+            border-radius: 18px;
+            font-size: 13px;
+            margin-left: 12px;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 500;
+            border: 1px solid rgba(100, 255, 218, 0.2);
         }
 
         .user-count:hover {
             background-color: var(--secondary);
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
+        /* Modals */
         #setup-modal {
             position: fixed;
             top: 0;
@@ -416,14 +423,14 @@
 
         .setup-container {
             background: var(--dark);
-            padding: 40px;
-            border-radius: 20px;
+            padding: 35px;
+            border-radius: 18px;
             width: 90%;
-            max-width: 500px;
+            max-width: 480px;
             text-align: center;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            transform: scale(0.95);
             transition: transform 0.3s;
         }
 
@@ -432,18 +439,19 @@
         }
 
         .setup-container h2 {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: var(--text-primary);
-            font-size: 28px;
+            font-size: 26px;
+            font-weight: 600;
         }
 
         .setup-container input {
             width: 100%;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 14px;
+            margin: 12px 0;
             border: 1px solid rgba(100, 255, 218, 0.3);
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
             background: var(--input-bg);
             color: var(--text-primary);
             transition: all 0.3s;
@@ -456,19 +464,20 @@
         }
 
         .profile-preview {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            margin: 25px auto;
+            margin: 20px auto;
             background-color: var(--primary);
             color: var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 50px;
+            font-size: 48px;
             overflow: hidden;
             position: relative;
-            border: 3px solid rgba(100, 255, 218, 0.3);
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .profile-preview img {
@@ -482,34 +491,35 @@
             background-color: var(--primary);
             color: var(--light);
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-top: 20px;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-top: 15px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .setup-btn:hover {
             background-color: var(--secondary);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
         }
 
         .users-list {
             position: absolute;
-            top: 60px;
+            top: 55px;
             right: 0;
             background: var(--dark);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            padding: 20px;
-            width: 250px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            padding: 18px;
+            width: 240px;
             display: none;
             z-index: 100;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            transform: translateY(10px);
+            transform: translateY(8px);
             opacity: 0;
             transition: all 0.3s;
         }
@@ -522,23 +532,24 @@
 
         .users-list h4 {
             color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 12px;
+            font-size: 17px;
+            font-weight: 600;
             border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .user-item {
             display: flex;
             align-items: center;
-            margin: 12px 0;
-            padding: 8px 0;
+            margin: 10px 0;
+            padding: 6px 0;
             border-bottom: 1px solid rgba(100, 255, 218, 0.05);
         }
 
         .user-avatar-small {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background-color: var(--primary);
             color: var(--light);
@@ -546,11 +557,12 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            margin-right: 15px;
-            font-size: 18px;
+            margin-right: 12px;
+            font-size: 17px;
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
+            border: 1px solid rgba(100, 255, 218, 0.2);
         }
 
         .user-avatar-small img {
@@ -566,7 +578,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: none;
             justify-content: center;
             align-items: center;
@@ -582,13 +594,13 @@
 
         .image-input-container {
             background: var(--dark);
-            padding: 30px;
-            border-radius: 15px;
+            padding: 28px;
+            border-radius: 14px;
             width: 90%;
-            max-width: 400px;
+            max-width: 380px;
             border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            transform: scale(0.95);
             transition: transform 0.3s;
         }
 
@@ -598,24 +610,27 @@
 
         .image-input-container h3 {
             color: var(--text-primary);
-            margin-bottom: 15px;
-            font-size: 22px;
+            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 600;
         }
 
         .image-input-container p {
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .image-input-container input {
             width: 100%;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 14px;
+            margin: 14px 0;
             background: var(--input-bg);
             border: 1px solid rgba(100, 255, 218, 0.3);
             color: var(--text-primary);
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.3s;
         }
 
@@ -628,28 +643,52 @@
         .image-input-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 18px;
+            gap: 12px;
         }
 
-        /* Animation de téléportation */
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes cardToMain {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        @keyframes mainToCard {
+            0% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
         @keyframes slideInFromRight {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         @keyframes slideInFromLeft {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         @keyframes slideOutToRight {
-            from { transform: translateX(0); }
-            to { transform: translateX(100%); }
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(30px); opacity: 0; }
         }
 
         @keyframes slideOutToLeft {
-            from { transform: translateX(0); }
-            to { transform: translateX(-100%); }
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-30px); opacity: 0; }
+        }
+
+        .card-to-main {
+            animation: cardToMain 0.3s ease-out forwards;
+        }
+
+        .main-to-card {
+            animation: mainToCard 0.3s ease-out forwards;
         }
 
         .slide-in-right {
@@ -668,23 +707,52 @@
             animation: slideOutToLeft 0.3s ease-out forwards;
         }
 
-        /* Animation de mise en avant */
-        @keyframes cardToMain {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding-bottom: 15px;
+            }
+
+            .time-online {
+                order: 3;
+                margin-top: 15px;
+            }
+
+            .profile-card, .description-card {
+                padding: 25px;
+            }
+
+            .mini-card {
+                width: 130px;
+                height: 130px;
+            }
         }
 
-        @keyframes mainToCard {
-            0% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
 
-        .card-to-main {
-            animation: cardToMain 0.3s ease-out forwards;
-        }
+            .profile-card {
+                max-width: 100%;
+            }
 
-        .main-to-card {
-            animation: mainToCard 0.3s ease-out forwards;
+            .mini-card {
+                width: 120px;
+                height: 120px;
+            }
+
+            .user-menu {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+
+            .user-name {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -702,7 +770,7 @@
                 
                 <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
-                <p id="username-info" style="color: var(--text-secondary);">
+                <p id="username-info" style="color: var(--text-secondary); font-size: 14px;">
                     Ce nom ne pourra pas être changé avant 48 heures
                 </p>
 
@@ -822,10 +890,9 @@
             let connectedUsersRef = null;
             let currentCardIndex = 5; // Commence par la carte "Messagerie"
             let isAnimating = false;
-            const cardWidth = 150 + 25; // Largeur de la carte + gap
+            const cardWidth = 140 + 15; // Largeur de la carte + gap réduit
             const cardTargets = ['workspace', 'homework', 'calendar', 'grades', 'resources', 'chat', 'settings'];
             let lastScrollDirection = 'right'; // 'left' ou 'right'
-            let cardPositions = [];
             let isDragging = false;
             let startX, scrollLeft;
 
@@ -835,12 +902,22 @@
                 setupEventListeners();
                 updateClock();
                 setInterval(updateClock, 1000);
+                centerActiveCard();
             });
 
             function updateClock() {
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString();
                 document.getElementById('current-time').textContent = timeStr;
+            }
+
+            function centerActiveCard() {
+                const container = document.getElementById('mini-cards-container');
+                const track = document.getElementById('mini-cards-track');
+                const containerWidth = container.offsetWidth;
+                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
+                
+                track.style.transform = `translateX(${targetPosition}px)`;
             }
 
             function initAuthState() {
@@ -1273,12 +1350,6 @@
                 const track = document.getElementById('mini-cards-track');
                 const container = document.getElementById('mini-cards-container');
                 
-                // Initialiser les positions des cartes
-                miniCards.forEach((card, index) => {
-                    cardPositions[index] = index * cardWidth;
-                    card.style.transform = `translateX(${cardPositions[index]}px)`;
-                });
-                
                 // Gestion du clic sur les mini-cards
                 miniCards.forEach((card, index) => {
                     card.addEventListener('click', function(e) {
@@ -1346,7 +1417,7 @@
                 }, { passive: false });
                 
                 // Positionner initialement la track pour que la carte active soit au centre
-                updateTrackPosition();
+                centerActiveCard();
             }
             
             function navigateToCard(targetIndex) {
@@ -1365,75 +1436,23 @@
                 // Animation de la mini-card cible qui devient principale
                 targetCard.classList.add('card-to-main');
                 
-                // Animation des cartes adjacentes
-                miniCards.forEach((card, index) => {
-                    if (index !== currentCardIndex && index !== targetIndex) {
-                        if (lastScrollDirection === 'right') {
-                            if (index > currentCardIndex && index < targetIndex) {
-                                card.classList.add('slide-out-left');
-                            } else if (index < currentCardIndex || index > targetIndex) {
-                                card.classList.add('slide-in-right');
-                            }
-                        } else {
-                            if (index < currentCardIndex && index > targetIndex) {
-                                card.classList.add('slide-out-right');
-                            } else if (index > currentCardIndex || index < targetIndex) {
-                                card.classList.add('slide-in-left');
-                            }
-                        }
-                    }
-                });
+                // Animation de la description card
+                updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
                 
+                // Mettre à jour l'index courant
+                currentCardIndex = targetIndex;
+                
+                // Centrer la carte active
+                centerActiveCard();
+                
+                // Finaliser les animations
                 setTimeout(() => {
-                    // Mettre à jour l'index courant
-                    currentCardIndex = targetIndex;
+                    targetCard.classList.add('active');
+                    targetCard.classList.remove('card-to-main');
+                    currentCard.classList.remove('main-to-card');
                     
-                    // Téléporter les cartes si nécessaire
-                    const miniCards = document.querySelectorAll('.mini-card');
-                    const containerWidth = document.querySelector('.mini-cards-container').offsetWidth;
-                    
-                    miniCards.forEach((card, index) => {
-                        const cardRect = card.getBoundingClientRect();
-                        
-                        // Téléportation droite → gauche
-                        if (cardRect.right < -cardWidth) {
-                            card.style.transform = `translateX(${containerWidth + (index * cardWidth)}px)`;
-                        }
-                        
-                        // Téléportation gauche → droite
-                        if (cardRect.left > containerWidth + cardWidth) {
-                            card.style.transform = `translateX(${-cardWidth + (index * cardWidth)}px)`;
-                        }
-                    });
-                    
-                    // Mettre à jour la position de la track
-                    updateTrackPosition();
-                    
-                    // Mettre à jour la description card
-                    updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
-                    
-                    // Finaliser les animations
-                    setTimeout(() => {
-                        targetCard.classList.add('active');
-                        targetCard.classList.remove('card-to-main');
-                        currentCard.classList.remove('main-to-card');
-                        
-                        // Réinitialiser les animations des autres cartes
-                        miniCards.forEach(card => {
-                            card.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-left', 'slide-in-right');
-                        });
-                        
-                        isAnimating = false;
-                    }, 300);
+                    isAnimating = false;
                 }, 300);
-            }
-            
-            function updateTrackPosition() {
-                const track = document.getElementById('mini-cards-track');
-                const containerWidth = document.querySelector('.mini-cards-container').offsetWidth;
-                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
-                
-                track.style.transform = `translateX(${targetPosition}px)`;
             }
             
             function updateDescriptionCard(target, direction) {
