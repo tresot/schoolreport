@@ -6,17 +6,17 @@
     <title>SchoolReport</title>
     <style>
         :root {
-            --primary: #2E8B57; /* Vert pomme */
-            --secondary: #1a5c38; /* Vert pomme plus foncé */
-            --light: #F8F4E6; /* Blanc cassé */
-            --dark: #0A192F; /* Bleu marine foncé */
-            --success: #64FFDA; /* Vert menthe */
+            --primary: #2E8B57;
+            --secondary: #1a5c38;
+            --light: #F8F4E6;
+            --dark: #0A192F;
+            --success: #64FFDA;
             --warning: #f8961e;
             --danger: #e63946;
-            --calendar: #3B82F6; /* Bleu clair pour le calendrier */
-            --text-primary: #CCD6F6; /* Texte principal */
-            --text-secondary: #8892B0; /* Texte secondaire */
-            --input-bg: #112240; /* Fond des inputs */
+            --calendar: #3B82F6;
+            --text-primary: #CCD6F6;
+            --text-secondary: #8892B0;
+            --input-bg: #112240;
         }
 
         * {
@@ -138,7 +138,6 @@
             background: rgba(230, 57, 70, 0.1);
         }
 
-        /* Main content layout */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -146,7 +145,6 @@
             margin-bottom: 60px;
         }
 
-        /* Profile card */
         .profile-card {
             background: rgba(16, 36, 69, 0.7);
             border-radius: 20px;
@@ -173,14 +171,12 @@
             overflow: hidden;
             border: 4px solid var(--primary);
             position: relative;
-            transition: all 0.5s;
         }
 
         .profile-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.5s;
         }
 
         .profile-image .initials {
@@ -196,7 +192,6 @@
             color: white;
             font-size: 50px;
             font-weight: bold;
-            transition: opacity 0.5s;
         }
 
         .profile-card h2 {
@@ -211,7 +206,6 @@
             margin-bottom: 25px;
         }
 
-        /* Description card */
         .description-card {
             background: rgba(16, 36, 69, 0.7);
             border-radius: 20px;
@@ -222,8 +216,6 @@
             border: 1px solid rgba(100, 255, 218, 0.1);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-origin: center;
         }
 
         .description-card h3 {
@@ -239,7 +231,6 @@
             margin-bottom: 30px;
         }
 
-        /* Mini cards container */
         .mini-cards-container {
             width: 100%;
             overflow-x: auto;
@@ -258,7 +249,6 @@
             display: flex;
             gap: 25px;
             padding: 15px;
-            transition: transform 0.5s ease-out;
             width: max-content;
         }
 
@@ -269,22 +259,15 @@
             overflow: hidden;
             flex-shrink: 0;
             cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 3px solid rgba(100, 255, 218, 0.3);
             position: relative;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .mini-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
         }
 
         .mini-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.5s;
         }
 
         .mini-card.active {
@@ -331,7 +314,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        /* Responsive layout */
         @media (min-width: 992px) {
             .profile-section {
                 display: flex;
@@ -377,7 +359,6 @@
             }
         }
 
-        /* Online users dropdown */
         .profile-badge {
             position: relative;
             display: flex;
@@ -412,7 +393,6 @@
             transform: scale(1.05);
         }
 
-        /* Modals */
         #setup-modal {
             position: fixed;
             top: 0;
@@ -651,115 +631,60 @@
             margin-top: 20px;
         }
 
-        /* Animations */
-        @keyframes cardToMain {
-            0% { 
-                transform: scale(1) translateY(0); 
-                z-index: 1;
-            }
-            50% { 
-                transform: scale(1.2) translateY(-50px); 
-                z-index: 10;
-            }
-            100% { 
-                transform: scale(1.1) translateY(0); 
-                z-index: 10;
-            }
-        }
-
-        @keyframes mainToCard {
-            0% { 
-                transform: scale(1.1) translateY(0); 
-                z-index: 10;
-            }
-            50% { 
-                transform: scale(0.8) translateY(50px); 
-                z-index: 1;
-            }
-            100% { 
-                transform: scale(1) translateY(0); 
-                z-index: 1;
-            }
-        }
-
-        @keyframes slideOutToRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        @keyframes slideOutToLeft {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-100%); opacity: 0; }
-        }
-
+        /* Animation de téléportation */
         @keyframes slideInFromRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
         }
 
         @keyframes slideInFromLeft {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
         }
 
-        @keyframes cardEnterFromRight {
-            from { transform: translateX(100vw) scale(0.8); }
-            to { transform: translateX(0) scale(1); }
+        @keyframes slideOutToRight {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
         }
 
-        @keyframes cardEnterFromLeft {
-            from { transform: translateX(-100vw) scale(0.8); }
-            to { transform: translateX(0) scale(1); }
-        }
-
-        @keyframes cardExitToRight {
-            from { transform: translateX(0) scale(1); }
-            to { transform: translateX(100vw) scale(0.8); }
-        }
-
-        @keyframes cardExitToLeft {
-            from { transform: translateX(0) scale(1); }
-            to { transform: translateX(-100vw) scale(0.8); }
-        }
-
-        .card-to-main {
-            animation: cardToMain 0.5s ease-out forwards;
-        }
-
-        .main-to-card {
-            animation: mainToCard 0.5s ease-out forwards;
-        }
-
-        .slide-out-right {
-            animation: slideOutToRight 0.5s ease-out forwards;
-        }
-
-        .slide-out-left {
-            animation: slideOutToLeft 0.5s ease-out forwards;
+        @keyframes slideOutToLeft {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
         }
 
         .slide-in-right {
-            animation: slideInFromRight 0.5s ease-out forwards;
+            animation: slideInFromRight 0.3s ease-out forwards;
         }
 
         .slide-in-left {
-            animation: slideInFromLeft 0.5s ease-out forwards;
+            animation: slideInFromLeft 0.3s ease-out forwards;
         }
 
-        .card-enter-right {
-            animation: cardEnterFromRight 0.5s ease-out forwards;
+        .slide-out-right {
+            animation: slideOutToRight 0.3s ease-out forwards;
         }
 
-        .card-enter-left {
-            animation: cardEnterFromLeft 0.5s ease-out forwards;
+        .slide-out-left {
+            animation: slideOutToLeft 0.3s ease-out forwards;
         }
 
-        .card-exit-right {
-            animation: cardExitToRight 0.5s ease-out forwards;
+        /* Animation de mise en avant */
+        @keyframes cardToMain {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
         }
 
-        .card-exit-left {
-            animation: cardExitToLeft 0.5s ease-out forwards;
+        @keyframes mainToCard {
+            0% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .card-to-main {
+            animation: cardToMain 0.3s ease-out forwards;
+        }
+
+        .main-to-card {
+            animation: mainToCard 0.3s ease-out forwards;
         }
     </style>
 </head>
@@ -900,6 +825,9 @@
             const cardWidth = 150 + 25; // Largeur de la carte + gap
             const cardTargets = ['workspace', 'homework', 'calendar', 'grades', 'resources', 'chat', 'settings'];
             let lastScrollDirection = 'right'; // 'left' ou 'right'
+            let cardPositions = [];
+            let isDragging = false;
+            let startX, scrollLeft;
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
@@ -1345,12 +1273,20 @@
                 const track = document.getElementById('mini-cards-track');
                 const container = document.getElementById('mini-cards-container');
                 
-                // Positionner initialement la track pour que la carte active soit au centre
-                updateTrackPosition();
+                // Initialiser les positions des cartes
+                miniCards.forEach((card, index) => {
+                    cardPositions[index] = index * cardWidth;
+                    card.style.transform = `translateX(${cardPositions[index]}px)`;
+                });
                 
                 // Gestion du clic sur les mini-cards
                 miniCards.forEach((card, index) => {
-                    card.addEventListener('click', function() {
+                    card.addEventListener('click', function(e) {
+                        if (isDragging) {
+                            isDragging = false;
+                            return;
+                        }
+                        
                         if (isAnimating) return;
                         
                         const targetIndex = Array.from(miniCards).indexOf(this);
@@ -1367,73 +1303,23 @@
                     });
                 });
                 
-                // Gestion du scroll horizontal
-                let isDown = false;
-                let startX;
-                let scrollLeft;
-                let lastScrollTime = 0;
-                let velocity = 0;
-                let lastFrameTime = 0;
-                let animationFrameId = null;
-                
-                // Fonction pour animer l'inertie
-                function animateInertia(timestamp) {
-                    if (!lastFrameTime) lastFrameTime = timestamp;
-                    const deltaTime = timestamp - lastFrameTime;
-                    lastFrameTime = timestamp;
-                    
-                    if (Math.abs(velocity) > 0.1) {
-                        container.scrollLeft += velocity * deltaTime / 16;
-                        velocity *= 0.95; // Facteur de friction
-                        animationFrameId = requestAnimationFrame(animateInertia);
-                    } else {
-                        velocity = 0;
-                        cancelAnimationFrame(animationFrameId);
-                        animationFrameId = null;
-                        
-                        // Snap to nearest card after inertia
-                        const cardIndex = Math.round(container.scrollLeft / cardWidth);
-                        navigateToCard(cardIndex);
-                    }
-                }
-                
+                // Gestion du drag and scroll
                 container.addEventListener('mousedown', (e) => {
-                    isDown = true;
+                    isDragging = true;
                     startX = e.pageX - container.offsetLeft;
                     scrollLeft = container.scrollLeft;
-                    lastScrollTime = Date.now();
-                    velocity = 0;
-                    if (animationFrameId) {
-                        cancelAnimationFrame(animationFrameId);
-                        animationFrameId = null;
-                    }
                 });
                 
                 container.addEventListener('mouseleave', () => {
-                    isDown = false;
+                    isDragging = false;
                 });
                 
                 container.addEventListener('mouseup', () => {
-                    isDown = false;
-                    const now = Date.now();
-                    const deltaTime = now - lastScrollTime;
-                    
-                    if (deltaTime > 0) {
-                        const deltaX = container.scrollLeft - scrollLeft;
-                        velocity = deltaX / deltaTime * 10; // Calcul de la vitesse
-                        
-                        if (Math.abs(velocity) > 1) {
-                            animationFrameId = requestAnimationFrame(animateInertia);
-                        } else {
-                            // Snap to nearest card if slow movement
-                            const cardIndex = Math.round(container.scrollLeft / cardWidth);
-                            navigateToCard(cardIndex);
-                        }
-                    }
+                    isDragging = false;
                 });
                 
                 container.addEventListener('mousemove', (e) => {
-                    if(!isDown) return;
+                    if(!isDragging) return;
                     e.preventDefault();
                     const x = e.pageX - container.offsetLeft;
                     const walk = (x - startX) * 2;
@@ -1442,43 +1328,25 @@
                 
                 // Pour les appareils tactiles
                 container.addEventListener('touchstart', (e) => {
-                    isDown = true;
+                    isDragging = true;
                     startX = e.touches[0].pageX - container.offsetLeft;
                     scrollLeft = container.scrollLeft;
-                    lastScrollTime = Date.now();
-                    velocity = 0;
-                    if (animationFrameId) {
-                        cancelAnimationFrame(animationFrameId);
-                        animationFrameId = null;
-                    }
                 }, { passive: false });
                 
                 container.addEventListener('touchend', () => {
-                    isDown = false;
-                    const now = Date.now();
-                    const deltaTime = now - lastScrollTime;
-                    
-                    if (deltaTime > 0) {
-                        const deltaX = container.scrollLeft - scrollLeft;
-                        velocity = deltaX / deltaTime * 10; // Calcul de la vitesse
-                        
-                        if (Math.abs(velocity) > 1) {
-                            animationFrameId = requestAnimationFrame(animateInertia);
-                        } else {
-                            // Snap to nearest card if slow movement
-                            const cardIndex = Math.round(container.scrollLeft / cardWidth);
-                            navigateToCard(cardIndex);
-                        }
-                    }
+                    isDragging = false;
                 });
                 
                 container.addEventListener('touchmove', (e) => {
-                    if(!isDown) return;
+                    if(!isDragging) return;
                     e.preventDefault();
                     const x = e.touches[0].pageX - container.offsetLeft;
                     const walk = (x - startX) * 2;
                     container.scrollLeft = scrollLeft - walk;
                 }, { passive: false });
+                
+                // Positionner initialement la track pour que la carte active soit au centre
+                updateTrackPosition();
             }
             
             function navigateToCard(targetIndex) {
@@ -1502,15 +1370,15 @@
                     if (index !== currentCardIndex && index !== targetIndex) {
                         if (lastScrollDirection === 'right') {
                             if (index > currentCardIndex && index < targetIndex) {
-                                card.classList.add('card-exit-left');
+                                card.classList.add('slide-out-left');
                             } else if (index < currentCardIndex || index > targetIndex) {
-                                card.classList.add('card-enter-right');
+                                card.classList.add('slide-in-right');
                             }
                         } else {
                             if (index < currentCardIndex && index > targetIndex) {
-                                card.classList.add('card-exit-right');
+                                card.classList.add('slide-out-right');
                             } else if (index > currentCardIndex || index < targetIndex) {
-                                card.classList.add('card-enter-left');
+                                card.classList.add('slide-in-left');
                             }
                         }
                     }
@@ -1519,6 +1387,24 @@
                 setTimeout(() => {
                     // Mettre à jour l'index courant
                     currentCardIndex = targetIndex;
+                    
+                    // Téléporter les cartes si nécessaire
+                    const miniCards = document.querySelectorAll('.mini-card');
+                    const containerWidth = document.querySelector('.mini-cards-container').offsetWidth;
+                    
+                    miniCards.forEach((card, index) => {
+                        const cardRect = card.getBoundingClientRect();
+                        
+                        // Téléportation droite → gauche
+                        if (cardRect.right < -cardWidth) {
+                            card.style.transform = `translateX(${containerWidth + (index * cardWidth)}px)`;
+                        }
+                        
+                        // Téléportation gauche → droite
+                        if (cardRect.left > containerWidth + cardWidth) {
+                            card.style.transform = `translateX(${-cardWidth + (index * cardWidth)}px)`;
+                        }
+                    });
                     
                     // Mettre à jour la position de la track
                     updateTrackPosition();
@@ -1534,11 +1420,11 @@
                         
                         // Réinitialiser les animations des autres cartes
                         miniCards.forEach(card => {
-                            card.classList.remove('card-exit-left', 'card-exit-right', 'card-enter-left', 'card-enter-right');
+                            card.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-left', 'slide-in-right');
                         });
                         
                         isAnimating = false;
-                    }, 500);
+                    }, 300);
                 }, 300);
             }
             
@@ -1616,7 +1502,7 @@
                     
                     setTimeout(() => {
                         descriptionCard.classList.remove('slide-in-right', 'slide-in-left');
-                    }, 500);
+                    }, 300);
                 }, 300);
             }
         </script>
