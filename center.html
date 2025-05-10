@@ -4,10 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CommandHub | SchoolReport</title>
-  <link rel="preload" href="photos/background1.webp" as="image">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
   <style>
     :root {
       --primary-blue: rgba(67, 97, 238, 0.8);
@@ -15,217 +11,229 @@
       --glass-color: rgba(255, 255, 255, 0.1);
       --glass-border: rgba(255, 255, 255, 0.2);
       --text-light: #f8f9fa;
-      --text-dark: #212529;
     }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
-
     body {
       min-height: 100vh;
-      background-image: url('photos/background1.webp');
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      overflow: hidden;
+      background: url('photos/background1.webp') center/cover fixed no-repeat;
       color: var(--text-light);
+      position: relative;
     }
-
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
       z-index: 0;
-      pointer-events: none;
     }
-
-    .intro-screen {
+    .loader {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 10;
-      transition: opacity 0.5s ease;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 9999;
     }
-
-    .intro-screen h1 {
-      font-size: 3.5rem;
-      background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-      -webkit-background-clip: text;
-      color: transparent;
-      animation: pulse 2s infinite;
+    .loader .bar {
+      width: 60px; height: 60px;
+      border: 8px solid var(--primary-blue);
+      border-top: 8px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
     }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+    .loader p {
+      font-size: 18px;
     }
-
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 100px auto;
-      padding: 20px;
       background: var(--glass-color);
       border: 1px solid var(--glass-border);
       border-radius: 20px;
+      padding: 30px;
       backdrop-filter: blur(10px);
     }
-
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
-
-    .logo h1 {
-      color: var(--primary-blue);
-      font-size: 28px;
-    }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
     .user-avatar {
-      width: 40px;
-      height: 40px;
+      width: 45px; height: 45px;
       border-radius: 50%;
-      background-color: var(--primary-blue);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      overflow: hidden;
+      background: var(--primary-blue);
+      display: flex; align-items: center; justify-content: center;
       font-weight: bold;
-    }
-
-    .welcome-section {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-    }
-
-    .action-card {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--glass-border);
-      border-radius: 15px;
-      padding: 30px;
-      text-align: center;
-      transition: all 0.3s;
       color: white;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
-
+    .actions-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .action-card {
+      flex: 1 1 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid var(--glass-border);
+      transition: 0.3s;
+    }
     .action-card:hover {
       transform: translateY(-5px);
-      background-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.15);
     }
-
     .action-btn {
       display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: var(--primary-blue);
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: var(--primary-blue);
       color: white;
       border-radius: 8px;
       text-decoration: none;
+    }
+    .user-entry {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.05);
+      padding: 8px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .user-avatar-small {
+      width: 35px; height: 35px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--primary-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: bold;
     }
-
-    .action-btn:hover {
-      background-color: var(--primary-green);
-    }
+    .user-status.online { color: #2ecc71; }
+    .user-status.offline { color: #e74c3c; }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
-  <div class="intro-screen" id="intro">
-    <h1 class="animate__animated animate__fadeInDown">Welcome to CommandHub</h1>
+  <div class="loader" id="loader">
+    <div class="bar"></div>
+    <p>Chargement en cours...</p>
+    <audio id="welcomeAudio" src="https://cdn.pixabay.com/audio/2022/03/26/audio_d3e27b8d3b.mp3" preload="auto"></audio>
   </div>
 
-  <div class="container animate__animated animate__fadeInUp" id="dashboard" style="display:none;">
+  <div class="container" id="dashboard" style="display:none;">
     <header>
-      <div class="logo"><h1>SchoolReport</h1></div>
-      <div class="user-menu">
-        <div class="user-avatar">U</div>
-        <button class="action-btn" onclick="logout()">Déconnexion</button>
+      <h1>CommandHub</h1>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div id="user-name">Utilisateur</div>
       </div>
     </header>
 
-    <div class="welcome-section">
-      <h2>Bienvenue sur votre espace de travail</h2>
-      <p>Choisissez une action ci-dessous pour commencer.</p>
-    </div>
+    <section class="actions-grid">
+      <div class="action-card"><h3>Messagerie</h3><a class="action-btn" href="chat.html">Ouvrir</a></div>
+      <div class="action-card"><h3>Devoirs</h3><a class="action-btn" href="homework.html">Accéder</a></div>
+      <div class="action-card"><h3>Calendrier</h3><a class="action-btn" href="calendar.html">Voir</a></div>
+      <div class="action-card"><h3>Codex</h3><a class="action-btn" href="Codex.html">Lire</a></div>
+      <div class="action-card"><h3>Fichiers</h3><a class="action-btn" href="files.html">Envoyer</a></div>
+      <div class="action-card"><h3>Bloc Notes</h3><a class="action-btn" href="bloc note.html">Notes</a></div>
+    </section>
 
-    <div class="actions-grid">
-      <div class="action-card">
-        <h3>Messagerie</h3>
-        <p>Accédez à vos discussions</p>
-        <a class="action-btn" href="chat.html">Ouvrir</a>
-      </div>
-      <div class="action-card">
-        <h3>Calendrier</h3>
-        <p>Consultez votre emploi du temps</p>
-        <a class="action-btn" href="calendar.html">Voir</a>
-      </div>
-      <div class="action-card">
-        <h3>Devoirs</h3>
-        <p>Gérez vos tâches à faire</p>
-        <a class="action-btn" href="homework.html">Accéder</a>
-      </div>
-      <div class="action-card">
-        <h3>Codex</h3>
-        <p>Créez ou consultez vos dissertations</p>
-        <a class="action-btn" href="Codex.html">Ouvrir</a>
-      </div>
-      <div class="action-card">
-        <h3>Transfert de fichiers</h3>
-        <p>Partagez des fichiers avec vos collègues</p>
-        <a class="action-btn" href="files.html">Accéder</a>
-      </div>
-      <div class="action-card">
-        <h3>Bloc Notes</h3>
-        <p>Organisez vos notes quotidiennes</p>
-        <a class="action-btn" href="bloc note.html">Ouvrir</a>
-      </div>
-    </div>
+    <h2 style="margin-top:40px;">Utilisateurs connectés</h2>
+    <div id="users-list"></div>
   </div>
 
-  <script>
-    window.onload = () => {
-      setTimeout(() => {
-        document.getElementById('intro').style.opacity = 0;
-        setTimeout(() => {
-          document.getElementById('intro').style.display = 'none';
-          document.getElementById('dashboard').style.display = 'block';
-        }, 500);
-      }, 1800);
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+      authDomain: "schoolreport-f8db0.firebaseapp.com",
+      databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "schoolreport-f8db0",
+      storageBucket: "schoolreport-f8db0.appspot.com",
+      messagingSenderId: "313069994450",
+      appId: "1:313069994450:web:37b009be4f1812fdca880b"
     };
 
-    particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/particles.json');
-    function logout() {
-      window.location.href = 'index.html';
-    }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        document.getElementById('user-name').textContent = user.displayName || 'Utilisateur';
+        if (user.photoURL) {
+          const img = document.createElement('img');
+          img.src = user.photoURL;
+          img.alt = 'Avatar';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          const avatar = document.getElementById('user-avatar');
+          avatar.innerHTML = '';
+          avatar.appendChild(img);
+        }
+
+        const userRef = ref(db, 'users/' + user.uid);
+        set(userRef, {
+          name: user.displayName || 'Utilisateur',
+          photoURL: user.photoURL || '',
+          online: true
+        });
+        onDisconnect(userRef).update({ online: false });
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    const usersRef = ref(db, 'users');
+    onValue(usersRef, snapshot => {
+      const list = document.getElementById('users-list');
+      list.innerHTML = '';
+      snapshot.forEach(child => {
+        const user = child.val();
+        const div = document.createElement('div');
+        div.className = 'user-entry';
+        div.innerHTML = `
+          <div class="user-avatar-small">
+            ${user.photoURL ? `<img src="${user.photoURL}" style="width:100%; height:100%; object-fit:cover;">` : user.name[0]}
+          </div>
+          <div>
+            <div class="user-name">${user.name}</div>
+            <div class="user-status ${user.online ? 'online' : 'offline'}">${user.online ? 'En ligne' : 'Hors ligne'}</div>
+          </div>`;
+        list.appendChild(div);
+      });
+    });
+
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('welcomeAudio').play().catch(() => {});
+      }, 2000);
+    });
   </script>
 </body>
 </html>
