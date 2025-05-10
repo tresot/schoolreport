@@ -1,10 +1,11 @@
+Optimized HTML Login Form Design
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SchoolReport - Connexion</title>
-    <link rel="preload" href="photos/background1.webp" as="image" loading="lazy">
+    <link rel="preload" href="photos/background1.webp" as="image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -54,20 +55,17 @@
     </script>
     <style>
         :root {
-            --primary-blue: rgba(67, 97, 238, 0.8);
-            --primary-green: rgba(76, 201, 240, 0.8);
-            --secondary-color: rgba(63, 55, 201, 0.8);
+            --primary-blue: rgba(67, 97, 238, 0.2);      /* bleu légèrement transparent */
+            --primary-green: rgba(76, 201, 240, 0.2);    /* vert légèrement transparent */
+            --secondary-color: rgba(63, 55, 201, 0.2);
             --accent-color: #4895ef;
             --light-color: #f8f9fa;
             --dark-color: #212529;
             --success-color: #4cc9f0;
             --error-color: #f72585;
-            --glass-color: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glow-color: rgba(67, 97, 238, 0.08);
-            --input-padding: 15px;
-            --border-radius: 8px;
-            --transition: 0.3s ease;
+            --glass-color: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glow-color: rgba(67, 97, 238, 0.05);
         }
 
         * {
@@ -82,12 +80,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('photos/background1.webp');
+            background-image: url('photos/background1.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             position: relative;
             overflow-x: hidden;
+            will-change: background-image;
         }
 
         body::before {
@@ -97,13 +96,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 0;
-            transition: backdrop-filter 0.5s ease;
-        }
-
-        body.scrolled::before {
-            backdrop-filter: blur(0);
         }
 
         #particles-js {
@@ -112,7 +106,6 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.8;
         }
 
         .intro-screen {
@@ -127,7 +120,9 @@
             align-items: center;
             color: white;
             z-index: 100;
+            background-color: rgba(0, 0, 0, 0.8);
             transition: opacity 0.5s ease-out;
+            will-change: opacity;
         }
 
         .intro-screen h1 {
@@ -182,16 +177,17 @@
             max-width: 450px;
             background: var(--glass-color);
             border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             padding: 40px;
             margin: 20px;
             border: 1px solid var(--glass-border);
             transform: translateY(100px);
             opacity: 0;
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            will-change: transform, opacity;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         .container::before {
@@ -209,12 +205,13 @@
             z-index: -1;
             border-radius: 22px;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, box-shadow 0.3s;
             animation: glowBorder 8s linear infinite;
         }
 
         .container.visible::before {
             opacity: 0.8;
+            box-shadow: 0 0 20px var(--glow-color);
         }
 
         .container.visible {
@@ -266,7 +263,7 @@
             text-align: center;
             margin-bottom: 20px;
             min-height: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             padding: 10px;
             border-radius: 5px;
             animation: fadeIn 0.5s ease-out;
@@ -294,21 +291,23 @@
             font-weight: 500;
         }
 
-        input {
+        .form-group input {
             width: 100%;
-            padding: var(--input-padding);
+            padding: 15px 45px 15px 15px;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             font-size: 14px;
+            transition: all 0.3s;
             background: rgba(255, 255, 255, 0.1);
             color: white;
+            will-change: transform, box-shadow;
         }
 
-        input::placeholder {
+        .form-group input::placeholder {
             color: rgba(255, 255, 255, 0.6);
         }
 
-        input:focus {
+        .form-group input:focus {
             border-color: var(--primary-blue);
             outline: none;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
@@ -316,7 +315,7 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        input:valid {
+        .form-group input:valid {
             border-color: var(--primary-green);
         }
 
@@ -333,11 +332,12 @@
             border: none;
             cursor: pointer;
             color: rgba(255, 255, 255, 0.6);
-            transition: color var(--transition);
+            transition: all 0.3s;
         }
 
         .toggle-password:hover {
             color: white;
+            transform: translateY(-50%) scale(1.1);
         }
 
         .remember-forgot {
@@ -362,7 +362,7 @@
         .forgot-password a {
             color: var(--light-color);
             text-decoration: none;
-            transition: color var(--transition);
+            transition: color 0.3s;
         }
 
         .forgot-password a:hover {
@@ -372,18 +372,19 @@
 
         .submit-btn {
             width: 100%;
-            padding: var(--input-padding);
+            padding: 15px;
             background: linear-gradient(45deg, var(--primary-blue), var(--secondary-color));
             color: white;
             border: none;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition);
+            transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
             position: relative;
             overflow: hidden;
+            will-change: transform, box-shadow;
         }
 
         .submit-btn:hover {
@@ -393,6 +394,27 @@
 
         .submit-btn:active {
             transform: translateY(1px);
+        }
+
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:hover::after {
+            opacity: 1;
+        }
+
+        .submit-btn span {
+            position: relative;
+            z-index: 1;
         }
 
         .toggle-form {
@@ -406,7 +428,7 @@
             color: var(--primary-blue);
             text-decoration: none;
             font-weight: 600;
-            transition: color var(--transition);
+            transition: all 0.3s;
         }
 
         .toggle-form a:hover {
@@ -427,8 +449,9 @@
             cursor: pointer;
             color: rgba(255, 255, 255, 0.6);
             font-weight: 600;
-            transition: color var(--transition);
+            transition: all 0.3s;
             border-bottom: 3px solid transparent;
+            position: relative;
         }
 
         .nav-tab.active {
@@ -438,6 +461,20 @@
 
         .nav-tab:hover {
             color: white;
+        }
+
+        .cursor-effect {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.5);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            mix-blend-mode: screen;
+            transition: transform 0.1s ease;
+            will-change: transform;
         }
 
         .ripple {
@@ -507,11 +544,7 @@
             }
         }
 
-        @media (max-width: 768px) {
-            #particles-js {
-                display: none;
-            }
-            
+        @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
                 border-radius: 15px;
@@ -551,6 +584,8 @@
             <div class="scroll-arrow"></div>
         </div>
     </div>
+
+    <div class="cursor-effect" id="cursor-effect"></div>
 
     <div class="container" id="login-container">
         <div class="logo">
@@ -646,11 +681,11 @@
     <script>
         // Initialisation des particules (optimisé pour performance)
         function initParticles() {
-            if (window.innerWidth > 768) { // Seulement sur desktop pour performance
+            if (window.innerWidth > 768) { // Seulement sur desktop
                 particlesJS('particles-js', {
                     "particles": {
                         "number": {
-                            "value": 80,
+                            "value": 60,
                             "density": {
                                 "enable": true,
                                 "value_area": 800
@@ -677,7 +712,7 @@
                             }
                         },
                         "size": {
-                            "value": 3,
+                            "value": 4,
                             "random": true,
                             "anim": {
                                 "enable": false,
@@ -690,7 +725,7 @@
                             "enable": true,
                             "distance": 150,
                             "color": "#ffffff",
-                            "opacity": 0.3,
+                            "opacity": 0.4,
                             "width": 1
                         },
                         "move": {
@@ -726,7 +761,6 @@
                 });
             }
         }
-
         // Gestion optimisée du scroll
         function handleScroll() {
             const introScreen = document.querySelector('.intro-screen');
@@ -739,7 +773,6 @@
                     introScreen.style.pointerEvents = 'none';
                     loginContainer.style.opacity = (scrollPosition - 50) / 100;
                     loginContainer.style.transform = `translateY(${Math.max(0, 100 - scrollPosition)}px`;
-                    document.body.classList.add('scrolled');
                     
                     if (scrollPosition > 150) {
                         loginContainer.classList.add('visible');
@@ -751,7 +784,6 @@
                     introScreen.style.pointerEvents = 'auto';
                     loginContainer.style.opacity = '0';
                     loginContainer.style.transform = 'translateY(100px)';
-                    document.body.classList.remove('scrolled');
                 }
             });
         }
@@ -792,6 +824,61 @@
                 `;
             }
             input.focus();
+        }
+
+        // Effet de curseur personnalisé optimisé
+        function initCursorEffect() {
+            const cursor = document.getElementById('cursor-effect');
+            let lastX = 0;
+            let lastY = 0;
+            let mouseX = 0;
+            let mouseY = 0;
+            let scale = 1;
+            let isInteractive = false;
+            
+            function moveCursor() {
+                const dx = mouseX - lastX;
+                const dy = mouseY - lastY;
+                
+                lastX += dx * 0.2;
+                lastY += dy * 0.2;
+                
+                cursor.style.transform = `translate(${lastX}px, ${lastY}px) scale(${scale})`;
+                
+                requestAnimationFrame(moveCursor);
+            }
+            
+            moveCursor();
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (!isInteractive) {
+                    const interactiveElements = document.querySelectorAll('button, a, input, .nav-tab');
+                    isInteractive = Array.from(interactiveElements).some(el => el.matches(':hover'));
+                    
+                    if (isInteractive) {
+                        scale = 2;
+                        cursor.style.background = 'rgba(67, 97, 238, 0.3)';
+                    } else {
+                        scale = 1;
+                        cursor.style.background = 'rgba(67, 97, 238, 0.5)';
+                    }
+                }
+            });
+            
+            document.addEventListener('mouseout', () => {
+                isInteractive = false;
+            });
+            
+            document.addEventListener('mousedown', () => {
+                scale = 0.8;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                scale = isInteractive ? 2 : 1;
+            });
         }
 
         // Mise à jour de l'heure
@@ -838,6 +925,9 @@
             // Initialiser les particules
             initParticles();
             
+            // Initialiser le changement de fond d'écran avec préchargement
+            changeBackground();
+            
             // Ajouter les écouteurs d'événements pour les boutons de visibilité du mot de passe
             document.querySelectorAll('.toggle-password').forEach(button => {
                 button.addEventListener('click', function() {
@@ -845,6 +935,9 @@
                     togglePasswordVisibility(inputId);
                 });
             });
+            
+            // Initialiser l'effet de curseur optimisé
+            initCursorEffect();
             
             // Initialiser l'effet ripple
             initRippleEffect();
