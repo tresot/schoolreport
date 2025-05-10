@@ -329,39 +329,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        /* Navigation arrows */
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(16, 36, 69, 0.7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            border: 2px solid rgba(100, 255, 218, 0.3);
-            transition: all 0.3s;
-            opacity: 0.7;
-        }
-
-        .nav-arrow:hover {
-            opacity: 1;
-            background: rgba(16, 36, 69, 0.9);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .nav-arrow.left {
-            left: 20px;
-        }
-
-        .nav-arrow.right {
-            right: 20px;
-        }
-
         /* Responsive layout */
         @media (min-width: 992px) {
             .profile-section {
@@ -688,19 +655,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes scaleIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes cardToMain {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.2) translateY(-50px); }
+            100% { transform: scale(1.1) translateY(0); }
         }
 
-        @keyframes slideInFromRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideInFromLeft {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes mainToCard {
+            0% { transform: scale(1.1) translateY(0); }
+            50% { transform: scale(0.8) translateY(50px); }
+            100% { transform: scale(1) translateY(0); }
         }
 
         @keyframes slideOutToRight {
@@ -713,14 +677,14 @@
             to { transform: translateX(-100%); opacity: 0; }
         }
 
-        @keyframes cardGrow {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); }
+        @keyframes slideInFromRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        @keyframes cardShrink {
-            from { transform: scale(1.05); }
-            to { transform: scale(1); }
+        @keyframes slideInFromLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .profile-card, .description-card {
@@ -731,12 +695,14 @@
             animation: fadeIn 0.8s ease-out forwards;
         }
 
-        .slide-in-right {
-            animation: slideInFromRight 0.5s ease-out forwards;
+        .card-to-main {
+            animation: cardToMain 0.5s ease-out forwards;
+            z-index: 10;
         }
 
-        .slide-in-left {
-            animation: slideInFromLeft 0.5s ease-out forwards;
+        .main-to-card {
+            animation: mainToCard 0.5s ease-out forwards;
+            z-index: 5;
         }
 
         .slide-out-right {
@@ -747,12 +713,12 @@
             animation: slideOutToLeft 0.5s ease-out forwards;
         }
 
-        .grow-card {
-            animation: cardGrow 0.3s ease-out forwards;
+        .slide-in-right {
+            animation: slideInFromRight 0.5s ease-out forwards;
         }
 
-        .shrink-card {
-            animation: cardShrink 0.3s ease-out forwards;
+        .slide-in-left {
+            animation: slideInFromLeft 0.5s ease-out forwards;
         }
     </style>
 </head>
@@ -782,7 +748,7 @@
         <div id="image-input-modal">
             <div class="image-input-container">
                 <h3>Changer la photo de profil</h3>
-                <p>Entrez le nom de la photo (format .webp)</p>
+                <p>Entrez le nom de la photo (sans extension .webp)</p>
                 <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off">
                 <div class="image-input-buttons">
                     <button class="logout-btn" id="cancel-image-btn">Annuler</button>
@@ -841,37 +807,34 @@
                         </div>
                     </div>
 
-                    <div class="mini-cards-container">
-                        <div class="nav-arrow left" id="nav-left">←</div>
-                        <div class="nav-arrow right" id="nav-right">→</div>
-                        
+                    <div class="mini-cards-container" id="mini-cards-container">
                         <div class="mini-cards-track" id="mini-cards-track">
-                            <div class="mini-card active" data-target="workspace">
-                                <img src="photos/workspace.webp" alt="Espace de travail">
+                            <div class="mini-card" data-target="workspace">
+                                <img src="photos/mini_workspace.webp" alt="Espace de travail">
                                 <div class="card-title">Espace de travail</div>
                             </div>
                             <div class="mini-card" data-target="homework">
-                                <img src="photos/homework.webp" alt="Devoirs">
+                                <img src="photos/mini_homework.webp" alt="Devoirs">
                                 <div class="card-title">Gestion des devoirs</div>
                             </div>
                             <div class="mini-card" data-target="calendar">
-                                <img src="photos/calendar.webp" alt="Calendrier">
+                                <img src="photos/mini_calendar.webp" alt="Calendrier">
                                 <div class="card-title">Calendrier</div>
                             </div>
                             <div class="mini-card" data-target="grades">
-                                <img src="photos/grades.webp" alt="Notes">
+                                <img src="photos/mini_grades.webp" alt="Notes">
                                 <div class="card-title">Notes</div>
                             </div>
                             <div class="mini-card" data-target="resources">
-                                <img src="photos/resources.webp" alt="Ressources">
+                                <img src="photos/mini_resources.webp" alt="Ressources">
                                 <div class="card-title">Ressources</div>
                             </div>
-                            <div class="mini-card" data-target="chat">
-                                <img src="photos/chat.webp" alt="Messagerie">
+                            <div class="mini-card active" data-target="chat">
+                                <img src="photos/mini_chat.webp" alt="Messagerie">
                                 <div class="card-title">Messagerie</div>
                             </div>
                             <div class="mini-card" data-target="settings">
-                                <img src="photos/settings.webp" alt="Paramètres">
+                                <img src="photos/mini_settings.webp" alt="Paramètres">
                                 <div class="card-title">Paramètres</div>
                             </div>
                         </div>
@@ -895,6 +858,7 @@
             let isAnimating = false;
             const cardWidth = 150 + 25; // Largeur de la carte + gap
             const cardTargets = ['workspace', 'homework', 'calendar', 'grades', 'resources', 'chat', 'settings'];
+            let lastScrollDirection = 'right'; // 'left' ou 'right'
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
@@ -1240,6 +1204,19 @@
                     
                     handleImageImport(`photos/${imageName}.webp`);
                 });
+
+                // Gestion des touches du clavier
+                document.addEventListener('keydown', (e) => {
+                    if (isAnimating) return;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        navigateToCard((currentCardIndex - 1 + 7) % 7);
+                        lastScrollDirection = 'left';
+                    } else if (e.key === 'ArrowRight') {
+                        navigateToCard((currentCardIndex + 1) % 7);
+                        lastScrollDirection = 'right';
+                    }
+                });
             }
 
             function setupLongPressAvatar() {
@@ -1316,7 +1293,7 @@
                 };
                 
                 img.onerror = function() {
-                    alert("Image non trouvée. Vérifiez le nom et assurez-vous qu'elle est au format .webp");
+                    alert("Image non trouvée. Vérifiez le nom et assurez-vous qu'elle est au format .webp dans le dossier photos/");
                 };
                 
                 img.src = imageUrl;
@@ -1325,8 +1302,7 @@
             function initMiniCards() {
                 const miniCards = document.querySelectorAll('.mini-card');
                 const track = document.getElementById('mini-cards-track');
-                const leftArrow = document.getElementById('nav-left');
-                const rightArrow = document.getElementById('nav-right');
+                const container = document.getElementById('mini-cards-container');
                 
                 // Positionner initialement la track pour que la carte active soit au centre
                 updateTrackPosition();
@@ -1339,65 +1315,90 @@
                         const targetIndex = Array.from(miniCards).indexOf(this);
                         if (targetIndex === currentCardIndex) return;
                         
+                        // Déterminer la direction du scroll
+                        lastScrollDirection = targetIndex > currentCardIndex ? 'right' : 'left';
+                        if (Math.abs(targetIndex - currentCardIndex) > 3) {
+                            // Cas spécial pour le "loop"
+                            lastScrollDirection = targetIndex > currentCardIndex ? 'left' : 'right';
+                        }
+                        
                         navigateToCard(targetIndex);
                     });
-                });
-                
-                // Gestion des flèches de navigation
-                leftArrow.addEventListener('click', () => {
-                    if (isAnimating) return;
-                    navigateToCard((currentCardIndex - 1 + miniCards.length) % miniCards.length);
-                });
-                
-                rightArrow.addEventListener('click', () => {
-                    if (isAnimating) return;
-                    navigateToCard((currentCardIndex + 1) % miniCards.length);
                 });
                 
                 // Gestion du scroll horizontal
                 let isDown = false;
                 let startX;
                 let scrollLeft;
+                let lastScrollTime = 0;
                 
-                track.addEventListener('mousedown', (e) => {
+                container.addEventListener('mousedown', (e) => {
                     isDown = true;
-                    startX = e.pageX - track.offsetLeft;
-                    scrollLeft = track.scrollLeft;
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                    lastScrollTime = Date.now();
                 });
                 
-                track.addEventListener('mouseleave', () => {
+                container.addEventListener('mouseleave', () => {
                     isDown = false;
                 });
                 
-                track.addEventListener('mouseup', () => {
+                container.addEventListener('mouseup', () => {
                     isDown = false;
+                    // Détecter un swipe rapide
+                    if (Date.now() - lastScrollTime < 200) {
+                        const delta = container.scrollLeft - scrollLeft;
+                        if (Math.abs(delta) > 50) {
+                            if (delta > 0) {
+                                navigateToCard((currentCardIndex - 1 + 7) % 7);
+                                lastScrollDirection = 'left';
+                            } else {
+                                navigateToCard((currentCardIndex + 1) % 7);
+                                lastScrollDirection = 'right';
+                            }
+                        }
+                    }
                 });
                 
-                track.addEventListener('mousemove', (e) => {
+                container.addEventListener('mousemove', (e) => {
                     if(!isDown) return;
                     e.preventDefault();
-                    const x = e.pageX - track.offsetLeft;
+                    const x = e.pageX - container.offsetLeft;
                     const walk = (x - startX) * 2;
-                    track.scrollLeft = scrollLeft - walk;
+                    container.scrollLeft = scrollLeft - walk;
                 });
                 
                 // Pour les appareils tactiles
-                track.addEventListener('touchstart', (e) => {
+                container.addEventListener('touchstart', (e) => {
                     isDown = true;
-                    startX = e.touches[0].pageX - track.offsetLeft;
-                    scrollLeft = track.scrollLeft;
+                    startX = e.touches[0].pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                    lastScrollTime = Date.now();
                 });
                 
-                track.addEventListener('touchend', () => {
+                container.addEventListener('touchend', () => {
                     isDown = false;
+                    // Détecter un swipe rapide
+                    if (Date.now() - lastScrollTime < 200) {
+                        const delta = container.scrollLeft - scrollLeft;
+                        if (Math.abs(delta) > 50) {
+                            if (delta > 0) {
+                                navigateToCard((currentCardIndex - 1 + 7) % 7);
+                                lastScrollDirection = 'left';
+                            } else {
+                                navigateToCard((currentCardIndex + 1) % 7);
+                                lastScrollDirection = 'right';
+                            }
+                        }
+                    }
                 });
                 
-                track.addEventListener('touchmove', (e) => {
+                container.addEventListener('touchmove', (e) => {
                     if(!isDown) return;
                     e.preventDefault();
-                    const x = e.touches[0].pageX - track.offsetLeft;
+                    const x = e.touches[0].pageX - container.offsetLeft;
                     const walk = (x - startX) * 2;
-                    track.scrollLeft = scrollLeft - walk;
+                    container.scrollLeft = scrollLeft - walk;
                 });
             }
             
@@ -1410,15 +1411,12 @@
                 const currentCard = miniCards[currentCardIndex];
                 const targetCard = miniCards[targetIndex];
                 
-                // Animation de sortie de la carte actuelle
-                descriptionCard.classList.add('slide-out-left');
-                
-                // Animation de la mini-card actuelle qui devient inactive
+                // Animation de la mini-card actuelle qui redevient normale
                 currentCard.classList.remove('active');
-                currentCard.classList.add('shrink-card');
+                currentCard.classList.add('main-to-card');
                 
-                // Animation de la mini-card cible qui devient active
-                targetCard.classList.add('grow-card');
+                // Animation de la mini-card cible qui devient principale
+                targetCard.classList.add('card-to-main');
                 
                 setTimeout(() => {
                     // Mettre à jour l'index courant
@@ -1428,18 +1426,13 @@
                     updateTrackPosition();
                     
                     // Mettre à jour la description card
-                    updateDescriptionCard(targetCard.getAttribute('data-target'));
+                    updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
                     
-                    // Animation d'entrée de la nouvelle carte
-                    descriptionCard.classList.remove('slide-out-left');
-                    descriptionCard.classList.add('slide-in-right');
-                    
-                    // Retirer les classes d'animation
+                    // Finaliser les animations
                     setTimeout(() => {
                         targetCard.classList.add('active');
-                        targetCard.classList.remove('grow-card');
-                        currentCard.classList.remove('shrink-card');
-                        descriptionCard.classList.remove('slide-in-right');
+                        targetCard.classList.remove('card-to-main');
+                        currentCard.classList.remove('main-to-card');
                         isAnimating = false;
                     }, 500);
                 }, 300);
@@ -1453,59 +1446,74 @@
                 track.style.transform = `translateX(${targetPosition}px)`;
             }
             
-            function updateDescriptionCard(target) {
+            function updateDescriptionCard(target, direction) {
                 const descriptionCard = document.getElementById('main-description-card');
                 
-                switch(target) {
-                    case 'workspace':
-                        descriptionCard.innerHTML = `
-                            <h3>Espace de travail</h3>
-                            <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants. L'espace de travail vous permet de garder tous vos documents scolaires organisés et accessibles où que vous soyez.</p>
-                            <a href="Codex.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir l'espace</a>
-                        `;
-                        break;
-                    case 'homework':
-                        descriptionCard.innerHTML = `
-                            <h3>Gestion des devoirs</h3>
-                            <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires. Le système de gestion des devoirs vous aide à rester organisé et à ne rien oublier.</p>
-                            <a href="homework.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les devoirs</a>
-                        `;
-                        break;
-                    case 'calendar':
-                        descriptionCard.innerHTML = `
-                            <h3>Calendrier et Planning</h3>
-                            <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante. Le calendrier intégré synchronise tous vos événements scolaires et personnels.</p>
-                            <a href="calendar.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir le planning</a>
-                        `;
-                        break;
-                    case 'grades':
-                        descriptionCard.innerHTML = `
-                            <h3>Notes et Évaluations</h3>
-                            <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe. Analysez vos forces et vos faiblesses pour améliorer vos résultats.</p>
-                            <a href="grades.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
-                        `;
-                        break;
-                    case 'resources':
-                        descriptionCard.innerHTML = `
-                            <h3>Ressources pédagogiques</h3>
-                            <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
-                            <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
-                        `;
-                        break;
-                    case 'settings':
-                        descriptionCard.innerHTML = `
-                            <h3>Paramètres du compte</h3>
-                            <p>Personnalisez votre expérience en modifiant vos préférences, votre profil et les paramètres de notification. Configurez SchoolReport selon vos besoins.</p>
-                            <a href="settings.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir les paramètres</a>
-                        `;
-                        break;
-                    default: // 'chat'
-                        descriptionCard.innerHTML = `
-                            <h3>Messagerie</h3>
-                            <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe. La communication simplifiée pour votre réussite scolaire.</p>
-                            <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
-                        `;
-                }
+                // Animation de sortie
+                descriptionCard.classList.add(direction === 'right' ? 'slide-out-left' : 'slide-out-right');
+                
+                setTimeout(() => {
+                    // Mettre à jour le contenu
+                    let newContent = '';
+                    switch(target) {
+                        case 'workspace':
+                            newContent = `
+                                <h3>Espace de travail</h3>
+                                <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants. L'espace de travail vous permet de garder tous vos documents scolaires organisés et accessibles où que vous soyez.</p>
+                                <a href="Codex.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir l'espace</a>
+                            `;
+                            break;
+                        case 'homework':
+                            newContent = `
+                                <h3>Gestion des devoirs</h3>
+                                <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires. Le système de gestion des devoirs vous aide à rester organisé et à ne rien oublier.</p>
+                                <a href="homework.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les devoirs</a>
+                            `;
+                            break;
+                        case 'calendar':
+                            newContent = `
+                                <h3>Calendrier et Planning</h3>
+                                <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante. Le calendrier intégré synchronise tous vos événements scolaires et personnels.</p>
+                                <a href="calendar.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir le planning</a>
+                            `;
+                            break;
+                        case 'grades':
+                            newContent = `
+                                <h3>Notes et Évaluations</h3>
+                                <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe. Analysez vos forces et vos faiblesses pour améliorer vos résultats.</p>
+                                <a href="grades.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
+                            `;
+                            break;
+                        case 'resources':
+                            newContent = `
+                                <h3>Ressources pédagogiques</h3>
+                                <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
+                                <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
+                            `;
+                            break;
+                        case 'settings':
+                            newContent = `
+                                <h3>Paramètres du compte</h3>
+                                <p>Personnalisez votre expérience en modifiant vos préférences, votre profil et les paramètres de notification. Configurez SchoolReport selon vos besoins.</p>
+                                <a href="settings.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir les paramètres</a>
+                            `;
+                            break;
+                        default: // 'chat'
+                            newContent = `
+                                <h3>Messagerie</h3>
+                                <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe. La communication simplifiée pour votre réussite scolaire.</p>
+                                <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
+                            `;
+                    }
+                    
+                    descriptionCard.innerHTML = newContent;
+                    descriptionCard.classList.remove('slide-out-left', 'slide-out-right');
+                    descriptionCard.classList.add(direction === 'right' ? 'slide-in-right' : 'slide-in-left');
+                    
+                    setTimeout(() => {
+                        descriptionCard.classList.remove('slide-in-right', 'slide-in-left');
+                    }, 500);
+                }, 300);
             }
         </script>
     </div>
