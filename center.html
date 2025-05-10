@@ -271,13 +271,29 @@
             overflow-x: auto;
             padding: 20px 0;
             margin-bottom: 40px;
-            scrollbar-width: none;
             position: relative;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
 
         .mini-cards-container::-webkit-scrollbar {
-            display: none;
+            height: 8px;
+            background: transparent;
+        }
+
+        .mini-cards-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mini-cards-container:hover::-webkit-scrollbar-thumb {
+            opacity: 0.5;
+        }
+
+        .mini-cards-container::-webkit-scrollbar-thumb:hover {
+            opacity: 1 !important;
         }
 
         .mini-cards-track {
@@ -647,6 +663,371 @@
             gap: 12px;
         }
 
+        /* Settings Panel */
+        .settings-panel {
+            display: none;
+            background: rgba(16, 36, 69, 0.9);
+            border-radius: 18px;
+            padding: 30px;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .settings-panel.show {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .settings-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .settings-tab.active {
+            color: var(--primary);
+        }
+
+        .settings-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .settings-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+        }
+
+        .settings-section h4 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .settings-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
+        }
+
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+
+        .settings-option label {
+            color: var(--text-primary);
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .settings-option p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-bg);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--text-secondary);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+            background-color: var(--light);
+        }
+
+        .friend-search {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .friend-search input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 8px 0 0 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .friend-search button {
+            padding: 0 18px;
+            background: var(--primary);
+            color: var(--light);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .friend-search button:hover {
+            background: var(--secondary);
+        }
+
+        .friend-requests {
+            margin-top: 20px;
+        }
+
+        .friend-request-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
+        }
+
+        .friend-request-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .friend-request-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            overflow: hidden;
+        }
+
+        .friend-request-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .friend-request-name {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .friend-request-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .friend-request-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .accept-btn {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        .accept-btn:hover {
+            background: var(--secondary);
+        }
+
+        .decline-btn {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--danger);
+        }
+
+        .decline-btn:hover {
+            background: rgba(230, 57, 70, 0.2);
+        }
+
+        /* Profile Switch */
+        .profile-switch {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            background: rgba(16, 36, 69, 0.5);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .profile-switch-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+        }
+
+        .profile-switch-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .profile-switch-info {
+            flex: 1;
+        }
+
+        .profile-switch-name {
+            color: var(--text-primary);
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .profile-switch-email {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .profile-switch-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .profile-switch-btn:hover {
+            color: var(--success);
+        }
+
+        .profile-switch-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--dark);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            padding: 15px;
+            width: 220px;
+            z-index: 10;
+            display: none;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .profile-switch-dropdown.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .profile-switch-dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-switch-dropdown-item:hover {
+            background: rgba(100, 255, 218, 0.05);
+        }
+
+        .profile-switch-dropdown-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-switch-dropdown-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .profile-switch-dropdown-name {
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -728,6 +1109,15 @@
                 width: 130px;
                 height: 130px;
             }
+
+            .settings-tabs {
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+
+            .settings-tabs::-webkit-scrollbar {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -752,6 +1142,11 @@
 
             .user-name {
                 display: none;
+            }
+
+            .settings-tab {
+                padding: 10px 15px;
+                font-size: 14px;
             }
         }
     </style>
@@ -841,6 +1236,147 @@
                         </div>
                     </div>
 
+                    <!-- Panel des paramètres (caché par défaut) -->
+                    <div class="settings-panel" id="settings-panel">
+                        <div class="profile-switch">
+                            <div class="profile-switch-avatar" id="current-profile-avatar">
+                                <img id="current-profile-pic">
+                                <span id="current-profile-initial">U</span>
+                            </div>
+                            <div class="profile-switch-info">
+                                <div class="profile-switch-name" id="current-profile-name">Utilisateur</div>
+                                <div class="profile-switch-email" id="current-profile-email">email@exemple.com</div>
+                            </div>
+                            <button class="profile-switch-btn" id="profile-switch-btn">
+                                <span>Changer</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            
+                            <div class="profile-switch-dropdown" id="profile-switch-dropdown">
+                                <!-- Les profils amis seront ajoutés ici dynamiquement -->
+                                <div class="profile-switch-dropdown-item" data-uid="current">
+                                    <div class="profile-switch-dropdown-avatar">
+                                        <img id="dropdown-current-pic">
+                                        <span id="dropdown-current-initial">U</span>
+                                    </div>
+                                    <div class="profile-switch-dropdown-name">Mon profil</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-tabs">
+                            <div class="settings-tab active" data-tab="account">Compte</div>
+                            <div class="settings-tab" data-tab="friends">Amis</div>
+                            <div class="settings-tab" data-tab="privacy">Confidentialité</div>
+                            <div class="settings-tab" data-tab="notifications">Notifications</div>
+                        </div>
+
+                        <div class="settings-content active" data-content="account">
+                            <div class="settings-section">
+                                <h4>Photo de profil</h4>
+                                <div class="settings-option">
+                                    <div>
+                                        <label>Changer la photo de profil</label>
+                                        <p>Format .webp recommandé</p>
+                                    </div>
+                                    <button class="setup-btn" id="change-profile-pic-btn" style="padding: 8px 16px; font-size: 14px;">Changer</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <h4>Informations personnelles</h4>
+                                <div class="settings-option">
+                                    <div>
+                                        <label>Nom d'utilisateur</label>
+                                        <p id="username-change-info">Modifiable dans 48 heures</p>
+                                    </div>
+                                    <button class="setup-btn" id="change-username-btn" style="padding: 8px 16px; font-size: 14px; background: var(--input-bg); color: var(--text-primary);" disabled>Changer</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-content" data-content="friends">
+                            <div class="settings-section">
+                                <h4>Ajouter un ami</h4>
+                                <div class="friend-search">
+                                    <input type="text" id="friend-search-input" placeholder="Rechercher par nom ou email">
+                                    <button id="friend-search-btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <h4>Demandes d'amis</h4>
+                                <div class="friend-requests" id="friend-requests-container">
+                                    <!-- Les demandes d'amis seront ajoutées ici dynamiquement -->
+                                    <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">Aucune demande d'ami pour le moment</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-content" data-content="privacy">
+                            <div class="settings-section">
+                                <h4>Visibilité du profil</h4>
+                                <div class="settings-option">
+                                    <div>
+                                        <label>Profil public</label>
+                                        <p>Tout le monde peut voir votre profil</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="public-profile-toggle">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <h4>Confidentialité des données</h4>
+                                <div class="settings-option">
+                                    <div>
+                                        <label>Partager les notes avec les amis</label>
+                                        <p>Autoriser vos amis à voir vos résultats</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="share-grades-toggle" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-content" data-content="notifications">
+                            <div class="settings-section">
+                                <h4>Préférences de notification</h4>
+                                <div class="settings-option">
+                                    <div>
+                                        <label>Notifications par email</label>
+                                        <p>Recevoir des emails pour les nouvelles activités</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="email-notifications-toggle" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-option">
+                                    <div>
+                                        <label>Notifications push</label>
+                                        <p>Recevoir des notifications sur votre appareil</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="push-notifications-toggle" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mini-cards-container" id="mini-cards-container">
                         <div class="mini-cards-track" id="mini-cards-track">
                             <div class="mini-card" data-target="workspace">
@@ -879,7 +1415,7 @@
 
         <script type="module">
             import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getDatabase, ref, set, onValue, update, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+            import { getDatabase, ref, set, onValue, update, onDisconnect, remove, push, get, child } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
             import { app, auth, db } from "./firebase/firebase-config.js";
 
             // Variables globales
@@ -891,10 +1427,11 @@
             let currentCardIndex = 5; // Commence par la carte "Messagerie"
             let isAnimating = false;
             const cardWidth = 140 + 15; // Largeur de la carte + gap réduit
-            const cardTargets = ['workspace', 'homework', 'calendar', 'grades', 'resources', 'chat', 'settings'];
             let lastScrollDirection = 'right'; // 'left' ou 'right'
             let isDragging = false;
             let startX, scrollLeft;
+            let friendsList = [];
+            let friendRequests = [];
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
@@ -1003,10 +1540,15 @@
                 
                 await set(userRef, {
                     username,
+                    email: user.email,
                     createdAt: Date.now(),
                     canChangeUsername: false,
                     lastSeen: Date.now(),
-                    profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null
+                    profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null,
+                    publicProfile: false,
+                    shareGrades: true,
+                    emailNotifications: true,
+                    pushNotifications: true
                 });
 
                 currentUsername = username;
@@ -1033,19 +1575,29 @@
 
                 // Initialiser les mini-cards
                 initMiniCards();
+
+                // Charger les amis et demandes d'amis
+                loadFriendsAndRequests(user.uid);
             }
 
             function updateUserInfo(userData) {
                 document.getElementById('user-name').textContent = userData.username;
                 document.getElementById('profile-username').textContent = userData.username;
+                document.getElementById('current-profile-name').textContent = userData.username;
+                document.getElementById('current-profile-email').textContent = userData.email || 'email@exemple.com';
                 
                 const avatarLetter = document.getElementById('avatar-letter');
                 const profilePic = document.getElementById('profile-pic');
                 const mainProfilePic = document.getElementById('main-profile-pic');
                 const profileInitials = document.getElementById('profile-initials');
+                const currentProfileInitial = document.getElementById('current-profile-initial');
+                const dropdownCurrentInitial = document.getElementById('dropdown-current-initial');
                 
-                avatarLetter.textContent = userData.username.charAt(0).toUpperCase();
-                profileInitials.textContent = userData.username.charAt(0).toUpperCase();
+                const firstLetter = userData.username.charAt(0).toUpperCase();
+                avatarLetter.textContent = firstLetter;
+                profileInitials.textContent = firstLetter;
+                currentProfileInitial.textContent = firstLetter;
+                dropdownCurrentInitial.textContent = firstLetter;
                 
                 // Format member since date
                 if (userData.createdAt) {
@@ -1064,6 +1616,14 @@
                     mainProfilePic.style.display = 'block';
                     profileInitials.style.display = 'none';
                     
+                    document.getElementById('current-profile-pic').src = userData.profileImage;
+                    document.getElementById('current-profile-pic').style.display = 'block';
+                    currentProfileInitial.style.display = 'none';
+                    
+                    document.getElementById('dropdown-current-pic').src = userData.profileImage;
+                    document.getElementById('dropdown-current-pic').style.display = 'block';
+                    dropdownCurrentInitial.style.display = 'none';
+                    
                     localStorage.setItem(`profileImage_${currentUser.uid}`, userData.profileImage);
                 } else {
                     const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
@@ -1075,13 +1635,41 @@
                         mainProfilePic.src = savedImage;
                         mainProfilePic.style.display = 'block';
                         profileInitials.style.display = 'none';
+                        
+                        document.getElementById('current-profile-pic').src = savedImage;
+                        document.getElementById('current-profile-pic').style.display = 'block';
+                        currentProfileInitial.style.display = 'none';
+                        
+                        document.getElementById('dropdown-current-pic').src = savedImage;
+                        document.getElementById('dropdown-current-pic').style.display = 'block';
+                        dropdownCurrentInitial.style.display = 'none';
                     } else {
                         profilePic.style.display = 'none';
                         avatarLetter.style.display = 'flex';
                         
                         mainProfilePic.style.display = 'none';
                         profileInitials.style.display = 'flex';
+                        
+                        document.getElementById('current-profile-pic').style.display = 'none';
+                        currentProfileInitial.style.display = 'flex';
+                        
+                        document.getElementById('dropdown-current-pic').style.display = 'none';
+                        dropdownCurrentInitial.style.display = 'flex';
                     }
+                }
+                
+                // Mettre à jour les paramètres
+                if (userData.publicProfile !== undefined) {
+                    document.getElementById('public-profile-toggle').checked = userData.publicProfile;
+                }
+                if (userData.shareGrades !== undefined) {
+                    document.getElementById('share-grades-toggle').checked = userData.shareGrades;
+                }
+                if (userData.emailNotifications !== undefined) {
+                    document.getElementById('email-notifications-toggle').checked = userData.emailNotifications;
+                }
+                if (userData.pushNotifications !== undefined) {
+                    document.getElementById('push-notifications-toggle').checked = userData.pushNotifications;
                 }
             }
 
@@ -1140,6 +1728,7 @@
                 set(currentUserStatusRef, {
                     uid: user.uid,
                     username: currentUsername,
+                    email: user.email,
                     profileImage: profileImage,
                     timestamp: Date.now(),
                     firstLetter: currentUsername.charAt(0).toUpperCase()
@@ -1161,6 +1750,7 @@
                             onlineUsers.push({
                                 userId: uid,
                                 username: userData.username || 'Utilisateur',
+                                email: userData.email || '',
                                 firstLetter: userData.firstLetter || (userData.username || 'U').charAt(0).toUpperCase(),
                                 profileImage: userData.profileImage || null
                             });
@@ -1263,6 +1853,302 @@
                         lastScrollDirection = 'right';
                     }
                 });
+
+                // Gestion des onglets des paramètres
+                document.querySelectorAll('.settings-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelector('.settings-tab.active').classList.remove('active');
+                        tab.classList.add('active');
+                        
+                        const tabName = tab.getAttribute('data-tab');
+                        document.querySelector('.settings-content.active').classList.remove('active');
+                        document.querySelector(`.settings-content[data-content="${tabName}"]`).classList.add('active');
+                    });
+                });
+
+                // Gestion du bouton de changement de photo de profil
+                document.getElementById('change-profile-pic-btn').addEventListener('click', showImageInputModal);
+
+                // Gestion du menu de changement de profil
+                document.getElementById('profile-switch-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.getElementById('profile-switch-dropdown').classList.toggle('show');
+                });
+
+                // Fermer le menu de changement de profil quand on clique ailleurs
+                document.addEventListener('click', () => {
+                    document.getElementById('profile-switch-dropdown').classList.remove('show');
+                });
+
+                // Gestion des paramètres
+                document.getElementById('public-profile-toggle').addEventListener('change', updateUserSettings);
+                document.getElementById('share-grades-toggle').addEventListener('change', updateUserSettings);
+                document.getElementById('email-notifications-toggle').addEventListener('change', updateUserSettings);
+                document.getElementById('push-notifications-toggle').addEventListener('change', updateUserSettings);
+
+                // Gestion de la recherche d'amis
+                document.getElementById('friend-search-btn').addEventListener('click', searchFriend);
+                document.getElementById('friend-search-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        searchFriend();
+                    }
+                });
+            }
+
+            async function updateUserSettings() {
+                const userRef = ref(db, 'users/' + currentUser.uid);
+                
+                try {
+                    await update(userRef, {
+                        publicProfile: document.getElementById('public-profile-toggle').checked,
+                        shareGrades: document.getElementById('share-grades-toggle').checked,
+                        emailNotifications: document.getElementById('email-notifications-toggle').checked,
+                        pushNotifications: document.getElementById('push-notifications-toggle').checked
+                    });
+                } catch (error) {
+                    console.error("Erreur lors de la mise à jour des paramètres:", error);
+                    alert("Une erreur est survenue lors de la mise à jour des paramètres");
+                }
+            }
+
+            async function searchFriend() {
+                const searchInput = document.getElementById('friend-search-input').value.trim();
+                if (!searchInput) return;
+
+                try {
+                    // Recherche dans la base de données
+                    const usersRef = ref(db, 'users');
+                    const snapshot = await get(usersRef);
+                    
+                    if (snapshot.exists()) {
+                        const allUsers = snapshot.val();
+                        let foundUser = null;
+                        
+                        // Recherche par email ou nom d'utilisateur
+                        Object.entries(allUsers).forEach(([uid, userData]) => {
+                            if (uid !== currentUser.uid && 
+                                (userData.email === searchInput || userData.username.toLowerCase().includes(searchInput.toLowerCase()))) {
+                                foundUser = {
+                                    uid,
+                                    ...userData
+                                };
+                            }
+                        });
+
+                        if (foundUser) {
+                            // Vérifier si déjà ami
+                            const isFriend = friendsList.some(friend => friend.uid === foundUser.uid);
+                            const hasPendingRequest = friendRequests.some(req => req.from === foundUser.uid || req.to === foundUser.uid);
+
+                            if (isFriend) {
+                                alert(`${foundUser.username} est déjà dans votre liste d'amis`);
+                            } else if (hasPendingRequest) {
+                                alert(`Une demande d'ami est déjà en attente avec ${foundUser.username}`);
+                            } else {
+                                // Envoyer une demande d'ami
+                                await sendFriendRequest(foundUser.uid);
+                                alert(`Demande d'ami envoyée à ${foundUser.username}`);
+                            }
+                        } else {
+                            alert("Aucun utilisateur trouvé avec ces informations");
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la recherche d'ami:", error);
+                    alert("Une erreur est survenue lors de la recherche");
+                }
+            }
+
+            async function sendFriendRequest(friendUid) {
+                const requestsRef = ref(db, 'friendRequests');
+                const newRequestRef = push(requestsRef);
+                
+                await set(newRequestRef, {
+                    from: currentUser.uid,
+                    to: friendUid,
+                    timestamp: Date.now(),
+                    status: 'pending'
+                });
+            }
+
+            async function loadFriendsAndRequests(userId) {
+                // Charger les amis
+                const friendsRef = ref(db, `friends/${userId}`);
+                onValue(friendsRef, (snapshot) => {
+                    friendsList = [];
+                    const friendsData = snapshot.val();
+                    
+                    if (friendsData) {
+                        Object.entries(friendsData).forEach(([friendId, friendData]) => {
+                            friendsList.push({
+                                uid: friendId,
+                                ...friendData
+                            });
+                        });
+                        
+                        updateFriendsDropdown();
+                    }
+                });
+
+                // Charger les demandes d'amis
+                const requestsRef = ref(db, 'friendRequests');
+                onValue(requestsRef, (snapshot) => {
+                    friendRequests = [];
+                    const requestsData = snapshot.val();
+                    
+                    if (requestsData) {
+                        Object.values(requestsData).forEach(request => {
+                            if (request.to === userId && request.status === 'pending') {
+                                friendRequests.push(request);
+                            }
+                        });
+                        
+                        updateFriendRequestsDisplay();
+                    }
+                });
+            }
+
+            function updateFriendsDropdown() {
+                const dropdown = document.getElementById('profile-switch-dropdown');
+                
+                // Garder seulement l'élément "Mon profil"
+                while (dropdown.children.length > 1) {
+                    dropdown.removeChild(dropdown.lastChild);
+                }
+                
+                // Ajouter les amis
+                friendsList.forEach(friend => {
+                    const friendElement = document.createElement('div');
+                    friendElement.className = 'profile-switch-dropdown-item';
+                    friendElement.setAttribute('data-uid', friend.uid);
+                    
+                    let avatarContent = '';
+                    if (friend.profileImage) {
+                        avatarContent = `<img src="${friend.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+                    } else {
+                        avatarContent = friend.username.charAt(0).toUpperCase();
+                    }
+                    
+                    friendElement.innerHTML = `
+                        <div class="profile-switch-dropdown-avatar">
+                            ${avatarContent}
+                        </div>
+                        <div class="profile-switch-dropdown-name">${friend.username}</div>
+                    `;
+                    
+                    dropdown.appendChild(friendElement);
+                });
+            }
+
+            function updateFriendRequestsDisplay() {
+                const container = document.getElementById('friend-requests-container');
+                
+                if (friendRequests.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">Aucune demande d\'ami pour le moment</p>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                friendRequests.forEach(async request => {
+                    // Récupérer les informations de l'utilisateur qui a envoyé la demande
+                    const userRef = ref(db, `users/${request.from}`);
+                    const snapshot = await get(userRef);
+                    
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const requestElement = document.createElement('div');
+                        requestElement.className = 'friend-request-item';
+                        
+                        let avatarContent = '';
+                        if (userData.profileImage) {
+                            avatarContent = `<img src="${userData.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+                        } else {
+                            avatarContent = userData.username.charAt(0).toUpperCase();
+                        }
+                        
+                        requestElement.innerHTML = `
+                            <div class="friend-request-info">
+                                <div class="friend-request-avatar">
+                                    ${avatarContent}
+                                </div>
+                                <div class="friend-request-name">${userData.username}</div>
+                            </div>
+                            <div class="friend-request-actions">
+                                <button class="friend-request-btn accept-btn" data-request-id="${request.from}">Accepter</button>
+                                <button class="friend-request-btn decline-btn" data-request-id="${request.from}">Refuser</button>
+                            </div>
+                        `;
+                        
+                        container.appendChild(requestElement);
+                        
+                        // Gestion des boutons
+                        requestElement.querySelector('.accept-btn').addEventListener('click', () => handleFriendRequest(request.from, 'accept'));
+                        requestElement.querySelector('.decline-btn').addEventListener('click', () => handleFriendRequest(request.from, 'decline'));
+                    }
+                });
+            }
+
+            async function handleFriendRequest(fromUserId, action) {
+                try {
+                    // Trouver la demande correspondante
+                    const requestsRef = ref(db, 'friendRequests');
+                    const snapshot = await get(requestsRef);
+                    
+                    if (snapshot.exists()) {
+                        let requestKey = null;
+                        
+                        Object.entries(snapshot.val()).forEach(([key, request]) => {
+                            if (request.from === fromUserId && request.to === currentUser.uid && request.status === 'pending') {
+                                requestKey = key;
+                            }
+                        });
+                        
+                        if (requestKey) {
+                            if (action === 'accept') {
+                                // Mettre à jour le statut de la demande
+                                await update(ref(db, `friendRequests/${requestKey}`), {
+                                    status: 'accepted'
+                                });
+                                
+                                // Ajouter aux amis des deux côtés
+                                const fromUserRef = ref(db, `users/${fromUserId}`);
+                                const fromUserSnapshot = await get(fromUserRef);
+                                const fromUserData = fromUserSnapshot.val();
+                                
+                                const currentUserRef = ref(db, `users/${currentUser.uid}`);
+                                const currentUserSnapshot = await get(currentUserRef);
+                                const currentUserData = currentUserSnapshot.val();
+                                
+                                // Ajouter l'ami à la liste de l'utilisateur actuel
+                                await set(ref(db, `friends/${currentUser.uid}/${fromUserId}`), {
+                                    username: fromUserData.username,
+                                    email: fromUserData.email,
+                                    profileImage: fromUserData.profileImage || null,
+                                    since: Date.now()
+                                });
+                                
+                                // Ajouter l'utilisateur actuel à la liste de l'ami
+                                await set(ref(db, `friends/${fromUserId}/${currentUser.uid}`), {
+                                    username: currentUserData.username,
+                                    email: currentUserData.email,
+                                    profileImage: currentUserData.profileImage || null,
+                                    since: Date.now()
+                                });
+                                
+                                alert(`${fromUserData.username} a été ajouté à vos amis`);
+                            } else {
+                                // Refuser la demande
+                                await update(ref(db, `friendRequests/${requestKey}`), {
+                                    status: 'declined'
+                                });
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erreur lors du traitement de la demande d'ami:", error);
+                    alert("Une erreur est survenue lors du traitement de la demande");
+                }
             }
 
             function setupLongPressAvatar() {
@@ -1310,6 +2196,10 @@
                     const avatarLetter = document.getElementById('avatar-letter');
                     const mainProfilePic = document.getElementById('main-profile-pic');
                     const profileInitials = document.getElementById('profile-initials');
+                    const currentProfilePic = document.getElementById('current-profile-pic');
+                    const currentProfileInitial = document.getElementById('current-profile-initial');
+                    const dropdownCurrentPic = document.getElementById('dropdown-current-pic');
+                    const dropdownCurrentInitial = document.getElementById('dropdown-current-initial');
                     
                     profilePic.src = imageUrl;
                     profilePic.style.display = 'block';
@@ -1318,6 +2208,14 @@
                     mainProfilePic.src = imageUrl;
                     mainProfilePic.style.display = 'block';
                     profileInitials.style.display = 'none';
+                    
+                    currentProfilePic.src = imageUrl;
+                    currentProfilePic.style.display = 'block';
+                    currentProfileInitial.style.display = 'none';
+                    
+                    dropdownCurrentPic.src = imageUrl;
+                    dropdownCurrentPic.style.display = 'block';
+                    dropdownCurrentInitial.style.display = 'none';
                     
                     // Sauvegarder dans le stockage local
                     localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
@@ -1426,6 +2324,7 @@
                 
                 const miniCards = document.querySelectorAll('.mini-card');
                 const descriptionCard = document.getElementById('main-description-card');
+                const settingsPanel = document.getElementById('settings-panel');
                 const currentCard = miniCards[currentCardIndex];
                 const targetCard = miniCards[targetIndex];
                 
@@ -1436,8 +2335,17 @@
                 // Animation de la mini-card cible qui devient principale
                 targetCard.classList.add('card-to-main');
                 
-                // Animation de la description card
-                updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
+                // Gestion du panel des paramètres
+                if (targetCard.getAttribute('data-target') === 'settings') {
+                    settingsPanel.classList.add('show');
+                } else {
+                    settingsPanel.classList.remove('show');
+                }
+                
+                // Animation de la description card (sauf pour les paramètres)
+                if (targetCard.getAttribute('data-target') !== 'settings') {
+                    updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
+                }
                 
                 // Mettre à jour l'index courant
                 currentCardIndex = targetIndex;
@@ -1498,13 +2406,6 @@
                                 <h3>Ressources pédagogiques</h3>
                                 <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
                                 <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
-                            `;
-                            break;
-                        case 'settings':
-                            newContent = `
-                                <h3>Paramètres du compte</h3>
-                                <p>Personnalisez votre expérience en modifiant vos préférences, votre profil et les paramètres de notification. Configurez SchoolReport selon vos besoins.</p>
-                                <a href="settings.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir les paramètres</a>
                             `;
                             break;
                         default: // 'chat'
