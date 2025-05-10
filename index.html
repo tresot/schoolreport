@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SchoolReport - Connexion</title>
-    <link rel="preload" href="photos/background1.jpg" as="image">
-    <link rel="preload" href="photos/background2.jpg" as="image">
-    <link rel="preload" href="photos/background3.jpg" as="image">
-    <link rel="preload" href="photos/background4.jpg" as="image">
-    <link rel="preload" href="photos/background5.jpg" as="image">
+    <link rel="preload" href="photos/background1.webp" as="image" loading="lazy">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -58,17 +54,20 @@
     </script>
     <style>
         :root {
-            --primary-blue: rgba(67, 97, 238, 0.8);      /* bleu légèrement transparent */
-            --primary-green: rgba(76, 201, 240, 0.8);    /* vert légèrement transparent */
+            --primary-blue: rgba(67, 97, 238, 0.8);
+            --primary-green: rgba(76, 201, 240, 0.8);
             --secondary-color: rgba(63, 55, 201, 0.8);
             --accent-color: #4895ef;
             --light-color: #f8f9fa;
             --dark-color: #212529;
             --success-color: #4cc9f0;
             --error-color: #f72585;
-            --glass-color: rgba(0, 0, 0, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-color: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --glow-color: rgba(67, 97, 238, 0.08);
+            --input-padding: 15px;
+            --border-radius: 8px;
+            --transition: 0.3s ease;
         }
 
         * {
@@ -83,13 +82,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('photos/background1.jpg');
+            background-image: url('photos/background1.webp');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             position: relative;
             overflow-x: hidden;
-            will-change: background-image;
         }
 
         body::before {
@@ -99,8 +97,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
             z-index: 0;
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        body.scrolled::before {
+            backdrop-filter: blur(0);
         }
 
         #particles-js {
@@ -109,6 +112,7 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
+            opacity: 0.8;
         }
 
         .intro-screen {
@@ -123,9 +127,7 @@
             align-items: center;
             color: white;
             z-index: 100;
-            background-color: rgba(0, 0, 0, 0.8);
             transition: opacity 0.5s ease-out;
-            will-change: opacity;
         }
 
         .intro-screen h1 {
@@ -180,17 +182,16 @@
             max-width: 450px;
             background: var(--glass-color);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             padding: 40px;
             margin: 20px;
             border: 1px solid var(--glass-border);
             transform: translateY(100px);
             opacity: 0;
             transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-            will-change: transform, opacity;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         .container::before {
@@ -208,13 +209,12 @@
             z-index: -1;
             border-radius: 22px;
             opacity: 0;
-            transition: opacity 0.3s, box-shadow 0.3s;
+            transition: opacity 0.3s;
             animation: glowBorder 8s linear infinite;
         }
 
         .container.visible::before {
             opacity: 0.8;
-            box-shadow: 0 0 20px var(--glow-color);
         }
 
         .container.visible {
@@ -266,7 +266,7 @@
             text-align: center;
             margin-bottom: 20px;
             min-height: 20px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             padding: 10px;
             border-radius: 5px;
             animation: fadeIn 0.5s ease-out;
@@ -294,23 +294,21 @@
             font-weight: 500;
         }
 
-        .form-group input {
+        input {
             width: 100%;
-            padding: 15px 45px 15px 15px;
+            padding: var(--input-padding);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 14px;
-            transition: all 0.3s;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            will-change: transform, box-shadow;
         }
 
-        .form-group input::placeholder {
+        input::placeholder {
             color: rgba(255, 255, 255, 0.6);
         }
 
-        .form-group input:focus {
+        input:focus {
             border-color: var(--primary-blue);
             outline: none;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
@@ -318,7 +316,7 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        .form-group input:valid {
+        input:valid {
             border-color: var(--primary-green);
         }
 
@@ -335,12 +333,11 @@
             border: none;
             cursor: pointer;
             color: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s;
+            transition: color var(--transition);
         }
 
         .toggle-password:hover {
             color: white;
-            transform: translateY(-50%) scale(1.1);
         }
 
         .remember-forgot {
@@ -365,7 +362,7 @@
         .forgot-password a {
             color: var(--light-color);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color var(--transition);
         }
 
         .forgot-password a:hover {
@@ -375,19 +372,18 @@
 
         .submit-btn {
             width: 100%;
-            padding: 15px;
+            padding: var(--input-padding);
             background: linear-gradient(45deg, var(--primary-blue), var(--secondary-color));
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: transform var(--transition), box-shadow var(--transition);
             box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
             position: relative;
             overflow: hidden;
-            will-change: transform, box-shadow;
         }
 
         .submit-btn:hover {
@@ -397,27 +393,6 @@
 
         .submit-btn:active {
             transform: translateY(1px);
-        }
-
-        .submit-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--secondary-color), var(--primary-blue));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .submit-btn:hover::after {
-            opacity: 1;
-        }
-
-        .submit-btn span {
-            position: relative;
-            z-index: 1;
         }
 
         .toggle-form {
@@ -431,7 +406,7 @@
             color: var(--primary-blue);
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: color var(--transition);
         }
 
         .toggle-form a:hover {
@@ -452,9 +427,8 @@
             cursor: pointer;
             color: rgba(255, 255, 255, 0.6);
             font-weight: 600;
-            transition: all 0.3s;
+            transition: color var(--transition);
             border-bottom: 3px solid transparent;
-            position: relative;
         }
 
         .nav-tab.active {
@@ -464,20 +438,6 @@
 
         .nav-tab:hover {
             color: white;
-        }
-
-        .cursor-effect {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(67, 97, 238, 0.5);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 999;
-            mix-blend-mode: screen;
-            transition: transform 0.1s ease;
-            will-change: transform;
         }
 
         .ripple {
@@ -547,7 +507,11 @@
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
+            #particles-js {
+                display: none;
+            }
+            
             .container {
                 padding: 30px 20px;
                 border-radius: 15px;
@@ -587,8 +551,6 @@
             <div class="scroll-arrow"></div>
         </div>
     </div>
-
-    <div class="cursor-effect" id="cursor-effect"></div>
 
     <div class="container" id="login-container">
         <div class="logo">
@@ -688,7 +650,7 @@
                 particlesJS('particles-js', {
                     "particles": {
                         "number": {
-                            "value": 60,
+                            "value": 80,
                             "density": {
                                 "enable": true,
                                 "value_area": 800
@@ -705,12 +667,12 @@
                             }
                         },
                         "opacity": {
-                            "value": 0.3,
+                            "value": 0.5,
                             "random": true,
                             "anim": {
                                 "enable": true,
                                 "speed": 1,
-                                "opacity_min": 0.1,
+                                "opacity_min": 0.3,
                                 "sync": false
                             }
                         },
@@ -728,7 +690,7 @@
                             "enable": true,
                             "distance": 150,
                             "color": "#ffffff",
-                            "opacity": 0.2,
+                            "opacity": 0.3,
                             "width": 1
                         },
                         "move": {
@@ -758,53 +720,11 @@
                                 "mode": "push"
                             },
                             "resize": true
-                        },
-                        "modes": {
-                            "grab": {
-                                "distance": 140,
-                                "line_linked": {
-                                    "opacity": 1
-                                }
-                            },
-                            "bubble": {
-                                "distance": 400,
-                                "size": 40,
-                                "duration": 2,
-                                "opacity": 8,
-                                "speed": 3
-                            },
-                            "repulse": {
-                                "distance": 200,
-                                "duration": 0.4
-                            },
-                            "push": {
-                                "particles_nb": 4
-                            },
-                            "remove": {
-                                "particles_nb": 2
-                            }
                         }
                     },
                     "retina_detect": true
                 });
             }
-        }
-
-        // Fonction pour changer le fond d'écran toutes les 5 minutes
-        function changeBackground() {
-            let currentBg = 1;
-            const totalBgs = 5;
-            
-            // Précharger toutes les images de fond
-            for (let i = 1; i <= totalBgs; i++) {
-                const img = new Image();
-                img.src = `photos/background${i}.jpg`;
-            }
-            
-            setInterval(() => {
-                currentBg = currentBg % totalBgs + 1;
-                document.body.style.backgroundImage = `url('photos/background${currentBg}.jpg')`;
-            }, 300000);
         }
 
         // Gestion optimisée du scroll
@@ -819,6 +739,7 @@
                     introScreen.style.pointerEvents = 'none';
                     loginContainer.style.opacity = (scrollPosition - 50) / 100;
                     loginContainer.style.transform = `translateY(${Math.max(0, 100 - scrollPosition)}px`;
+                    document.body.classList.add('scrolled');
                     
                     if (scrollPosition > 150) {
                         loginContainer.classList.add('visible');
@@ -830,6 +751,7 @@
                     introScreen.style.pointerEvents = 'auto';
                     loginContainer.style.opacity = '0';
                     loginContainer.style.transform = 'translateY(100px)';
+                    document.body.classList.remove('scrolled');
                 }
             });
         }
@@ -870,61 +792,6 @@
                 `;
             }
             input.focus();
-        }
-
-        // Effet de curseur personnalisé optimisé
-        function initCursorEffect() {
-            const cursor = document.getElementById('cursor-effect');
-            let lastX = 0;
-            let lastY = 0;
-            let mouseX = 0;
-            let mouseY = 0;
-            let scale = 1;
-            let isInteractive = false;
-            
-            function moveCursor() {
-                const dx = mouseX - lastX;
-                const dy = mouseY - lastY;
-                
-                lastX += dx * 0.2;
-                lastY += dy * 0.2;
-                
-                cursor.style.transform = `translate(${lastX}px, ${lastY}px) scale(${scale})`;
-                
-                requestAnimationFrame(moveCursor);
-            }
-            
-            moveCursor();
-            
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                
-                if (!isInteractive) {
-                    const interactiveElements = document.querySelectorAll('button, a, input, .nav-tab');
-                    isInteractive = Array.from(interactiveElements).some(el => el.matches(':hover'));
-                    
-                    if (isInteractive) {
-                        scale = 2;
-                        cursor.style.background = 'rgba(67, 97, 238, 0.3)';
-                    } else {
-                        scale = 1;
-                        cursor.style.background = 'rgba(67, 97, 238, 0.5)';
-                    }
-                }
-            });
-            
-            document.addEventListener('mouseout', () => {
-                isInteractive = false;
-            });
-            
-            document.addEventListener('mousedown', () => {
-                scale = 0.8;
-            });
-            
-            document.addEventListener('mouseup', () => {
-                scale = isInteractive ? 2 : 1;
-            });
         }
 
         // Mise à jour de l'heure
@@ -971,9 +838,6 @@
             // Initialiser les particules
             initParticles();
             
-            // Initialiser le changement de fond d'écran avec préchargement
-            changeBackground();
-            
             // Ajouter les écouteurs d'événements pour les boutons de visibilité du mot de passe
             document.querySelectorAll('.toggle-password').forEach(button => {
                 button.addEventListener('click', function() {
@@ -981,9 +845,6 @@
                     togglePasswordVisibility(inputId);
                 });
             });
-            
-            // Initialiser l'effet de curseur optimisé
-            initCursorEffect();
             
             // Initialiser l'effet ripple
             initRippleEffect();
