@@ -273,23 +273,30 @@
             margin-bottom: 40px;
             position: relative;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
         }
 
         .mini-cards-container::-webkit-scrollbar {
-            height: 8px;
+            height: 6px;
             background: transparent;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mini-cards-container:hover::-webkit-scrollbar {
+            opacity: 1;
         }
 
         .mini-cards-container::-webkit-scrollbar-thumb {
-            background: var(--primary);
+            background-color: var(--primary);
             border-radius: 10px;
             opacity: 0;
             transition: opacity 0.3s;
         }
 
         .mini-cards-container:hover::-webkit-scrollbar-thumb {
-            opacity: 0.5;
+            opacity: 0.7;
         }
 
         .mini-cards-container::-webkit-scrollbar-thumb:hover {
@@ -686,6 +693,12 @@
             display: flex;
             border-bottom: 1px solid rgba(100, 255, 218, 0.1);
             margin-bottom: 25px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .settings-tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .settings-tab {
@@ -695,6 +708,7 @@
             font-weight: 500;
             transition: all 0.3s;
             position: relative;
+            white-space: nowrap;
         }
 
         .settings-tab.active {
@@ -1028,6 +1042,15 @@
             font-size: 14px;
         }
 
+        /* Coming Soon */
+        .coming-soon {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-style: italic;
+            text-align: center;
+            padding: 20px 0;
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -1110,28 +1133,69 @@
                 height: 130px;
             }
 
-            .settings-tabs {
-                overflow-x: auto;
-                scrollbar-width: none;
+            .settings-panel {
+                padding: 20px;
             }
 
-            .settings-tabs::-webkit-scrollbar {
-                display: none;
+            .settings-tab {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .settings-option {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .friend-search {
+                flex-direction: column;
+            }
+
+            .friend-search input {
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+
+            .friend-search button {
+                border-radius: 8px;
+                padding: 10px;
+            }
+
+            .friend-request-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .friend-request-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .friend-request-btn {
+                flex: 1;
+                padding: 8px;
             }
         }
 
         @media (max-width: 480px) {
             .container {
-                padding: 20px;
+                padding: 15px;
             }
 
             .profile-card {
                 max-width: 100%;
+                padding: 20px;
+            }
+
+            .description-card {
+                padding: 20px;
             }
 
             .mini-card {
-                width: 120px;
-                height: 120px;
+                width: 110px;
+                height: 110px;
             }
 
             .user-menu {
@@ -1145,8 +1209,29 @@
             }
 
             .settings-tab {
-                padding: 10px 15px;
-                font-size: 14px;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .profile-switch {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .profile-switch-avatar {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .profile-switch-btn {
+                align-self: flex-end;
+            }
+
+            .profile-switch-dropdown {
+                width: 100%;
+                right: auto;
+                left: 0;
             }
         }
     </style>
@@ -1166,7 +1251,7 @@
                 <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
                 <p id="username-info" style="color: var(--text-secondary); font-size: 14px;">
-                    Ce nom ne pourra pas être changé avant 48 heures
+                    Ce nom ne pourra pas être changé avant 30 jours
                 </p>
 
                 <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
@@ -1290,7 +1375,7 @@
                                 <div class="settings-option">
                                     <div>
                                         <label>Nom d'utilisateur</label>
-                                        <p id="username-change-info">Modifiable dans 48 heures</p>
+                                        <p id="username-change-info">Modifiable dans 30 jours</p>
                                     </div>
                                     <button class="setup-btn" id="change-username-btn" style="padding: 8px 16px; font-size: 14px; background: var(--input-bg); color: var(--text-primary);" disabled>Changer</button>
                                 </div>
@@ -1326,7 +1411,7 @@
                                 <div class="settings-option">
                                     <div>
                                         <label>Profil public</label>
-                                        <p>Tout le monde peut voir votre profil</p>
+                                        <p>Autoriser les autres utilisateurs à vous trouver et vous envoyer des demandes d'amis</p>
                                     </div>
                                     <label class="toggle-switch">
                                         <input type="checkbox" id="public-profile-toggle">
@@ -1351,28 +1436,8 @@
                         </div>
 
                         <div class="settings-content" data-content="notifications">
-                            <div class="settings-section">
-                                <h4>Préférences de notification</h4>
-                                <div class="settings-option">
-                                    <div>
-                                        <label>Notifications par email</label>
-                                        <p>Recevoir des emails pour les nouvelles activités</p>
-                                    </div>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="email-notifications-toggle" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                                <div class="settings-option">
-                                    <div>
-                                        <label>Notifications push</label>
-                                        <p>Recevoir des notifications sur votre appareil</p>
-                                    </div>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="push-notifications-toggle" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
+                            <div class="coming-soon">
+                                Fonctionnalité de notifications en cours de développement
                             </div>
                         </div>
                     </div>
@@ -1478,11 +1543,43 @@
                         // Profil existant
                         currentUsername = userData.username;
                         setupMainInterface(user, userData);
+                        
+                        // Mettre à jour le temps restant pour le changement de nom
+                        updateUsernameChangeTime(userData);
                     } else {
                         // Nouvel utilisateur
                         setupProfileConfiguration(user);
                     }
-                }, { onlyOnce: true });
+                });
+            }
+
+            function updateUsernameChangeTime(userData) {
+                const usernameChangeInfo = document.getElementById('username-change-info');
+                
+                if (userData.canChangeUsername) {
+                    usernameChangeInfo.textContent = "Modifiable maintenant";
+                    document.getElementById('change-username-btn').disabled = false;
+                    document.getElementById('change-username-btn').style.background = 'var(--primary)';
+                } else {
+                    const createdAt = userData.createdAt || Date.now();
+                    const daysPassed = Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
+                    const daysLeft = Math.max(0, 30 - daysPassed);
+                    
+                    if (daysLeft > 0) {
+                        usernameChangeInfo.textContent = `Modifiable dans ${daysLeft} jour${daysLeft > 1 ? 's' : ''}`;
+                        document.getElementById('change-username-btn').disabled = true;
+                        document.getElementById('change-username-btn').style.background = 'var(--input-bg)';
+                    } else {
+                        usernameChangeInfo.textContent = "Modifiable maintenant";
+                        document.getElementById('change-username-btn').disabled = false;
+                        document.getElementById('change-username-btn').style.background = 'var(--primary)';
+                        
+                        // Mettre à jour la base de données
+                        update(ref(db, 'users/' + currentUser.uid), {
+                            canChangeUsername: true
+                        });
+                    }
+                }
             }
 
             function setupProfileConfiguration(user) {
@@ -1664,12 +1761,6 @@
                 }
                 if (userData.shareGrades !== undefined) {
                     document.getElementById('share-grades-toggle').checked = userData.shareGrades;
-                }
-                if (userData.emailNotifications !== undefined) {
-                    document.getElementById('email-notifications-toggle').checked = userData.emailNotifications;
-                }
-                if (userData.pushNotifications !== undefined) {
-                    document.getElementById('push-notifications-toggle').checked = userData.pushNotifications;
                 }
             }
 
@@ -1883,8 +1974,6 @@
                 // Gestion des paramètres
                 document.getElementById('public-profile-toggle').addEventListener('change', updateUserSettings);
                 document.getElementById('share-grades-toggle').addEventListener('change', updateUserSettings);
-                document.getElementById('email-notifications-toggle').addEventListener('change', updateUserSettings);
-                document.getElementById('push-notifications-toggle').addEventListener('change', updateUserSettings);
 
                 // Gestion de la recherche d'amis
                 document.getElementById('friend-search-btn').addEventListener('click', searchFriend);
@@ -1897,14 +1986,21 @@
 
             async function updateUserSettings() {
                 const userRef = ref(db, 'users/' + currentUser.uid);
+                const publicProfile = document.getElementById('public-profile-toggle').checked;
+                const shareGrades = document.getElementById('share-grades-toggle').checked;
                 
                 try {
                     await update(userRef, {
-                        publicProfile: document.getElementById('public-profile-toggle').checked,
-                        shareGrades: document.getElementById('share-grades-toggle').checked,
-                        emailNotifications: document.getElementById('email-notifications-toggle').checked,
-                        pushNotifications: document.getElementById('push-notifications-toggle').checked
+                        publicProfile,
+                        shareGrades
                     });
+                    
+                    // Mettre à jour aussi dans la liste des utilisateurs connectés
+                    if (currentUserStatusRef) {
+                        update(currentUserStatusRef, {
+                            publicProfile
+                        });
+                    }
                 } catch (error) {
                     console.error("Erreur lors de la mise à jour des paramètres:", error);
                     alert("Une erreur est survenue lors de la mise à jour des paramètres");
@@ -1916,6 +2012,16 @@
                 if (!searchInput) return;
 
                 try {
+                    // Vérifier si le profil est public
+                    const currentUserRef = ref(db, `users/${currentUser.uid}`);
+                    const currentUserSnapshot = await get(currentUserRef);
+                    const currentUserData = currentUserSnapshot.val();
+                    
+                    if (!currentUserData.publicProfile) {
+                        alert("Votre profil n'est pas public. Activez 'Profil public' dans les paramètres de confidentialité pour recevoir des demandes d'amis.");
+                        return;
+                    }
+
                     // Recherche dans la base de données
                     const usersRef = ref(db, 'users');
                     const snapshot = await get(usersRef);
@@ -1927,6 +2033,7 @@
                         // Recherche par email ou nom d'utilisateur
                         Object.entries(allUsers).forEach(([uid, userData]) => {
                             if (uid !== currentUser.uid && 
+                                userData.publicProfile && // Seulement les profils publics
                                 (userData.email === searchInput || userData.username.toLowerCase().includes(searchInput.toLowerCase()))) {
                                 foundUser = {
                                     uid,
@@ -1950,7 +2057,7 @@
                                 alert(`Demande d'ami envoyée à ${foundUser.username}`);
                             }
                         } else {
-                            alert("Aucun utilisateur trouvé avec ces informations");
+                            alert("Aucun utilisateur trouvé avec ces informations ou le profil n'est pas public");
                         }
                     }
                 } catch (error) {
@@ -1997,9 +2104,12 @@
                     const requestsData = snapshot.val();
                     
                     if (requestsData) {
-                        Object.values(requestsData).forEach(request => {
+                        Object.entries(requestsData).forEach(([requestId, request]) => {
                             if (request.to === userId && request.status === 'pending') {
-                                friendRequests.push(request);
+                                friendRequests.push({
+                                    id: requestId,
+                                    ...request
+                                });
                             }
                         });
                         
@@ -2036,11 +2146,42 @@
                         <div class="profile-switch-dropdown-name">${friend.username}</div>
                     `;
                     
+                    friendElement.addEventListener('click', () => {
+                        // Charger les informations de l'ami dans la vue principale
+                        document.getElementById('profile-username').textContent = friend.username;
+                        
+                        const mainProfilePic = document.getElementById('main-profile-pic');
+                        const profileInitials = document.getElementById('profile-initials');
+                        
+                        if (friend.profileImage) {
+                            mainProfilePic.src = friend.profileImage;
+                            mainProfilePic.style.display = 'block';
+                            profileInitials.style.display = 'none';
+                        } else {
+                            mainProfilePic.style.display = 'none';
+                            profileInitials.textContent = friend.username.charAt(0).toUpperCase();
+                            profileInitials.style.display = 'flex';
+                        }
+                        
+                        // Mettre à jour la description pour l'ami
+                        const descriptionCard = document.getElementById('main-description-card');
+                        descriptionCard.innerHTML = `
+                            <h3>Profil de ${friend.username}</h3>
+                            <p>Membre depuis ${new Date(friend.since || Date.now()).toLocaleDateString('fr-FR')}</p>
+                            ${friend.shareGrades ? 
+                                `<a href="friend-grades.html?uid=${friend.uid}" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir ses notes</a>` : 
+                                '<p style="color: var(--text-secondary);">Cet ami ne partage pas ses notes</p>'}
+                        `;
+                        
+                        // Fermer le dropdown
+                        document.getElementById('profile-switch-dropdown').classList.remove('show');
+                    });
+                    
                     dropdown.appendChild(friendElement);
                 });
             }
 
-            function updateFriendRequestsDisplay() {
+            async function updateFriendRequestsDisplay() {
                 const container = document.getElementById('friend-requests-container');
                 
                 if (friendRequests.length === 0) {
@@ -2050,100 +2191,93 @@
                 
                 container.innerHTML = '';
                 
-                friendRequests.forEach(async request => {
-                    // Récupérer les informations de l'utilisateur qui a envoyé la demande
-                    const userRef = ref(db, `users/${request.from}`);
-                    const snapshot = await get(userRef);
-                    
-                    if (snapshot.exists()) {
-                        const userData = snapshot.val();
-                        const requestElement = document.createElement('div');
-                        requestElement.className = 'friend-request-item';
+                for (const request of friendRequests) {
+                    try {
+                        // Récupérer les informations de l'utilisateur qui a envoyé la demande
+                        const userRef = ref(db, `users/${request.from}`);
+                        const snapshot = await get(userRef);
                         
-                        let avatarContent = '';
-                        if (userData.profileImage) {
-                            avatarContent = `<img src="${userData.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-                        } else {
-                            avatarContent = userData.username.charAt(0).toUpperCase();
-                        }
-                        
-                        requestElement.innerHTML = `
-                            <div class="friend-request-info">
-                                <div class="friend-request-avatar">
-                                    ${avatarContent}
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            const requestElement = document.createElement('div');
+                            requestElement.className = 'friend-request-item';
+                            
+                            let avatarContent = '';
+                            if (userData.profileImage) {
+                                avatarContent = `<img src="${userData.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+                            } else {
+                                avatarContent = userData.username.charAt(0).toUpperCase();
+                            }
+                            
+                            requestElement.innerHTML = `
+                                <div class="friend-request-info">
+                                    <div class="friend-request-avatar">
+                                        ${avatarContent}
+                                    </div>
+                                    <div class="friend-request-name">${userData.username}</div>
                                 </div>
-                                <div class="friend-request-name">${userData.username}</div>
-                            </div>
-                            <div class="friend-request-actions">
-                                <button class="friend-request-btn accept-btn" data-request-id="${request.from}">Accepter</button>
-                                <button class="friend-request-btn decline-btn" data-request-id="${request.from}">Refuser</button>
-                            </div>
-                        `;
-                        
-                        container.appendChild(requestElement);
-                        
-                        // Gestion des boutons
-                        requestElement.querySelector('.accept-btn').addEventListener('click', () => handleFriendRequest(request.from, 'accept'));
-                        requestElement.querySelector('.decline-btn').addEventListener('click', () => handleFriendRequest(request.from, 'decline'));
+                                <div class="friend-request-actions">
+                                    <button class="friend-request-btn accept-btn" data-request-id="${request.id}">Accepter</button>
+                                    <button class="friend-request-btn decline-btn" data-request-id="${request.id}">Refuser</button>
+                                </div>
+                            `;
+                            
+                            container.appendChild(requestElement);
+                            
+                            // Gestion des boutons
+                            requestElement.querySelector('.accept-btn').addEventListener('click', () => handleFriendRequest(request.id, 'accept'));
+                            requestElement.querySelector('.decline-btn').addEventListener('click', () => handleFriendRequest(request.id, 'decline'));
+                        }
+                    } catch (error) {
+                        console.error("Erreur lors du chargement de la demande d'ami:", error);
                     }
-                });
+                }
             }
 
-            async function handleFriendRequest(fromUserId, action) {
+            async function handleFriendRequest(requestId, action) {
                 try {
-                    // Trouver la demande correspondante
-                    const requestsRef = ref(db, 'friendRequests');
-                    const snapshot = await get(requestsRef);
-                    
-                    if (snapshot.exists()) {
-                        let requestKey = null;
-                        
-                        Object.entries(snapshot.val()).forEach(([key, request]) => {
-                            if (request.from === fromUserId && request.to === currentUser.uid && request.status === 'pending') {
-                                requestKey = key;
-                            }
+                    if (action === 'accept') {
+                        // Mettre à jour le statut de la demande
+                        await update(ref(db, `friendRequests/${requestId}`), {
+                            status: 'accepted'
                         });
                         
-                        if (requestKey) {
-                            if (action === 'accept') {
-                                // Mettre à jour le statut de la demande
-                                await update(ref(db, `friendRequests/${requestKey}`), {
-                                    status: 'accepted'
-                                });
-                                
-                                // Ajouter aux amis des deux côtés
-                                const fromUserRef = ref(db, `users/${fromUserId}`);
-                                const fromUserSnapshot = await get(fromUserRef);
-                                const fromUserData = fromUserSnapshot.val();
-                                
-                                const currentUserRef = ref(db, `users/${currentUser.uid}`);
-                                const currentUserSnapshot = await get(currentUserRef);
-                                const currentUserData = currentUserSnapshot.val();
-                                
-                                // Ajouter l'ami à la liste de l'utilisateur actuel
-                                await set(ref(db, `friends/${currentUser.uid}/${fromUserId}`), {
-                                    username: fromUserData.username,
-                                    email: fromUserData.email,
-                                    profileImage: fromUserData.profileImage || null,
-                                    since: Date.now()
-                                });
-                                
-                                // Ajouter l'utilisateur actuel à la liste de l'ami
-                                await set(ref(db, `friends/${fromUserId}/${currentUser.uid}`), {
-                                    username: currentUserData.username,
-                                    email: currentUserData.email,
-                                    profileImage: currentUserData.profileImage || null,
-                                    since: Date.now()
-                                });
-                                
-                                alert(`${fromUserData.username} a été ajouté à vos amis`);
-                            } else {
-                                // Refuser la demande
-                                await update(ref(db, `friendRequests/${requestKey}`), {
-                                    status: 'declined'
-                                });
-                            }
-                        }
+                        // Récupérer les informations de la demande
+                        const requestRef = ref(db, `friendRequests/${requestId}`);
+                        const requestSnapshot = await get(requestRef);
+                        const requestData = requestSnapshot.val();
+                        
+                        // Récupérer les informations des deux utilisateurs
+                        const fromUserRef = ref(db, `users/${requestData.from}`);
+                        const fromUserSnapshot = await get(fromUserRef);
+                        const fromUserData = fromUserSnapshot.val();
+                        
+                        const currentUserRef = ref(db, `users/${currentUser.uid}`);
+                        const currentUserSnapshot = await get(currentUserRef);
+                        const currentUserData = currentUserSnapshot.val();
+                        
+                        // Ajouter l'ami à la liste de l'utilisateur actuel
+                        await set(ref(db, `friends/${currentUser.uid}/${requestData.from}`), {
+                            username: fromUserData.username,
+                            email: fromUserData.email,
+                            profileImage: fromUserData.profileImage || null,
+                            since: Date.now()
+                        });
+                        
+                        // Ajouter l'utilisateur actuel à la liste de l'ami
+                        await set(ref(db, `friends/${requestData.from}/${currentUser.uid}`), {
+                            username: currentUserData.username,
+                            email: currentUserData.email,
+                            profileImage: currentUserData.profileImage || null,
+                            since: Date.now()
+                        });
+                        
+                        alert(`${fromUserData.username} a été ajouté à vos amis`);
+                    } else {
+                        // Refuser la demande
+                        await update(ref(db, `friendRequests/${requestId}`), {
+                            status: 'declined'
+                        });
                     }
                 } catch (error) {
                     console.error("Erreur lors du traitement de la demande d'ami:", error);
