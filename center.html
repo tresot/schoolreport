@@ -2169,7 +2169,7 @@
                             <h3>Profil de ${friend.username}</h3>
                             <p>Membre depuis ${new Date(friend.since || Date.now()).toLocaleDateString('fr-FR')}</p>
                             ${friend.shareGrades ? 
-                                `<a href="friend-grades.html?uid=${friend.uid}" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir ses notes</a>` : 
+                                `<a href="404-page.html?uid=${friend.uid}" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir ses notes</a>` : 
                                 '<p style="color: var(--text-secondary);">Cet ami ne partage pas ses notes</p>'}
                         `;
                         
@@ -2532,14 +2532,14 @@
                             newContent = `
                                 <h3>Notes et Évaluations</h3>
                                 <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe. Analysez vos forces et vos faiblesses pour améliorer vos résultats.</p>
-                                <a href="grades.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
+                                <a href="404-page.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
                             `;
                             break;
                         case 'resources':
                             newContent = `
                                 <h3>Ressources pédagogiques</h3>
                                 <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
-                                <a href="resources.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
+                                <a href="404-page.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
                             `;
                             break;
                         default: // 'chat'
