@@ -4,23 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ESPACE DE TRAVAIL</title>
-  <style>
+<style>
     :root {
-      --bg: #e3f2fd;
-      --bg-alt: #ffffff;
-      --text: #333;
-      --accent: #4CAF50;
-      --hover: #388e3c;
-      --box: #f5f5f5;
+      --bg: #f5f0e1;
+      --bg-alt: #f8f3e6;
+      --text: #3a3226;
+      --accent: #8b5a2b;
+      --hover: #6b4423;
+      --box: #e8d9c5;
+      --parchment: #f9f2e7;
+      --ink: #2a2118;
     }
 
     body.dark {
-      --bg: #121212;
-      --bg-alt: #1e1e1e;
-      --text: #f5f5f5;
-      --accent: #81c784;
-      --hover: #66bb6a;
-      --box: #2e2e2e;
+      --bg: #1a120b;
+      --bg-alt: #221a11;
+      --text: #e0d5c8;
+      --accent: #c19a6b;
+      --hover: #d4b483;
+      --box: #2e2620;
+      --parchment: #2a2118;
+      --ink: #e0d5c8;
     }
 
     * {
@@ -30,10 +34,12 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'EB Garamond', 'Times New Roman', serif;
       background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      background-image: url('https://www.transparenttextures.com/patterns/old-paper.png');
+      line-height: 1.6;
     }
 
     .navbar {
@@ -47,43 +53,65 @@
       justify-content: center;
       gap: 10px;
       z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      border-bottom: 2px solid var(--hover);
     }
 
     .navbar button {
-      background-color: #ffffff;
-      color: #333;
-      border: none;
+      background-color: var(--box);
+      color: var(--ink);
+      border: 1px solid var(--hover);
       padding: 10px 20px;
       border-radius: 25px;
       cursor: pointer;
       font-size: 1rem;
       transition: 0.3s;
+      font-family: 'EB Garamond', serif;
+      letter-spacing: 0.5px;
     }
 
     .navbar button:hover {
-      background-color: #c8e6c9;
-    }
-
-    body.dark .navbar button {
-      background-color: #333;
+      background-color: var(--hover);
       color: #fff;
     }
 
+    body.dark .navbar button {
+      background-color: var(--box);
+      color: var(--text);
+    }
+
     .container, .news-container, .grimoire-container {
-      background-color: var(--bg-alt);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      padding: 20px;
+      background-color: var(--parchment);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      padding: 30px;
       width: 90%;
       max-width: 800px;
       margin: 90px auto 20px auto;
+      border: 1px solid var(--accent);
+      position: relative;
+      background-image: url('https://www.transparenttextures.com/patterns/paper.png');
+    }
+
+    .container:before, .news-container:before, .grimoire-container:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, rgba(139, 90, 43, 0.1) 0%, rgba(0,0,0,0) 15%);
+      pointer-events: none;
     }
 
     .container h1, .news-container h2, .grimoire-container h2 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       color: var(--accent);
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 2.5rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      letter-spacing: 1px;
     }
 
     .search-bar {
@@ -92,34 +120,39 @@
       align-items: center;
       padding: 10px;
       background-color: var(--box);
-      border-radius: 50px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--accent);
     }
 
     .search-bar input {
       width: 75%;
       padding: 10px;
       border: none;
-      border-radius: 50px;
+      border-radius: 5px;
       font-size: 1rem;
       outline: none;
-      background-color: #fff;
+      background-color: var(--parchment);
+      color: var(--ink);
+      font-family: 'EB Garamond', serif;
+      border: 1px solid var(--accent);
     }
 
     body.dark .search-bar input {
-      background-color: #444;
-      color: #fff;
+      background-color: var(--box);
+      color: var(--text);
     }
 
     .search-bar button {
       padding: 10px 15px;
       border: none;
       background-color: var(--accent);
-      color: #ffffff;
+      color: var(--parchment);
       font-size: 1rem;
       cursor: pointer;
-      border-radius: 50px;
+      border-radius: 5px;
       transition: background-color 0.3s ease;
+      font-family: 'EB Garamond', serif;
     }
 
     .search-bar button:hover {
@@ -130,36 +163,48 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      border: 1px solid var(--accent);
     }
 
     .results table th,
     .results table td {
-      padding: 10px;
+      padding: 12px;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--accent);
+      background-color: var(--parchment);
+    }
+
+    .results table th {
+      background-color: var(--box);
+      font-weight: bold;
     }
 
     .results img {
       margin-top: 10px;
-      border-radius: 8px;
+      border-radius: 5px;
       max-width: 100px;
+      border: 1px solid var(--accent);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     /* Dissertation Section améliorée */
     #dissertationPage {
-      background-color: var(--bg-alt);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      background-color: var(--parchment);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 5px;
       margin: 90px auto 20px auto;
       max-width: 900px;
       text-align: center;
+      border: 1px solid var(--accent);
+      position: relative;
     }
 
     #dissertationPage h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       margin-bottom: 25px;
       color: var(--accent);
+      font-family: 'UnifrakturMaguntia', cursive;
     }
 
     .dissertation-controls {
@@ -181,31 +226,34 @@
       margin-bottom: 8px;
       font-weight: bold;
       color: var(--accent);
+      font-family: 'EB Garamond', serif;
     }
 
     #essaySubject, #essayType {
       padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
       font-size: 1rem;
-      background-color: var(--box);
-      color: var(--text);
+      background-color: var(--parchment);
+      color: var(--ink);
+      font-family: 'EB Garamond', serif;
     }
 
     #essayOutput {
       width: 100%;
       min-height: 400px;
       padding: 20px;
-      font-size: 1rem;
-      background-color: var(--box);
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      color: var(--text);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      font-size: 1.1rem;
+      background-color: var(--parchment);
+      border-radius: 5px;
+      border: 1px solid var(--accent);
+      color: var(--ink);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
       line-height: 1.6;
       resize: vertical;
       text-align: left;
       margin-top: 20px;
+      font-family: 'EB Garamond', serif;
     }
 
     .loading {
@@ -213,17 +261,15 @@
       text-align: center;
       margin: 20px 0;
       color: var(--accent);
+      font-style: italic;
     }
 
     .word-count {
       text-align: right;
       margin-top: 10px;
       font-style: italic;
-      color: #666;
-    }
-
-    body.dark .word-count {
-      color: #aaa;
+      color: var(--accent);
+      font-size: 0.9rem;
     }
 
     /* News Section */
@@ -233,41 +279,50 @@
 
     .news-item {
       background-color: var(--box);
-      border-radius: 8px;
+      border-radius: 5px;
       padding: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: 1px solid var(--accent);
+      position: relative;
     }
 
     .news-item h3 {
       color: var(--accent);
       margin-bottom: 10px;
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 1.5rem;
     }
 
     .news-item p {
       margin-bottom: 10px;
+      font-family: 'EB Garamond', serif;
     }
 
     .news-item .date {
       font-size: 0.8rem;
-      color: #666;
+      color: var(--accent);
       text-align: right;
-    }
-
-    body.dark .news-item .date {
-      color: #aaa;
+      font-style: italic;
     }
 
     .news-item img {
       max-width: 100%;
-      border-radius: 8px;
+      border-radius: 5px;
       margin-top: 10px;
+      border: 1px solid var(--accent);
     }
 
     .refresh-news {
       display: block;
       margin: 20px auto;
       padding: 10px 20px;
+      background-color: var(--accent);
+      color: var(--parchment);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'EB Garamond', serif;
     }
 
     /* Grimoire Section */
@@ -277,17 +332,20 @@
 
     .spell-item {
       background-color: var(--box);
-      border-radius: 8px;
+      border-radius: 5px;
       padding: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      border-left: 4px solid var(--accent);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-left: 5px solid var(--accent);
       cursor: pointer;
       transition: transform 0.3s;
+      position: relative;
+      overflow: hidden;
     }
 
     .spell-item:hover {
       transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     .spell-item h3 {
@@ -295,36 +353,50 @@
       margin-bottom: 10px;
       display: flex;
       align-items: center;
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: 1.8rem;
     }
 
     .spell-item h3::before {
       content: "✧";
       margin-right: 10px;
-      font-size: 1.2em;
+      font-size: 1.5em;
+      color: var(--hover);
     }
 
     .spell-item .spell-type {
       display: inline-block;
-      padding: 3px 8px;
+      padding: 3px 10px;
       background-color: var(--accent);
-      color: white;
-      border-radius: 12px;
-      font-size: 0.8em;
+      color: var(--parchment);
+      border-radius: 15px;
+      font-size: 0.9em;
       margin-left: 10px;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
     }
 
     .spell-item .spell-description {
       margin-bottom: 10px;
+      font-family: 'EB Garamond', serif;
     }
 
     .spell-item .spell-ingredients {
       font-style: italic;
-      color: #666;
+      color: var(--accent);
       margin-top: 10px;
+      font-family: 'EB Garamond', serif;
+      padding-left: 15px;
+      border-left: 2px solid var(--accent);
     }
 
-    body.dark .spell-item .spell-ingredients {
-      color: #aaa;
+    .spell-item .spell-ingredients ul {
+      margin-top: 5px;
+      padding-left: 20px;
+    }
+
+    .spell-item .spell-ingredients strong {
+      font-weight: bold;
     }
 
     .spell-search {
@@ -333,8 +405,9 @@
     
     /* Style pour le texte énochien */
     .enochian {
-      font-family: 'Times New Roman', serif;
-      font-style: italic;
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-style: normal;
+      letter-spacing: 1px;
     }
 
     /* Illustrations de sorts */
@@ -342,13 +415,41 @@
       display: none;
       margin-top: 15px;
       text-align: center;
+      padding: 10px;
+      background-color: var(--parchment);
+      border-radius: 5px;
+      border: 1px solid var(--accent);
     }
     .spell-illustration img {
       max-width: 100%;
-      border-radius: 8px;
+      border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border: 1px solid var(--accent);
     }
-  </style>
+
+    /* Effet de vieux papier */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .container, .news-container, .grimoire-container {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Effet de parchemin froissé */
+    .container::after, .news-container::after, .grimoire-container::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('https://www.transparenttextures.com/patterns/crissxcross.png');
+      opacity: 0.1;
+      pointer-events: none;
+    }
+</style>
 </head>
 <body>
 
