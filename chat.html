@@ -1007,6 +1007,166 @@
       opacity: 0.9;
     }
 
+    /* Group info modal */
+    .group-info-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .group-info-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .group-info-content {
+      background-color: white;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s;
+    }
+
+    .group-info-modal.active .group-info-content {
+      transform: translateY(0);
+    }
+
+    .group-info-header {
+      padding: 15px 20px;
+      text-align: center;
+      background: var(--bg-gradient);
+      color: white;
+      position: relative;
+    }
+
+    .group-info-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .group-info-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .group-info-close:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .group-info-body {
+      padding: 20px;
+    }
+
+    .group-info-members {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+    .group-info-member {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .group-info-member-name {
+      flex: 1;
+    }
+
+    .group-info-member-status {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    .group-info-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .group-info-btn {
+      padding: 8px 15px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .group-info-btn-leave {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .group-info-btn-delete {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    /* Seen by indicator */
+    .seen-by {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      font-size: 11px;
+      color: var(--gray);
+    }
+
+    .seen-by-label {
+      margin-right: 5px;
+    }
+
+    .seen-by-users {
+      display: flex;
+    }
+
+    .seen-by-avatar {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 3px;
+      position: relative;
+    }
+
+    .seen-by-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .seen-by-avatar span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      background-color: var(--primary);
+      color: white;
+      font-size: 8px;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -1151,6 +1311,14 @@
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </button>
+        <button class="chat-header-btn" id="group-info-btn" title="Infos groupe" style="display: none;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </button>
       </div>
     </div>
     
@@ -1256,6 +1424,30 @@
     </div>
   </div>
   
+  <!-- Group info modal -->
+  <div class="group-info-modal" id="group-info-modal">
+    <div class="group-info-content">
+      <div class="group-info-header">
+        <div class="group-info-close" id="group-info-close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </div>
+        <div class="group-info-title" id="group-info-title">Infos groupe</div>
+      </div>
+      <div class="group-info-body">
+        <div class="group-info-members" id="group-info-members">
+          <!-- Group members will be added here -->
+        </div>
+        <div class="group-info-actions" id="group-info-actions">
+          <button class="group-info-btn group-info-btn-leave" id="group-info-leave-btn">Quitter le groupe</button>
+          <button class="group-info-btn group-info-btn-delete" id="group-info-delete-btn" style="display: none;">Supprimer le groupe</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <!-- Context menu -->
   <div class="context-menu" id="context-menu">
     <div class="context-menu-item" id="context-menu-reply">
@@ -1264,6 +1456,13 @@
         <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
       </svg>
       Répondre
+    </div>
+    <div class="context-menu-item" id="context-menu-mark-as-read">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      Marquer comme lu
     </div>
     <div class="context-menu-divider"></div>
     <div class="context-menu-item" id="context-menu-copy">
@@ -1352,6 +1551,7 @@ let replyToMessageId = null;
 let replyToMessageText = '';
 let replyToMessageSender = '';
 let groups = {};
+let groupTypingStatus = {};
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
@@ -1470,6 +1670,12 @@ function setupPresenceTracking(userId) {
     document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
     updateDirectChats();
     updateChatListStatus();
+  });
+  
+  // Surveiller le statut de saisie pour les groupes
+  db.ref('groupTyping').on('value', (snapshot) => {
+    groupTypingStatus = snapshot.val() || {};
+    updateTypingIndicator();
   });
 }
 
@@ -1712,6 +1918,9 @@ function openChat(chatType, chatWith, chatName, chatAvatar) {
   loadChatMessages();
   setupTypingIndicator();
   markMessagesAsRead();
+  
+  // Afficher/masquer le bouton d'info groupe
+  document.getElementById('group-info-btn').style.display = chatType === 'group' ? 'block' : 'none';
 }
 
 function getChatId(userId1, userId2) {
@@ -1852,7 +2061,8 @@ function processMessagesSnapshot(snapshot) {
       status: data.status,
       replyTo: data.replyTo,
       replyToText: data.replyToText,
-      replyToSender: data.replyToSender
+      replyToSender: data.replyToSender,
+      seenBy: data.seenBy || {}
     });
   });
   return messages;
@@ -1919,6 +2129,11 @@ function createMessageElement(message, lastSender, lastDate) {
     messageDiv.dataset.messageId = message.id;
   }
   
+  // Ajouter les vues si nécessaire
+  if (message.seenBy && Object.keys(message.seenBy).length > 0) {
+    addSeenByIndicator(messageDiv, message.seenBy);
+  }
+  
   // Configuration des événements
   setupMessageInteractions(messageDiv, message);
   
@@ -1966,6 +2181,39 @@ function buildMessageContent(message, isCurrentUser, lastSender, formattedTime) 
   `;
   
   return content;
+}
+
+function addSeenByIndicator(messageDiv, seenBy) {
+  const seenByDiv = document.createElement('div');
+  seenByDiv.className = 'seen-by';
+  
+  const seenByLabel = document.createElement('span');
+  seenByLabel.className = 'seen-by-label';
+  seenByLabel.textContent = 'Vu par:';
+  
+  const seenByUsers = document.createElement('div');
+  seenByUsers.className = 'seen-by-users';
+  
+  Object.keys(seenBy).forEach(userId => {
+    if (userId !== currentUser.uid && onlineUsers[userId]) {
+      const user = onlineUsers[userId];
+      const avatar = document.createElement('div');
+      avatar.className = 'seen-by-avatar';
+      
+      if (user.profileImage) {
+        avatar.innerHTML = `<img src="${user.profileImage}">`;
+      } else {
+        const letter = user.firstLetter || (user.username ? user.username.charAt(0).toUpperCase() : 'U');
+        avatar.innerHTML = `<span>${letter}</span>`;
+      }
+      
+      seenByUsers.appendChild(avatar);
+    }
+  });
+  
+  seenByDiv.appendChild(seenByLabel);
+  seenByDiv.appendChild(seenByUsers);
+  messageDiv.appendChild(seenByDiv);
 }
 
 function setupMessageLongPress() {
@@ -2018,6 +2266,13 @@ function setupMessageLongPress() {
 
 function setupMessageInteractions(messageDiv, message) {
   setupMessageHoverEffects(messageDiv);
+  
+  // Marquer comme lu quand on clique sur un message
+  if (message.userId !== currentUser.uid && (!message.seenBy || !message.seenBy[currentUser.uid])) {
+    messageDiv.addEventListener('click', () => {
+      markMessageAsSeen(message.id);
+    });
+  }
 }
 
 function setupMessageHoverEffects(messageDiv) {
@@ -2030,6 +2285,18 @@ function setupMessageHoverEffects(messageDiv) {
     messageDiv.style.transform = '';
     messageDiv.style.boxShadow = '';
   });
+}
+
+function markMessageAsSeen(messageId) {
+  if (!messageId || !currentChatId) return;
+  
+  const updateData = {};
+  updateData[`seenBy.${currentUser.uid}`] = firebase.firestore.FieldValue.serverTimestamp();
+  
+  firestore.collection("messages").doc(messageId).update(updateData)
+    .catch(error => {
+      console.error("Erreur lors du marquage comme lu:", error);
+    });
 }
 
 // Envoi de message
@@ -2046,7 +2313,10 @@ function sendMessage() {
       chatType: currentChatType,
       chatId: currentChatId,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      status: 'sent'
+      status: 'sent',
+      seenBy: {
+        [currentUser.uid]: firebase.firestore.FieldValue.serverTimestamp()
+      }
     };
     
     // Ajouter les informations de réponse si elles existent
@@ -2105,6 +2375,15 @@ function setupTypingIndicator() {
         console.error("Erreur dans updateTypingIndicator:", error);
       }
     });
+  } else if (currentChatType === 'group') {
+    // Pour les groupes, écouter le statut dans groupTyping
+    db.ref('groupTyping/' + currentChatId).on('value', (snapshot) => {
+      try {
+        updateGroupTypingIndicator(snapshot.val());
+      } catch (error) {
+        console.error("Erreur dans updateGroupTypingIndicator:", error);
+      }
+    });
   }
 }
 
@@ -2126,10 +2405,44 @@ function updateTypingIndicator(typingChatId) {
   }
 }
 
-function updateTypingUserAvatar() {
-  if (!currentChatWith || !onlineUsers[currentChatWith]) return;
+function updateGroupTypingIndicator(typingData) {
+  const typingBadge = document.getElementById('typing-indicator-badge');
+  const typingIndicator = document.getElementById('typing-indicator');
   
-  const user = onlineUsers[currentChatWith];
+  if (!typingBadge || !typingIndicator || !typingData) return;
+  
+  // Trouver qui est en train de taper
+  const typingUsers = Object.keys(typingData)
+    .filter(uid => uid !== currentUser.uid && typingData[uid] === currentChatId);
+  
+  if (typingUsers.length > 0) {
+    const firstTypingUser = onlineUsers[typingUsers[0]];
+    const userCount = typingUsers.length;
+    
+    typingBadge.style.display = 'inline-block';
+    typingIndicator.classList.add('active');
+    
+    if (firstTypingUser) {
+      typingBadge.textContent = userCount > 1 ? 
+        `${firstTypingUser.username} et ${userCount - 1} autre(s) tapent...` : 
+        `${firstTypingUser.username} tape...`;
+      
+      updateTypingUserAvatar(firstTypingUser);
+    }
+    
+    scrollToBottom();
+  } else {
+    typingBadge.style.display = 'none';
+    typingIndicator.classList.remove('active');
+  }
+}
+
+function updateTypingUserAvatar(user) {
+  if (!user) {
+    if (!currentChatWith || !onlineUsers[currentChatWith]) return;
+    user = onlineUsers[currentChatWith];
+  }
+  
   const typingAvatar = document.getElementById('typing-user-avatar-letter');
   const typingAvatarImg = document.getElementById('typing-user-avatar-img');
   
@@ -2147,17 +2460,30 @@ function updateTypingUserAvatar() {
 }
 
 function setTyping(typing) {
-  if (isTyping === typing || !currentChatWith) return;
+  if (isTyping === typing || !currentChatId) return;
   
   isTyping = typing;
-  const typingRef = db.ref('status/' + currentUser.uid + '/typing');
   
-  if (typing) {
-    typingRef.set(currentChatId);
-    resetTypingTimeout();
-  } else {
-    typingRef.remove();
-    clearTypingTimeout();
+  if (currentChatType === 'direct' && currentChatWith) {
+    const typingRef = db.ref('status/' + currentUser.uid + '/typing');
+    
+    if (typing) {
+      typingRef.set(currentChatId);
+      resetTypingTimeout();
+    } else {
+      typingRef.remove();
+      clearTypingTimeout();
+    }
+  } else if (currentChatType === 'group') {
+    const typingRef = db.ref('groupTyping/' + currentChatId + '/' + currentUser.uid);
+    
+    if (typing) {
+      typingRef.set(currentChatId);
+      resetTypingTimeout();
+    } else {
+      typingRef.remove();
+      clearTypingTimeout();
+    }
   }
 }
 
@@ -2298,6 +2624,14 @@ function setupContextMenu() {
     showGroupCreationModal();
     document.getElementById('context-menu').style.display = 'none';
   });
+  
+  // Gestion du marquage comme lu
+  document.getElementById('context-menu-mark-as-read').addEventListener('click', () => {
+    if (selectedMessage && selectedMessage.dataset.messageId) {
+      markMessageAsSeen(selectedMessage.dataset.messageId);
+    }
+    document.getElementById('context-menu').style.display = 'none';
+  });
 }
 
 function showContextMenu(e, messageElement) {
@@ -2307,6 +2641,16 @@ function showContextMenu(e, messageElement) {
   
   selectedMessage = messageElement;
   setupContextMenuActions(messageElement);
+  
+  // Afficher/masquer l'option "Marquer comme lu" selon le type de message
+  const markAsReadItem = document.getElementById('context-menu-mark-as-read');
+  const messageId = messageElement.dataset.messageId;
+  
+  if (messageId && messageElement.classList.contains('received')) {
+    markAsReadItem.style.display = 'flex';
+  } else {
+    markAsReadItem.style.display = 'none';
+  }
 }
 
 function positionContextMenu(e, contextMenu) {
@@ -2488,6 +2832,108 @@ function createGroup() {
   }
 }
 
+// Gestion des informations de groupe
+function showGroupInfo() {
+  if (!currentChatType === 'group' || !currentChatWith) return;
+  
+  const group = groups[currentChatWith];
+  if (!group) return;
+  
+  const modal = document.getElementById('group-info-modal');
+  const membersList = document.getElementById('group-info-members');
+  const title = document.getElementById('group-info-title');
+  const deleteBtn = document.getElementById('group-info-delete-btn');
+  
+  // Mettre à jour le titre
+  title.textContent = group.name || 'Infos groupe';
+  
+  // Vider la liste des membres
+  membersList.innerHTML = '';
+  
+  // Ajouter les membres
+  for (const userId in group.members) {
+    const member = group.members[userId];
+    const memberItem = document.createElement('div');
+    memberItem.className = 'group-info-member';
+    
+    memberItem.innerHTML = `
+      <div class="group-avatar">
+        ${member.profileImage 
+          ? `<img src="${member.profileImage}">` 
+          : `<span>${member.username ? member.username.charAt(0).toUpperCase() : 'U'}</span>`}
+      </div>
+      <div class="group-info-member-name">${member.username || 'Utilisateur'}</div>
+      <div class="group-info-member-status">${onlineUsers[userId]?.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
+    `;
+    
+    membersList.appendChild(memberItem);
+  }
+  
+  // Afficher/masquer le bouton de suppression selon si l'utilisateur est le créateur
+  deleteBtn.style.display = group.creator === currentUser.uid ? 'block' : 'none';
+  
+  // Afficher le modal
+  modal.classList.add('active');
+}
+
+function leaveGroup() {
+  if (!currentChatType === 'group' || !currentChatWith) return;
+  
+  if (confirm('Voulez-vous vraiment quitter ce groupe?')) {
+    db.ref(`groups/${currentChatWith}/members/${currentUser.uid}`).remove()
+      .then(() => {
+        alert('Vous avez quitté le groupe');
+        document.getElementById('group-info-modal').classList.remove('active');
+        // Recharger les conversations
+        loadGroups();
+        // Retourner au chat général
+        openChat('general', null, 'Général', null);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        alert("Une erreur s'est produite lors de la tentative de quitter le groupe");
+      });
+  }
+}
+
+function deleteGroup() {
+  if (!currentChatType === 'group' || !currentChatWith) return;
+  
+  const group = groups[currentChatWith];
+  if (!group || group.creator !== currentUser.uid) return;
+  
+  if (confirm('Voulez-vous vraiment supprimer ce groupe? Cette action est irréversible.')) {
+    // Supprimer le groupe
+    db.ref(`groups/${currentChatWith}`).remove()
+      .then(() => {
+        // Supprimer tous les messages du groupe
+        return firestore.collection("messages")
+          .where("chatType", "==", "group")
+          .where("chatId", "==", currentChatWith)
+          .get()
+          .then(querySnapshot => {
+            const batch = firestore.batch();
+            querySnapshot.forEach(doc => {
+              batch.delete(doc.ref);
+            });
+            return batch.commit();
+          });
+      })
+      .then(() => {
+        alert('Le groupe a été supprimé');
+        document.getElementById('group-info-modal').classList.remove('active');
+        // Recharger les conversations
+        loadGroups();
+        // Retourner au chat général
+        openChat('general', null, 'Général', null);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        alert("Une erreur s'est produite lors de la suppression du groupe");
+      });
+  }
+}
+
 // Formatage des dates
 function formatDate(dateString) {
   const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
@@ -2523,6 +2969,9 @@ function setupSearch() {
 function markMessagesAsRead() {
   if (currentChatType === 'direct' && currentChatWith) {
     const chatItems = document.querySelectorAll(`.chat-item[data-user-id="${currentChatWith}"]`);
+    chatItems.forEach(item => item.classList.remove('unread'));
+  } else if (currentChatType === 'group' && currentChatWith) {
+    const chatItems = document.querySelectorAll(`.chat-item[data-group-id="${currentChatWith}"]`);
     chatItems.forEach(item => item.classList.remove('unread'));
   }
 }
@@ -2562,6 +3011,16 @@ function setupEventListeners() {
   });
   
   document.getElementById('group-create-btn').addEventListener('click', createGroup);
+  
+  document.getElementById('group-info-btn').addEventListener('click', showGroupInfo);
+  
+  document.getElementById('group-info-close').addEventListener('click', () => {
+    document.getElementById('group-info-modal').classList.remove('active');
+  });
+  
+  document.getElementById('group-info-leave-btn').addEventListener('click', leaveGroup);
+  
+  document.getElementById('group-info-delete-btn').addEventListener('click', deleteGroup);
   
   document.getElementById('emoji-btn').addEventListener('click', (e) => {
     const picker = document.getElementById('emoji-picker');
