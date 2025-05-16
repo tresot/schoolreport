@@ -481,44 +481,35 @@
       max-width: 300px;
     }
 
-    /* Typing indicator */
-    .typing-indicator {
+    /* View indicator */
+    .view-indicator {
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
-      opacity: 0;
-      transition: opacity 0.3s;
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--gray);
+      justify-content: flex-end;
     }
 
-    .typing-indicator.active {
-      opacity: 1;
+    .view-count {
+      margin-left: 5px;
+      color: var(--primary);
+      font-weight: 600;
     }
 
-    .typing-dots {
-      display: flex;
-      margin-left: 10px;
+    .view-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      margin-left: 5px;
     }
 
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      background-color: var(--gray);
-      border-radius: 50%;
-      margin-right: 3px;
-      animation: typingAnimation 1.4s infinite ease-in-out;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typingAnimation {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-5px); }
+    .view-btn:hover {
+      color: var(--primary-dark);
     }
 
     /* Profile modal */
@@ -654,24 +645,6 @@
 
     .badge-warning {
       background-color: var(--warning);
-      color: white;
-    }
-
-    /* Message status indicators */
-    .message-status {
-      margin-left: 5px;
-      font-size: 12px;
-    }
-
-    .message-status.sent {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .message-status.delivered {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .message-status.read {
       color: white;
     }
 
@@ -1125,48 +1098,6 @@
       color: white;
     }
 
-    /* Seen by indicator */
-    .seen-by {
-      display: flex;
-      align-items: center;
-      margin-top: 5px;
-      font-size: 11px;
-      color: var(--gray);
-    }
-
-    .seen-by-label {
-      margin-right: 5px;
-    }
-
-    .seen-by-users {
-      display: flex;
-    }
-
-    .seen-by-avatar {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      margin-right: 3px;
-      position: relative;
-    }
-
-    .seen-by-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .seen-by-avatar span {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      background-color: var(--primary);
-      color: white;
-      font-size: 8px;
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -1300,7 +1231,6 @@
       <div class="chat-header-info">
         <div class="chat-header-name" id="current-chat-name">
           Nom du chat
-          <span class="badge badge-warning" id="typing-indicator-badge" style="display: none;">en train d'écrire...</span>
         </div>
         <div class="chat-header-status" id="current-chat-status-text">En ligne</div>
       </div>
@@ -1322,19 +1252,7 @@
       </div>
     </div>
     
-    <div class="chat-messages" id="chat-messages" style="display: none;">
-      <div class="typing-indicator" id="typing-indicator">
-        <div class="chat-avatar" id="typing-user-avatar">
-          <span id="typing-user-avatar-letter">U</span>
-          <img id="typing-user-avatar-img" style="display: none;">
-        </div>
-        <div class="typing-dots">
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-        </div>
-      </div>
-    </div>
+    <div class="chat-messages" id="chat-messages" style="display: none;"></div>
     
     <div class="chat-input-container" id="chat-input-container" style="display: none;">
       <div class="reply-indicator" id="reply-indicator" style="display: none;">
@@ -1457,12 +1375,12 @@
       </svg>
       Répondre
     </div>
-    <div class="context-menu-item" id="context-menu-mark-as-read">
+    <div class="context-menu-item" id="context-menu-view">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
       </svg>
-      Marquer comme lu
+      Voir les vues
     </div>
     <div class="context-menu-divider"></div>
     <div class="context-menu-item" id="context-menu-copy">
@@ -1480,16 +1398,6 @@
         <line x1="14" y1="11" x2="14" y2="17"></line>
       </svg>
       Supprimer
-    </div>
-    <div class="context-menu-divider"></div>
-    <div class="context-menu-item" id="context-menu-create-group">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
-      Créer un groupe
     </div>
   </div>
   
@@ -1541,8 +1449,6 @@ let currentChatType = null;
 let currentChatWith = null;
 let currentChatName = '';
 let currentChatAvatar = '';
-let typingTimeout = null;
-let isTyping = false;
 let onlineUsers = {};
 let chatMessagesLimit = 100;
 let selectedMessage = null;
@@ -1551,7 +1457,6 @@ let replyToMessageId = null;
 let replyToMessageText = '';
 let replyToMessageSender = '';
 let groups = {};
-let groupTypingStatus = {};
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
@@ -1670,12 +1575,6 @@ function setupPresenceTracking(userId) {
     document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
     updateDirectChats();
     updateChatListStatus();
-  });
-  
-  // Surveiller le statut de saisie pour les groupes
-  db.ref('groupTyping').on('value', (snapshot) => {
-    groupTypingStatus = snapshot.val() || {};
-    updateTypingIndicator();
   });
 }
 
@@ -1916,7 +1815,6 @@ function openChat(chatType, chatWith, chatName, chatAvatar) {
   
   updateChatUI();
   loadChatMessages();
-  setupTypingIndicator();
   markMessagesAsRead();
   
   // Afficher/masquer le bouton d'info groupe
@@ -1983,14 +1881,6 @@ function loadChatMessages() {
   const messagesContainer = document.getElementById('chat-messages');
   messagesContainer.innerHTML = '';
   
-  // Ajout du fond en arrière-plan sans interférer avec les messages
-  messagesContainer.style.position = 'relative';
-  messagesContainer.style.backgroundImage = 'none';
-  messagesContainer.style.backgroundColor = '#f8f9fa';
-  
-  // Ajout de l'indicateur de saisie
-  addTypingIndicator();
-  
   const messagesQuery = buildMessagesQuery();
   
   messageListener = messagesQuery.onSnapshot((snapshot) => {
@@ -1999,29 +1889,7 @@ function loadChatMessages() {
     scrollToBottom();
   }, (error) => {
     console.error("Erreur:", error);
-    // Gestion de l'erreur d'index manquant
-    if (error.code === 'failed-precondition') {
-      console.warn("Index Firestore manquant. Veuillez créer l'index requis.");
-    }
   });
-}
-
-function addTypingIndicator() {
-  const typingIndicator = document.createElement('div');
-  typingIndicator.className = 'typing-indicator';
-  typingIndicator.id = 'typing-indicator';
-  typingIndicator.innerHTML = `
-    <div class="chat-avatar" id="typing-user-avatar">
-      <span id="typing-user-avatar-letter">U</span>
-      <img id="typing-user-avatar-img" style="display: none;">
-    </div>
-    <div class="typing-dots">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>
-  `;
-  document.getElementById('chat-messages').appendChild(typingIndicator);
 }
 
 function buildMessagesQuery() {
@@ -2073,12 +1941,6 @@ function displayMessages(messages) {
   const messagesContainer = document.getElementById('chat-messages');
   messagesContainer.innerHTML = '';
   
-  // Réajouter l'indicateur de saisie
-  const typingIndicator = document.getElementById('typing-indicator');
-  if (typingIndicator) {
-    messagesContainer.appendChild(typingIndicator);
-  }
-  
   let lastSender = null;
   let lastDate = null;
   
@@ -2101,10 +1963,6 @@ function createMessageElement(message, lastSender, lastDate) {
   const isCurrentUser = message.userId === currentUser.uid;
   const messageDiv = document.createElement('div');
   messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
-  
-  // Assurer que le message est au-dessus du fond
-  messageDiv.style.position = 'relative';
-  messageDiv.style.zIndex = '1';
   
   const timestamp = getMessageTimestamp(message);
   const formattedTime = formatTime(timestamp);
@@ -2129,10 +1987,8 @@ function createMessageElement(message, lastSender, lastDate) {
     messageDiv.dataset.messageId = message.id;
   }
   
-  // Ajouter les vues si nécessaire
-  if (message.seenBy && Object.keys(message.seenBy).length > 0) {
-    addSeenByIndicator(messageDiv, message.seenBy);
-  }
+  // Ajouter le système de vues
+  addViewIndicator(messageDiv, message);
   
   // Configuration des événements
   setupMessageInteractions(messageDiv, message);
@@ -2183,37 +2039,36 @@ function buildMessageContent(message, isCurrentUser, lastSender, formattedTime) 
   return content;
 }
 
-function addSeenByIndicator(messageDiv, seenBy) {
-  const seenByDiv = document.createElement('div');
-  seenByDiv.className = 'seen-by';
-  
-  const seenByLabel = document.createElement('span');
-  seenByLabel.className = 'seen-by-label';
-  seenByLabel.textContent = 'Vu par:';
-  
-  const seenByUsers = document.createElement('div');
-  seenByUsers.className = 'seen-by-users';
+function addViewIndicator(messageDiv, message) {
+  const viewCount = Object.keys(message.seenBy || {}).length;
+  if (viewCount > 0) {
+    const viewDiv = document.createElement('div');
+    viewDiv.className = 'view-indicator';
+    
+    const viewBtn = document.createElement('button');
+    viewBtn.className = 'view-btn';
+    viewBtn.textContent = 'Vues';
+    viewBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showViewers(message.seenBy);
+    });
+    
+    viewDiv.innerHTML = `<span>${viewCount}</span>`;
+    viewDiv.appendChild(viewBtn);
+    messageDiv.appendChild(viewDiv);
+  }
+}
+
+function showViewers(seenBy) {
+  let viewersList = 'Personnes ayant vu ce message:\n\n';
   
   Object.keys(seenBy).forEach(userId => {
     if (userId !== currentUser.uid && onlineUsers[userId]) {
-      const user = onlineUsers[userId];
-      const avatar = document.createElement('div');
-      avatar.className = 'seen-by-avatar';
-      
-      if (user.profileImage) {
-        avatar.innerHTML = `<img src="${user.profileImage}">`;
-      } else {
-        const letter = user.firstLetter || (user.username ? user.username.charAt(0).toUpperCase() : 'U');
-        avatar.innerHTML = `<span>${letter}</span>`;
-      }
-      
-      seenByUsers.appendChild(avatar);
+      viewersList += `• ${onlineUsers[userId].username || 'Utilisateur'}\n`;
     }
   });
   
-  seenByDiv.appendChild(seenByLabel);
-  seenByDiv.appendChild(seenByUsers);
-  messageDiv.appendChild(seenByDiv);
+  alert(viewersList);
 }
 
 function setupMessageLongPress() {
@@ -2331,7 +2186,6 @@ function sendMessage() {
         updateMessageStatus(docRef);
         clearMessageInput();
         clearReplyIndicator();
-        setTyping(false);
         scrollToBottom();
       })
       .catch((error) => {
@@ -2363,142 +2217,6 @@ function scrollToBottom() {
     const messagesContainer = document.getElementById('chat-messages');
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }, 100);
-}
-
-// Indicateur de saisie avec gestion des erreurs
-function setupTypingIndicator() {
-  if (currentChatType === 'direct' && currentChatWith) {
-    db.ref('status/' + currentChatWith + '/typing').on('value', (snapshot) => {
-      try {
-        updateTypingIndicator(snapshot.val());
-      } catch (error) {
-        console.error("Erreur dans updateTypingIndicator:", error);
-      }
-    });
-  } else if (currentChatType === 'group') {
-    // Pour les groupes, écouter le statut dans groupTyping
-    db.ref('groupTyping/' + currentChatId).on('value', (snapshot) => {
-      try {
-        updateGroupTypingIndicator(snapshot.val());
-      } catch (error) {
-        console.error("Erreur dans updateGroupTypingIndicator:", error);
-      }
-    });
-  }
-}
-
-function updateTypingIndicator(typingChatId) {
-  const typingBadge = document.getElementById('typing-indicator-badge');
-  const typingIndicator = document.getElementById('typing-indicator');
-  
-  // Vérification que les éléments existent avant de les manipuler
-  if (!typingBadge || !typingIndicator) return;
-  
-  if (typingChatId === currentChatId) {
-    typingBadge.style.display = 'inline-block';
-    typingIndicator.classList.add('active');
-    updateTypingUserAvatar();
-    scrollToBottom();
-  } else {
-    typingBadge.style.display = 'none';
-    typingIndicator.classList.remove('active');
-  }
-}
-
-function updateGroupTypingIndicator(typingData) {
-  const typingBadge = document.getElementById('typing-indicator-badge');
-  const typingIndicator = document.getElementById('typing-indicator');
-  
-  if (!typingBadge || !typingIndicator || !typingData) return;
-  
-  // Trouver qui est en train de taper
-  const typingUsers = Object.keys(typingData)
-    .filter(uid => uid !== currentUser.uid && typingData[uid] === currentChatId);
-  
-  if (typingUsers.length > 0) {
-    const firstTypingUser = onlineUsers[typingUsers[0]];
-    const userCount = typingUsers.length;
-    
-    typingBadge.style.display = 'inline-block';
-    typingIndicator.classList.add('active');
-    
-    if (firstTypingUser) {
-      typingBadge.textContent = userCount > 1 ? 
-        `${firstTypingUser.username} et ${userCount - 1} autre(s) tapent...` : 
-        `${firstTypingUser.username} tape...`;
-      
-      updateTypingUserAvatar(firstTypingUser);
-    }
-    
-    scrollToBottom();
-  } else {
-    typingBadge.style.display = 'none';
-    typingIndicator.classList.remove('active');
-  }
-}
-
-function updateTypingUserAvatar(user) {
-  if (!user) {
-    if (!currentChatWith || !onlineUsers[currentChatWith]) return;
-    user = onlineUsers[currentChatWith];
-  }
-  
-  const typingAvatar = document.getElementById('typing-user-avatar-letter');
-  const typingAvatarImg = document.getElementById('typing-user-avatar-img');
-  
-  if (!typingAvatar || !typingAvatarImg) return;
-  
-  if (user.profileImage) {
-    typingAvatarImg.src = user.profileImage;
-    typingAvatarImg.style.display = 'block';
-    typingAvatar.style.display = 'none';
-  } else {
-    typingAvatar.textContent = user.firstLetter || (user.username ? user.username.charAt(0).toUpperCase() : 'U');
-    typingAvatar.style.display = 'flex';
-    typingAvatarImg.style.display = 'none';
-  }
-}
-
-function setTyping(typing) {
-  if (isTyping === typing || !currentChatId) return;
-  
-  isTyping = typing;
-  
-  if (currentChatType === 'direct' && currentChatWith) {
-    const typingRef = db.ref('status/' + currentUser.uid + '/typing');
-    
-    if (typing) {
-      typingRef.set(currentChatId);
-      resetTypingTimeout();
-    } else {
-      typingRef.remove();
-      clearTypingTimeout();
-    }
-  } else if (currentChatType === 'group') {
-    const typingRef = db.ref('groupTyping/' + currentChatId + '/' + currentUser.uid);
-    
-    if (typing) {
-      typingRef.set(currentChatId);
-      resetTypingTimeout();
-    } else {
-      typingRef.remove();
-      clearTypingTimeout();
-    }
-  }
-}
-
-function resetTypingTimeout() {
-  clearTypingTimeout();
-  typingTimeout = setTimeout(() => {
-    setTyping(false);
-  }, 5000);
-}
-
-function clearTypingTimeout() {
-  if (typingTimeout) {
-    clearTimeout(typingTimeout);
-    typingTimeout = null;
-  }
 }
 
 // Gestion du profil
@@ -2593,7 +2311,6 @@ function setupEmojiPicker() {
     input.value += emoji;
     input.focus();
     emojiPicker.style.display = 'none';
-    setTyping(true);
   }
   
   emojiTabs.forEach((tab) => {
@@ -2619,16 +2336,10 @@ function setupContextMenu() {
     document.getElementById('context-menu').style.display = 'none';
   });
   
-  // Gestion de la création de groupe
-  document.getElementById('context-menu-create-group').addEventListener('click', () => {
-    showGroupCreationModal();
-    document.getElementById('context-menu').style.display = 'none';
-  });
-  
-  // Gestion du marquage comme lu
-  document.getElementById('context-menu-mark-as-read').addEventListener('click', () => {
+  // Gestion de la vue des messages
+  document.getElementById('context-menu-view').addEventListener('click', () => {
     if (selectedMessage && selectedMessage.dataset.messageId) {
-      markMessageAsSeen(selectedMessage.dataset.messageId);
+      viewMessage(selectedMessage.dataset.messageId);
     }
     document.getElementById('context-menu').style.display = 'none';
   });
@@ -2641,16 +2352,6 @@ function showContextMenu(e, messageElement) {
   
   selectedMessage = messageElement;
   setupContextMenuActions(messageElement);
-  
-  // Afficher/masquer l'option "Marquer comme lu" selon le type de message
-  const markAsReadItem = document.getElementById('context-menu-mark-as-read');
-  const messageId = messageElement.dataset.messageId;
-  
-  if (messageId && messageElement.classList.contains('received')) {
-    markAsReadItem.style.display = 'flex';
-  } else {
-    markAsReadItem.style.display = 'none';
-  }
 }
 
 function positionContextMenu(e, contextMenu) {
@@ -2676,6 +2377,21 @@ function copyMessage(messageElement) {
   const messageText = messageElement.querySelector('.message-text').textContent;
   navigator.clipboard.writeText(messageText);
   document.getElementById('context-menu').style.display = 'none';
+}
+
+function viewMessage(messageId) {
+  if (!messageId) return;
+  
+  firestore.collection("messages").doc(messageId).get()
+    .then((doc) => {
+      if (doc.exists) {
+        const message = doc.data();
+        showViewers(message.seenBy || {});
+      }
+    })
+    .catch(error => {
+      console.error("Erreur:", error);
+    });
 }
 
 function deleteMessage(messageElement) {
@@ -2984,10 +2700,6 @@ function setupEventListeners() {
   
   document.getElementById('message-input').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
-  });
-  
-  document.getElementById('message-input').addEventListener('input', () => {
-    setTyping(document.getElementById('message-input').value.trim().length > 0);
   });
   
   document.getElementById('general-chat-item').addEventListener('click', () => {
