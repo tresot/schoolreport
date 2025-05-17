@@ -40,7 +40,7 @@
     /* Sidebar styles */
     .sidebar {
       width: 300px;
-      background-color: var(--bg-color);
+      background-color: white;
       border-right: 1px solid #e9ecef;
       height: 100vh;
       display: flex;
@@ -236,7 +236,7 @@
       border-bottom: 1px solid #e9ecef;
       display: flex;
       align-items: center;
-      background-color: var(--bg-color);
+      background-color: white;
       z-index: 10;
     }
 
@@ -316,7 +316,7 @@
 
     .message.received {
       align-self: flex-start;
-      background-color: var(--bg-color);
+      background-color: white;
       border: 1px solid #e9ecef;
       border-bottom-left-radius: 5px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -361,7 +361,7 @@
 
     .chat-input-container {
       padding: 15px;
-      background-color: var(--bg-color);
+      background-color: white;
       border-top: 1px solid #e9ecef;
       z-index: 10;
     }
@@ -544,7 +544,7 @@
     }
 
     .profile-content {
-      background-color: var(--bg-color);
+      background-color: white;
       border-radius: 10px;
       width: 90%;
       max-width: 400px;
@@ -572,7 +572,7 @@
       border: 4px solid white;
       margin: 0 auto 15px;
       overflow: hidden;
-      background-color: var(--bg-color);
+      background-color: white;
     }
 
     .profile-avatar img {
@@ -678,7 +678,7 @@
     /* Context menu */
     .context-menu {
       position: absolute;
-      background-color: var(--bg-color);
+      background-color: white;
       border: 1px solid #e9ecef;
       border-radius: 6px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -714,7 +714,7 @@
       bottom: 70px;
       right: 20px;
       width: 300px;
-      background-color: var(--bg-color);
+      background-color: white;
       border: 1px solid #e9ecef;
       border-radius: 10px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -881,7 +881,7 @@
     }
 
     .group-content {
-      background-color: var(--bg-color);
+      background-color: white;
       border-radius: 10px;
       width: 90%;
       max-width: 400px;
@@ -1030,7 +1030,7 @@
     }
 
     .group-info-content {
-      background-color: var(--bg-color);
+      background-color: white;
       border-radius: 10px;
       width: 90%;
       max-width: 400px;
@@ -1240,112 +1240,8 @@
       animation: pulse 2s infinite;
     }
   </style>
-
-<style>
-.seen-by {
-  font-size: 0.75rem;
-  color: #6c757d;
-  margin-top: 2px;
-  margin-left: 10px;
-  font-style: italic;
-}
-</style>
-
-
-<style>
-:root {
-  --bg-color: #f5f5f5;
-  --text-color: #111;
-  --bubble-color: #e5e5ea;
-}
-.dark-theme {
-  --bg-color: #181818;
-  --text-color: #fff;
-  --bubble-color: #333;
-}
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-.message-bubble {
-  background-color: var(--bubble-color);
-  color: var(--text-color);
-}
-</style>
-
-
-<style>
-:root {
-  --bg-color: #ffffff;
-  --text-color: #111111;
-  --bubble-color: #f0f0f0;
-  --msg-own-bg: #2f80ed;
-  --msg-other-bg: #e5e5ea;
-  --sidebar-bg: #f9f9f9;
-  --input-bg: #f0f0f0;
-}
-.dark-theme {
-  --bg-color: #0e0e10;
-  --text-color: #eeeeee;
-  --bubble-color: #2a2a2f;
-  --msg-own-bg: #2f80ed;
-  --msg-other-bg: #2a2a2f;
-  --sidebar-bg: #18181c;
-  --input-bg: #1e1e22;
-}
-body, .content, .chat-window {
-  background-color: var(--bg-color) !important;
-  color: var(--text-color) !important;
-  transition: background-color 0.3s, color 0.3s;
-}
-.leftbar {
-  background-color: var(--sidebar-bg) !important;
-  transition: background-color 0.3s;
-}
-.msg-box {
-  background-color: var(--msg-other-bg) !important;
-  color: var(--text-color) !important;
-  border-radius: 16px !important;
-  transition: background-color 0.3s, color 0.3s;
-}
-.msg-box.owner {
-  background-color: var(--msg-own-bg) !important;
-  color: #fff !important;
-}
-textarea, input, .input-box {
-  background-color: var(--input-bg) !important;
-  color: var(--text-color) !important;
-  border: none;
-  transition: background-color 0.3s, color 0.3s;
-}
-.seen-by {
-  font-size: 0.8em;
-  font-style: italic;
-  color: var(--text-color);
-  opacity: 0.7;
-  margin-top: 4px;
-}
-</style>
-
 </head>
 <body>
-
-
-      <div class="bb8">
-        <div class="bb8__head-container">
-          <div class="bb8__antenna"></div>
-          <div class="bb8__antenna"></div>
-          <div class="bb8__head"></div>
-        </div>
-        <div class="bb8__body"></div>
-      </div>
-      <div class="artificial__hidden">
-        <div class="bb8__shadow"></div>
-      </div>
-    </div>
-  </label>
-</div>
-
   <!-- Sidebar with chat list -->
   <div class="sidebar">
     <div class="sidebar-header">
@@ -3139,58 +3035,5 @@ function setupEventListeners() {
   });
 }
   </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const toggle = document.getElementById('theme-switch');
-  if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark-theme");
-    toggle.checked = true;
-  }
-  toggle.addEventListener("change", () => {
-    document.body.classList.toggle("dark-theme");
-    localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
-  });
-});
-</script>
-
-
-<!-- Theme Switch BB8 -->
-<div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; background-color: #1a1a1a; padding: 8px; border-radius: 12px;">
-  <label class="bb8-toggle">
-    <input id="theme-switch" class="bb8-toggle__checkbox" type="checkbox">
-    <div class="bb8-toggle__container">
-      <div class="bb8-toggle__scenery">
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="tatto-1"></div>
-        <div class="tatto-2"></div>
-        <div class="gomrassen"></div>
-        <div class="hermes"></div>
-        <div class="chenini"></div>
-        <div class="bb8-toggle__cloud"></div>
-        <div class="bb8-toggle__cloud"></div>
-        <div class="bb8-toggle__cloud"></div>
-      </div>
-      <div class="bb8">
-        <div class="bb8__head-container">
-          <div class="bb8__antenna"></div>
-          <div class="bb8__antenna"></div>
-          <div class="bb8__head"></div>
-        </div>
-        <div class="bb8__body"></div>
-      </div>
-      <div class="artificial__hidden">
-        <div class="bb8__shadow"></div>
-      </div>
-    </div>
-  </label>
-</div>
-
 </body>
 </html>
