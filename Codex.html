@@ -1,857 +1,259 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ESPACE DE TRAVAIL</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grimoire du Savoir - Codex</title>
+  
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+
+  
 <style>
-   :root {
-  --bg: #0f0f1a;
-  --bg-alt: #1a1a2e;
-  --text: #e0e0e0;
-  --accent: #00f0ff;
-  --hover: #00bcd4;
-  --box: #212132;
-  --parchment: #161625;
-  --ink: #ffffff;
-}
+  body {
+    background: linear-gradient(to bottom, #f5f3e7, #eae4d3);
+    font-family: 'Cinzel Decorative', serif;
+    color: #3f3b2e;
+    padding: 2rem;
+    line-height: 1.8;
+    background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+  }
 
-body.dark {
-  --bg: #00010a;
-  --bg-alt: #0a0a14;
-  --text: #d0d0d0;
-  --accent: #00ffe7;
-  --hover: #00bfa5;
-  --box: #1e1e2e;
-  --parchment: #12121f;
-  --ink: #ffffff;
-}
+  h1, h2 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #4e3a21;
+    text-shadow: 1px 1px 0px #d3c5a1;
+  }
 
-* {
+  .search-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .search-section input[type="text"] {
+    padding: 0.75rem;
+    width: 80%;
+    max-width: 400px;
+    font-size: 1.1rem;
+    border: 2px solid #8b7c5a;
+    border-radius: 8px;
+    font-family: 'Cinzel Decorative', serif;
+  }
+
+  .search-section button {
+    padding: 0.75rem 1.2rem;
+    font-size: 1rem;
+    background-color: #8b7c5a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel Decorative', serif;
+    margin-left: 0.5rem;
+  }
+
+  .result-card {
+    background-color: #fffdf8;
+    border: 1px solid #d6c9aa;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .result-card h3 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-card p {
+    font-size: 1rem;
+    font-family: Georgia, serif;
+  }
+
+  .result-card a {
+    color: #6d4c41;
+    text-decoration: underline;
+  }
+
+  @media screen and (max-width: 600px) {
+    .search-section input[type="text"] {
+      width: 90%;
+    }
+  }
+</style>
+
+
+<style>
+.loader {
+  --background: linear-gradient(135deg, #23C4F8, #275EFE);
+  --shadow: rgba(39, 94, 254, 0.28);
+  --text: #6C7486;
+  --page: rgba(255, 255, 255, 0.36);
+  --page-fold: rgba(255, 255, 255, 0.52);
+  --duration: 3s;
+  width: 200px;
+  height: 140px;
+  position: relative;
+}
+.loader:before, .loader:after {
+  --r: -6deg;
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  width: 120px;
+  top: 80%;
+  box-shadow: 0 16px 12px var(--shadow);
+  transform: rotate(var(--r));
+}
+.loader:before {
+  left: 4px;
+}
+.loader:after {
+  --r: 6deg;
+  right: 4px;
+}
+.loader div {
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+  position: relative;
+  z-index: 1;
+  perspective: 600px;
+  box-shadow: 0 4px 6px var(--shadow);
+  background-image: var(--background);
+}
+.loader div ul {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Orbitron', sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  background-image: radial-gradient(circle at top left, #202040, #0f0f1a);
-  line-height: 1.6;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: var(--box);
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  z-index: 1000;
-  border-bottom: 2px solid var(--accent);
-  box-shadow: 0 4px 10px rgba(0, 255, 255, 0.1);
-}
-
-.navbar button {
-  background-color: transparent;
-  color: var(--accent);
-  border: 2px solid var(--accent);
-  padding: 10px 20px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s;
-  font-family: 'Orbitron', sans-serif;
-  text-transform: uppercase;
-}
-
-.navbar button:hover {
-  background-color: var(--hover);
-  color: #000;
-}
-
-.container, .news-container, .grimoire-container, #dissertationPage {
-  background-color: var(--parchment);
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 30px;
-  width: 90%;
-  max-width: 800px;
-  margin: 90px auto 20px auto;
-  border: 1px solid var(--accent);
+  list-style: none;
   position: relative;
-  backdrop-filter: blur(10px);
 }
-
-.container h1, .news-container h2, .grimoire-container h2, #dissertationPage h1 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: var(--accent);
-  font-size: 2.5rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px var(--accent);
+.loader div ul li {
+  --r: 180deg;
+  --o: 0;
+  --c: var(--page);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  transform-origin: 100% 50%;
+  color: var(--c);
+  opacity: var(--o);
+  transform: rotateY(var(--r));
+  animation: var(--duration) ease infinite;
 }
-
-.search-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: var(--box);
-  border-radius: 10px;
-  border: 1px solid var(--accent);
-}
-
-.search-bar input {
-  width: 75%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  outline: none;
-  background-color: var(--bg-alt);
-  color: var(--ink);
-  border: 1px solid var(--accent);
-}
-
-.search-bar button {
-  padding: 10px 15px;
-  border: none;
-  background-color: var(--accent);
-  color: var(--bg);
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 5px;
-  font-family: 'Orbitron', sans-serif;
-}
-
-.search-bar button:hover {
-  background-color: var(--hover);
-}
-
-.results table {
-  width: 100%;
-  border-collapse: collapse;
+.loader div ul li:first-child { --r: 0deg; --o: 1; }
+.loader div ul li:last-child { --o: 1; }
+.loader span {
+  display: block;
+  left: 0;
+  right: 0;
+  top: 100%;
   margin-top: 20px;
-  border: 1px solid var(--accent);
-}
-
-.results table th,
-.results table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--accent);
-  background-color: var(--bg-alt);
-}
-
-.results table th {
-  background-color: var(--box);
-  font-weight: bold;
-  color: var(--accent);
-}
-
-.results img {
-  margin-top: 10px;
-  border-radius: 5px;
-  max-width: 100px;
-  border: 1px solid var(--accent);
-  box-shadow: 0 0 10px rgba(0,255,255,0.3);
-}
-
-.input-group label, .news-item .date, .spell-item .spell-ingredients, .word-count {
-  color: var(--accent);
-  font-family: 'Orbitron', sans-serif;
-}
-
-.dissertation-controls, .spell-search {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.input-group select, .input-group input {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid var(--accent);
-  background-color: var(--bg-alt);
+  text-align: center;
   color: var(--text);
 }
-
-#essayOutput {
-  background-color: var(--bg-alt);
-  color: var(--ink);
-  font-family: 'Orbitron', sans-serif;
-  box-shadow: inset 0 0 10px rgba(0,255,255,0.1);
-  padding: 20px;
-  border-radius: 10px;
-  min-height: 400px;
-  margin-top: 20px;
-  resize: vertical;
-  text-align: left;
-}
-
-.spell-item {
-  background-color: var(--box);
-  border-left: 5px solid var(--accent);
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,255,255,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.spell-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(0,255,255,0.3);
-}
-
-.spell-item h3 {
-  color: var(--accent);
-  font-size: 1.8rem;
-  display: flex;
-  align-items: center;
-  font-family: 'Orbitron', sans-serif;
-}
-
-.spell-item .spell-type {
-  background-color: var(--accent);
-  color: var(--bg);
-  border-radius: 15px;
-  padding: 5px 10px;
-  margin-left: 10px;
-  font-size: 0.8rem;
-}
-
-.spell-illustration img {
-  max-width: 100%;
-  border-radius: 10px;
-  border: 1px solid var(--accent);
-  box-shadow: 0 0 15px rgba(0,255,255,0.3);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.container, .news-container, .grimoire-container, #dissertationPage {
-  animation: fadeIn 0.6s ease-in-out;
-}
+@keyframes page-2 { 0% {transform:rotateY(180deg);opacity:0;} 20%{opacity:1;} 35%,100%{opacity:0;} 50%,100%{transform:rotateY(0deg);} }
+@keyframes page-3 { 15% {transform:rotateY(180deg);opacity:0;} 35%{opacity:1;} 50%,100%{opacity:0;} 65%,100%{transform:rotateY(0deg);} }
+@keyframes page-4 { 30% {transform:rotateY(180deg);opacity:0;} 50%{opacity:1;} 65%,100%{opacity:0;} 80%,100%{transform:rotateY(0deg);} }
+@keyframes page-5 { 45% {transform:rotateY(180deg);opacity:0;} 65%{opacity:1;} 80%,100%{opacity:0;} 95%,100%{transform:rotateY(0deg);} }
 </style>
 </head>
 <body>
-
-  <div class="navbar">
-    <button onclick="showSearchPage()">🔍 Recherche</button>
-    <button onclick="showDissertationPage()">📝 Dissertation</button>
-    <button onclick="showNewsPage()">📰 Actualités</button>
-    <button onclick="showGrimoirePage()">🔮 Grimoire</button>
-    <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
-    <button id="logoutBtn" onclick="logout()">🚪 <span class="enochian">Zir</span></button>
+  <h1>Codex Magisterium</h1>
+  <div class="search-section">
+    <input type="text" id="searchInput" placeholder="Entrez un mot-clé...">
+    <button onclick="searchWikipedia()">Rechercher</button>
   </div>
+  
+<div id="loading" class="loader" style="display:none; margin: auto; margin-top: 2rem;">
+  <div>
+    <ul>
+      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
+      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
+      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
+      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
+      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
+      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
+    </ul>
+  </div><span>Loading</span>
+</div>
 
-  <div class="container" id="searchPage">
-    <h1>Workspace</h1>
-    <div class="username-display" id="usernameDisplay"></div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Tape ta recherche ici...">
-      <button onclick="effectuerRecherche()">Rechercher</button>
-    </div>
-    <div class="results" id="results"></div>
-  </div>
+<div id="results"></div>
+  
+<script>
+  async function searchWikipedia() {
+    const query = document.getElementById('searchInput').value;
+    const searchURL = `https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+    const response = await fetch(searchURL);
+    const data = await response.json();
+    const results = data.query.search;
 
-  <div id="dissertationPage" class="container" style="display: none;">
-    <h1>Rédiger une dissertation</h1>
-    
-    <div class="dissertation-controls">
-      <div class="input-group">
-        <label for="essaySubject">Sujet de la dissertation</label>
-        <input type="text" id="essaySubject" placeholder="Entrez le sujet de la dissertation...">
-      </div>
-      
-      <div class="input-group">
-        <label for="essayType">Type de dissertation</label>
-        <select id="essayType">
-          <option value="argumentative">Argumentative</option>
-          <option value="explicative">Explicative</option>
-          <option value="comparee">Comparée</option>
-          <option value="litteraire">Littéraire</option>
-          <option value="philosophique">Philosophique</option>
-        </select>
-      </div>
-      
-      <button onclick="genererDissertation()">Générer la dissertation</button>
-    </div>
-    
-    <div class="loading" id="loadingIndicator">
-      <p>Génération en cours... Veuillez patienter.</p>
-    </div>
-    
-    <textarea id="essayOutput" rows="10" placeholder="La dissertation générée apparaîtra ici..." readonly></textarea>
-    <div class="word-count" id="wordCount">0 mots</div>
-  </div>
+    const resultArea = document.getElementById('results');
+const loader = document.getElementById('loading');
+loader.style.display = 'block';
+    resultArea.innerHTML = '';
 
-  <div id="newsPage" class="news-container" style="display: none;">
-    <h2>Actualités</h2>
-    <div class="username-display" id="usernameDisplayNews"></div>
-    
-    <div id="newsContent">
-      <div class="news-item">
-        <h3>Alerte</h3>
-        <p>Désolée nous avant une maintenance en cours</p>
-      </div>
-      
-      <div class="news-item">
-        <h3>Alerte</h3>
-        <p>Maintenance en cours exuces nous</p>
-      </div>
-      
-      <div class="news-item">
-        <h3>Alerte</h3>
-        <p>Revennez plus tard </p>
-      </div>
-    </div>
-    
-    <button class="refresh-news" onclick="chargerActualites()">Actualiser les nouvelles</button>
-  </div>
+    for (const item of results) {
+      const title = item.title;
+      const pageId = item.pageid;
+      const snippet = item.snippet.replace(/<[^>]+>/g, '');
+      const pageURL = `https://fr.wikipedia.org/wiki/${encodeURIComponent(title)}`;
 
-  <div id="grimoirePage" class="grimoire-container" style="display: none;">
-    <h2>🔮 Grimoire Magique</h2>
-    <div class="username-display" id="usernameDisplayGrimoire"></div>
-    
-    <div class="spell-search">
-      <div class="search-bar">
-        <input type="text" id="spellSearchInput" placeholder="Rechercher une formule ou potion...">
-        <button onclick="searchSpells()">Chercher</button>
-      </div>
-    </div>
-    
-    <div id="spellsContent">
-      <!-- Formules existantes -->
-      <div class="spell-item">
-        <h3>Lumos <span class="spell-type">Lumière</span></h3>
-        <div class="spell-description">
-          <p>Crée une source de lumière magique au bout de votre baguette. Parfait pour éclairer les passages sombres.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Lumos"<br>
-          <strong>Mouvement:</strong> Petit mouvement circulaire
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/7vQwX9k.png" alt="Illustration du sort Lumos">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Wingardium Leviosa <span class="spell-type">Lévitation</span></h3>
-        <div class="spell-description">
-          <p>Permet de faire léviter des objets. La prononciation correcte est cruciale pour le succès du sort.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Wingardium Leviosa"<br>
-          <strong>Mouvement:</strong> Mouvement en coup de fouet et en balayage
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/p9TZzLm.png" alt="Illustration du sort Wingardium Leviosa">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Expecto Patronum <span class="spell-type">Défense</span></h3>
-        <div class="spell-description">
-          <p>Sortilège de défense contre les Détraqueurs. Nécessite un souvenir heureux puissant.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Expecto Patronum"<br>
-          <strong>Mouvement:</strong> Mouvement circulaire énergique
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/vVqQZzG.png" alt="Illustration du sort Expecto Patronum">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Alohomora <span class="spell-type">Ouverture</span></h3>
-        <div class="spell-description">
-          <p>Ouvre les serrures et les portes verrouillées. Efficacité réduite sur les serrures enchantées.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Alohomora"<br>
-          <strong>Mouvement:</strong> Mouvement en S inversé
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/mN3kBhc.png" alt="Illustration du sort Alohomora">
-        </div>
-      </div>
-      
-      <!-- Nouvelles formules -->
-      <div class="spell-item">
-        <h3>Accio <span class="spell-type">Invocation</span></h3>
-        <div class="spell-description">
-          <p>Fait venir à soi un objet éloigné. Plus efficace sur les objets que vous connaissez bien.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Accio [nom de l'objet]"<br>
-          <strong>Mouvement:</strong> Mouvement de rappel vers soi
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/JqYeZvL.png" alt="Illustration du sort Accio">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Episkey <span class="spell-type">Soin</span></h3>
-        <div class="spell-description">
-          <p>Soigne les blessures mineures comme les nez saignants ou les petites coupures.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Episkey"<br>
-          <strong>Mouvement:</strong> Pointer la baguette vers la blessure
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/pQ5vX9T.png" alt="Illustration du sort Episkey">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Protego <span class="spell-type">Défense</span></h3>
-        <div class="spell-description">
-          <p>Crée un bouclier magique qui repousse les sorts et les objets lancés.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Protego"<br>
-          <strong>Mouvement:</strong> Mouvement circulaire rapide
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/KLQqWYx.png" alt="Illustration du sort Protego">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Reparo <span class="spell-type">Réparation</span></h3>
-        <div class="spell-description">
-          <p>Répare les objets cassés. Plus efficace sur les récents dommages.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Reparo"<br>
-          <strong>Mouvement:</strong> Pointer la baguette vers l'objet en traçant ses contours
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/7vQwX9k.png" alt="Illustration du sort Reparo">
-        </div>
-      </div>
-      
-      <!-- Potions -->
-      <div class="spell-item">
-        <h3>Potion de Ratatinage <span class="spell-type">Potion</span></h3>
-        <div class="spell-description">
-          <p>Fait rétrécir la personne ou l'animal qui la boit. Effet temporaire.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Ingrédients:</strong> 
-          <ul>
-            <li>3 chenilles séchées</li>
-            <li>1 gramme de peau de serpent</li>
-            <li>2 gouttes d'essence de pétunia</li>
-            <li>10 cl d'eau distillée</li>
-          </ul>
-          <strong>Préparation:</strong> Mélanger dans l'ordre en remuant 7 fois dans le sens inverse des aiguilles d'une montre.
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/p9TZzLm.png" alt="Illustration de la Potion de Ratatinage">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Potion Polynectar <span class="spell-type">Potion</span></h3>
-        <div class="spell-description">
-          <p>Permet de prendre l'apparence d'une autre personne pendant une heure.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Ingrédients:</strong> 
-          <ul>
-            <li>1 cheveu de la personne à imiter</li>
-            <li>2 feuilles de menthe sauvage</li>
-            <li>3 écailles de dragon</li>
-            <li>5 cl de jus de limace</li>
-          </ul>
-          <strong>Préparation:</strong> Laisser mijoter pendant 30 minutes à feu doux après avoir ajouté le cheveu.
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/vVqQZzG.png" alt="Illustration de la Potion Polynectar">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Potion de Mort Vivant <span class="spell-type">Potion</span></h3>
-        <div class="spell-description">
-          <p>Ressuscite temporairement les morts sous forme de zombies dociles.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Ingrédients:</strong> 
-          <ul>
-            <li>1 os du défunt</li>
-            <li>3 larmes de phénix</li>
-            <li>1 pincée de poussière de tombe</li>
-            <li>1 verre de sang de vampire</li>
-          </ul>
-          <strong>Préparation:</strong> Mélanger pendant la pleine lune en récitant l'incantation "Resurgam".
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/mN3kBhc.png" alt="Illustration de la Potion de Mort Vivant">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Potion de Vérité <span class="spell-type">Potion</span></h3>
-        <div class="spell-description">
-          <p>Force la personne qui la boit à dire la vérité pendant 10 minutes.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Ingrédients:</strong> 
-          <ul>
-            <li>2 feuilles de véridicium</li>
-            <li>1 œil de triton</li>
-            <li>5 gouttes de rosée du matin</li>
-            <li>1 pincée de sel pur</li>
-          </ul>
-          <strong>Préparation:</strong> Infuser les feuilles pendant 24 heures avant d'ajouter les autres ingrédients.
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/JqYeZvL.png" alt="Illustration de la Potion de Vérité">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Potion de Sommeil Éternel <span class="spell-type">Potion</span></h3>
-        <div class="spell-description">
-          <p>Plonge la personne dans un sommeil profond jusqu'à l'administration de l'antidote.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Ingrédients:</strong> 
-          <ul>
-            <li>3 pétales de pavot noir</li>
-            <li>1 gramme de poudre de valériane</li>
-            <li>1 larme de sirène</li>
-            <li>1 étoile filante broyée</li>
-          </ul>
-          <strong>Préparation:</strong> Mélanger à minuit en chantant une berceuse.
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/pQ5vX9T.png" alt="Illustration de la Potion de Sommeil Éternel">
-        </div>
-      </div>
-      
-      <!-- Nouvelles formules ajoutées -->
-      <div class="spell-item">
-        <h3>Incendio <span class="spell-type">Feu</span></h3>
-        <div class="spell-description">
-          <p>Crée un jet de flammes depuis la baguette. Utilisé pour allumer des feux ou comme sort défensif.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Incendio"<br>
-          <strong>Mouvement:</strong> Mouvement brusque vers l'avant
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/JqYeZvL.png" alt="Illustration du sort Incendio">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Aguamenti <span class="spell-type">Eau</span></h3>
-        <div class="spell-description">
-          <p>Fait jaillir un jet d'eau de la baguette. Utile pour éteindre des incendies ou remplir des récipients.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Aguamenti"<br>
-          <strong>Mouvement:</strong> Mouvement fluide en S
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/pQ5vX9T.png" alt="Illustration du sort Aguamenti">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Petrificus Totalus <span class="spell-type">Immobilisation</span></h3>
-        <div class="spell-description">
-          <p>Immobilise complètement la cible, la figant dans sa position actuelle.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Petrificus Totalus"<br>
-          <strong>Mouvement:</strong> Mouvement brusque vers la cible
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/mN3kBhc.png" alt="Illustration du sort Petrificus Totalus">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Riddikulus <span class="spell-type">Défense</span></h3>
-        <div class="spell-description">
-          <p>Transforme un épouvantard en une forme comique pour neutraliser sa peur.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Incantation:</strong> "Riddikulus"<br>
-          <strong>Mouvement:</strong> Mouvement circulaire suivi d'un coup sec
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/vVqQZzG.png" alt="Illustration du sort Riddikulus">
-        </div>
-      </div>
-      
-      <div class="spell-item">
-        <h3>Potion d'Invisibilité <span class="spell-type">Potion</span></h3>
-        <div class="spell-description">
-          <p>Rend invisible celui qui la boit pendant une durée limitée.</p>
-        </div>
-        <div class="spell-ingredients">
-          <strong>Ingrédients:</strong> 
-          <ul>
-            <li>1 plume de Demiguise</li>
-            <li>2 feuilles de caméléon séchées</li>
-            <li>5 gouttes de rosée lunaire</li>
-            <li>1 œil de poisson transparent</li>
-          </ul>
-          <strong>Préparation:</strong> Mélanger pendant la nouvelle lune en chantant à voix basse.
-        </div>
-        <div class="spell-illustration">
-          <img src="https://i.imgur.com/KLQqWYx.png" alt="Illustration de la Potion d'Invisibilité">
-        </div>
-      </div>
-    </div>
-  </div>
+      const detailsURL = `https://fr.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=${encodeURIComponent(title)}&pithumbsize=200&origin=*`;
+      const detailsResponse = await fetch(detailsURL);
+      const detailsData = await detailsResponse.json();
+      const pages = detailsData.query.pages;
+      const page = Object.values(pages)[0];
+      const thumbnail = page.thumbnail ? page.thumbnail.source : null;
 
-  <script>
-    function showSearchPage() {
-      document.getElementById("searchPage").style.display = "block";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "none";
-      document.getElementById("grimoirePage").style.display = "none";
-    }
-
-    function showDissertationPage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "block";
-      document.getElementById("newsPage").style.display = "none";
-      document.getElementById("grimoirePage").style.display = "none";
-    }
-
-    function showNewsPage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "block";
-      document.getElementById("grimoirePage").style.display = "none";
-      chargerActualites();
-    }
-
-    function showGrimoirePage() {
-      document.getElementById("searchPage").style.display = "none";
-      document.getElementById("dissertationPage").style.display = "none";
-      document.getElementById("newsPage").style.display = "none";
-      document.getElementById("grimoirePage").style.display = "block";
-    }
-
-    function searchSpells() {
-      const query = document.getElementById("spellSearchInput").value.toLowerCase();
-      const spells = document.querySelectorAll(".spell-item");
-      
-      spells.forEach(spell => {
-        const spellName = spell.querySelector("h3").textContent.toLowerCase();
-        if (spellName.includes(query)) {
-          spell.style.display = "block";
-        } else {
-          spell.style.display = "none";
-        }
-      });
-    }
-
-    function effectuerRecherche() {
-      const query = document.getElementById("searchInput").value.trim();
-      if (!query) return alert("Entrez un terme de recherche");
-
-      const url = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          const results = document.getElementById("results");
-          results.innerHTML = "";
-
-          if (data.extract) {
-            results.innerHTML = `
-              <table>
-                <tr><th>Titre</th><th>Description</th></tr>
-                <tr>
-                  <td>
-                    <a href="${data.content_urls.desktop.page}" target="_blank">${data.title}</a>
-                    ${data.thumbnail ? `<br><img src="${data.thumbnail.source}" alt="${data.title}">` : ""}
-                  </td>
-                  <td>${data.extract}</td>
-                </tr>
-              </table>
-            `;
-          } else {
-            results.innerHTML = "<p>Aucun résultat trouvé.</p>";
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          alert("Erreur lors de la recherche");
-        });
-    }
-
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark");
-      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
-    }
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = "center.html";
-    }
-
-    function genererDissertation() {
-      const subject = document.getElementById("essaySubject").value.trim();
-      if (!subject) return alert("Entrez un sujet de dissertation");
-
-      const type = document.getElementById("essayType").value;
-      
-      document.getElementById("loadingIndicator").style.display = "block";
-      document.getElementById("essayOutput").value = "";
-      
-      setTimeout(() => {
-        const dissertation = genererStructureDissertation(subject, type);
-        document.getElementById("essayOutput").value = dissertation;
-        document.getElementById("loadingIndicator").style.display = "none";
-        updateWordCount();
-      }, 1500);
-    }
-
-    function genererStructureDissertation(sujet, type) {
-      let dissertation = `DISSERTATION : ${sujet.toUpperCase()}\n`;
-      dissertation += `Type : ${getTypeName(type)}\n\n`;
-      
-      dissertation += "INTRODUCTION\n\n";
-      dissertation += `Le sujet "${sujet}" pose une problématique importante dans le domaine concerné. `;
-      dissertation += `Cette dissertation de type ${getTypeName(type)} vise à analyser les différents aspects de cette question. `;
-      dissertation += `Nous examinerons successivement les arguments principaux, les contre-arguments, avant de proposer une conclusion éclairée.\n\n`;
-      
-      dissertation += "DÉVELOPPEMENT\n\n";
-      
-      dissertation += "1. Première partie\n";
-      dissertation += `La première approche de ${sujet} révèle que... `;
-      dissertation += `Selon plusieurs études, on peut observer que... `;
-      dissertation += `Cette perspective est particulièrement intéressante car...\n\n`;
-      
-      dissertation += "2. Deuxième partie\n";
-      dissertation += `Une analyse plus approfondie montre que ${sujet}... `;
-      dissertation += `En comparant avec d'autres situations, on constate que... `;
-      dissertation += `Cette analyse est corroborée par les travaux de...\n\n`;
-      
-      if (type === "argumentative") {
-        dissertation += "3. Troisième partie\n";
-        dissertation += `Les arguments opposés suggèrent que ${sujet} pourrait aussi être interprété comme... `;
-        dissertation += `Certains experts soutiennent en effet que... `;
-        dissertation += `Cependant, cette position est contestable car...\n\n`;
-      }
-      
-      dissertation += "CONCLUSION\n\n";
-      dissertation += `En conclusion, l'analyse de ${sujet} a permis de mettre en lumière... `;
-      dissertation += `Nous avons vu que... `;
-      dissertation += `Cette réflexion ouvre des perspectives intéressantes pour...`;
-      
-      return dissertation;
-    }
-
-    function getTypeName(type) {
-      const types = {
-        "argumentative": "Argumentative",
-        "explicative": "Explicative",
-        "comparee": "Comparée",
-        "litteraire": "Littéraire",
-        "philosophique": "Philosophique"
-      };
-      return types[type] || type;
-    }
-
-    function updateWordCount() {
-      const text = document.getElementById("essayOutput").value;
-      const wordCount = text.trim() === "" ? 0 : text.split(/\s+/).length;
-      document.getElementById("wordCount").textContent = `${wordCount} mots`;
-    }
-
-    function chargerActualites() {
-      const newsContent = document.getElementById("newsContent");
-      newsContent.innerHTML = `
-        <div class="news-item">
-          <h3>Nouvelle réforme éducative annoncée</h3>
-          <p>Le ministre de l'Éducation a dévoilé aujourd'hui une série de mesures visant à moderniser le système scolaire...</p>
-          <div class="date">${new Date().toLocaleDateString()}</div>
-        </div>
-        
-        <div class="news-item">
-          <h3>Découverte scientifique majeure</h3>
-          <p>Des chercheurs ont fait une avancée significative dans le domaine de l'intelligence artificielle qui pourrait révolutionner...</p>
-          <div class="date">${new Date(Date.now() - 86400000).toLocaleDateString()}</div>
-        </div>
-        
-        <div class="news-item">
-          <h3>Conférence internationale sur le climat</h3>
-          <p>Les dirigeants mondiaux se réunissent cette semaine pour discuter des nouvelles mesures contre le changement climatique...</p>
-          <div class="date">${new Date(Date.now() - 172800000).toLocaleDateString()}</div>
-        </div>
+      const card = document.createElement('div');
+      card.className = 'result-card';
+      card.innerHTML = `
+        <h3>${title}</h3>
+        ${thumbnail ? `<img src="${thumbnail}" alt="${title}" style="max-width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
+        <p>${snippet}...</p>
+        <a href="${pageURL}" target="_blank">Lire sur Wikipedia</a>
       `;
+      resultArea.appendChild(card);
+loader.style.display = 'none';
     }
+  }
+</script>
+  async function searchWikipedia() {
+    const query = document.getElementById('searchInput').value;
+    const url = `https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+    const response = await fetch(url);
+    const data = await response.json();
+    const results = data.query.search;
 
-    // Gestion des illustrations de sorts
-    document.querySelectorAll('.spell-item').forEach(item => {
-      item.addEventListener('click', function() {
-        const illustration = this.querySelector('.spell-illustration');
-        if (illustration) {
-          // Masquer toutes les autres illustrations
-          document.querySelectorAll('.spell-illustration').forEach(el => {
-            if (el !== illustration) el.style.display = 'none';
-          });
-          
-          // Basculer l'affichage de l'illustration actuelle
-          illustration.style.display = illustration.style.display === 'block' ? 'none' : 'block';
-        }
-      });
+    const resultArea = document.getElementById('results');
+const loader = document.getElementById('loading');
+loader.style.display = 'block';
+    resultArea.innerHTML = '';
+
+    results.forEach(async (item) => {
+      const pageUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(item.title)}`;
+      const snippet = item.snippet.replace(/<[^>]+>/g, '');
+
+      const card = document.createElement('div');
+      card.className = 'result-card';
+      card.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${snippet}...</p>
+        <a href="${pageUrl}" target="_blank">Lire sur Wikipedia</a>
+      `;
+      resultArea.appendChild(card);
+loader.style.display = 'none';
     });
-
-    // Empêcher la propagation du clic sur les illustrations
-    document.querySelectorAll('.spell-illustration').forEach(illustration => {
-      illustration.addEventListener('click', function(e) {
-        e.stopPropagation();
-      });
-    });
-
-    document.getElementById("essayOutput").addEventListener("input", updateWordCount);
-
-    window.onload = () => {
-      if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark");
-      }
-
-      const username = localStorage.getItem("user") || "Invité";
-      document.getElementById("usernameDisplay").textContent = `Connecté en tant que : ${username}`;
-      document.getElementById("usernameDisplayNews").textContent = `Connecté en tant que : ${username}`;
-      document.getElementById("usernameDisplayGrimoire").textContent = `Connecté en tant que : ${username}`;
-      
-      // Appliquer le style énochien au bouton de déconnexion
-      const logoutBtn = document.getElementById("logoutBtn");
-      const enochianText = logoutBtn.querySelector(".enochian");
-      enochianText.textContent = "Sortie";
-    };
-  </script>
+  }
+</script>
 
 </body>
 </html>
