@@ -1273,46 +1273,63 @@ body {
 }
 </style>
 
+
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #111111;
+  --bubble-color: #f0f0f0;
+  --msg-own-bg: #2f80ed;
+  --msg-other-bg: #e5e5ea;
+  --sidebar-bg: #f9f9f9;
+  --input-bg: #f0f0f0;
+}
+.dark-theme {
+  --bg-color: #0e0e10;
+  --text-color: #eeeeee;
+  --bubble-color: #2a2a2f;
+  --msg-own-bg: #2f80ed;
+  --msg-other-bg: #2a2a2f;
+  --sidebar-bg: #18181c;
+  --input-bg: #1e1e22;
+}
+body, .content, .chat-window {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  transition: background-color 0.3s, color 0.3s;
+}
+.leftbar {
+  background-color: var(--sidebar-bg) !important;
+  transition: background-color 0.3s;
+}
+.msg-box {
+  background-color: var(--msg-other-bg) !important;
+  color: var(--text-color) !important;
+  border-radius: 16px !important;
+  transition: background-color 0.3s, color 0.3s;
+}
+.msg-box.owner {
+  background-color: var(--msg-own-bg) !important;
+  color: #fff !important;
+}
+textarea, input, .input-box {
+  background-color: var(--input-bg) !important;
+  color: var(--text-color) !important;
+  border: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+.seen-by {
+  font-size: 0.8em;
+  font-style: italic;
+  color: var(--text-color);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+</style>
+
 </head>
 <body>
 
-
-<!-- Theme Switch BB8 -->
-<div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-  <label class="bb8-toggle">
-    <input id="theme-switch" class="bb8-toggle__checkbox" type="checkbox">
-    <div class="bb8-toggle__container">
-      <div class="bb8-toggle__scenery">
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="bb8-toggle__star"></div>
-        <div class="tatto-1"></div>
-        <div class="tatto-2"></div>
-        <div class="gomrassen"></div>
-        <div class="hermes"></div>
-        <div class="chenini"></div>
-        <div class="bb8-toggle__cloud"></div>
-        <div class="bb8-toggle__cloud"></div>
-        <div class="bb8-toggle__cloud"></div>
-      </div>
-      <div class="bb8">
-        <div class="bb8__head-container">
-          <div class="bb8__antenna"></div>
-          <div class="bb8__antenna"></div>
-          <div class="bb8__head"></div>
-        </div>
-        <div class="bb8__body"></div>
-      </div>
-      <div class="artificial__hidden">
-        <div class="bb8__shadow"></div>
-      </div>
-    </div>
-  </label>
-</div>
 
       <div class="bb8">
         <div class="bb8__head-container">
@@ -3136,6 +3153,44 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+
+<!-- Theme Switch BB8 -->
+<div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; background-color: #1a1a1a; padding: 8px; border-radius: 12px;">
+  <label class="bb8-toggle">
+    <input id="theme-switch" class="bb8-toggle__checkbox" type="checkbox">
+    <div class="bb8-toggle__container">
+      <div class="bb8-toggle__scenery">
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="bb8-toggle__star"></div>
+        <div class="tatto-1"></div>
+        <div class="tatto-2"></div>
+        <div class="gomrassen"></div>
+        <div class="hermes"></div>
+        <div class="chenini"></div>
+        <div class="bb8-toggle__cloud"></div>
+        <div class="bb8-toggle__cloud"></div>
+        <div class="bb8-toggle__cloud"></div>
+      </div>
+      <div class="bb8">
+        <div class="bb8__head-container">
+          <div class="bb8__antenna"></div>
+          <div class="bb8__antenna"></div>
+          <div class="bb8__head"></div>
+        </div>
+        <div class="bb8__body"></div>
+      </div>
+      <div class="artificial__hidden">
+        <div class="bb8__shadow"></div>
+      </div>
+    </div>
+  </label>
+</div>
 
 </body>
 </html>
