@@ -4,166 +4,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grimoire du Savoir - Codex</title>
-  
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
-
-  
-<style>
-  body {
-    background: linear-gradient(to bottom, #f5f3e7, #eae4d3);
-    font-family: 'Cinzel Decorative', serif;
-    color: #3f3b2e;
-    padding: 2rem;
-    line-height: 1.8;
-    background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-  }
-
-  h1, h2 {
-    font-family: 'Great Vibes', cursive;
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 1rem;
-    color: #4e3a21;
-    text-shadow: 1px 1px 0px #d3c5a1;
-  }
-
-  .search-section {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .search-section input[type="text"] {
-    padding: 0.75rem;
-    width: 80%;
-    max-width: 400px;
-    font-size: 1.1rem;
-    border: 2px solid #8b7c5a;
-    border-radius: 8px;
-    font-family: 'Cinzel Decorative', serif;
-  }
-
-  .search-section button {
-    padding: 0.75rem 1.2rem;
-    font-size: 1rem;
-    background-color: #8b7c5a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Cinzel Decorative', serif;
-    margin-left: 0.5rem;
-  }
-
-  .result-card {
-    background-color: #fffdf8;
-    border: 1px solid #d6c9aa;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-bottom: 1.5rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .result-card h3 {
-    font-family: 'Great Vibes', cursive;
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .result-card p {
-    font-size: 1rem;
-    font-family: Georgia, serif;
-  }
-
-  .result-card a {
-    color: #6d4c41;
-    text-decoration: underline;
-  }
-
-  @media screen and (max-width: 600px) {
-    .search-section input[type="text"] {
-      width: 90%;
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to bottom, #f5f3e7, #eae4d3);
+      font-family: 'Cinzel Decorative', serif;
+      color: #3f3b2e;
+      padding: 2rem;
+      line-height: 1.8;
+      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
     }
-  }
-</style>
-
-
-<style>
-.loader {
-  --background: linear-gradient(135deg, #23C4F8, #275EFE);
-  --shadow: rgba(39, 94, 254, 0.28);
-  --text: #6C7486;
-  --page: rgba(255, 255, 255, 0.36);
-  --page-fold: rgba(255, 255, 255, 0.52);
-  --duration: 3s;
-  width: 200px;
-  height: 140px;
-  position: relative;
-}
-.loader:before, .loader:after {
-  --r: -6deg;
-  content: "";
-  position: absolute;
-  bottom: 8px;
-  width: 120px;
-  top: 80%;
-  box-shadow: 0 16px 12px var(--shadow);
-  transform: rotate(var(--r));
-}
-.loader:before {
-  left: 4px;
-}
-.loader:after {
-  --r: 6deg;
-  right: 4px;
-}
-.loader div {
-  width: 100%;
-  height: 100%;
-  border-radius: 13px;
-  position: relative;
-  z-index: 1;
-  perspective: 600px;
-  box-shadow: 0 4px 6px var(--shadow);
-  background-image: var(--background);
-}
-.loader div ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  position: relative;
-}
-.loader div ul li {
-  --r: 180deg;
-  --o: 0;
-  --c: var(--page);
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  transform-origin: 100% 50%;
-  color: var(--c);
-  opacity: var(--o);
-  transform: rotateY(var(--r));
-  animation: var(--duration) ease infinite;
-}
-.loader div ul li:first-child { --r: 0deg; --o: 1; }
-.loader div ul li:last-child { --o: 1; }
-.loader span {
-  display: block;
-  left: 0;
-  right: 0;
-  top: 100%;
-  margin-top: 20px;
-  text-align: center;
-  color: var(--text);
-}
-@keyframes page-2 { 0% {transform:rotateY(180deg);opacity:0;} 20%{opacity:1;} 35%,100%{opacity:0;} 50%,100%{transform:rotateY(0deg);} }
-@keyframes page-3 { 15% {transform:rotateY(180deg);opacity:0;} 35%{opacity:1;} 50%,100%{opacity:0;} 65%,100%{transform:rotateY(0deg);} }
-@keyframes page-4 { 30% {transform:rotateY(180deg);opacity:0;} 50%{opacity:1;} 65%,100%{opacity:0;} 80%,100%{transform:rotateY(0deg);} }
-@keyframes page-5 { 45% {transform:rotateY(180deg);opacity:0;} 65%{opacity:1;} 80%,100%{opacity:0;} 95%,100%{transform:rotateY(0deg);} }
-</style>
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5rem;
+      text-align: center;
+      color: #4e3a21;
+      margin-bottom: 2rem;
+    }
+    .search-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .search-section input {
+      padding: 0.75rem;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1.1rem;
+      border: 2px solid #8b7c5a;
+      border-radius: 8px;
+      font-family: 'Cinzel Decorative', serif;
+    }
+    .search-section button {
+      padding: 0.75rem 1.2rem;
+      font-size: 1rem;
+      background-color: #8b7c5a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Cinzel Decorative', serif;
+      margin-left: 0.5rem;
+    }
+    .result-card {
+      background-color: #fffdf8;
+      border: 1px solid #d6c9aa;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .result-card h3 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .result-card p {
+      font-size: 1rem;
+      font-family: Georgia, serif;
+    }
+    .result-card a {
+      color: #6d4c41;
+      text-decoration: underline;
+    }
+    @media screen and (max-width: 600px) {
+      .search-section input[type="text"] {
+        width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>Codex Magisterium</h1>
@@ -171,89 +82,43 @@
     <input type="text" id="searchInput" placeholder="Entrez un mot-clé...">
     <button onclick="searchWikipedia()">Rechercher</button>
   </div>
-  
-<div id="loading" class="loader" style="display:none; margin: auto; margin-top: 2rem;">
-  <div>
-    <ul>
-      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
-      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
-      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
-      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
-      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
-      <li><svg fill="currentColor" viewBox="0 0 90 120"><path d="...Z"></path></svg></li>
-    </ul>
-  </div><span>Loading</span>
-</div>
 
-<div id="results"></div>
-  
-<script>
-  async function searchWikipedia() {
-    const query = document.getElementById('searchInput').value;
-    const searchURL = `https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
-    const response = await fetch(searchURL);
-    const data = await response.json();
-    const results = data.query.search;
+  <div id="results"></div>
 
-    const resultArea = document.getElementById('results');
-const loader = document.getElementById('loading');
-loader.style.display = 'block';
-    resultArea.innerHTML = '';
+  <script>
+    async function searchWikipedia() {
+      const query = document.getElementById('searchInput').value;
+      const searchURL = `https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+      const response = await fetch(searchURL);
+      const data = await response.json();
+      const results = data.query.search;
 
-    for (const item of results) {
-      const title = item.title;
-      const pageId = item.pageid;
-      const snippet = item.snippet.replace(/<[^>]+>/g, '');
-      const pageURL = `https://fr.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+      const resultArea = document.getElementById('results');
+      resultArea.innerHTML = '';
 
-      const detailsURL = `https://fr.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=${encodeURIComponent(title)}&pithumbsize=200&origin=*`;
-      const detailsResponse = await fetch(detailsURL);
-      const detailsData = await detailsResponse.json();
-      const pages = detailsData.query.pages;
-      const page = Object.values(pages)[0];
-      const thumbnail = page.thumbnail ? page.thumbnail.source : null;
+      for (const item of results) {
+        const title = item.title;
+        const pageURL = `https://fr.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+        const snippet = item.snippet.replace(/<[^>]+>/g, '');
 
-      const card = document.createElement('div');
-      card.className = 'result-card';
-      card.innerHTML = `
-        <h3>${title}</h3>
-        ${thumbnail ? `<img src="${thumbnail}" alt="${title}" style="max-width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
-        <p>${snippet}...</p>
-        <a href="${pageURL}" target="_blank">Lire sur Wikipedia</a>
-      `;
-      resultArea.appendChild(card);
-loader.style.display = 'none';
+        const detailsURL = `https://fr.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=${encodeURIComponent(title)}&pithumbsize=200&origin=*`;
+        const detailsResponse = await fetch(detailsURL);
+        const detailsData = await detailsResponse.json();
+        const pages = detailsData.query.pages;
+        const page = Object.values(pages)[0];
+        const thumbnail = page.thumbnail ? page.thumbnail.source : null;
+
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <h3>${title}</h3>
+          ${thumbnail ? `<img src="${thumbnail}" alt="${title}" style="max-width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
+          <p>${snippet}...</p>
+          <a href="${pageURL}" target="_blank">Lire sur Wikipedia</a>
+        `;
+        resultArea.appendChild(card);
+      }
     }
-  }
-</script>
-  async function searchWikipedia() {
-    const query = document.getElementById('searchInput').value;
-    const url = `https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const results = data.query.search;
-
-    const resultArea = document.getElementById('results');
-const loader = document.getElementById('loading');
-loader.style.display = 'block';
-    resultArea.innerHTML = '';
-
-    results.forEach(async (item) => {
-      const pageUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(item.title)}`;
-      const snippet = item.snippet.replace(/<[^>]+>/g, '');
-
-      const card = document.createElement('div');
-      card.className = 'result-card';
-      card.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${snippet}...</p>
-        <a href="${pageUrl}" target="_blank">Lire sur Wikipedia</a>
-      `;
-      resultArea.appendChild(card);
-loader.style.display = 'none';
-    });
-  }
-</script>
-
+  </script>
 </body>
 </html>
