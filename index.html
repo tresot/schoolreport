@@ -14,6 +14,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
@@ -27,7 +28,24 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        window.signUp = async (email, password) => {
+        
+    window.resetPassword = async () => {
+      const email = document.getElementById('resetEmail').value;
+      try {
+        await sendPasswordResetEmail(auth, email);
+        toastr.success("Un lien a été envoyé !");
+        toggleResetForm();
+      } catch (e) {
+        toastr.error(e.message);
+      }
+    };
+
+    window.toggleResetForm = () => {
+      document.getElementById('login-form').classList.toggle('hidden');
+      document.getElementById('reset-form').classList.toggle('hidden');
+    };
+
+window.signUp = async (email, password) => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
                 toastr.success('Compte créé avec succès ! Redirection...');
