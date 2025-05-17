@@ -1,82 +1,977 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SchoolReport - Devoirs</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f7fa;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
 
-    h1 {
-      text-align: center;
-      color: #3f37c9;
     }
-
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      background: #4361ee;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .devoir {
-      background: white;
-      border-left: 5px solid #4361ee;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
+      overflow: hidden;
+            margin-top: 10px;
+      font-weight: 600;
+    .calendar-card, .notes-card {
     .devoir h3 {
+        .logo h1 {
+      border-radius: 5px;
+<title>SchoolReport - Calendrier et Planning</title>
+      --primary: #6366f1;
+            bottom: 5px;
+      height: 6px;
+<style>
+      }
+    /* Responsive */
+            border: none;
+      margin-bottom: 15px;
+            padding: 5px 10px;
+      color: #cbd5e1;
+      padding: 1rem;
+      background: #f5f7fa;
+      width: 6px;
+      border-bottom: 1px solid #e2e8f0;
+      border: 1px solid #ccc;
+    :root {
+            width: 6px;
+      transition: all 0.2s;
+            box-sizing: border-box;
+    @media (max-width: 768px) {
+        .form-section input, .form-section textarea {
+    .today-button {
+      background-color: #f1f5f9;
+            gap: 5px;
+      grid-template-columns: repeat(7, 1fr);
+      background: rgba(255, 255, 255, 0.3);
       margin: 0 0 5px;
-    }
-
+            border-radius: 8px;
+            border: 2px solid var(--calendar);
+    .action-button {
+      border-top: 1px solid #e2e8f0;
+      transform: translateY(-2px);
+            padding: 15px;
+      height: 3rem;
+        .day.has-schedule::after,
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: var(--primary);
+      max-width: 1200px;
+      top: 0.5rem;
+            aspect-ratio: 1;
+        .homework-item input[type="checkbox"] {
+      border-radius: 50%;
+            width: 100%;
+        .calendar-header h2 {
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+    body {
+                font-size: 14px;
+            justify-content: center;
+      background-color: var(--primary);
+        .calendar-header {
+      display: grid;
+            border-radius: 12px;
+        @media (max-width: 768px) {
+            --input-bg: #112240; /* Fond des inputs */
+            --danger: #e63946;
+      --secondary: #f59e0b;
+                grid-template-columns: 1fr;
+      background-color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    .note-content {
+        }
+    .header h1 {
+      position: relative;
+            cursor: pointer;
+    .nav-button:hover {
+      right: 0.5rem;
+        .calendar-section {
+            justify-content: space-between;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+    .notes-header {
+      padding: 0.5rem 1rem;
+      font-size: 1.25rem;
+      --primary-light: #818cf8;
+    .header {
+      background-color: var(--primary-dark);
+      padding: 0.75rem 1rem;
+            height: 6px;
     .completed {
-      text-decoration: line-through;
+      justify-content: center;
+                min-width: 35px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      resize: none;
+      margin-bottom: 1rem;
+    .day {
+      padding: 0.5rem 0;
+        .calendar-card {
+        .form-section button {
+            background-color: var(--calendar);
+            --calendar: #3B82F6; /* Bleu clair pour le calendrier */
+            font-size: 24px;
+      position: absolute;
+      to { opacity: 1; transform: translateY(0); }
+            }
+      border-left: 4px solid var(--primary);
+      border: 1px solid #e2e8f0;
+    button {
+    .date-display {
+    .empty-state svg {
+      padding: 12px;
+      font-weight: 700;
+      margin: 1rem;
+        grid-template-columns: 1fr;
+      aspect-ratio: 1;
+<title>Study Planner | Bloc-notes avec Calendrier</title>
+      --dark: #1e293b;
+            --text-primary: #CCD6F6; /* Texte principal */
+      height: 1.75rem;
+            background-color: var(--danger);
+            --text-secondary: #8892B0; /* Texte secondaire */
+            padding: 0;
+      background-color: #e2e8f0;
+    .day.selected {
+    .note {
+      background-color: var(--primary-light);
+    .note-form {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        * {
+      width: 100%;
+        .day:hover {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
       color: gray;
-    }
+      background: rgba(255, 255, 255, 0.2);
+      margin: auto;
+        :root {
+            color: var(--primary);
+            gap: 25px;
+      --gray: #94a3b8;
+      color: var(--gray);
+            --success: #64FFDA; /* Vert menthe */
+            border-radius: 50%;
+            content: '';
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      content: '';
+            --secondary: #1a5c38; /* Vert pomme plus foncé */
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+      padding: 2rem;
+            position: relative;
+            margin-right: 10px;
+      color: var(--primary-dark);
+    .container {
+      height: 2.5rem;
+      width: 2.5rem;
+            margin: 5px 0;
+      width: 3rem;
+      border-radius: 8px;
+    .submit-button:hover {
+      font-size: 0.875rem;
+            margin-bottom: 10px;
+        .schedule-item, .homework-item {
+        .schedule-homework-card h3 {
+      border-left: 5px solid #4361ee;
   </style>
+    /* Animation */
+      margin-bottom: 2rem;
+      --light: #f8fafc;
+<head>
+      bottom: 6px;
+            background: rgba(10, 25, 47, 0.85);
+            --light: #F8F4E6; /* Blanc cassé */
+        .day.today {
+      color: white;
+      padding: 20px;
+      line-height: 1.6;
+    .weekdays {
+            padding: 20px 0;
+            grid-template-columns: repeat(7, 1fr);
+    @keyframes fadeIn {
+      background: #4361ee;
+      margin-bottom: 30px;
+    .delete-button:hover {
+        .container {
+      margin: 10px 0;
+            margin-bottom: 20px;
+      color: #ef4444;
+        .nav-buttons button {
+      .calendar-card, .notes-card {
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    h1 {
+    .day:hover {
+      font-weight: 500;
+            padding: 10px 20px;
+        .day.has-schedule::after {
+    .calendar-header h2 {
+            min-height: 100vh;
+            margin: 0 auto;
+      from { opacity: 0; transform: translateY(10px); }
+            font-size: 14px;
+            margin-bottom: 15px;
+            --dark: #0A192F; /* Bleu marine foncé */
+    .note:hover {
+            display: grid;
+            transition: background 0.3s;
+      color: var(--primary);
+      padding: 1.5rem;
+    .notes-list {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      background: none;
+    .note-actions {
+            max-width: 1200px;
+            .day {
+        .schedule-item p, .homework-item p {
+        .schedule-homework-card {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            --warning: #f8961e;
+      font-family: 'Segoe UI', sans-serif;
+            background-color: var(--secondary);
+        body {
+      width: 1.75rem;
+        .day.selected {
+        .weekdays {
+        .day.has-homework::after {
+            background: var(--input-bg);
+            .calendar-section {
+      font-weight: bold;
+      
+            background-color: var(--success);
+        .form-section button:hover {
+            margin-top: 20px;
+            --primary: #2E8B57; /* Vert pomme */
+            text-align: center;
+    .day.today {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        gap: 1.5rem;
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SchoolReport - Devoirs</title>
+      border: none;
+    .today-button:hover {
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            grid-template-columns: 1fr 1fr;
+    .calendar-header {
+            color: var(--light);
+    .day.other-month {
+<meta charset="utf-8"/>
+    .action-button:hover {
+            color: var(--text-primary);
+    </style>
+      align-items: center;
+            margin: 0;
+      min-height: 200px;
+        .day {
+      gap: 0.5rem;
+      animation: fadeIn 0.3s ease-out;
+      color: var(--dark);
+      padding: 10px;
+            background-color: var(--dark);
+        .form-section {
+            font-size: 18px;
+      border-radius: 12px;
+    .day.has-notes::after {
+      .main-grid {
+            padding: 10px;
+      font-size: 1.75rem;
+      color: #3f37c9;
+    .devoir {
+      text-decoration: line-through;
+      display: flex;
+      max-width: 800px;
+            font-weight: bold;
+      padding: 15px;
+            background: none;
+    input, textarea, select {
+        .days-grid {
+            background: rgba(100, 255, 218, 0.1);
+    .nav-button {
+      background: white;
 </head>
-<body>
-  <h1>Gestion des Devoirs</h1>
+            font-size: 20px;
+      font-family: inherit;
+      --success: #10b981;
+            min-width: 40px;
+        border-radius: 12px;
+    .submit-button {
+    .notes-header h2 {
+            align-items: center;
+        header {
+      justify-content: space-between;
+      cursor: pointer;
+      opacity: 0.6;
+      margin-right: 2rem;
+    .note-input:focus {
+      background-color: var(--secondary);
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      outline: none;
+      border-color: var(--primary);
+      text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+    .days-grid {
+            position: absolute;
+        .day.other-month {
+      border-radius: 6px;
+      --primary-dark: #4f46e5;
+    .note-input {
+    form {
+    .empty-state {
+<body style="margin:0;padding:0;font-family:sans-serif;background:#f9f9f9;">
 
-  <form onsubmit="addHomework(); return false;">
-    <input type="text" id="title" placeholder="Titre du devoir" required />
-    <input type="text" id="subject" placeholder="Matière" required />
-    <input type="date" id="dueDate" required />
-    <textarea id="description" rows="3" placeholder="Description du devoir..."></textarea>
-    <button type="submit">Ajouter</button>
-  </form>
+  <nav style="width: 220px; background: #202124; color: white; height: 100vh; position: fixed; top: 0; left: 0; padding: 20px;">
+    <h2 style="color: #90caf9;">Homework Hub</h2>
+    <ul style="list-style: none; padding-left: 0;">
+      <li><a href="#bloc-notes" style="color: white; text-decoration: none;">🗒️ Bloc-notes</a></li>
+      <li><a href="#calendar" style="color: white; text-decoration: none;">📅 Calendrier</a></li>
+      <li><a href="#homework" style="color: white; text-decoration: none;">🧠 Devoirs</a></li>
+    </ul>
+  </nav>
 
-  <div id="homeworkList"></div>
+  <main style="margin-left: 240px; padding: 20px;">
+    <section id="bloc-notes">
+      <h2>🗒️ Bloc-notes</h2>
+      <body class="min-h-screen py-8">
+<div class="container mx-auto px-4">
+<header class="header">
+<h1><i class="fas fa-book-open mr-2"></i> Study Planner</h1>
+<p class="opacity-90 mt-1">Organisez vos sessions de révision et vos notes</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 main-grid">
+<!-- Calendrier -->
+<div class="calendar-card">
+<div class="calendar-header">
+<h2 id="current-month"></h2>
+<div class="flex gap-2">
+<button class="nav-button" id="prev-month">
+<i class="fas fa-chevron-left"></i>
+</button>
+<button class="nav-button" id="next-month">
+<i class="fas fa-chevron-right"></i>
+</button>
+</div>
+</div>
+<div class="weekdays">
+<div>Dim</div>
+<div>Lun</div>
+<div>Mar</div>
+<div>Mer</div>
+<div>Jeu</div>
+<div>Ven</div>
+<div>Sam</div>
+</div>
+<div class="days-grid" id="calendar">
+<!-- Les jours seront générés par JavaScript -->
+</div>
+<div class="text-center">
+<button class="today-button" id="today-btn">
+<i class="fas fa-calendar-day mr-2"></i>Aujourd'hui
+          </button>
+</div>
+</div>
+<!-- Notes -->
+<div class="notes-card">
+<div class="notes-header">
+<h2><i class="fas fa-sticky-note mr-2"></i>Notes de révision</h2>
+<div class="date-display" id="selected-date"></div>
+</div>
+<div class="notes-list" id="notes-container">
+<!-- État vide par défaut -->
+<div class="empty-state">
+<i class="fas fa-clipboard-list"></i>
+<p>Sélectionnez une date pour voir ou ajouter des notes</p>
+</div>
+</div>
+<form class="note-form" id="note-form">
+<textarea class="note-input" id="note-input" placeholder="Ajoutez une note de cours, un rappel ou une idée..." rows="3"></textarea>
+<button class="submit-button" type="submit">
+<i class="fas fa-plus mr-2"></i>Ajouter la note
+          </button>
+</form>
+</div>
+</div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Éléments du DOM
+      const calendarEl = document.getElementById('calendar');
+      const currentMonthEl = document.getElementById('current-month');
+      const prevMonthBtn = document.getElementById('prev-month');
+      const nextMonthBtn = document.getElementById('next-month');
+      const todayBtn = document.getElementById('today-btn');
+      const selectedDateEl = document.getElementById('selected-date');
+      const notesContainerEl = document.getElementById('notes-container');
+      const noteFormEl = document.getElementById('note-form');
+      const noteInputEl = document.getElementById('note-input');
 
-  <script type="module">
+      // Variables d'état
+      let currentDate = new Date();
+      let selectedDate = null;
+      let notes = JSON.parse(localStorage.getItem('studyNotes')) || {};
+
+      // Initialisation
+      generateCalendar();
+      selectDate(new Date());
+
+      // Événements
+      prevMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        generateCalendar();
+      });
+
+      nextMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        generateCalendar();
+      });
+
+      todayBtn.addEventListener('click', () => {
+        currentDate = new Date();
+        generateCalendar();
+        selectDate(new Date());
+      });
+
+      noteFormEl.addEventListener('submit', function(e) {
+        e.preventDefault();
+        addNote();
+      });
+
+      // Fonctions
+      function generateCalendar() {
+        // Réinitialiser le calendrier
+        while (calendarEl.children.length > 7) {
+          calendarEl.removeChild(calendarEl.lastChild);
+        }
+
+        // Mettre à jour le mois en cours
+        const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        currentMonthEl.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+        // Obtenir le premier jour du mois et le dernier jour du mois
+        const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+        // Obtenir le jour de la semaine du premier jour (0 = dimanche, 6 = samedi)
+        const startDay = firstDay.getDay();
+
+        // Obtenir le nombre de jours dans le mois
+        const daysInMonth = lastDay.getDate();
+
+        // Obtenir le dernier jour du mois précédent
+        const prevLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+
+        // Ajouter les jours du mois précédent
+        for (let i = startDay; i > 0; i--) {
+          const day = prevLastDay - i + 1;
+          const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, day);
+          const dayEl = createDayElement(day, date, true);
+          calendarEl.appendChild(dayEl);
+        }
+
+        // Ajouter les jours du mois en cours
+        const today = new Date();
+        for (let i = 1; i <= daysInMonth; i++) {
+          const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+          const isToday = date.toDateString() === today.toDateString() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+          const dayEl = createDayElement(i, date, false, isToday);
+          calendarEl.appendChild(dayEl);
+        }
+
+        // Calculer les jours restants pour compléter la grille (prochain mois)
+        const daysLeft = 42 - (startDay + daysInMonth); // 6 lignes de 7 jours
+        for (let i = 1; i <= daysLeft; i++) {
+          const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, i);
+          const dayEl = createDayElement(i, date, true);
+          calendarEl.appendChild(dayEl);
+        }
+      }
+
+      function createDayElement(day, date, isOtherMonth, isToday = false) {
+        const dayEl = document.createElement('div');
+        dayEl.classList.add('day');
+        dayEl.textContent = day;
+
+        if (isOtherMonth) {
+          dayEl.classList.add('other-month');
+        }
+
+        if (isToday) {
+          dayEl.classList.add('today');
+        }
+
+        // Vérifier si la date est sélectionnée
+        if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+          dayEl.classList.add('selected');
+        }
+
+        // Vérifier s'il y a des notes pour cette date
+        const dateKey = formatDateKey(date);
+        if (notes[dateKey] && notes[dateKey].length > 0) {
+          dayEl.classList.add('has-notes');
+        }
+
+        dayEl.addEventListener('click', () => {
+          selectDate(date);
+        });
+
+        return dayEl;
+      }
+
+      function selectDate(date) {
+        selectedDate = date;
+        
+        // Mettre à jour l'affichage de la date sélectionnée
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        selectedDateEl.textContent = date.toLocaleDateString('fr-FR', options);
+        
+        // Re-générer le calendrier pour mettre à jour la sélection
+        generateCalendar();
+        
+        // Afficher les notes pour cette date
+        displayNotesForDate(date);
+      }
+
+      function displayNotesForDate(date) {
+        const dateKey = formatDateKey(date);
+        const dateNotes = notes[dateKey] || [];
+
+        notesContainerEl.innerHTML = '';
+
+        if (dateNotes.length === 0) {
+          notesContainerEl.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-book"></i>
+              <p>Aucune note de révision pour cette date</p>
+            </div>
+          `;
+          return;
+        }
+
+        dateNotes.forEach((note, index) => {
+          const noteEl = document.createElement('div');
+          noteEl.classList.add('note');
+          noteEl.innerHTML = `
+            <div class="note-content">${note.text}</div>
+            <div class="note-actions">
+              <button class="action-button edit-btn" data-id="${index}" title="Modifier">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-button delete-button delete-btn" data-id="${index}" title="Supprimer">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <div class="text-xs text-gray-500 mt-2">
+              <i class="far fa-clock"></i> ${new Date(note.createdAt).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}
+            </div>
+          `;
+          notesContainerEl.appendChild(noteEl);
+        });
+
+        // Ajouter les événements pour les boutons d'édition et de suppression
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            deleteNote(parseInt(this.getAttribute('data-id')));
+          });
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            editNote(parseInt(this.getAttribute('data-id')));
+          });
+        });
+      }
+
+      function addNote() {
+        const text = noteInputEl.value.trim();
+        if (!text || !selectedDate) return;
+
+        const dateKey = formatDateKey(selectedDate);
+        
+        if (!notes[dateKey]) {
+          notes[dateKey] = [];
+        }
+
+        notes[dateKey].push({
+          text: text,
+          createdAt: new Date().toISOString()
+        });
+
+        saveNotes();
+        displayNotesForDate(selectedDate);
+        generateCalendar();
+        noteInputEl.value = '';
+        
+        // Animation de confirmation
+        const submitBtn = noteFormEl.querySelector('button');
+        submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Note ajoutée!';
+        submitBtn.style.backgroundColor = '#10b981';
+        setTimeout(() => {
+          submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Ajouter la note';
+          submitBtn.style.backgroundColor = '';
+        }, 2000);
+      }
+
+      function editNote(index) {
+        const dateKey = formatDateKey(selectedDate);
+        if (!notes[dateKey] || !notes[dateKey][index]) return;
+
+        const currentNote = notes[dateKey][index].text;
+        const newText = prompt('Modifier votre note de révision:', currentNote);
+        if (newText !== null && newText.trim() !== '') {
+          notes[dateKey][index].text = newText.trim();
+          notes[dateKey][index].updatedAt = new Date().toISOString();
+          saveNotes();
+          displayNotesForDate(selectedDate);
+        }
+      }
+
+      function deleteNote(index) {
+        const dateKey = formatDateKey(selectedDate);
+        if (!notes[dateKey] || !notes[dateKey][index]) return;
+
+        if (confirm('Supprimer cette note de révision ?')) {
+          notes[dateKey].splice(index, 1);
+          
+          if (notes[dateKey].length === 0) {
+            delete notes[dateKey];
+          }
+          
+          saveNotes();
+          displayNotesForDate(selectedDate);
+          generateCalendar();
+        }
+      }
+
+      function saveNotes() {
+        localStorage.setItem('studyNotes', JSON.stringify(notes));
+      }
+
+      function formatDateKey(date) {
+        return date.toISOString().split('T')[0];
+      }
+    });
+  </script>
+</body>
+    </section>
+    <hr>
+    <section id="calendar">
+      <h2>📅 Calendrier</h2>
+      <body>
+<div class="container">
+<header>
+<div class="logo">
+<h1>SchoolReport</h1>
+</div>
+<button class="logout-btn" id="logout-btn">Déconnexion</button>
+</header>
+<div class="calendar-section">
+<div class="calendar-card">
+<div class="calendar-header">
+<h2 id="current-month"></h2>
+<div class="nav-buttons">
+<button id="prev-month">←</button>
+<button id="next-month">→</button>
+<button id="today-btn">Aujourd'hui</button>
+</div>
+</div>
+<div class="weekdays">
+<div>Dim</div>
+<div>Lun</div>
+<div>Mar</div>
+<div>Mer</div>
+<div>Jeu</div>
+<div>Ven</div>
+<div>Sam</div>
+</div>
+<div class="days-grid" id="calendar"></div>
+</div>
+<div class="schedule-homework-card">
+<h3 id="selected-date">Sélectionnez une date</h3>
+<div id="schedule-list">
+<p style="color: var(--text-secondary);">Aucun emploi du temps pour cette date</p>
+</div>
+<div class="form-section">
+<h4>Ajouter un emploi du temps</h4>
+<input id="schedule-title" placeholder="Matière (ex: Mathématiques)" type="text"/>
+<input id="schedule-time" placeholder="Heure (ex: 9h-10h)" type="text"/>
+<input id="schedule-location" placeholder="Lieu (ex: Salle 101)" type="text"/>
+<button id="add-schedule-btn">Ajouter</button>
+</div>
+<div id="homework-list">
+<p style="color: var(--text-secondary);">Aucun devoir pour cette date</p>
+</div>
+<div class="form-section">
+<h4>Ajouter un devoir</h4>
+<input id="homework-title" placeholder="Titre du devoir" type="text"/>
+<textarea id="homework-description" placeholder="Description" rows="3"></textarea>
+<input id="homework-due-date" type="date"/>
+<button id="add-homework-btn">Ajouter</button>
+</div>
+</div>
+</div>
+</div>
+<script type="module">
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { app, auth, db } from "./firebase/firebase-config.js";
+
+        let currentUser = null;
+        let currentDate = new Date();
+        let selectedDate = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuthState();
+            generateCalendar();
+            selectDate(new Date());
+            setupEventListeners();
+        });
+
+        function initAuthState() {
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    window.location.href = 'index.html';
+                } else {
+                    currentUser = user;
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('prev-month').addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                generateCalendar();
+            });
+
+            document.getElementById('next-month').addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                generateCalendar();
+            });
+
+            document.getElementById('today-btn').addEventListener('click', () => {
+                currentDate = new Date();
+                selectDate(new Date());
+                generateCalendar();
+            });
+
+            document.getElementById('add-schedule-btn').addEventListener('click', addSchedule);
+            document.getElementById('add-homework-btn').addEventListener('click', addHomework);
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+        }
+
+        function generateCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            const currentMonthEl = document.getElementById('current-month');
+            calendarEl.innerHTML = '';
+
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            currentMonthEl.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            console.log(`Generating calendar for ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`);
+
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            const startDay = firstDay.getDay();
+            const daysInMonth = lastDay.getDate();
+            const prevLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+
+            for (let i = startDay; i > 0; i--) {
+                const day = prevLastDay - i + 1;
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, day);
+                calendarEl.appendChild(createDayElement(day, date, true));
+                console.log(`Added previous month day: ${day}`);
+            }
+
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+                const isToday = date.toDateString() === today.toDateString();
+                calendarEl.appendChild(createDayElement(i, date, false, isToday));
+                console.log(`Added current month day: ${i}`);
+            }
+
+            const daysLeft = 42 - (startDay + daysInMonth);
+            for (let i = 1; i <= daysLeft; i++) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, i);
+                calendarEl.appendChild(createDayElement(i, date, true));
+                console.log(`Added next month day: ${i}`);
+            }
+        }
+
+        function createDayElement(day, date, isOtherMonth, isToday = false) {
+            const dayEl = document.createElement('div');
+            dayEl.classList.add('day');
+            dayEl.textContent = day;
+            console.log(`Creating day element: ${day}, isOtherMonth: ${isOtherMonth}, isToday: ${isToday}`);
+
+            if (isOtherMonth) dayEl.classList.add('other-month');
+            if (isToday) dayEl.classList.add('today');
+            if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+                dayEl.classList.add('selected');
+            }
+
+            const dateKey = formatDateKey(date);
+            const scheduleRef = ref(db, `schedules/${currentUser.uid}/${dateKey}`);
+            const homeworkRef = ref(db, `homeworks/${currentUser.uid}/${dateKey}`);
+
+            onValue(scheduleRef, (snapshot) => {
+                if (snapshot.exists()) dayEl.classList.add('has-schedule');
+            }, { onlyOnce: true });
+
+            onValue(homeworkRef, (snapshot) => {
+                if (snapshot.exists()) dayEl.classList.add('has-homework');
+            }, { onlyOnce: true });
+
+            dayEl.addEventListener('click', () => selectDate(date));
+            return dayEl;
+        }
+
+        function selectDate(date) {
+            selectedDate = date;
+            document.getElementById('selected-date').textContent = date.toLocaleDateString('fr-FR', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+            generateCalendar();
+            displaySchedules();
+            displayHomeworks();
+        }
+
+        function displaySchedules() {
+            const scheduleList = document.getElementById('schedule-list');
+            const dateKey = formatDateKey(selectedDate);
+            const scheduleRef = ref(db, `schedules/${currentUser.uid}/${dateKey}`);
+
+            onValue(scheduleRef, (snapshot) => {
+                scheduleList.innerHTML = '';
+                const schedules = snapshot.val();
+                if (!schedules) {
+                    scheduleList.innerHTML = '<p style="color: var(--text-secondary);">Aucun emploi du temps pour cette date</p>';
+                    return;
+                }
+
+                Object.entries(schedules).forEach(([id, schedule]) => {
+                    const scheduleEl = document.createElement('div');
+                    scheduleEl.className = 'schedule-item';
+                    scheduleEl.innerHTML = `
+                        <p><strong>${schedule.title}</strong></p>
+                        <p>${schedule.time} - ${schedule.location}</p>
+                        <button class="delete-btn" data-id="${id}">Supprimer</button>
+                    `;
+                    scheduleList.appendChild(scheduleEl);
+
+                    scheduleEl.querySelector('.delete-btn').addEventListener('click', () => {
+                        remove(ref(db, `schedules/${currentUser.uid}/${dateKey}/${id}`));
+                    });
+                });
+            });
+        }
+
+        function displayHomeworks() {
+            const homeworkList = document.getElementById('homework-list');
+            const dateKey = formatDateKey(selectedDate);
+            const homeworkRef = ref(db, `homeworks/${currentUser.uid}/${dateKey}`);
+
+            onValue(homeworkRef, (snapshot) => {
+                homeworkList.innerHTML = '';
+                const homeworks = snapshot.val();
+                if (!homeworks) {
+                    homeworkList.innerHTML = '<p style="color: var(--text-secondary);">Aucun devoir pour cette date</p>';
+                    return;
+                }
+
+                Object.entries(homeworks).forEach(([id, homework]) => {
+                    const homeworkEl = document.createElement('div');
+                    homeworkEl.className = 'homework-item';
+                    homeworkEl.innerHTML = `
+                        <p><input type="checkbox" ${homework.completed ? 'checked' : ''} data-id="${id}">
+                            <strong>${homework.title}</strong></p>
+                        <p>${homework.description}</p>
+                        <p>Échéance: ${new Date(homework.dueDate).toLocaleDateString('fr-FR')}</p>
+                        <button class="delete-btn" data-id="${id}">Supprimer</button>
+                    `;
+                    homeworkList.appendChild(homeworkEl);
+
+                    const checkbox = homeworkEl.querySelector('input[type="checkbox"]');
+                    checkbox.addEventListener('change', () => {
+                        update(ref(db, `homeworks/${currentUser.uid}/${dateKey}/${id}`), {
+                            completed: checkbox.checked
+                        });
+                    });
+
+                    homeworkEl.querySelector('.delete-btn').addEventListener('click', () => {
+                        remove(ref(db, `homeworks/${currentUser.uid}/${dateKey}/${id}`));
+                    });
+                });
+            });
+        }
+
+        function addSchedule() {
+            const title = document.getElementById('schedule-title').value.trim();
+            const time = document.getElementById('schedule-time').value.trim();
+            const location = document.getElementById('schedule-location').value.trim();
+
+            if (!title || !time || !location) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            const dateKey = formatDateKey(selectedDate);
+            const scheduleId = Date.now().toString();
+            set(ref(db, `schedules/${currentUser.uid}/${dateKey}/${scheduleId}`), {
+                title,
+                time,
+                location
+            });
+
+            document.getElementById('schedule-title').value = '';
+            document.getElementById('schedule-time').value = '';
+            document.getElementById('schedule-location').value = '';
+        }
+
+        function addHomework() {
+            const title = document.getElementById('homework-title').value.trim();
+            const description = document.getElementById('homework-description').value.trim();
+            const dueDate = document.getElementById('homework-due-date').value;
+
+            if (!title || !dueDate) {
+                alert('Veuillez remplir le titre et la date d\'échéance');
+                return;
+            }
+
+            const dateKey = formatDateKey(selectedDate);
+            const homeworkId = Date.now().toString();
+            set(ref(db, `homeworks/${currentUser.uid}/${dateKey}/${homeworkId}`), {
+                title,
+                description,
+                dueDate,
+                completed: false
+            });
+
+            document.getElementById('homework-title').value = '';
+            document.getElementById('homework-description').value = '';
+            document.getElementById('homework-due-date').value = '';
+        }
+
+        function formatDateKey(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Erreur lors de la déconnexion:", error);
+                alert("Une erreur est survenue lors de la déconnexion");
+            }
+        }
+    </script>
+</body>
+    </section>
+    <hr>
+    <section id="homework">
+      <h2>🧠 Devoirs</h2>
+      <body>
+<h1>Gestion des Devoirs</h1>
+<form onsubmit="addHomework(); return false;">
+<input id="title" placeholder="Titre du devoir" required="" type="text"/>
+<input id="subject" placeholder="Matière" required="" type="text"/>
+<input id="dueDate" required="" type="date"/>
+<textarea id="description" placeholder="Description du devoir..." rows="3"></textarea>
+<button type="submit">Ajouter</button>
+</form>
+<div id="homeworkList"></div>
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -147,5 +1042,9 @@
       await updateDoc(ref, { done });
     }
   </script>
+</body>
+    </section>
+  </main>
+
 </body>
 </html>
