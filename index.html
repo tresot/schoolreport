@@ -13,12 +13,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
             authDomain: "schoolreport-f8db0.firebaseapp.com",
+            databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "schoolreport-f8db0",
             storageBucket: "schoolreport-f8db0.appspot.com",
             messagingSenderId: "313069994450",
@@ -28,24 +28,47 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        
-    window.resetPassword = async () => {
-      const email = document.getElementById('resetEmail').value;
-      try {
-        await sendPasswordResetEmail(auth, email);
-        toastr.success("Un lien a été envoyé !");
-        toggleResetForm();
-      } catch (e) {
-        toastr.error(e.message);
-      }
-    };
+        // Fonction de récupération de mot de passe améliorée
+        window.resetPassword = async () => {
+            const email = document.getElementById('resetEmail').value;
+            
+            // Validation email simple
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                toastr.error('Veuillez entrer une adresse email valide');
+                return;
+            }
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                toastr.success("Un lien de réinitialisation a été envoyé à votre email !");
+                toggleResetForm();
+            } catch (error) {
+                let errorMessage = 'Une erreur est survenue';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'Aucun compte n\'existe avec cette adresse email';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Adresse email invalide';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard.';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                toastr.error(errorMessage);
+            }
+        };
 
-    window.toggleResetForm = () => {
-      document.getElementById('login-form').classList.toggle('hidden');
-      document.getElementById('reset-form').classList.toggle('hidden');
-    };
+        window.toggleResetForm = () => {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('reset-form').classList.toggle('hidden');
+        };
 
-window.signUp = async (email, password) => {
+        // Fonctions originales conservées
+        window.signUp = async (email, password) => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
                 toastr.success('Compte créé avec succès ! Redirection...');
@@ -55,7 +78,7 @@ window.signUp = async (email, password) => {
                     opacity: 0,
                     ease: "power2.in",
                     onComplete: () => {
-                        setTimeout(() => window.location.href = 'center.html', 300);
+                        setTimeout(() => window.location.href = 'homework.html', 300);
                     }
                 });
             } catch (error) {
@@ -73,7 +96,7 @@ window.signUp = async (email, password) => {
                     opacity: 0,
                     ease: "power2.in",
                     onComplete: () => {
-                        setTimeout(() => window.location.href = 'center.html', 300);
+                        setTimeout(() => window.location.href = 'homework.html', 300);
                     }
                 });
             } catch (error) {
@@ -335,7 +358,6 @@ window.signUp = async (email, password) => {
             will-change: transform, box-shadow;
         }
 
-        /* Correction pour l'autocomplete */
         .form-group input:-webkit-autofill,
         .form-group input:-webkit-autofill:hover, 
         .form-group input:-webkit-autofill:focus, 
@@ -405,6 +427,7 @@ window.signUp = async (email, password) => {
             color: var(--light-color);
             text-decoration: none;
             transition: color 0.3s;
+            cursor: pointer;
         }
 
         .forgot-password a:hover {
@@ -471,6 +494,7 @@ window.signUp = async (email, password) => {
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .toggle-form a:hover {
@@ -528,6 +552,44 @@ window.signUp = async (email, password) => {
             transform: scale(0);
             animation: ripple 0.6s linear;
             pointer-events: none;
+        }
+
+        /* Styles pour le formulaire de reset password */
+        .reset-form {
+            text-align: center;
+        }
+
+        .reset-form.hidden {
+            display: none;
+        }
+
+        .reset-form h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .reset-form .form-group {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-link {
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .back-link a:hover {
+            color: var(--primary-green);
+            text-decoration: underline;
         }
 
         @keyframes ripple {
@@ -686,7 +748,7 @@ window.signUp = async (email, password) => {
                     <label for="remember-me">Se souvenir de moi</label>
                 </div>
                 <div class="forgot-password">
-                    <a href="#">Mot de passe oublié ?</a>
+                    <a onclick="toggleResetForm()">Mot de passe oublié ?</a>
                 </div>
             </div>
             <button class="submit-btn" onclick="signIn(document.getElementById('login-email').value, document.getElementById('login-password').value)">
@@ -737,6 +799,24 @@ window.signUp = async (email, password) => {
                 Déjà inscrit ? <a onclick="toggleForms()">Se connecter</a>
             </div>
         </div>
+
+        <!-- Formulaire de réinitialisation de mot de passe -->
+        <div id="reset-form" class="reset-form hidden">
+            <h3>Réinitialiser le mot de passe</h3>
+            <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px; font-size: 14px;">
+                Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+            </p>
+            <div class="form-group">
+                <label for="resetEmail">Adresse email</label>
+                <input type="email" id="resetEmail" placeholder="Entrez votre email" required>
+            </div>
+            <button class="submit-btn" onclick="resetPassword()">
+                <span>Envoyer le lien</span>
+            </button>
+            <div class="back-link">
+                <a onclick="toggleResetForm()">← Retour à la connexion</a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -761,7 +841,6 @@ window.signUp = async (email, password) => {
 
         // Animation d'entrée avec ScrollTrigger
         function setupScrollAnimations() {
-            // Animation du container principal
             gsap.to(".container", {
                 scrollTrigger: {
                     trigger: "body",
@@ -786,7 +865,6 @@ window.signUp = async (email, password) => {
                 }
             });
 
-            // Animation des onglets
             gsap.to(".nav-tab", {
                 scrollTrigger: {
                     trigger: ".container",
@@ -801,7 +879,6 @@ window.signUp = async (email, password) => {
                 delay: 0.3
             });
 
-            // Animation des champs de formulaire
             gsap.to(".form-group", {
                 scrollTrigger: {
                     trigger: ".container",
@@ -816,7 +893,6 @@ window.signUp = async (email, password) => {
                 delay: 0.5
             });
 
-            // Animation du logo
             gsap.to(".logo h1", {
                 scrollTrigger: {
                     trigger: ".container",
@@ -866,7 +942,6 @@ window.signUp = async (email, password) => {
             
             if (!loginForm.classList.contains('hidden')) return;
             
-            // Animation de transition
             gsap.to(signupForm, {
                 duration: 0.3,
                 opacity: 0,
@@ -882,7 +957,6 @@ window.signUp = async (email, password) => {
                 }
             });
             
-            // Mise à jour des onglets
             document.querySelector('.nav-tabs .nav-tab:nth-child(1)').classList.add('active');
             document.querySelector('.nav-tabs .nav-tab:nth-child(2)').classList.remove('active');
         }
@@ -893,7 +967,6 @@ window.signUp = async (email, password) => {
             
             if (!signupForm.classList.contains('hidden')) return;
             
-            // Animation de transition
             gsap.to(loginForm, {
                 duration: 0.3,
                 opacity: 0,
@@ -909,7 +982,6 @@ window.signUp = async (email, password) => {
                 }
             });
             
-            // Mise à jour des onglets
             document.querySelector('.nav-tabs .nav-tab:nth-child(1)').classList.remove('active');
             document.querySelector('.nav-tabs .nav-tab:nth-child(2)').classList.add('active');
         }
