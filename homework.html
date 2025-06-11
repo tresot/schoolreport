@@ -38,7 +38,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -69,6 +69,34 @@
             font-size: 0.9rem;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.25rem;
+        }
+
+        .view-toggle button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .view-toggle button.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         .logout-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -88,11 +116,116 @@
             transform: translateY(-2px);
         }
 
-        .main-grid {
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card.success { border-left-color: var(--success); }
+        .stat-card.warning { border-left-color: var(--warning); }
+        .stat-card.danger { border-left-color: var(--danger); }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Filters and Search */
+        .controls-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.875rem;
+        }
+
+        .search-input, .filter-select {
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            background: white;
+            color: var(--dark);
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .clear-filters-btn {
+            background: var(--gray);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: fit-content;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--dark);
+        }
+
+        /* Main Content Grid */
+        .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
+        }
+
+        .main-content.agenda-view {
+            grid-template-columns: 1fr;
         }
 
         .card {
@@ -126,6 +259,7 @@
             gap: 0.5rem;
         }
 
+        /* Calendar Styles */
         .nav-buttons {
             display: flex;
             gap: 0.5rem;
@@ -226,6 +360,7 @@
             box-shadow: 0 0 4px rgba(230, 57, 70, 0.6);
         }
 
+        /* Homework List Styles */
         .homework-header {
             padding: 1.5rem;
             border-bottom: 1px solid var(--light-gray);
@@ -249,10 +384,10 @@
             font-weight: 500;
         }
 
-        .homework-list {
+        .homework-list, .agenda-list {
             padding: 1rem;
             min-height: 300px;
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
@@ -384,6 +519,78 @@
             color: var(--danger);
         }
 
+        .priority-high { border-left-color: var(--danger); }
+        .priority-medium { border-left-color: var(--warning); }
+        .priority-low { border-left-color: var(--success); }
+
+        .due-soon {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            border-color: var(--danger);
+        }
+
+        .overdue {
+            background: linear-gradient(135deg, #fff0f0 0%, #ffe0e0 100%);
+            border-color: var(--danger);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(248, 150, 30, 0.1);
+            color: var(--warning);
+        }
+
+        .status-overdue {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--danger);
+        }
+
+        /* Subject Groups */
+        .subject-group {
+            margin-bottom: 2rem;
+        }
+
+        .subject-header {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subject-name {
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .subject-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Form Styles */
         .homework-form {
             background: white;
             border-radius: 12px;
@@ -466,50 +673,21 @@
             transform: translateY(0);
         }
 
-        .priority-high { border-left-color: var(--danger); }
-        .priority-medium { border-left-color: var(--warning); }
-        .priority-low { border-left-color: var(--success); }
-
-        .due-soon {
-            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
-            border-color: var(--danger);
-        }
-
-        .overdue {
-            background: linear-gradient(135deg, #fff0f0 0%, #ffe0e0 100%);
-            border-color: var(--danger);
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-completed {
-            background: rgba(76, 201, 240, 0.1);
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: rgba(248, 150, 30, 0.1);
-            color: var(--warning);
-        }
-
-        .status-overdue {
-            background: rgba(230, 57, 70, 0.1);
-            color: var(--danger);
-        }
-
         /* Responsive */
-        @media (max-width: 768px) {
-            .main-grid {
+        @media (max-width: 1024px) {
+            .main-content {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+            }
+            
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .day {
@@ -528,22 +706,26 @@
             }
         }
 
-        /* Scrollbar personnalisée */
-        .homework-list::-webkit-scrollbar {
+        /* Scrollbar */
+        .homework-list::-webkit-scrollbar,
+        .agenda-list::-webkit-scrollbar {
             width: 8px;
         }
 
-        .homework-list::-webkit-scrollbar-track {
+        .homework-list::-webkit-scrollbar-track,
+        .agenda-list::-webkit-scrollbar-track {
             background: var(--light);
             border-radius: 4px;
         }
 
-        .homework-list::-webkit-scrollbar-thumb {
+        .homework-list::-webkit-scrollbar-thumb,
+        .agenda-list::-webkit-scrollbar-thumb {
             background: var(--primary);
             border-radius: 4px;
         }
 
-        .homework-list::-webkit-scrollbar-thumb:hover {
+        .homework-list::-webkit-scrollbar-thumb:hover,
+        .agenda-list::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
         }
 
@@ -578,20 +760,9 @@
             to { transform: translateX(100%); opacity: 0; }
         }
 
-        /* Loading spinner */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 20px auto;
-            border: 4px solid var(--light-gray);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -605,15 +776,107 @@
                 </h1>
                 <p class="header-subtitle">Organisez vos devoirs et suivez vos échéances</p>
             </div>
-            <button class="logout-btn" id="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                Déconnexion
-            </button>
+            <div class="header-actions">
+                <div class="view-toggle">
+                    <button id="calendar-view-btn" class="active">
+                        <i class="fas fa-calendar"></i> Calendrier
+                    </button>
+                    <button id="agenda-view-btn">
+                        <i class="fas fa-list"></i> Liste
+                    </button>
+                    <button id="subject-view-btn">
+                        <i class="fas fa-layer-group"></i> Matières
+                    </button>
+                </div>
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </button>
+            </div>
         </header>
 
-        <div class="main-grid">
-            <!-- Calendrier -->
-            <div class="card">
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-homeworks">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-clipboard-list"></i>
+                    Total devoirs
+                </div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-number" id="completed-homeworks">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-check-circle"></i>
+                    Terminés
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-number" id="pending-homeworks">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-clock"></i>
+                    En cours
+                </div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-number" id="overdue-homeworks">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    En retard
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="controls-section">
+            <div class="search-filters">
+                <div class="filter-group">
+                    <label for="search-input">Rechercher</label>
+                    <input type="text" id="search-input" class="search-input" placeholder="Rechercher dans les devoirs...">
+                </div>
+                <div class="filter-group">
+                    <label for="subject-filter">Matière</label>
+                    <select id="subject-filter" class="filter-select">
+                        <option value="">Toutes les matières</option>
+                        <option value="mathematiques">Mathématiques</option>
+                        <option value="francais">Français</option>
+                        <option value="histoire">Histoire-Géographie</option>
+                        <option value="sciences">Sciences</option>
+                        <option value="anglais">Anglais</option>
+                        <option value="physique">Physique-Chimie</option>
+                        <option value="svt">SVT</option>
+                        <option value="philosophie">Philosophie</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="priority-filter">Priorité</label>
+                    <select id="priority-filter" class="filter-select">
+                        <option value="">Toutes les priorités</option>
+                        <option value="high">Haute</option>
+                        <option value="medium">Moyenne</option>
+                        <option value="low">Basse</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status-filter">Statut</label>
+                    <select id="status-filter" class="filter-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="completed">Terminés</option>
+                        <option value="pending">En cours</option>
+                        <option value="overdue">En retard</option>
+                    </select>
+                </div>
+                <button class="clear-filters-btn" id="clear-filters">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="main-content">
+            <!-- Calendar View -->
+            <div class="card" id="calendar-card">
                 <div class="card-header">
                     <h2>
                         <i class="fas fa-calendar-alt"></i>
@@ -649,8 +912,8 @@
                 </div>
             </div>
 
-            <!-- Liste des devoirs -->
-            <div class="card">
+            <!-- Homework List for Selected Date -->
+            <div class="card" id="homework-card">
                 <div class="homework-header">
                     <h2>
                         <i class="fas fa-tasks"></i>
@@ -667,22 +930,66 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Agenda View (All Homeworks) -->
+            <div class="card hidden" id="agenda-card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-list"></i>
+                        Tous les devoirs
+                    </h2>
+                    <div>
+                        <select id="sort-select" class="filter-select" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                            <option value="dueDate">Trier par date</option>
+                            <option value="priority">Trier par priorité</option>
+                            <option value="subject">Trier par matière</option>
+                            <option value="status">Trier par statut</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="agenda-list" id="agenda-list">
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Aucun devoir</h3>
+                        <p>Commencez par ajouter vos premiers devoirs</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject Groups View -->
+            <div class="card hidden" id="subject-card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-layer-group"></i>
+                        Devoirs par matière
+                    </h2>
+                </div>
+                
+                <div class="agenda-list" id="subject-groups">
+                    <div class="empty-state">
+                        <i class="fas fa-books"></i>
+                        <h3>Aucun devoir</h3>
+                        <p>Vos devoirs seront organisés par matière ici</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Formulaire d'ajout de devoir -->
+        <!-- Add Homework Form -->
         <div class="homework-form">
             <h3>
                 <i class="fas fa-plus-circle"></i>
-                Ajouter un devoir
+                <span id="form-title">Ajouter un devoir</span>
             </h3>
             <form id="homework-form">
                 <div class="form-group">
-                    <label for="homework-title">Titre du devoir</label>
+                    <label for="homework-title">Titre du devoir *</label>
                     <input type="text" id="homework-title" placeholder="Ex: Dissertation de français" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="homework-subject">Matière</label>
+                    <label for="homework-subject">Matière *</label>
                     <select id="homework-subject" required>
                         <option value="">Sélectionner une matière</option>
                         <option value="mathematiques">Mathématiques</option>
@@ -703,7 +1010,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="homework-due-date">Date d'échéance</label>
+                    <label for="homework-due-date">Date d'échéance *</label>
                     <input type="date" id="homework-due-date" required>
                 </div>
                 
@@ -716,18 +1023,23 @@
                     </select>
                 </div>
                 
-                <button type="submit" class="submit-button">
+                <button type="submit" class="submit-button" id="submit-btn">
                     <i class="fas fa-plus"></i>
                     Ajouter le devoir
+                </button>
+                
+                <button type="button" class="submit-button hidden" id="cancel-btn" style="background: var(--gray); margin-top: 0.5rem;">
+                    <i class="fas fa-times"></i>
+                    Annuler
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Font Awesome pour les icônes -->
+    <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     
-    <!-- Firebase v8 Scripts -->
+    <!-- Firebase v8 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -755,9 +1067,12 @@
         let currentDate = new Date();
         let selectedDate = null;
         let homeworks = {};
+        let allHomeworks = [];
+        let filteredHomeworks = [];
         let isEditing = false;
         let editingHomeworkId = null;
         let editingDateKey = null;
+        let currentView = 'calendar';
 
         // Utilitaires
         const SecurityUtils = {
@@ -803,6 +1118,16 @@
                 const today = new Date();
                 const checkDate = new Date(date);
                 return checkDate.toDateString() === today.toDateString();
+            },
+
+            formatShortDate(date) {
+                if (!(date instanceof Date)) {
+                    date = new Date(date);
+                }
+                return date.toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'short'
+                });
             }
         };
 
@@ -812,6 +1137,7 @@
             generateCalendar();
             selectDate(new Date());
             setupEventListeners();
+            setupFilters();
         });
 
         function initAuthState() {
@@ -845,9 +1171,69 @@
 
             // Formulaire
             document.getElementById('homework-form').addEventListener('submit', handleHomeworkSubmit);
+            document.getElementById('cancel-btn').addEventListener('click', resetForm);
             
             // Déconnexion
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+            // Changement de vue
+            document.getElementById('calendar-view-btn').addEventListener('click', () => switchView('calendar'));
+            document.getElementById('agenda-view-btn').addEventListener('click', () => switchView('agenda'));
+            document.getElementById('subject-view-btn').addEventListener('click', () => switchView('subject'));
+
+            // Tri
+            document.getElementById('sort-select').addEventListener('change', updateAgendaView);
+        }
+
+        function setupFilters() {
+            const searchInput = document.getElementById('search-input');
+            const subjectFilter = document.getElementById('subject-filter');
+            const priorityFilter = document.getElementById('priority-filter');
+            const statusFilter = document.getElementById('status-filter');
+            const clearFilters = document.getElementById('clear-filters');
+
+            [searchInput, subjectFilter, priorityFilter, statusFilter].forEach(element => {
+                element.addEventListener('input', applyFilters);
+            });
+
+            clearFilters.addEventListener('click', () => {
+                searchInput.value = '';
+                subjectFilter.value = '';
+                priorityFilter.value = '';
+                statusFilter.value = '';
+                applyFilters();
+            });
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Update button states
+            document.querySelectorAll('.view-toggle button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`${view}-view-btn`).classList.add('active');
+
+            // Show/hide cards
+            document.getElementById('calendar-card').classList.toggle('hidden', view !== 'calendar');
+            document.getElementById('homework-card').classList.toggle('hidden', view !== 'calendar');
+            document.getElementById('agenda-card').classList.toggle('hidden', view !== 'agenda');
+            document.getElementById('subject-card').classList.toggle('hidden', view !== 'subject');
+
+            // Update main content grid
+            const mainContent = document.getElementById('main-content');
+            if (view === 'agenda' || view === 'subject') {
+                mainContent.classList.add('agenda-view');
+            } else {
+                mainContent.classList.remove('agenda-view');
+            }
+
+            // Update content
+            if (view === 'agenda') {
+                updateAgendaView();
+            } else if (view === 'subject') {
+                updateSubjectView();
+            }
         }
 
         function generateCalendar() {
@@ -922,14 +1308,198 @@
             const homeworksRef = db.ref('homeworks/' + currentUser.uid);
             homeworksRef.on('value', (snapshot) => {
                 homeworks = snapshot.val() || {};
+                
+                // Convertir en tableau plat pour les vues globales
+                allHomeworks = [];
+                Object.keys(homeworks).forEach(dateKey => {
+                    Object.keys(homeworks[dateKey]).forEach(homeworkId => {
+                        const homework = homeworks[dateKey][homeworkId];
+                        allHomeworks.push({
+                            id: homeworkId,
+                            dateKey: dateKey,
+                            ...homework
+                        });
+                    });
+                });
+
                 generateCalendar();
+                updateStats();
+                applyFilters();
+                
                 if (selectedDate) {
                     displayHomeworks();
+                }
+
+                if (currentView === 'agenda') {
+                    updateAgendaView();
+                } else if (currentView === 'subject') {
+                    updateSubjectView();
                 }
             }, (error) => {
                 console.error('Erreur lors du chargement des devoirs:', error);
                 showNotification('Erreur lors du chargement des devoirs', 'error');
             });
+        }
+
+        function updateStats() {
+            const total = allHomeworks.length;
+            const completed = allHomeworks.filter(h => h.completed).length;
+            const pending = allHomeworks.filter(h => !h.completed && new Date(h.dueDate) >= new Date()).length;
+            const overdue = allHomeworks.filter(h => !h.completed && new Date(h.dueDate) < new Date()).length;
+
+            document.getElementById('total-homeworks').textContent = total;
+            document.getElementById('completed-homeworks').textContent = completed;
+            document.getElementById('pending-homeworks').textContent = pending;
+            document.getElementById('overdue-homeworks').textContent = overdue;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const subjectFilter = document.getElementById('subject-filter').value;
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            filteredHomeworks = allHomeworks.filter(homework => {
+                // Recherche textuelle
+                if (searchTerm && !homework.title.toLowerCase().includes(searchTerm) && 
+                    !homework.description?.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+
+                // Filtre par matière
+                if (subjectFilter && homework.subject !== subjectFilter) {
+                    return false;
+                }
+
+                // Filtre par priorité
+                if (priorityFilter && homework.priority !== priorityFilter) {
+                    return false;
+                }
+
+                // Filtre par statut
+                if (statusFilter) {
+                    const dueDate = new Date(homework.dueDate);
+                    const now = new Date();
+                    
+                    if (statusFilter === 'completed' && !homework.completed) return false;
+                    if (statusFilter === 'pending' && (homework.completed || dueDate < now)) return false;
+                    if (statusFilter === 'overdue' && (homework.completed || dueDate >= now)) return false;
+                }
+
+                return true;
+            });
+
+            if (currentView === 'agenda') {
+                updateAgendaView();
+            } else if (currentView === 'subject') {
+                updateSubjectView();
+            }
+        }
+
+        function updateAgendaView() {
+            const agendaList = document.getElementById('agenda-list');
+            const sortBy = document.getElementById('sort-select').value;
+            
+            if (filteredHomeworks.length === 0) {
+                agendaList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Aucun résultat</h3>
+                        <p>Aucun devoir ne correspond à vos critères</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Trier les devoirs
+            const sortedHomeworks = [...filteredHomeworks].sort((a, b) => {
+                switch (sortBy) {
+                    case 'dueDate':
+                        return new Date(a.dueDate) - new Date(b.dueDate);
+                    case 'priority':
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        return priorityOrder[b.priority] - priorityOrder[a.priority];
+                    case 'subject':
+                        return a.subject.localeCompare(b.subject);
+                    case 'status':
+                        if (a.completed !== b.completed) return a.completed - b.completed;
+                        return new Date(a.dueDate) - new Date(b.dueDate);
+                    default:
+                        return new Date(a.dueDate) - new Date(b.dueDate);
+                }
+            });
+
+            agendaList.innerHTML = '';
+            sortedHomeworks.forEach(homework => {
+                const homeworkEl = createHomeworkElement(homework.id, homework, homework.dateKey, true);
+                agendaList.appendChild(homeworkEl);
+            });
+        }
+
+        function updateSubjectView() {
+            const subjectGroups = document.getElementById('subject-groups');
+            
+            if (filteredHomeworks.length === 0) {
+                subjectGroups.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-books"></i>
+                        <h3>Aucun devoir</h3>
+                        <p>Aucun devoir ne correspond à vos critères</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Grouper par matière
+            const groupedBySubject = {};
+            filteredHomeworks.forEach(homework => {
+                if (!groupedBySubject[homework.subject]) {
+                    groupedBySubject[homework.subject] = [];
+                }
+                groupedBySubject[homework.subject].push(homework);
+            });
+
+            subjectGroups.innerHTML = '';
+            
+            Object.keys(groupedBySubject).sort().forEach(subject => {
+                const subjectHomeworks = groupedBySubject[subject];
+                const subjectGroup = document.createElement('div');
+                subjectGroup.className = 'subject-group';
+
+                subjectGroup.innerHTML = `
+                    <div class="subject-header">
+                        <div class="subject-name">
+                            <i class="fas fa-book"></i>
+                            ${getSubjectDisplayName(subject)}
+                        </div>
+                        <div class="subject-count">${subjectHomeworks.length}</div>
+                    </div>
+                `;
+
+                subjectHomeworks
+                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                    .forEach(homework => {
+                        const homeworkEl = createHomeworkElement(homework.id, homework, homework.dateKey, true);
+                        subjectGroup.appendChild(homeworkEl);
+                    });
+
+                subjectGroups.appendChild(subjectGroup);
+            });
+        }
+
+        function getSubjectDisplayName(subject) {
+            const subjects = {
+                'mathematiques': 'Mathématiques',
+                'francais': 'Français',
+                'histoire': 'Histoire-Géographie',
+                'sciences': 'Sciences',
+                'anglais': 'Anglais',
+                'physique': 'Physique-Chimie',
+                'svt': 'SVT',
+                'philosophie': 'Philosophie',
+                'autre': 'Autre'
+            };
+            return subjects[subject] || subject;
         }
 
         function displayHomeworks() {
@@ -964,7 +1534,7 @@
             });
         }
 
-        function createHomeworkElement(id, homework, dateKey) {
+        function createHomeworkElement(id, homework, dateKey, showDate = false) {
             const homeworkEl = document.createElement('div');
             homeworkEl.className = `homework-item priority-${homework.priority || 'medium'}`;
             
@@ -1013,7 +1583,7 @@
                     <div class="homework-title">${SecurityUtils.sanitizeInput(homework.title)}</div>
                     <div class="homework-subject">
                         <i class="fas fa-book"></i>
-                        ${SecurityUtils.sanitizeInput(homework.subject)}
+                        ${getSubjectDisplayName(homework.subject)}
                     </div>
                     ${homework.description ? `<div class="homework-description">${SecurityUtils.sanitizeInput(homework.description)}</div>` : ''}
                 </div>
@@ -1029,7 +1599,7 @@
                     <div style="text-align: right; color: var(--gray); font-size: 0.8rem;">
                         <div>
                             <i class="fas fa-calendar"></i>
-                            ${DateUtils.formatDate(new Date(homework.dueDate))}
+                            ${showDate ? DateUtils.formatShortDate(new Date(homework.dueDate)) : DateUtils.formatDate(new Date(homework.dueDate))}
                         </div>
                         ${diffDays < 0 ? '<div style="color: var(--danger); font-weight: 500;">En retard</div>' : 
                           diffDays === 0 ? '<div style="color: var(--warning); font-weight: 500;">Aujourd\'hui</div>' :
@@ -1137,6 +1707,9 @@
         function updateHomework(title, subject, description, dueDate, priority) {
             if (!currentUser || !editingHomeworkId || !editingDateKey) return;
 
+            const oldDateKey = editingDateKey;
+            const newDateKey = DateUtils.formatDateKey(new Date(dueDate));
+
             const homeworkData = {
                 title: SecurityUtils.sanitizeInput(title),
                 subject: SecurityUtils.sanitizeInput(subject),
@@ -1146,17 +1719,44 @@
                 updatedAt: firebase.database.ServerValue.TIMESTAMP
             };
 
-            const homeworkRef = db.ref('homeworks/' + currentUser.uid + '/' + editingDateKey + '/' + editingHomeworkId);
-            
-            homeworkRef.update(homeworkData)
-                .then(() => {
-                    resetForm();
-                    showNotification('Devoir modifié avec succès', 'success');
-                })
-                .catch((error) => {
-                    console.error('Erreur lors de la modification du devoir:', error);
-                    showNotification('Erreur lors de la modification du devoir', 'error');
+            if (oldDateKey === newDateKey) {
+                // Même date, simple mise à jour
+                const homeworkRef = db.ref('homeworks/' + currentUser.uid + '/' + oldDateKey + '/' + editingHomeworkId);
+                homeworkRef.update(homeworkData)
+                    .then(() => {
+                        resetForm();
+                        showNotification('Devoir modifié avec succès', 'success');
+                    })
+                    .catch((error) => {
+                        console.error('Erreur lors de la modification du devoir:', error);
+                        showNotification('Erreur lors de la modification du devoir', 'error');
+                    });
+            } else {
+                // Date changée, déplacer le devoir
+                const oldRef = db.ref('homeworks/' + currentUser.uid + '/' + oldDateKey + '/' + editingHomeworkId);
+                const newRef = db.ref('homeworks/' + currentUser.uid + '/' + newDateKey).push();
+
+                // Récupérer les données existantes pour préserver createdAt et completed
+                oldRef.once('value', (snapshot) => {
+                    const existingData = snapshot.val();
+                    const completeData = {
+                        ...homeworkData,
+                        completed: existingData.completed || false,
+                        createdAt: existingData.createdAt || firebase.database.ServerValue.TIMESTAMP
+                    };
+
+                    newRef.set(completeData)
+                        .then(() => oldRef.remove())
+                        .then(() => {
+                            resetForm();
+                            showNotification('Devoir modifié avec succès', 'success');
+                        })
+                        .catch((error) => {
+                            console.error('Erreur lors de la modification du devoir:', error);
+                            showNotification('Erreur lors de la modification du devoir', 'error');
+                        });
                 });
+            }
         }
 
         function toggleHomeworkComplete(homeworkId, dateKey, completed) {
@@ -1184,10 +1784,11 @@
             document.getElementById('homework-due-date').value = homework.dueDate;
             document.getElementById('homework-priority').value = homework.priority || 'medium';
 
-            // Modifier le bouton de soumission
-            const submitBtn = document.querySelector('.submit-button');
-            submitBtn.innerHTML = '<i class="fas fa-save"></i>Modifier le devoir';
-            submitBtn.style.background = 'linear-gradient(135deg, var(--warning), #e67e22)';
+            // Modifier l'interface
+            document.getElementById('form-title').textContent = 'Modifier le devoir';
+            document.getElementById('submit-btn').innerHTML = '<i class="fas fa-save"></i>Modifier le devoir';
+            document.getElementById('submit-btn').style.background = 'linear-gradient(135deg, var(--warning), #e67e22)';
+            document.getElementById('cancel-btn').classList.remove('hidden');
 
             // Marquer comme en cours d'édition
             isEditing = true;
@@ -1214,9 +1815,10 @@
 
         function resetForm() {
             document.getElementById('homework-form').reset();
-            const submitBtn = document.querySelector('.submit-button');
-            submitBtn.innerHTML = '<i class="fas fa-plus"></i>Ajouter le devoir';
-            submitBtn.style.background = 'var(--bg-gradient)';
+            document.getElementById('form-title').textContent = 'Ajouter un devoir';
+            document.getElementById('submit-btn').innerHTML = '<i class="fas fa-plus"></i>Ajouter le devoir';
+            document.getElementById('submit-btn').style.background = 'var(--bg-gradient)';
+            document.getElementById('cancel-btn').classList.add('hidden');
             
             isEditing = false;
             editingHomeworkId = null;
@@ -1257,33 +1859,97 @@
             }, 4000);
         }
 
-        // Ajout du bouton d'annulation lors de l'édition
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('homework-form');
-            const cancelBtn = document.createElement('button');
-            cancelBtn.type = 'button';
-            cancelBtn.className = 'submit-button';
-            cancelBtn.style.background = 'var(--gray)';
-            cancelBtn.style.marginTop = '0.5rem';
-            cancelBtn.style.display = 'none';
-            cancelBtn.innerHTML = '<i class="fas fa-times"></i>Annuler';
+        // Raccourcis clavier
+        document.addEventListener('keydown', (e) => {
+            // Escape pour annuler l'édition
+            if (e.key === 'Escape' && isEditing) {
+                resetForm();
+            }
             
-            cancelBtn.addEventListener('click', resetForm);
-            form.appendChild(cancelBtn);
+            // Ctrl/Cmd + N pour nouveau devoir
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                document.getElementById('homework-title').focus();
+            }
+            
+            // Ctrl/Cmd + S pour sauvegarder
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('homework-form').dispatchEvent(new Event('submit'));
+            }
+        });
 
-            // Modifier la fonction editHomework pour afficher le bouton d'annulation
-            const originalEditHomework = window.editHomework;
-            window.editHomework = function(homeworkId, homework, dateKey) {
-                originalEditHomework(homeworkId, homework, dateKey);
-                cancelBtn.style.display = 'block';
+        // Auto-save des filtres dans localStorage
+        function saveFiltersState() {
+            const filters = {
+                search: document.getElementById('search-input').value,
+                subject: document.getElementById('subject-filter').value,
+                priority: document.getElementById('priority-filter').value,
+                status: document.getElementById('status-filter').value,
+                view: currentView,
+                sort: document.getElementById('sort-select').value
             };
+            localStorage.setItem('homeworkFilters', JSON.stringify(filters));
+        }
 
-            // Modifier resetForm pour cacher le bouton d'annulation
-            const originalResetForm = window.resetForm;
-            window.resetForm = function() {
-                originalResetForm();
-                cancelBtn.style.display = 'none';
-            };
+        function loadFiltersState() {
+            const saved = localStorage.getItem('homeworkFilters');
+            if (saved) {
+                try {
+                    const filters = JSON.parse(saved);
+                    document.getElementById('search-input').value = filters.search || '';
+                    document.getElementById('subject-filter').value = filters.subject || '';
+                    document.getElementById('priority-filter').value = filters.priority || '';
+                    document.getElementById('status-filter').value = filters.status || '';
+                    document.getElementById('sort-select').value = filters.sort || 'dueDate';
+                    
+                    if (filters.view && filters.view !== 'calendar') {
+                        setTimeout(() => switchView(filters.view), 100);
+                    }
+                } catch (e) {
+                    console.warn('Erreur lors du chargement des filtres sauvegardés');
+                }
+            }
+        }
+
+        // Sauvegarder l'état des filtres à chaque changement
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadFiltersState, 500);
+            
+            // Sauvegarder à chaque changement
+            ['search-input', 'subject-filter', 'priority-filter', 'status-filter', 'sort-select'].forEach(id => {
+                document.getElementById(id).addEventListener('change', saveFiltersState);
+            });
+        });
+
+        // Export des devoirs (bonus)
+        function exportHomeworks() {
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Titre,Matière,Description,Date d'échéance,Priorité,Statut\n"
+                + allHomeworks.map(h => 
+                    `"${h.title}","${getSubjectDisplayName(h.subject)}","${h.description || ''}","${h.dueDate}","${h.priority}","${h.completed ? 'Terminé' : 'En cours'}"`
+                ).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `devoirs_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('Devoirs exportés avec succès', 'success');
+        }
+
+        // Ajouter un bouton d'export dans le header
+        document.addEventListener('DOMContentLoaded', () => {
+            const exportBtn = document.createElement('button');
+            exportBtn.className = 'logout-btn';
+            exportBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+            exportBtn.innerHTML = '<i class="fas fa-download"></i> Export';
+            exportBtn.addEventListener('click', exportHomeworks);
+            
+            document.querySelector('.header-actions').insertBefore(exportBtn, document.getElementById('logout-btn'));
         });
     </script>
 </body>
