@@ -3,122 +3,1400 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grimoire du Savoir - Codex</title>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+  <title>Grimoire du Savoir - Codex Magisterium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --parchment-light: #f5f3e7;
+      --parchment-dark: #eae4d3;
+      --ink-dark: #3f3b2e;
+      --ink-medium: #4e3a21;
+      --gold: #d4af37;
+      --gold-dark: #b8941f;
+      --emerald: #50c878;
+      --ruby: #e0115f;
+      --shadow: rgba(0,0,0,0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background: linear-gradient(to bottom, #f5f3e7, #eae4d3);
-      font-family: 'Cinzel Decorative', serif;
-      color: #3f3b2e;
-      padding: 2rem;
-      line-height: 1.8;
-      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      background: linear-gradient(135deg, var(--parchment-light), var(--parchment-dark));
+      font-family: 'Cinzel', serif;
+      color: var(--ink-dark);
+      padding: 1rem;
+      line-height: 1.6;
+      background-image: 
+        url('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+        radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(80, 200, 120, 0.1) 0%, transparent 50%);
+      min-height: 100vh;
+      position: relative;
     }
-    h1 {
+
+    .magical-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      50% { transform: translateY(-10px) rotate(180deg); opacity: 1; }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .main-title {
       font-family: 'Great Vibes', cursive;
-      font-size: 2.5rem;
-      text-align: center;
-      color: #4e3a21;
-      margin-bottom: 2rem;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      color: var(--ink-medium);
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px var(--shadow);
+      position: relative;
     }
-    .search-section {
-      text-align: center;
-      margin-bottom: 2rem;
+
+    .main-title::before,
+    .main-title::after {
+      content: "✦";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gold);
+      font-size: 1.5rem;
+      animation: sparkle 2s infinite alternate;
     }
-    .search-section input {
-      padding: 0.75rem;
-      width: 80%;
-      max-width: 400px;
-      font-size: 1.1rem;
-      border: 2px solid #8b7c5a;
-      border-radius: 8px;
+
+    .main-title::before { left: -3rem; }
+    .main-title::after { right: -3rem; }
+
+    @keyframes sparkle {
+      0% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+      100% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    }
+
+    .subtitle {
       font-family: 'Cinzel Decorative', serif;
+      font-size: 1.2rem;
+      color: var(--gold-dark);
+      margin-bottom: 2rem;
     }
-    .search-section button {
-      padding: 0.75rem 1.2rem;
+
+    .search-section {
+      background: rgba(255, 253, 248, 0.9);
+      border: 2px solid var(--gold);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 8px 25px var(--shadow);
+      backdrop-filter: blur(5px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .search-section::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+      animation: shine 3s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .search-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 300px;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      border: 2px solid var(--gold-dark);
+      border-radius: 25px;
+      font-family: 'Cinzel', serif;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--ink-dark);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--emerald);
+      box-shadow: 0 0 15px rgba(80, 200, 120, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .search-btn {
+      padding: 1rem 2rem;
       font-size: 1rem;
-      background-color: #8b7c5a;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 25px;
       cursor: pointer;
       font-family: 'Cinzel Decorative', serif;
-      margin-left: 0.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    .result-card {
-      background-color: #fffdf8;
-      border: 1px solid #d6c9aa;
+
+    .search-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .search-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .advanced-search {
+      display: none;
+      margin-top: 1rem;
       padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin-bottom: 1.5rem;
-      max-width: 700px;
+      background: rgba(234, 228, 211, 0.5);
+      border-radius: 10px;
+      border: 1px solid var(--gold);
+    }
+
+    .advanced-search.active {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .search-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      color: var(--ink-medium);
+      font-weight: 600;
+    }
+
+    .filter-select {
+      padding: 0.5rem;
+      border: 1px solid var(--gold-dark);
+      border-radius: 5px;
+      background: white;
+      font-family: 'Cinzel', serif;
+    }
+
+    .toggle-advanced {
+      background: none;
+      border: none;
+      color: var(--gold-dark);
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      text-decoration: underline;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid var(--gold);
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 15px var(--shadow);
+      z-index: 10;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .suggestion-item:hover {
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .results-section {
+      position: relative;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--parchment-dark);
+      border-top: 3px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .results-stats {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-style: italic;
+      color: var(--gold-dark);
+    }
+
+    .result-card {
+      background: rgba(255, 253, 248, 0.95);
+      border: 2px solid var(--gold);
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px var(--shadow);
+      margin-bottom: 2rem;
+      max-width: 800px;
       margin-left: auto;
       margin-right: auto;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .result-card h3 {
+
+    .result-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .result-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px var(--shadow);
+      border-color: var(--emerald);
+    }
+
+    .result-card:hover::before {
+      left: 100%;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-image {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid var(--gold);
+      flex-shrink: 0;
+    }
+
+    .result-content {
+      flex: 1;
+    }
+
+    .result-title {
       font-family: 'Great Vibes', cursive;
       font-size: 1.8rem;
+      color: var(--ink-medium);
       margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 2px var(--shadow);
     }
-    .result-card p {
+
+    .result-category {
+      display: inline-block;
+      background: var(--emerald);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-snippet {
       font-size: 1rem;
-      font-family: Georgia, serif;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      color: var(--ink-dark);
     }
-    .result-card a {
-      color: #6d4c41;
-      text-decoration: underline;
+
+    .result-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    @media screen and (max-width: 600px) {
-      .search-section input[type="text"] {
-        width: 90%;
+
+    .result-link {
+      background: linear-gradient(135deg, var(--emerald), #3d9970);
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .result-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(80, 200, 120, 0.3);
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      background: none;
+      border: 2px solid var(--gold);
+      color: var(--gold-dark);
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-btn:hover {
+      background: var(--gold);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 3rem;
+    }
+
+    .page-btn {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gold);
+      background: transparent;
+      color: var(--gold-dark);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Cinzel', serif;
+    }
+
+    .page-btn:hover,
+    .page-btn.active {
+      background: var(--gold);
+      color: white;
+    }
+
+    .history-sidebar {
+      position: fixed;
+      right: -300px;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background: rgba(255, 253, 248, 0.95);
+      border-left: 2px solid var(--gold);
+      box-shadow: -5px 0 15px var(--shadow);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      padding: 2rem 1rem;
+      overflow-y: auto;
+    }
+
+    .history-sidebar.active {
+      right: 0;
+    }
+
+    .history-toggle {
+      position: fixed;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--gold);
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--shadow);
+      z-index: 1001;
+      transition: all 0.3s ease;
+    }
+
+    .history-toggle:hover {
+      background: var(--gold-dark);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .history-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.5rem;
+      color: var(--ink-medium);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .history-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--gold);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .history-item:hover {
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .history-query {
+      font-weight: 600;
+      color: var(--ink-medium);
+    }
+
+    .history-time {
+      font-size: 0.8rem;
+      color: var(--gold-dark);
+    }
+
+    .floating-actions {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 100;
+    }
+
+    .floating-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: var(--emerald);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(80, 200, 120, 0.3);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .floating-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(80, 200, 120, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .search-controls {
+        flex-direction: column;
       }
+
+      .search-input {
+        min-width: 100%;
+      }
+
+      .result-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .result-image {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        margin: 0 auto;
+      }
+
+      .floating-actions {
+        bottom: 1rem;
+        right: 1rem;
+      }
+
+      .history-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--ink-dark);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--shadow);
+      z-index: 1002;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    body.dark-theme {
+      --parchment-light: #2c1810;
+      --parchment-dark: #3d2817;
+      --ink-dark: #f5f3e7;
+      --ink-medium: #eae4d3;
+    }
+
+    body.dark-theme .search-section,
+    body.dark-theme .result-card {
+      background: rgba(44, 24, 16, 0.9);
+      border-color: var(--gold);
+    }
+
+    body.dark-theme .search-input {
+      background: rgba(61, 40, 23, 0.9);
+      color: var(--ink-dark);
+    }
+
+    .bookmarks-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .bookmarks-modal.active {
+      display: flex;
+    }
+
+    .bookmarks-content {
+      background: var(--parchment-light);
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 2px solid var(--gold);
+    }
+
+    .close-modal {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gold-dark);
+    }
+
+    .error-message {
+      background: var(--ruby);
+      color: white;
+      padding: 1rem;
+      border-radius: 10px;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: var(--gold-dark);
+      font-style: italic;
+    }
+
+    .no-results::before {
+      content: "📚";
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
   </style>
 </head>
 <body>
-  <h1>Codex Magisterium</h1>
-  <div class="search-section">
-    <input type="text" id="searchInput" placeholder="Entrez un mot-clé...">
-    <button onclick="searchWikipedia()">Rechercher</button>
+  <div class="magical-particles" id="particles"></div>
+  <button class="theme-toggle" id="themeToggle" title="Changer de thème">🌙</button>
+  <button class="history-toggle" id="historyToggle" title="Historique">📜</button>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="main-title">Codex Magisterium</h1>
+      <p class="subtitle">~ Grimoire du Savoir Universel ~</p>
+    </div>
+
+    <div class="search-section">
+      <div class="search-controls">
+        <div style="position: relative; flex: 1;">
+          <input type="text" class="search-input" id="searchInput" placeholder="Entrez votre quête de savoir...">
+          <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+        <button class="search-btn" id="searchBtn">
+          ⚡ Invoquer
+        </button>
+      </div>
+      
+      <button class="toggle-advanced" id="toggleAdvanced">Options avancées ↓</button>
+      
+      <div class="advanced-search" id="advancedSearch">
+        <div class="search-filters">
+          <div class="filter-group">
+            <label class="filter-label">Langue:</label>
+            <select class="filter-select" id="languageFilter">
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="de">Deutsch</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Catégorie:</label>
+            <select class="filter-select" id="categoryFilter">
+              <option value="">Toutes</option>
+              <option value="science">Sciences</option>
+              <option value="histoire">Histoire</option>
+              <option value="art">Arts</option>
+              <option value="litterature">Littérature</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Résultats par page:</label>
+            <select class="filter-select" id="limitFilter">
+              <option value="10">10</option>
+              <option value="20" selected>20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-section">
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>Consultation des grimoires anciens...</p>
+      </div>
+      
+      <div class="results-stats" id="resultsStats"></div>
+      <div id="results"></div>
+      
+      <div class="pagination" id="pagination"></div>
+    </div>
   </div>
 
-  <div id="results"></div>
+  <div class="history-sidebar" id="historySidebar">
+    <div class="history-title">Chroniques des Recherches</div>
+    <div id="searchHistory"></div>
+  </div>
+
+  <div class="floating-actions">
+    <button class="floating-btn" id="bookmarksBtn" title="Favoris">⭐</button>
+    <button class="floating-btn" id="scrollTopBtn" title="Retour au sommet">↑</button>
+  </div>
+
+  <div class="bookmarks-modal" id="bookmarksModal">
+    <div class="bookmarks-content">
+      <button class="close-modal" id="closeBookmarks">×</button>
+      <h3>Parchemins Favoris</h3>
+      <div id="bookmarksList"></div>
+    </div>
+  </div>
 
   <script>
-    async function searchWikipedia() {
-      const query = document.getElementById('searchInput').value;
-      const searchURL = `https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
-      const response = await fetch(searchURL);
-      const data = await response.json();
-      const results = data.query.search;
+    // Application Codex
+    const CodexApp = {
+      config: {
+        currentLanguage: 'fr',
+        resultsPerPage: 20,
+        currentPage: 0,
+        searchHistory: [],
+        bookmarks: [],
+        suggestions: [
+          'Histoire de France', 'Physique quantique', 'Renaissance italienne',
+          'Révolution française', 'ADN', 'Système solaire', 'Photosynthèse',
+          'Art gothique', 'Philosophie antique', 'Musique classique'
+        ]
+      },
+      currentResults: [],
+      isLoading: false,
 
-      const resultArea = document.getElementById('results');
-      resultArea.innerHTML = '';
+      init: function() {
+        this.loadConfig();
+        this.setupEventListeners();
+        this.createMagicalParticles();
+        this.renderSearchHistory();
+        this.renderBookmarks();
+      },
 
-      for (const item of results) {
-        const title = item.title;
-        const pageURL = `https://fr.wikipedia.org/wiki/${encodeURIComponent(title)}`;
-        const snippet = item.snippet.replace(/<[^>]+>/g, '');
+      loadConfig: function() {
+        const savedTheme = this.getLocalStorage('codexTheme', 'light');
+        if (savedTheme === 'dark') {
+          document.body.classList.add('dark-theme');
+          document.getElementById('themeToggle').textContent = '☀️';
+        }
 
-        const detailsURL = `https://fr.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=${encodeURIComponent(title)}&pithumbsize=200&origin=*`;
-        const detailsResponse = await fetch(detailsURL);
-        const detailsData = await detailsResponse.json();
-        const pages = detailsData.query.pages;
-        const page = Object.values(pages)[0];
-        const thumbnail = page.thumbnail ? page.thumbnail.source : null;
+        this.config.searchHistory = this.getLocalStorage('codexHistory', []);
+        this.config.bookmarks = this.getLocalStorage('codexBookmarks', []);
+      },
 
+      // Utilitaires
+      getLocalStorage: function(key, defaultValue) {
+        try {
+          return JSON.parse(localStorage.getItem(key)) || defaultValue;
+        } catch (e) {
+          return defaultValue;
+        }
+      },
+
+      setLocalStorage: function(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+
+      escapeHtml: function(unsafe) {
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      },
+
+      // Initialisation
+      setupEventListeners: function() {
+        document.getElementById('searchBtn').addEventListener('click', () => this.searchWikipedia());
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.searchWikipedia();
+        });
+        
+        document.getElementById('toggleAdvanced').addEventListener('click', () => this.toggleAdvancedSearch());
+        document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+        document.getElementById('historyToggle').addEventListener('click', () => this.toggleHistory());
+        document.getElementById('bookmarksBtn').addEventListener('click', () => this.showBookmarks());
+        document.getElementById('closeBookmarks').addEventListener('click', () => this.closeBookmarks());
+        document.getElementById('scrollTopBtn').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        
+        document.getElementById('languageFilter').addEventListener('change', (e) => {
+          this.config.currentLanguage = e.target.value;
+        });
+        
+        document.getElementById('limitFilter').addEventListener('change', (e) => {
+          this.config.resultsPerPage = parseInt(e.target.value);
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => this.handleSearchInput(e));
+        
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.search-input')) {
+            document.getElementById('searchSuggestions').style.display = 'none';
+          }
+        });
+
+        // Raccourcis clavier
+        document.addEventListener('keydown', (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            switch(e.key) {
+              case 'k':
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+                break;
+              case 'h':
+                e.preventDefault();
+                this.toggleHistory();
+                break;
+              case 'b':
+                e.preventDefault();
+                this.showBookmarks();
+                break;
+            }
+          }
+          
+          if (e.key === 'Escape') {
+            document.getElementById('searchSuggestions').style.display = 'none';
+            this.closeBookmarks();
+            document.getElementById('historySidebar').classList.remove('active');
+          }
+        });
+      },
+
+      // Gestion des suggestions
+      handleSearchInput: function(e) {
+        const query = e.target.value.toLowerCase();
+        const suggestionsContainer = document.getElementById('searchSuggestions');
+        
+        if (query.length < 2) {
+          suggestionsContainer.style.display = 'none';
+          return;
+        }
+
+        const filteredSuggestions = this.config.suggestions.filter(suggestion => 
+          suggestion.toLowerCase().includes(query)
+        );
+
+        if (filteredSuggestions.length > 0) {
+          suggestionsContainer.innerHTML = filteredSuggestions
+            .slice(0, 5)
+            .map(suggestion => `
+              <div class="suggestion-item" onclick="CodexApp.selectSuggestion('${suggestion}')">
+                ${suggestion}
+              </div>
+            `).join('');
+          suggestionsContainer.style.display = 'block';
+        } else {
+          suggestionsContainer.style.display = 'none';
+        }
+      },
+
+      selectSuggestion: function(suggestion) {
+        document.getElementById('searchInput').value = suggestion;
+        document.getElementById('searchSuggestions').style.display = 'none';
+        this.searchWikipedia();
+      },
+
+      // Fonctionnalités principales
+      searchWikipedia: async function() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query || this.isLoading) return;
+
+        this.addToHistory(query);
+        this.setLoading(true);
+        
+        try {
+          const lang = this.config.currentLanguage;
+          const limit = this.config.resultsPerPage;
+          
+          // Essayer plusieurs URLs de secours
+          const searchURLs = [
+            `https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*&srlimit=${limit}`,
+            `https://cors-anywhere.herokuapp.com/https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&srlimit=${limit}`,
+            `https://api.allorigins.win/get?url=${encodeURIComponent(`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&srlimit=${limit}`)}`
+          ];
+          
+          let data = null;
+          let lastError = null;
+          
+          // Essayer chaque URL jusqu'à ce qu'une fonctionne
+          for (const url of searchURLs) {
+            try {
+              console.log(`Tentative avec: ${url}`);
+              
+              const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                mode: 'cors'
+              });
+              
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+              }
+              
+              // Si c'est AllOrigins, extraire le contenu
+              if (url.includes('allorigins')) {
+                const allOriginsData = await response.json();
+                data = JSON.parse(allOriginsData.contents);
+              } else {
+                data = await response.json();
+              }
+              
+              if (data.error) {
+                throw new Error(data.error.info);
+              }
+              
+              break; // Succès, sortir de la boucle
+              
+            } catch (error) {
+              lastError = error;
+              console.warn(`Échec avec ${url}:`, error.message);
+              continue; // Essayer l'URL suivante
+            }
+          }
+          
+          // Si aucune URL n'a fonctionné
+          if (!data) {
+            throw new Error(`Toutes les tentatives ont échoué. Dernière erreur: ${lastError?.message || 'Inconnue'}`);
+          }
+          
+          this.currentResults = data.query.search;
+          const enrichedResults = await this.enrichResults(this.currentResults, lang);
+          
+          this.displayResults(enrichedResults, query);
+          this.updateResultsStats(this.currentResults.length, query);
+          
+        } catch (error) {
+          console.error('Erreur de recherche:', error);
+          this.showError('Impossible de consulter les grimoires en ce moment. Vérifiez votre connexion ou réessayez plus tard.');
+        } finally {
+          this.setLoading(false);
+        }
+      },
+
+      enrichResults: async function(results, lang) {
+        return Promise.all(
+          results.map(async (result) => {
+            try {
+              // URLs de secours pour récupérer les détails
+              const detailsURLs = [
+                `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages|categories&titles=${encodeURIComponent(result.title)}&pithumbsize=200&origin=*&cllimit=5`,
+                `https://api.allorigins.win/get?url=${encodeURIComponent(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages|categories&titles=${encodeURIComponent(result.title)}&pithumbsize=200&cllimit=5`)}`
+              ];
+              
+              for (const url of detailsURLs) {
+                try {
+                  const response = await fetch(url);
+                  if (!response.ok) continue;
+                  
+                  let data;
+                  if (url.includes('allorigins')) {
+                    const allOriginsData = await response.json();
+                    data = JSON.parse(allOriginsData.contents);
+                  } else {
+                    data = await response.json();
+                  }
+                  
+                  const pages = data.query.pages;
+                  const page = Object.values(pages)[0];
+                  
+                  return {
+                    ...result,
+                    thumbnail: page.thumbnail?.source,
+                    categories: page.categories?.map(cat => cat.title.replace('Catégorie:', '')) || [],
+                    pageUrl: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(result.title)}`
+                  };
+                } catch (error) {
+                  continue; // Essayer l'URL suivante
+                }
+              }
+              
+              // Si toutes les tentatives échouent, retourner le résultat de base
+              return {
+                ...result,
+                pageUrl: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(result.title)}`
+              };
+              
+            } catch (error) {
+              return {
+                ...result,
+                pageUrl: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(result.title)}`
+              };
+            }
+          })
+        );
+      },
+
+      displayResults: function(results, query) {
+        const resultArea = document.getElementById('results');
+        resultArea.innerHTML = '';
+
+        if (results.length === 0) {
+          resultArea.innerHTML = `
+            <div class="no-results">
+              <p>Aucun parchemin trouvé pour "${this.escapeHtml(query)}"</p>
+              <p>Essayez des termes différents ou consultez vos recherches précédentes</p>
+            </div>
+          `;
+          return;
+        }
+
+        results.forEach((item, index) => {
+          const card = this.createResultCard(item);
+          resultArea.appendChild(card);
+          
+          // Animation
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 100);
+        });
+      },
+
+      createResultCard: function(item) {
         const card = document.createElement('div');
         card.className = 'result-card';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.5s ease';
+        
+        const snippet = item.snippet.replace(/<[^>]+>/g, '');
+        const category = this.getCategory(item.categories);
+        
         card.innerHTML = `
-          <h3>${title}</h3>
-          ${thumbnail ? `<img src="${thumbnail}" alt="${title}" style="max-width:100%; border-radius:8px; margin-bottom:10px;">` : ''}
-          <p>${snippet}...</p>
-          <a href="${pageURL}" target="_blank">Lire sur Wikipedia</a>
+          <div class="result-header">
+            ${item.thumbnail ? 
+              `<img src="${this.escapeHtml(item.thumbnail)}" alt="${this.escapeHtml(item.title)}" class="result-image" loading="lazy">` : 
+              `<div class="result-image" style="background: linear-gradient(135deg, var(--gold), var(--emerald)); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">📚</div>`
+            }
+            <div class="result-content">
+              <h3 class="result-title">${this.escapeHtml(item.title)}</h3>
+              ${category ? `<span class="result-category">${this.escapeHtml(category)}</span>` : ''}
+              <p class="result-snippet">${this.escapeHtml(snippet)}...</p>
+            </div>
+          </div>
+          <div class="result-footer">
+            <a href="${this.escapeHtml(item.pageUrl)}" target="_blank" class="result-link">
+              📖 Consulter le Grimoire
+              <span>→</span>
+            </a>
+            <div class="result-actions">
+              <button class="action-btn" title="Ajouter aux favoris">
+                ⭐
+              </button>
+              <button class="action-btn" title="Partager">
+                📤
+              </button>
+              <button class="action-btn" title="Lecture audio">
+                🔊
+              </button>
+            </div>
+          </div>
         `;
-        resultArea.appendChild(card);
+        
+        // Ajout des gestionnaires d'événements
+        const bookmarkBtn = card.querySelector('.action-btn:nth-child(1)');
+        const shareBtn = card.querySelector('.action-btn:nth-child(2)');
+        const readBtn = card.querySelector('.action-btn:nth-child(3)');
+        
+        bookmarkBtn.addEventListener('click', () => this.bookmarkResult(item.title, item.pageUrl));
+        shareBtn.addEventListener('click', () => this.shareResult(item.title, item.pageUrl));
+        readBtn.addEventListener('click', () => this.readAloud(snippet));
+        
+        return card;
+      },
+
+      // Fonctions utilitaires
+      getCategory: function(categories) {
+        if (!categories || categories.length === 0) return null;
+        
+        const categoryMap = {
+          'science': '🔬 Science',
+          'histoire': '📜 Histoire', 
+          'art': '🎨 Art',
+          'littérature': '📚 Littérature',
+          'géographie': '🌍 Géographie',
+          'biographie': '👤 Biographie',
+          'philosophie': '🤔 Philosophie',
+          'technologie': '⚙️ Technologie'
+        };
+        
+        for (const [key, value] of Object.entries(categoryMap)) {
+          if (categories.some(cat => cat.toLowerCase().includes(key))) {
+            return value;
+          }
+        }
+        
+        return '📖 Général';
+      },
+
+      updateResultsStats: function(count, query) {
+        document.getElementById('resultsStats').textContent = 
+          `${count} parchemins découverts pour "${this.escapeHtml(query)}"`;
+      },
+
+      setLoading: function(loading) {
+        this.isLoading = loading;
+        document.getElementById('loadingSpinner').style.display = loading ? 'block' : 'none';
+        document.getElementById('results').style.opacity = loading ? '0.5' : '1';
+      },
+
+      showError: function(message) {
+        const resultArea = document.getElementById('results');
+        resultArea.innerHTML = `<div class="error-message">${this.escapeHtml(message)}</div>`;
+      },
+
+      showNotification: function(message) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: var(--emerald);
+          color: white;
+          padding: 1rem 2rem;
+          border-radius: 25px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+          z-index: 3000;
+          animation: fadeInOut 2s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 2000);
+      },
+
+      // Fonctionnalités interface
+      toggleAdvancedSearch: function() {
+        const advanced = document.getElementById('advancedSearch');
+        const button = document.getElementById('toggleAdvanced');
+        
+        advanced.classList.toggle('active');
+        button.textContent = advanced.classList.contains('active') ? 
+          'Options avancées ↑' : 'Options avancées ↓';
+      },
+
+      toggleTheme: function() {
+        document.body.classList.toggle('dark-theme');
+        const button = document.getElementById('themeToggle');
+        button.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+        
+        this.setLocalStorage('codexTheme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+      },
+
+      toggleHistory: function() {
+        const sidebar = document.getElementById('historySidebar');
+        sidebar.classList.toggle('active');
+      },
+
+      // Gestion de l'historique
+      addToHistory: function(query) {
+        const historyItem = {
+          query,
+          timestamp: new Date().toISOString(),
+          language: this.config.currentLanguage
+        };
+        
+        // Éviter les doublons récents
+        this.config.searchHistory = this.config.searchHistory.filter(item => 
+          item.query !== query || new Date() - new Date(item.timestamp) > 3600000
+        );
+        
+        this.config.searchHistory.unshift(historyItem);
+        this.config.searchHistory = this.config.searchHistory.slice(0, 50);
+        
+        this.setLocalStorage('codexHistory', this.config.searchHistory);
+        this.renderSearchHistory();
+      },
+
+      renderSearchHistory: function() {
+        const historyContainer = document.getElementById('searchHistory');
+        
+        if (this.config.searchHistory.length === 0) {
+          historyContainer.innerHTML = '<p style="text-align: center; color: var(--gold-dark); font-style: italic;">Aucune quête passée</p>';
+          return;
+        }
+        
+        historyContainer.innerHTML = this.config.searchHistory.map(item => `
+          <div class="history-item" onclick="CodexApp.searchFromHistory('${this.escapeHtml(item.query)}')">
+            <div class="history-query">${this.escapeHtml(item.query)}</div>
+            <div class="history-time">${this.formatDate(item.timestamp)}</div>
+          </div>
+        `).join('');
+      },
+
+      searchFromHistory: function(query) {
+        document.getElementById('searchInput').value = query;
+        this.toggleHistory();
+        this.searchWikipedia();
+      },
+
+      // Gestion des favoris
+      bookmarkResult: function(title, url) {
+        const bookmark = {
+          title,
+          url,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Éviter les doublons
+        this.config.bookmarks = this.config.bookmarks.filter(b => b.url !== url);
+        this.config.bookmarks.unshift(bookmark);
+        this.config.bookmarks = this.config.bookmarks.slice(0, 100);
+        
+        this.setLocalStorage('codexBookmarks', this.config.bookmarks);
+        this.showNotification('📚 Ajouté aux favoris !');
+      },
+
+      renderBookmarks: function() {
+        const bookmarksList = document.getElementById('bookmarksList');
+        
+        if (this.config.bookmarks.length === 0) {
+          bookmarksList.innerHTML = '<p style="text-align: center; color: var(--gold-dark); font-style: italic;">Aucun favori enregistré</p>';
+          return;
+        }
+        
+        bookmarksList.innerHTML = this.config.bookmarks.map(bookmark => `
+          <div class="history-item">
+            <div class="history-query">
+              <a href="${this.escapeHtml(bookmark.url)}" target="_blank" style="color: var(--ink-medium); text-decoration: none;">
+                ${this.escapeHtml(bookmark.title)}
+              </a>
+            </div>
+            <div class="history-time">${this.formatDate(bookmark.timestamp)}</div>
+            <button onclick="CodexApp.removeBookmark('${this.escapeHtml(bookmark.url)}')" style="float: right; background: none; border: none; color: var(--ruby); cursor: pointer;">×</button>
+          </div>
+        `).join('');
+      },
+
+      removeBookmark: function(url) {
+        this.config.bookmarks = this.config.bookmarks.filter(b => b.url !== url);
+        this.setLocalStorage('codexBookmarks', this.config.bookmarks);
+        this.renderBookmarks();
+      },
+
+      showBookmarks: function() {
+        this.renderBookmarks();
+        document.getElementById('bookmarksModal').classList.add('active');
+      },
+
+      closeBookmarks: function() {
+        document.getElementById('bookmarksModal').classList.remove('active');
+      },
+
+      // Fonctionnalités utilitaires
+      shareResult: function(title, url) {
+        if (navigator.share) {
+          navigator.share({
+            title: `Codex: ${title}`,
+            url: url
+          });
+        } else {
+          navigator.clipboard.writeText(`${title}: ${url}`);
+          this.showNotification('📋 Lien copié !');
+        }
+      },
+
+      readAloud: function(text) {
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = this.config.currentLanguage === 'fr' ? 'fr-FR' : 'en-US';
+          utterance.rate = 0.8;
+          speechSynthesis.speak(utterance);
+          this.showNotification('🔊 Lecture en cours...');
+        } else {
+          this.showNotification('❌ Lecture audio non supportée');
+        }
+      },
+
+      formatDate: function(isoString) {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) return 'À l\'instant';
+        if (diffMins < 60) return `Il y a ${diffMins}min`;
+        if (diffHours < 24) return `Il y a ${diffHours}h`;
+        if (diffDays < 7) return `Il y a ${diffDays}j`;
+        
+        return date.toLocaleDateString('fr-FR');
+      },
+
+      // Particules magiques
+      createMagicalParticles: function() {
+        const particlesContainer = document.getElementById('particles');
+        
+        for (let i = 0; i < 20; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.left = Math.random() * 100 + '%';
+          particle.style.animationDelay = Math.random() * 8 + 's';
+          particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+          particlesContainer.appendChild(particle);
+        }
       }
-    }
+    };
+
+    // Initialisation de l'application
+    document.addEventListener('DOMContentLoaded', () => {
+      CodexApp.init();
+    });
   </script>
 </body>
 </html>
