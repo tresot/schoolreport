@@ -673,62 +673,6 @@
             transform: translateY(0);
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .search-filters {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .day {
-                min-width: 35px;
-                font-size: 14px;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-        }
-
-        /* Scrollbar */
-        .homework-list::-webkit-scrollbar,
-        .agenda-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .homework-list::-webkit-scrollbar-track,
-        .agenda-list::-webkit-scrollbar-track {
-            background: var(--light);
-            border-radius: 4px;
-        }
-
-        .homework-list::-webkit-scrollbar-thumb,
-        .agenda-list::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        .homework-list::-webkit-scrollbar-thumb:hover,
-        .agenda-list::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-
         /* Notifications */
         .notification {
             position: fixed;
@@ -763,6 +707,71 @@
         /* Hidden elements */
         .hidden {
             display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .day {
+                min-width: 35px;
+                font-size: 14px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        /* Error message styles */
+        .error-message {
+            background: #ffe6e6;
+            color: #d8000c;
+            border: 1px solid #d8000c;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--light-gray);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -982,10 +991,14 @@
                 <i class="fas fa-plus-circle"></i>
                 <span id="form-title">Ajouter un devoir</span>
             </h3>
+            
+            <!-- Error message container -->
+            <div id="error-message" class="error-message hidden"></div>
+            
             <form id="homework-form">
                 <div class="form-group">
                     <label for="homework-title">Titre du devoir *</label>
-                    <input type="text" id="homework-title" placeholder="Ex: Dissertation de français" required>
+                    <input type="text" id="homework-title" placeholder="Ex: Dissertation de français" required maxlength="100">
                 </div>
                 
                 <div class="form-group">
@@ -1006,7 +1019,7 @@
                 
                 <div class="form-group">
                     <label for="homework-description">Description</label>
-                    <textarea id="homework-description" placeholder="Description détaillée du devoir..." rows="3"></textarea>
+                    <textarea id="homework-description" placeholder="Description détaillée du devoir..." rows="3" maxlength="500"></textarea>
                 </div>
                 
                 <div class="form-group">
@@ -1039,13 +1052,14 @@
     <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     
-    <!-- Firebase v8 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- Firebase v11 -->
+    <script type="module">
+        // Import Firebase v11 functions (même version que firebase-config.js)
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getDatabase, ref, push, set, update, remove, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js';
 
-    <script>
-        // Configuration Firebase v8
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
             authDomain: "schoolreport-f8db0.firebaseapp.com",
@@ -1057,10 +1071,10 @@
             measurementId: "G-N8YF0VKWCD"
         };
 
-        // Initialisation Firebase v8
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
 
         // Variables globales
         let currentUser = null;
@@ -1091,6 +1105,11 @@
                 if (typeof input !== 'string') return false;
                 const trimmed = input.trim();
                 return trimmed.length >= minLength && trimmed.length <= maxLength;
+            },
+
+            isValidDate(dateString) {
+                const date = new Date(dateString);
+                return date instanceof Date && !isNaN(date);
             }
         };
 
@@ -1099,6 +1118,7 @@
                 if (!(date instanceof Date)) {
                     date = new Date(date);
                 }
+                if (isNaN(date)) return 'Date invalide';
                 return date.toLocaleDateString('fr-FR', {
                     weekday: 'long',
                     year: 'numeric',
@@ -1111,6 +1131,7 @@
                 if (!(date instanceof Date)) {
                     date = new Date(date);
                 }
+                if (isNaN(date)) return null;
                 return date.toISOString().split('T')[0];
             },
 
@@ -1124,10 +1145,16 @@
                 if (!(date instanceof Date)) {
                     date = new Date(date);
                 }
+                if (isNaN(date)) return 'Date invalide';
                 return date.toLocaleDateString('fr-FR', {
                     day: 'numeric',
                     month: 'short'
                 });
+            },
+
+            getTodayDateString() {
+                const today = new Date();
+                return today.toISOString().split('T')[0];
             }
         };
 
@@ -1138,14 +1165,24 @@
             selectDate(new Date());
             setupEventListeners();
             setupFilters();
+            setMinDate();
         });
 
+        function setMinDate() {
+            // Set minimum date to today for the date input
+            const dateInput = document.getElementById('homework-due-date');
+            if (dateInput) {
+                dateInput.min = DateUtils.getTodayDateString();
+            }
+        }
+
         function initAuthState() {
-            auth.onAuthStateChanged((user) => {
+            onAuthStateChanged(auth, (user) => {
                 if (!user) {
                     window.location.href = 'index.html';
                 } else {
                     currentUser = user;
+                    console.log('Utilisateur connecté:', user.uid);
                     loadHomeworks();
                 }
             });
@@ -1153,36 +1190,40 @@
 
         function setupEventListeners() {
             // Navigation du calendrier
-            document.getElementById('prev-month').addEventListener('click', () => {
+            document.getElementById('prev-month')?.addEventListener('click', () => {
                 currentDate.setMonth(currentDate.getMonth() - 1);
                 generateCalendar();
             });
 
-            document.getElementById('next-month').addEventListener('click', () => {
+            document.getElementById('next-month')?.addEventListener('click', () => {
                 currentDate.setMonth(currentDate.getMonth() + 1);
                 generateCalendar();
             });
 
-            document.getElementById('today-btn').addEventListener('click', () => {
+            document.getElementById('today-btn')?.addEventListener('click', () => {
                 currentDate = new Date();
                 selectDate(new Date());
                 generateCalendar();
             });
 
             // Formulaire
-            document.getElementById('homework-form').addEventListener('submit', handleHomeworkSubmit);
-            document.getElementById('cancel-btn').addEventListener('click', resetForm);
+            const form = document.getElementById('homework-form');
+            if (form) {
+                form.addEventListener('submit', handleHomeworkSubmit);
+            }
+            
+            document.getElementById('cancel-btn')?.addEventListener('click', resetForm);
             
             // Déconnexion
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 
             // Changement de vue
-            document.getElementById('calendar-view-btn').addEventListener('click', () => switchView('calendar'));
-            document.getElementById('agenda-view-btn').addEventListener('click', () => switchView('agenda'));
-            document.getElementById('subject-view-btn').addEventListener('click', () => switchView('subject'));
+            document.getElementById('calendar-view-btn')?.addEventListener('click', () => switchView('calendar'));
+            document.getElementById('agenda-view-btn')?.addEventListener('click', () => switchView('agenda'));
+            document.getElementById('subject-view-btn')?.addEventListener('click', () => switchView('subject'));
 
             // Tri
-            document.getElementById('sort-select').addEventListener('change', updateAgendaView);
+            document.getElementById('sort-select')?.addEventListener('change', updateAgendaView);
         }
 
         function setupFilters() {
@@ -1193,14 +1234,16 @@
             const clearFilters = document.getElementById('clear-filters');
 
             [searchInput, subjectFilter, priorityFilter, statusFilter].forEach(element => {
-                element.addEventListener('input', applyFilters);
+                if (element) {
+                    element.addEventListener('input', applyFilters);
+                }
             });
 
-            clearFilters.addEventListener('click', () => {
-                searchInput.value = '';
-                subjectFilter.value = '';
-                priorityFilter.value = '';
-                statusFilter.value = '';
+            clearFilters?.addEventListener('click', () => {
+                if (searchInput) searchInput.value = '';
+                if (subjectFilter) subjectFilter.value = '';
+                if (priorityFilter) priorityFilter.value = '';
+                if (statusFilter) statusFilter.value = '';
                 applyFilters();
             });
         }
@@ -1212,20 +1255,28 @@
             document.querySelectorAll('.view-toggle button').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.getElementById(`${view}-view-btn`).classList.add('active');
+            const activeBtn = document.getElementById(`${view}-view-btn`);
+            if (activeBtn) activeBtn.classList.add('active');
 
             // Show/hide cards
-            document.getElementById('calendar-card').classList.toggle('hidden', view !== 'calendar');
-            document.getElementById('homework-card').classList.toggle('hidden', view !== 'calendar');
-            document.getElementById('agenda-card').classList.toggle('hidden', view !== 'agenda');
-            document.getElementById('subject-card').classList.toggle('hidden', view !== 'subject');
+            const calendarCard = document.getElementById('calendar-card');
+            const homeworkCard = document.getElementById('homework-card');
+            const agendaCard = document.getElementById('agenda-card');
+            const subjectCard = document.getElementById('subject-card');
+
+            if (calendarCard) calendarCard.classList.toggle('hidden', view !== 'calendar');
+            if (homeworkCard) homeworkCard.classList.toggle('hidden', view !== 'calendar');
+            if (agendaCard) agendaCard.classList.toggle('hidden', view !== 'agenda');
+            if (subjectCard) subjectCard.classList.toggle('hidden', view !== 'subject');
 
             // Update main content grid
             const mainContent = document.getElementById('main-content');
-            if (view === 'agenda' || view === 'subject') {
-                mainContent.classList.add('agenda-view');
-            } else {
-                mainContent.classList.remove('agenda-view');
+            if (mainContent) {
+                if (view === 'agenda' || view === 'subject') {
+                    mainContent.classList.add('agenda-view');
+                } else {
+                    mainContent.classList.remove('agenda-view');
+                }
             }
 
             // Update content
@@ -1239,6 +1290,9 @@
         function generateCalendar() {
             const calendarEl = document.getElementById('calendar');
             const currentMonthEl = document.getElementById('current-month');
+            
+            if (!calendarEl || !currentMonthEl) return;
+            
             calendarEl.innerHTML = '';
 
             const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
@@ -1259,7 +1313,6 @@
             }
 
             // Jours du mois actuel
-            const today = new Date();
             for (let i = 1; i <= daysInMonth; i++) {
                 const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
                 const isToday = DateUtils.isToday(date);
@@ -1287,7 +1340,7 @@
 
             // Vérifier s'il y a des devoirs pour cette date
             const dateKey = DateUtils.formatDateKey(date);
-            if (homeworks[dateKey] && Object.keys(homeworks[dateKey]).length > 0) {
+            if (dateKey && homeworks[dateKey] && Object.keys(homeworks[dateKey]).length > 0) {
                 dayEl.classList.add('has-homework');
             }
 
@@ -1297,7 +1350,10 @@
 
         function selectDate(date) {
             selectedDate = date;
-            document.getElementById('selected-date').textContent = DateUtils.formatDate(date);
+            const selectedDateEl = document.getElementById('selected-date');
+            if (selectedDateEl) {
+                selectedDateEl.textContent = DateUtils.formatDate(date);
+            }
             generateCalendar();
             displayHomeworks();
         }
@@ -1305,21 +1361,28 @@
         function loadHomeworks() {
             if (!currentUser) return;
             
-            const homeworksRef = db.ref('homeworks/' + currentUser.uid);
-            homeworksRef.on('value', (snapshot) => {
+            console.log('Chargement des devoirs pour l\'utilisateur:', currentUser.uid);
+            
+            const homeworksRef = ref(database, 'homeworks/' + currentUser.uid);
+            onValue(homeworksRef, (snapshot) => {
                 homeworks = snapshot.val() || {};
+                console.log('Devoirs chargés:', homeworks);
                 
                 // Convertir en tableau plat pour les vues globales
                 allHomeworks = [];
                 Object.keys(homeworks).forEach(dateKey => {
-                    Object.keys(homeworks[dateKey]).forEach(homeworkId => {
-                        const homework = homeworks[dateKey][homeworkId];
-                        allHomeworks.push({
-                            id: homeworkId,
-                            dateKey: dateKey,
-                            ...homework
+                    if (homeworks[dateKey] && typeof homeworks[dateKey] === 'object') {
+                        Object.keys(homeworks[dateKey]).forEach(homeworkId => {
+                            const homework = homeworks[dateKey][homeworkId];
+                            if (homework && typeof homework === 'object') {
+                                allHomeworks.push({
+                                    id: homeworkId,
+                                    dateKey: dateKey,
+                                    ...homework
+                                });
+                            }
                         });
-                    });
+                    }
                 });
 
                 generateCalendar();
@@ -1337,7 +1400,7 @@
                 }
             }, (error) => {
                 console.error('Erreur lors du chargement des devoirs:', error);
-                showNotification('Erreur lors du chargement des devoirs', 'error');
+                showNotification('Erreur lors du chargement des devoirs: ' + error.message, 'error');
             });
         }
 
@@ -1347,43 +1410,55 @@
             const pending = allHomeworks.filter(h => !h.completed && new Date(h.dueDate) >= new Date()).length;
             const overdue = allHomeworks.filter(h => !h.completed && new Date(h.dueDate) < new Date()).length;
 
-            document.getElementById('total-homeworks').textContent = total;
-            document.getElementById('completed-homeworks').textContent = completed;
-            document.getElementById('pending-homeworks').textContent = pending;
-            document.getElementById('overdue-homeworks').textContent = overdue;
+            const totalEl = document.getElementById('total-homeworks');
+            const completedEl = document.getElementById('completed-homeworks');
+            const pendingEl = document.getElementById('pending-homeworks');
+            const overdueEl = document.getElementById('overdue-homeworks');
+
+            if (totalEl) totalEl.textContent = total;
+            if (completedEl) completedEl.textContent = completed;
+            if (pendingEl) pendingEl.textContent = pending;
+            if (overdueEl) overdueEl.textContent = overdue;
         }
 
         function applyFilters() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const subjectFilter = document.getElementById('subject-filter').value;
-            const priorityFilter = document.getElementById('priority-filter').value;
-            const statusFilter = document.getElementById('status-filter').value;
+            const searchInput = document.getElementById('search-input');
+            const subjectFilter = document.getElementById('subject-filter');
+            const priorityFilter = document.getElementById('priority-filter');
+            const statusFilter = document.getElementById('status-filter');
+
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
+            const priorityFilterValue = priorityFilter ? priorityFilter.value : '';
+            const statusFilterValue = statusFilter ? statusFilter.value : '';
 
             filteredHomeworks = allHomeworks.filter(homework => {
                 // Recherche textuelle
-                if (searchTerm && !homework.title.toLowerCase().includes(searchTerm) && 
-                    !homework.description?.toLowerCase().includes(searchTerm)) {
-                    return false;
+                if (searchTerm && homework.title && homework.description) {
+                    if (!homework.title.toLowerCase().includes(searchTerm) && 
+                        !homework.description.toLowerCase().includes(searchTerm)) {
+                        return false;
+                    }
                 }
 
                 // Filtre par matière
-                if (subjectFilter && homework.subject !== subjectFilter) {
+                if (subjectFilterValue && homework.subject !== subjectFilterValue) {
                     return false;
                 }
 
                 // Filtre par priorité
-                if (priorityFilter && homework.priority !== priorityFilter) {
+                if (priorityFilterValue && homework.priority !== priorityFilterValue) {
                     return false;
                 }
 
                 // Filtre par statut
-                if (statusFilter) {
+                if (statusFilterValue) {
                     const dueDate = new Date(homework.dueDate);
                     const now = new Date();
                     
-                    if (statusFilter === 'completed' && !homework.completed) return false;
-                    if (statusFilter === 'pending' && (homework.completed || dueDate < now)) return false;
-                    if (statusFilter === 'overdue' && (homework.completed || dueDate >= now)) return false;
+                    if (statusFilterValue === 'completed' && !homework.completed) return false;
+                    if (statusFilterValue === 'pending' && (homework.completed || dueDate < now)) return false;
+                    if (statusFilterValue === 'overdue' && (homework.completed || dueDate >= now)) return false;
                 }
 
                 return true;
@@ -1398,7 +1473,11 @@
 
         function updateAgendaView() {
             const agendaList = document.getElementById('agenda-list');
-            const sortBy = document.getElementById('sort-select').value;
+            const sortSelect = document.getElementById('sort-select');
+            
+            if (!agendaList) return;
+            
+            const sortBy = sortSelect ? sortSelect.value : 'dueDate';
             
             if (filteredHomeworks.length === 0) {
                 agendaList.innerHTML = `
@@ -1438,6 +1517,8 @@
 
         function updateSubjectView() {
             const subjectGroups = document.getElementById('subject-groups');
+            
+            if (!subjectGroups) return;
             
             if (filteredHomeworks.length === 0) {
                 subjectGroups.innerHTML = `
@@ -1504,8 +1585,10 @@
 
         function displayHomeworks() {
             const homeworkList = document.getElementById('homework-list');
+            if (!homeworkList || !selectedDate) return;
+            
             const dateKey = DateUtils.formatDateKey(selectedDate);
-            const dayHomeworks = homeworks[dateKey] || {};
+            const dayHomeworks = (dateKey && homeworks[dateKey]) ? homeworks[dateKey] : {};
 
             homeworkList.innerHTML = '';
 
@@ -1611,13 +1694,19 @@
 
             // Événements
             const checkbox = homeworkEl.querySelector('input[type="checkbox"]');
-            checkbox.addEventListener('change', () => toggleHomeworkComplete(id, dateKey, checkbox.checked));
+            if (checkbox) {
+                checkbox.addEventListener('change', () => toggleHomeworkComplete(id, dateKey, checkbox.checked));
+            }
 
             const editBtn = homeworkEl.querySelector('.edit-btn');
-            editBtn.addEventListener('click', () => editHomework(id, homework, dateKey));
+            if (editBtn) {
+                editBtn.addEventListener('click', () => editHomework(id, homework, dateKey));
+            }
 
             const deleteBtn = homeworkEl.querySelector('.delete-btn');
-            deleteBtn.addEventListener('click', () => deleteHomework(id, dateKey));
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => deleteHomework(id, dateKey));
+            }
 
             return homeworkEl;
         }
@@ -1625,170 +1714,262 @@
         function handleHomeworkSubmit(event) {
             event.preventDefault();
             
-            const title = document.getElementById('homework-title').value.trim();
-            const subject = document.getElementById('homework-subject').value;
-            const description = document.getElementById('homework-description').value.trim();
-            const dueDate = document.getElementById('homework-due-date').value;
-            const priority = document.getElementById('homework-priority').value;
+            // Clear previous error messages
+            hideErrorMessage();
+            
+            const titleInput = document.getElementById('homework-title');
+            const subjectInput = document.getElementById('homework-subject');
+            const descriptionInput = document.getElementById('homework-description');
+            const dueDateInput = document.getElementById('homework-due-date');
+            const priorityInput = document.getElementById('homework-priority');
 
-            // Validation
-            if (!SecurityUtils.validateInput(title, 3, 100)) {
-                showNotification('Le titre doit contenir entre 3 et 100 caractères', 'error');
+            if (!titleInput || !subjectInput || !dueDateInput || !priorityInput) {
+                showErrorMessage('Erreur: éléments du formulaire manquants');
                 return;
             }
 
-            if (!subject) {
-                showNotification('Veuillez sélectionner une matière', 'error');
-                return;
-            }
+            const title = titleInput.value.trim();
+            const subject = subjectInput.value;
+            const description = descriptionInput ? descriptionInput.value.trim() : '';
+            const dueDate = dueDateInput.value;
+            const priority = priorityInput.value;
 
-            if (!dueDate) {
-                showNotification('Veuillez sélectionner une date d\'échéance', 'error');
-                return;
-            }
+            // Validation côté client
+            try {
+                // Validation du titre
+                if (!SecurityUtils.validateInput(title, 3, 100)) {
+                    throw new Error('Le titre doit contenir entre 3 et 100 caractères');
+                }
 
-            const dueDateObj = new Date(dueDate);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+                // Validation de la matière
+                if (!subject) {
+                    throw new Error('Veuillez sélectionner une matière');
+                }
 
-            if (dueDateObj < today) {
-                showNotification('La date d\'échéance ne peut pas être dans le passé', 'error');
-                return;
-            }
+                // Validation de la date
+                if (!dueDate) {
+                    throw new Error('Veuillez sélectionner une date d\'échéance');
+                }
 
-            if (description.length > 500) {
-                showNotification('La description ne peut pas dépasser 500 caractères', 'error');
-                return;
-            }
+                if (!SecurityUtils.isValidDate(dueDate)) {
+                    throw new Error('Date d\'échéance invalide');
+                }
 
-            if (isEditing) {
-                updateHomework(title, subject, description, dueDate, priority);
-            } else {
-                addHomework(title, subject, description, dueDate, priority);
+                const dueDateObj = new Date(dueDate);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (dueDateObj < today) {
+                    throw new Error('La date d\'échéance ne peut pas être dans le passé');
+                }
+
+                // Validation de la description
+                if (description && description.length > 500) {
+                    throw new Error('La description ne peut pas dépasser 500 caractères');
+                }
+
+                // Validation de la priorité
+                if (!['low', 'medium', 'high'].includes(priority)) {
+                    throw new Error('Priorité invalide');
+                }
+
+                // Show loading state
+                const submitBtn = document.getElementById('submit-btn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<div class="spinner"></div>Traitement...';
+                }
+
+                if (isEditing) {
+                    updateHomework(title, subject, description, dueDate, priority);
+                } else {
+                    addHomework(title, subject, description, dueDate, priority);
+                }
+
+            } catch (error) {
+                showErrorMessage(error.message);
+                console.error('Erreur de validation:', error);
             }
         }
 
         function addHomework(title, subject, description, dueDate, priority) {
-            if (!currentUser) return;
+            if (!currentUser) {
+                showErrorMessage('Utilisateur non connecté');
+                resetSubmitButton();
+                return;
+            }
 
-            const dateKey = DateUtils.formatDateKey(new Date(dueDate));
-            const homeworkRef = db.ref('homeworks/' + currentUser.uid + '/' + dateKey);
-            const newHomeworkRef = homeworkRef.push();
+            try {
+                const dateKey = DateUtils.formatDateKey(new Date(dueDate));
+                if (!dateKey) {
+                    throw new Error('Date invalide');
+                }
 
-            const homeworkData = {
-                title: SecurityUtils.sanitizeInput(title),
-                subject: SecurityUtils.sanitizeInput(subject),
-                description: SecurityUtils.sanitizeInput(description),
-                dueDate: dueDate,
-                priority: priority,
-                completed: false,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                updatedAt: firebase.database.ServerValue.TIMESTAMP
-            };
+                const homeworksRef = ref(database, 'homeworks/' + currentUser.uid + '/' + dateKey);
+                const newHomeworkRef = push(homeworksRef);
 
-            newHomeworkRef.set(homeworkData)
-                .then(() => {
-                    // Réinitialiser le formulaire
-                    document.getElementById('homework-form').reset();
-                    
-                    // Si le devoir est ajouté pour la date sélectionnée, actualiser l'affichage
-                    if (selectedDate && DateUtils.formatDateKey(selectedDate) === dateKey) {
-                        selectDate(new Date(dueDate));
-                    }
+                const homeworkData = {
+                    title: SecurityUtils.sanitizeInput(title),
+                    subject: SecurityUtils.sanitizeInput(subject),
+                    description: SecurityUtils.sanitizeInput(description),
+                    dueDate: dueDate,
+                    priority: priority,
+                    completed: false,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
 
-                    showNotification('Devoir ajouté avec succès', 'success');
-                })
-                .catch((error) => {
-                    console.error('Erreur lors de l\'ajout du devoir:', error);
-                    showNotification('Erreur lors de l\'ajout du devoir', 'error');
-                });
+                console.log('Ajout du devoir:', homeworkData);
+
+                set(newHomeworkRef, homeworkData)
+                    .then(() => {
+                        console.log('Devoir ajouté avec succès');
+                        // Réinitialiser le formulaire
+                        const form = document.getElementById('homework-form');
+                        if (form) form.reset();
+                        
+                        // Si le devoir est ajouté pour la date sélectionnée, actualiser l'affichage
+                        if (selectedDate && DateUtils.formatDateKey(selectedDate) === dateKey) {
+                            selectDate(new Date(dueDate));
+                        }
+
+                        showNotification('Devoir ajouté avec succès', 'success');
+                        resetSubmitButton();
+                    })
+                    .catch((error) => {
+                        console.error('Erreur lors de l\'ajout du devoir:', error);
+                        showErrorMessage('Erreur lors de l\'ajout du devoir: ' + error.message);
+                        resetSubmitButton();
+                    });
+
+            } catch (error) {
+                console.error('Erreur lors de la préparation des données:', error);
+                showErrorMessage('Erreur lors de la préparation des données: ' + error.message);
+                resetSubmitButton();
+            }
         }
 
         function updateHomework(title, subject, description, dueDate, priority) {
-            if (!currentUser || !editingHomeworkId || !editingDateKey) return;
+            if (!currentUser || !editingHomeworkId || !editingDateKey) {
+                showErrorMessage('Données d\'édition manquantes');
+                resetSubmitButton();
+                return;
+            }
 
-            const oldDateKey = editingDateKey;
-            const newDateKey = DateUtils.formatDateKey(new Date(dueDate));
+            try {
+                const oldDateKey = editingDateKey;
+                const newDateKey = DateUtils.formatDateKey(new Date(dueDate));
 
-            const homeworkData = {
-                title: SecurityUtils.sanitizeInput(title),
-                subject: SecurityUtils.sanitizeInput(subject),
-                description: SecurityUtils.sanitizeInput(description),
-                dueDate: dueDate,
-                priority: priority,
-                updatedAt: firebase.database.ServerValue.TIMESTAMP
-            };
+                if (!newDateKey) {
+                    throw new Error('Date invalide');
+                }
 
-            if (oldDateKey === newDateKey) {
-                // Même date, simple mise à jour
-                const homeworkRef = db.ref('homeworks/' + currentUser.uid + '/' + oldDateKey + '/' + editingHomeworkId);
-                homeworkRef.update(homeworkData)
-                    .then(() => {
-                        resetForm();
-                        showNotification('Devoir modifié avec succès', 'success');
-                    })
-                    .catch((error) => {
-                        console.error('Erreur lors de la modification du devoir:', error);
-                        showNotification('Erreur lors de la modification du devoir', 'error');
-                    });
-            } else {
-                // Date changée, déplacer le devoir
-                const oldRef = db.ref('homeworks/' + currentUser.uid + '/' + oldDateKey + '/' + editingHomeworkId);
-                const newRef = db.ref('homeworks/' + currentUser.uid + '/' + newDateKey).push();
+                const homeworkData = {
+                    title: SecurityUtils.sanitizeInput(title),
+                    subject: SecurityUtils.sanitizeInput(subject),
+                    description: SecurityUtils.sanitizeInput(description),
+                    dueDate: dueDate,
+                    priority: priority,
+                    updatedAt: serverTimestamp()
+                };
 
-                // Récupérer les données existantes pour préserver createdAt et completed
-                oldRef.once('value', (snapshot) => {
-                    const existingData = snapshot.val();
-                    const completeData = {
-                        ...homeworkData,
-                        completed: existingData.completed || false,
-                        createdAt: existingData.createdAt || firebase.database.ServerValue.TIMESTAMP
-                    };
-
-                    newRef.set(completeData)
-                        .then(() => oldRef.remove())
+                if (oldDateKey === newDateKey) {
+                    // Même date, simple mise à jour
+                    const homeworkRef = ref(database, 'homeworks/' + currentUser.uid + '/' + oldDateKey + '/' + editingHomeworkId);
+                    update(homeworkRef, homeworkData)
                         .then(() => {
+                            console.log('Devoir modifié avec succès');
                             resetForm();
                             showNotification('Devoir modifié avec succès', 'success');
                         })
                         .catch((error) => {
                             console.error('Erreur lors de la modification du devoir:', error);
-                            showNotification('Erreur lors de la modification du devoir', 'error');
+                            showErrorMessage('Erreur lors de la modification du devoir: ' + error.message);
+                            resetSubmitButton();
                         });
-                });
+                } else {
+                    // Date changée, déplacer le devoir
+                    const oldRef = ref(database, 'homeworks/' + currentUser.uid + '/' + oldDateKey + '/' + editingHomeworkId);
+                    const newRef = push(ref(database, 'homeworks/' + currentUser.uid + '/' + newDateKey));
+
+                    // Récupérer les données existantes pour préserver createdAt et completed
+                    onValue(oldRef, (snapshot) => {
+                        const existingData = snapshot.val();
+                        if (existingData) {
+                            const completeData = {
+                                ...homeworkData,
+                                completed: existingData.completed || false,
+                                createdAt: existingData.createdAt || serverTimestamp()
+                            };
+
+                            set(newRef, completeData)
+                                .then(() => remove(oldRef))
+                                .then(() => {
+                                    console.log('Devoir déplacé avec succès');
+                                    resetForm();
+                                    showNotification('Devoir modifié avec succès', 'success');
+                                })
+                                .catch((error) => {
+                                    console.error('Erreur lors du déplacement du devoir:', error);
+                                    showErrorMessage('Erreur lors de la modification du devoir: ' + error.message);
+                                    resetSubmitButton();
+                                });
+                        } else {
+                            showErrorMessage('Devoir introuvable');
+                            resetSubmitButton();
+                        }
+                    }, { onlyOnce: true });
+                }
+
+            } catch (error) {
+                console.error('Erreur lors de la préparation de la mise à jour:', error);
+                showErrorMessage('Erreur lors de la préparation de la mise à jour: ' + error.message);
+                resetSubmitButton();
             }
         }
 
         function toggleHomeworkComplete(homeworkId, dateKey, completed) {
             if (!currentUser) return;
 
-            const homeworkRef = db.ref('homeworks/' + currentUser.uid + '/' + dateKey + '/' + homeworkId);
-            homeworkRef.update({
+            const homeworkRef = ref(database, 'homeworks/' + currentUser.uid + '/' + dateKey + '/' + homeworkId);
+            update(homeworkRef, {
                 completed: completed,
-                updatedAt: firebase.database.ServerValue.TIMESTAMP
+                updatedAt: serverTimestamp()
             })
             .then(() => {
                 showNotification(completed ? 'Devoir marqué comme terminé' : 'Devoir marqué comme à faire', 'success');
             })
             .catch((error) => {
                 console.error('Erreur lors de la mise à jour du devoir:', error);
-                showNotification('Erreur lors de la mise à jour du devoir', 'error');
+                showNotification('Erreur lors de la mise à jour du devoir: ' + error.message, 'error');
             });
         }
 
         function editHomework(homeworkId, homework, dateKey) {
             // Pré-remplir le formulaire avec les données existantes
-            document.getElementById('homework-title').value = homework.title;
-            document.getElementById('homework-subject').value = homework.subject;
-            document.getElementById('homework-description').value = homework.description || '';
-            document.getElementById('homework-due-date').value = homework.dueDate;
-            document.getElementById('homework-priority').value = homework.priority || 'medium';
+            const titleInput = document.getElementById('homework-title');
+            const subjectInput = document.getElementById('homework-subject');
+            const descriptionInput = document.getElementById('homework-description');
+            const dueDateInput = document.getElementById('homework-due-date');
+            const priorityInput = document.getElementById('homework-priority');
+
+            if (titleInput) titleInput.value = homework.title || '';
+            if (subjectInput) subjectInput.value = homework.subject || '';
+            if (descriptionInput) descriptionInput.value = homework.description || '';
+            if (dueDateInput) dueDateInput.value = homework.dueDate || '';
+            if (priorityInput) priorityInput.value = homework.priority || 'medium';
 
             // Modifier l'interface
-            document.getElementById('form-title').textContent = 'Modifier le devoir';
-            document.getElementById('submit-btn').innerHTML = '<i class="fas fa-save"></i>Modifier le devoir';
-            document.getElementById('submit-btn').style.background = 'linear-gradient(135deg, var(--warning), #e67e22)';
-            document.getElementById('cancel-btn').classList.remove('hidden');
+            const formTitle = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+
+            if (formTitle) formTitle.textContent = 'Modifier le devoir';
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-save"></i>Modifier le devoir';
+                submitBtn.style.background = 'linear-gradient(135deg, var(--warning), #e67e22)';
+            }
+            if (cancelBtn) cancelBtn.classList.remove('hidden');
 
             // Marquer comme en cours d'édition
             isEditing = true;
@@ -1796,43 +1977,85 @@
             editingDateKey = dateKey;
 
             // Scroll vers le formulaire
-            document.querySelector('.homework-form').scrollIntoView({ behavior: 'smooth' });
+            const homeworkForm = document.querySelector('.homework-form');
+            if (homeworkForm) {
+                homeworkForm.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function deleteHomework(homeworkId, dateKey) {
             if (!confirm('Êtes-vous sûr de vouloir supprimer ce devoir ?')) return;
 
-            const homeworkRef = db.ref('homeworks/' + currentUser.uid + '/' + dateKey + '/' + homeworkId);
-            homeworkRef.remove()
+            const homeworkRef = ref(database, 'homeworks/' + currentUser.uid + '/' + dateKey + '/' + homeworkId);
+            remove(homeworkRef)
                 .then(() => {
                     showNotification('Devoir supprimé avec succès', 'success');
                 })
                 .catch((error) => {
                     console.error('Erreur lors de la suppression du devoir:', error);
-                    showNotification('Erreur lors de la suppression du devoir', 'error');
+                    showNotification('Erreur lors de la suppression du devoir: ' + error.message, 'error');
                 });
         }
 
         function resetForm() {
-            document.getElementById('homework-form').reset();
-            document.getElementById('form-title').textContent = 'Ajouter un devoir';
-            document.getElementById('submit-btn').innerHTML = '<i class="fas fa-plus"></i>Ajouter le devoir';
-            document.getElementById('submit-btn').style.background = 'var(--bg-gradient)';
-            document.getElementById('cancel-btn').classList.add('hidden');
+            const form = document.getElementById('homework-form');
+            if (form) form.reset();
+            
+            const formTitle = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+
+            if (formTitle) formTitle.textContent = 'Ajouter un devoir';
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-plus"></i>Ajouter le devoir';
+                submitBtn.style.background = 'var(--bg-gradient)';
+                submitBtn.disabled = false;
+            }
+            if (cancelBtn) cancelBtn.classList.add('hidden');
             
             isEditing = false;
             editingHomeworkId = null;
             editingDateKey = null;
+            
+            hideErrorMessage();
+        }
+
+        function resetSubmitButton() {
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                if (isEditing) {
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i>Modifier le devoir';
+                } else {
+                    submitBtn.innerHTML = '<i class="fas fa-plus"></i>Ajouter le devoir';
+                }
+            }
+        }
+
+        function showErrorMessage(message) {
+            const errorEl = document.getElementById('error-message');
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function hideErrorMessage() {
+            const errorEl = document.getElementById('error-message');
+            if (errorEl) {
+                errorEl.classList.add('hidden');
+            }
         }
 
         function handleLogout() {
-            auth.signOut()
+            signOut(auth)
                 .then(() => {
+                    console.log('Déconnexion réussie');
                     window.location.href = 'index.html';
                 })
                 .catch((error) => {
                     console.error("Erreur lors de la déconnexion:", error);
-                    showNotification("Une erreur est survenue lors de la déconnexion", 'error');
+                    showNotification("Une erreur est survenue lors de la déconnexion: " + error.message, 'error');
                 });
         }
 
@@ -1869,61 +2092,25 @@
             // Ctrl/Cmd + N pour nouveau devoir
             if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                 e.preventDefault();
-                document.getElementById('homework-title').focus();
+                const titleInput = document.getElementById('homework-title');
+                if (titleInput) titleInput.focus();
             }
             
             // Ctrl/Cmd + S pour sauvegarder
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
-                document.getElementById('homework-form').dispatchEvent(new Event('submit'));
+                const form = document.getElementById('homework-form');
+                if (form) form.dispatchEvent(new Event('submit'));
             }
-        });
-
-        // Auto-save des filtres dans localStorage
-        function saveFiltersState() {
-            const filters = {
-                search: document.getElementById('search-input').value,
-                subject: document.getElementById('subject-filter').value,
-                priority: document.getElementById('priority-filter').value,
-                status: document.getElementById('status-filter').value,
-                view: currentView,
-                sort: document.getElementById('sort-select').value
-            };
-            localStorage.setItem('homeworkFilters', JSON.stringify(filters));
-        }
-
-        function loadFiltersState() {
-            const saved = localStorage.getItem('homeworkFilters');
-            if (saved) {
-                try {
-                    const filters = JSON.parse(saved);
-                    document.getElementById('search-input').value = filters.search || '';
-                    document.getElementById('subject-filter').value = filters.subject || '';
-                    document.getElementById('priority-filter').value = filters.priority || '';
-                    document.getElementById('status-filter').value = filters.status || '';
-                    document.getElementById('sort-select').value = filters.sort || 'dueDate';
-                    
-                    if (filters.view && filters.view !== 'calendar') {
-                        setTimeout(() => switchView(filters.view), 100);
-                    }
-                } catch (e) {
-                    console.warn('Erreur lors du chargement des filtres sauvegardés');
-                }
-            }
-        }
-
-        // Sauvegarder l'état des filtres à chaque changement
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(loadFiltersState, 500);
-            
-            // Sauvegarder à chaque changement
-            ['search-input', 'subject-filter', 'priority-filter', 'status-filter', 'sort-select'].forEach(id => {
-                document.getElementById(id).addEventListener('change', saveFiltersState);
-            });
         });
 
         // Export des devoirs (bonus)
         function exportHomeworks() {
+            if (allHomeworks.length === 0) {
+                showNotification('Aucun devoir à exporter', 'warning');
+                return;
+            }
+
             const csvContent = "data:text/csv;charset=utf-8," 
                 + "Titre,Matière,Description,Date d'échéance,Priorité,Statut\n"
                 + allHomeworks.map(h => 
@@ -1943,14 +2130,29 @@
 
         // Ajouter un bouton d'export dans le header
         document.addEventListener('DOMContentLoaded', () => {
-            const exportBtn = document.createElement('button');
-            exportBtn.className = 'logout-btn';
-            exportBtn.style.background = 'rgba(255, 255, 255, 0.2)';
-            exportBtn.innerHTML = '<i class="fas fa-download"></i> Export';
-            exportBtn.addEventListener('click', exportHomeworks);
+            const headerActions = document.querySelector('.header-actions');
+            const logoutBtn = document.getElementById('logout-btn');
             
-            document.querySelector('.header-actions').insertBefore(exportBtn, document.getElementById('logout-btn'));
+            if (headerActions && logoutBtn) {
+                const exportBtn = document.createElement('button');
+                exportBtn.className = 'logout-btn';
+                exportBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+                exportBtn.innerHTML = '<i class="fas fa-download"></i> Export';
+                exportBtn.addEventListener('click', exportHomeworks);
+                
+                headerActions.insertBefore(exportBtn, logoutBtn);
+            }
         });
+
+        // Make functions available globally for debugging
+        window.debugHomework = {
+            currentUser,
+            homeworks,
+            allHomeworks,
+            SecurityUtils,
+            DateUtils
+        };
+
     </script>
 </body>
 </html>
