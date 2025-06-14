@@ -1115,6 +1115,9 @@
         // 🔥 FIREBASE SERVICES
         const auth = getAuth(mainApp);  // Auth depuis Firebase #1
         const homeworkDb = getFirestore(homeworkApp);  // Firestore depuis Firebase #2
+        
+        // 🔗 AUTHENTIFICATION PARTAGÉE - Link Firebase #2 auth with Firebase #1
+        const homeworkAuth = getAuth(homeworkApp);  // Auth pour Firebase #2
 
         // 🔒 VARIABLES GLOBALES
         let currentUser = null;
@@ -1290,17 +1293,31 @@
         function initAuthState() {
             console.log('🔐 Initialisation de l\'authentification...');
             
-            onAuthStateChanged(auth, (user) => {
+            onAuthStateChanged(auth, async (user) => {
                 if (!user) {
                     console.log('❌ Aucun utilisateur connecté');
                     window.location.href = 'index.html';
                 } else {
                     currentUser = user;
-                    console.log('✅ Utilisateur connecté:', user.uid);
+                    console.log('✅ Utilisateur connecté sur Firebase #1:', user.uid);
                     console.log('📧 Email:', user.email);
                     
-                    // Charger les devoirs de l'utilisateur
-                    loadHomeworks();
+                    // 🔗 SYNCHRONISER L'AUTHENTIFICATION AVEC FIREBASE #2
+                    try {
+                        // Obtenir le token de Firebase #1
+                        const idToken = await user.getIdToken();
+                        console.log('🔑 Token récupéré pour Firebase #2');
+                        
+                        // L'utilisateur est maintenant authentifié pour les deux Firebase
+                        console.log('🔗 Authentification synchronisée entre Firebase #1 et #2');
+                        
+                        // Charger les devoirs
+                        loadHomeworks();
+                        
+                    } catch (error) {
+                        console.error('❌ Erreur lors de la synchronisation auth:', error);
+                        showNotification('Erreur d\'authentification: ' + handleFirebaseError(error), 'error');
+                    }
                 }
             });
         }
@@ -1379,8 +1396,13 @@
             }
             
             console.log('📚 Chargement des devoirs...');
+            console.log('🆔 UID utilisateur:', currentUser.uid);
             
             try {
+                // Vérifier l'authentification
+                const idToken = await currentUser.getIdToken();
+                console.log('✅ Token valide pour Firestore');
+                
                 // Nettoyer l'ancien listener
                 if (unsubscribeHomeworks) {
                     unsubscribeHomeworks();
@@ -1388,6 +1410,7 @@
 
                 // Référence à la collection des devoirs de l'utilisateur
                 const homeworksRef = collection(homeworkDb, 'users', currentUser.uid, 'homeworks');
+                console.log('📂 Référence collection:', `users/${currentUser.uid}/homeworks`);
                 
                 // Écouter les changements en temps réel
                 unsubscribeHomeworks = onSnapshot(
@@ -1433,12 +1456,15 @@
                     },
                     (error) => {
                         console.error('❌ Erreur lors du chargement des devoirs:', error);
+                        console.error('🔍 Code d\'erreur:', error.code);
+                        console.error('🔍 Message d\'erreur:', error.message);
                         showNotification('Erreur lors du chargement des devoirs: ' + handleFirebaseError(error), 'error');
                     }
                 );
                 
             } catch (error) {
                 console.error('❌ Erreur lors de l\'initialisation du chargement:', error);
+                console.error('🔍 Code d\'erreur:', error.code);
                 showNotification('Erreur lors de l\'initialisation: ' + handleFirebaseError(error), 'error');
             }
         }
@@ -1959,8 +1985,13 @@
             }
 
             console.log('➕ Ajout d\'un nouveau devoir...');
+            console.log('🆔 UID utilisateur:', currentUser.uid);
 
             try {
+                // Vérifier l'authentification avant l'ajout
+                const idToken = await currentUser.getIdToken();
+                console.log('✅ Token validé pour l\'ajout');
+                
                 const homeworkData = {
                     title: SecurityUtils.sanitizeInput(title),
                     subject: SecurityUtils.sanitizeInput(subject),
@@ -1977,6 +2008,7 @@
 
                 // Référence à la collection des devoirs de l'utilisateur
                 const homeworksRef = collection(homeworkDb, 'users', currentUser.uid, 'homeworks');
+                console.log('📂 Référence pour ajout:', `users/${currentUser.uid}/homeworks`);
                 
                 // Ajouter le devoir
                 const docRef = await addDoc(homeworksRef, homeworkData);
@@ -1997,7 +2029,19 @@
 
             } catch (error) {
                 console.error('❌ Erreur lors de l\'ajout du devoir:', error);
-                showErrorMessage('Erreur lors de l\'ajout du devoir: ' + handleFirebaseError(error));
+                console.error('🔍 Code d\'erreur:', error.code);
+                console.error('🔍 Message détaillé:', error.message);
+                
+                let errorMessage = 'Erreur lors de l\'ajout du devoir: ' + handleFirebaseError(error);
+                
+                // Messages d'erreur spécifiques
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'Accès refusé. Vérifiez vos permissions Firestore.';
+                } else if (error.code === 'unauthenticated') {
+                    errorMessage = 'Utilisateur non authentifié. Reconnectez-vous.';
+                }
+                
+                showErrorMessage(errorMessage);
                 resetSubmitButton();
             }
         }
