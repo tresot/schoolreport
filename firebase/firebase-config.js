@@ -1,26 +1,39 @@
-// firebase/firebase-config.js - Version corrigée et complète
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+// firebase/firebase-config.js - Version corrigée et complète avec DEUX Firebase Apps
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// Configuration Firebase unifiée
+// === Firebase PRINCIPAL (de ton pote) ===
 const firebaseConfig = {
     apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
     authDomain: "schoolreport-f8db0.firebaseapp.com",
     databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "schoolreport-f8db0",
-    storageBucket: "schoolreport-f8db0.appspot.com", // Corrigé pour être cohérent
+    storageBucket: "schoolreport-f8db0.appspot.com",
     messagingSenderId: "313069994450",
     appId: "1:313069994450:web:37b009be4f1812fdca880b",
     measurementId: "G-N8YF0VKWCD"
 };
 
-// Initialisation Firebase
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 const firestore = getFirestore(app);
+
+// === Firebase SECONDAIRE (ton propre Firebase pour homework) ===
+const homeworkConfig = {
+    apiKey: "AIzaSyAqXrOOxX81-BaWRF51IV0shmNqFPJHB-Q",
+    authDomain: "schoolreport-50ff9.firebaseapp.com",
+    projectId: "schoolreport-50ff9",
+    storageBucket: "schoolreport-50ff9.firebasestorage.app",
+    messagingSenderId: "354132120658",
+    appId: "1:354132120658:web:1a84dd27f6d45d316ebb8b",
+    measurementId: "G-M4CJ1KJYD4"
+};
+
+const homeworkApp = getApps().find(app => app.name === 'homeworkApp') || initializeApp(homeworkConfig, "homeworkApp");
+const homeworkFirestore = getFirestore(homeworkApp);
 
 // Utilitaires de sécurité
 export const SecurityUtils = {
@@ -94,7 +107,7 @@ export const DateUtils = {
 // Gestion des erreurs Firebase
 export function handleFirebaseError(error) {
     console.error('Erreur Firebase:', error);
-    
+
     switch (error.code) {
         case 'auth/user-not-found':
             return 'Utilisateur non trouvé';
@@ -147,7 +160,6 @@ export const NotificationUtils = {
         notification.style.backgroundColor = colors[type] || colors.info;
         notification.textContent = message;
 
-        // Ajouter les styles d'animation si pas déjà présents
         if (!document.getElementById('notification-styles')) {
             const style = document.createElement('style');
             style.id = 'notification-styles';
@@ -166,7 +178,6 @@ export const NotificationUtils = {
 
         document.body.appendChild(notification);
 
-        // Supprimer automatiquement
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease-out';
             setTimeout(() => {
@@ -178,4 +189,4 @@ export const NotificationUtils = {
     }
 };
 
-export { app, auth, db, firestore };
+export { app, auth, db, firestore, homeworkApp, homeworkFirestore };
