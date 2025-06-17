@@ -1,10 +1,13 @@
-// firebase/firebase-config.js - Version corrigée et complète avec DEUX Firebase Apps
+// firebase-config.js - SchoolReport (Firebase UNIFIÉ)
+
+// Import des modules Firebase
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-// === Firebase PRINCIPAL (de ton pote) ===
+// === Configuration Firebase UNIFIÉE ===
 const firebaseConfig = {
     apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
     authDomain: "schoolreport-f8db0.firebaseapp.com",
@@ -16,26 +19,19 @@ const firebaseConfig = {
     measurementId: "G-N8YF0VKWCD"
 };
 
+// Initialisation unique
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+// Initialisation des services
 const auth = getAuth(app);
 const db = getDatabase(app);
 const firestore = getFirestore(app);
+const storage = getStorage(app);
 
-// === Firebase SECONDAIRE (ton propre Firebase pour homework) ===
-const homeworkConfig = {
-    apiKey: "AIzaSyAqXrOOxX81-BaWRF51IV0shmNqFPJHB-Q",
-    authDomain: "schoolreport-50ff9.firebaseapp.com",
-    projectId: "schoolreport-50ff9",
-    storageBucket: "schoolreport-50ff9.firebasestorage.app",
-    messagingSenderId: "354132120658",
-    appId: "1:354132120658:web:1a84dd27f6d45d316ebb8b",
-    measurementId: "G-M4CJ1KJYD4"
-};
+// ✅ Export des modules Firebase
+export { app, auth, db, firestore, storage };
 
-const homeworkApp = getApps().find(app => app.name === 'homeworkApp') || initializeApp(homeworkConfig, "homeworkApp");
-const homeworkFirestore = getFirestore(homeworkApp);
-
-// Utilitaires de sécurité
+// 🧰 Utilitaires de sécurité
 export const SecurityUtils = {
     sanitizeInput(input) {
         if (typeof input !== 'string') return '';
@@ -60,12 +56,10 @@ export const SecurityUtils = {
     }
 };
 
-// Utilitaires de date
+// 🕒 Utilitaires de date
 export const DateUtils = {
     formatDate(date) {
-        if (!(date instanceof Date)) {
-            date = new Date(date);
-        }
+        if (!(date instanceof Date)) date = new Date(date);
         return date.toLocaleDateString('fr-FR', {
             weekday: 'long',
             year: 'numeric',
@@ -73,30 +67,22 @@ export const DateUtils = {
             day: 'numeric'
         });
     },
-
     formatDateKey(date) {
-        if (!(date instanceof Date)) {
-            date = new Date(date);
-        }
-        return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+        if (!(date instanceof Date)) date = new Date(date);
+        return date.toISOString().split('T')[0];
     },
-
     formatTime(date) {
-        if (!(date instanceof Date)) {
-            date = new Date(date);
-        }
+        if (!(date instanceof Date)) date = new Date(date);
         return date.toLocaleTimeString('fr-FR', {
             hour: '2-digit',
             minute: '2-digit'
         });
     },
-
     isToday(date) {
         const today = new Date();
         const checkDate = new Date(date);
         return checkDate.toDateString() === today.toDateString();
     },
-
     addDays(date, days) {
         const result = new Date(date);
         result.setDate(result.getDate() + days);
@@ -104,10 +90,9 @@ export const DateUtils = {
     }
 };
 
-// Gestion des erreurs Firebase
+// 🛡️ Gestion des erreurs Firebase
 export function handleFirebaseError(error) {
     console.error('Erreur Firebase:', error);
-
     switch (error.code) {
         case 'auth/user-not-found':
             return 'Utilisateur non trouvé';
@@ -130,7 +115,7 @@ export function handleFirebaseError(error) {
     }
 }
 
-// Utilitaires pour les notifications
+// 🔔 Notifications simples
 export const NotificationUtils = {
     show(message, type = 'info', duration = 4000) {
         const notification = document.createElement('div');
@@ -140,53 +125,18 @@ export const NotificationUtils = {
             top: 20px;
             right: 20px;
             padding: 12px 20px;
-            border-radius: 8px;
+            background: ${type === 'error' ? '#e63946' : type === 'success' ? '#2ecc71' : '#3498db'};
             color: white;
-            font-weight: 500;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-            max-width: 400px;
-            word-wrap: break-word;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            font-size: 14px;
+            font-family: 'Segoe UI', sans-serif;
         `;
-
-        const colors = {
-            success: '#10b981',
-            error: '#e63946',
-            warning: '#f8961e',
-            info: '#6366f1'
-        };
-
-        notification.style.backgroundColor = colors[type] || colors.info;
-        notification.textContent = message;
-
-        if (!document.getElementById('notification-styles')) {
-            const style = document.createElement('style');
-            style.id = 'notification-styles';
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
+        notification.innerText = message;
         document.body.appendChild(notification);
-
         setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
+            notification.remove();
         }, duration);
     }
 };
-
-export { app, auth, db, firestore, homeworkApp, homeworkFirestore };
