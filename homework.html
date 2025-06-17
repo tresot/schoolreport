@@ -1063,9 +1063,9 @@
     <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     
-    <!-- Firebase v11 + Double Firebase Configuration -->
+    <!-- Firebase v11 + Configuration Unifiée -->
     <script type="module">
-        // 🔥 FIREBASE CONFIGURATION - DOUBLE FIREBASE SETUP
+        // 🔥 FIREBASE CONFIGURATION UNIFIÉE - schoolreport-f8db0
         import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { 
@@ -1085,8 +1085,8 @@
             Timestamp 
         } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        // 🔥 FIREBASE #1 - Pour l'authentification (schoolreport-f8db0)
-        const mainFirebaseConfig = {
+        // ⚙️ Configuration Firebase Unifiée
+        const firebaseConfig = {
             apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
             authDomain: "schoolreport-f8db0.firebaseapp.com",
             databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -1097,27 +1097,10 @@
             measurementId: "G-N8YF0VKWCD"
         };
 
-        // 🔥 FIREBASE #2 - Pour les devoirs (schoolreport-50ff9)
-        const homeworkFirebaseConfig = {
-            apiKey: "AIzaSyAqXrOOxX81-BaWRF51IV0shmNqFPJHB-Q",
-            authDomain: "schoolreport-50ff9.firebaseapp.com",
-            projectId: "schoolreport-50ff9",
-            storageBucket: "schoolreport-50ff9.firebasestorage.app",
-            messagingSenderId: "354132120658",
-            appId: "1:354132120658:web:1a84dd27f6d45d316ebb8b",
-            measurementId: "G-M4CJ1KJYD4"
-        };
-
-        // 🔥 INITIALIZE FIREBASE APPS
-        const mainApp = getApps().length ? getApp() : initializeApp(mainFirebaseConfig);
-        const homeworkApp = getApps().find(app => app.name === 'homeworkApp') || initializeApp(homeworkFirebaseConfig, "homeworkApp");
-
-        // 🔥 FIREBASE SERVICES
-        const auth = getAuth(mainApp);  // Auth depuis Firebase #1
-        const homeworkDb = getFirestore(homeworkApp);  // Firestore depuis Firebase #2
-        
-        // 🔗 AUTHENTIFICATION PARTAGÉE - Link Firebase #2 auth with Firebase #1
-        const homeworkAuth = getAuth(homeworkApp);  // Auth pour Firebase #2
+        // 🚀 Initialisation Firebase
+        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // 🔒 VARIABLES GLOBALES
         let currentUser = null;
@@ -1299,25 +1282,11 @@
                     window.location.href = 'index.html';
                 } else {
                     currentUser = user;
-                    console.log('✅ Utilisateur connecté sur Firebase #1:', user.uid);
+                    console.log('✅ Utilisateur connecté:', user.uid);
                     console.log('📧 Email:', user.email);
                     
-                    // 🔗 SYNCHRONISER L'AUTHENTIFICATION AVEC FIREBASE #2
-                    try {
-                        // Obtenir le token de Firebase #1
-                        const idToken = await user.getIdToken();
-                        console.log('🔑 Token récupéré pour Firebase #2');
-                        
-                        // L'utilisateur est maintenant authentifié pour les deux Firebase
-                        console.log('🔗 Authentification synchronisée entre Firebase #1 et #2');
-                        
-                        // Charger les devoirs
-                        loadHomeworks();
-                        
-                    } catch (error) {
-                        console.error('❌ Erreur lors de la synchronisation auth:', error);
-                        showNotification('Erreur d\'authentification: ' + handleFirebaseError(error), 'error');
-                    }
+                    // Charger les devoirs
+                    loadHomeworks();
                 }
             });
         }
@@ -1388,7 +1357,7 @@
             });
         }
 
-        // 📚 HOMEWORK DATA MANAGEMENT
+        // 📚 HOMEWORK DATA MANAGEMENT - Structure Optimisée
         async function loadHomeworks() {
             if (!currentUser) {
                 console.error('❌ Pas d\'utilisateur connecté');
@@ -1399,22 +1368,25 @@
             console.log('🆔 UID utilisateur:', currentUser.uid);
             
             try {
-                // Vérifier l'authentification
-                const idToken = await currentUser.getIdToken();
-                console.log('✅ Token valide pour Firestore');
-                
                 // Nettoyer l'ancien listener
                 if (unsubscribeHomeworks) {
                     unsubscribeHomeworks();
                 }
 
-                // Référence à la collection des devoirs de l'utilisateur
-                const homeworksRef = collection(homeworkDb, 'users', currentUser.uid, 'homeworks');
-                console.log('📂 Référence collection:', `users/${currentUser.uid}/homeworks`);
+                // 🔥 STRUCTURE OPTIMISÉE: Collection principale des devoirs
+                // /homeworks/{homeworkId} avec userId comme champ
+                const homeworksRef = collection(db, 'homeworks');
+                const userHomeworksQuery = query(
+                    homeworksRef, 
+                    where('userId', '==', currentUser.uid),
+                    orderBy('dueDate', 'asc')
+                );
+                
+                console.log('📂 Requête Firestore optimisée pour userId:', currentUser.uid);
                 
                 // Écouter les changements en temps réel
                 unsubscribeHomeworks = onSnapshot(
-                    query(homeworksRef, orderBy('createdAt', 'desc')),
+                    userHomeworksQuery,
                     (snapshot) => {
                         console.log('📊 Données reçues:', snapshot.size, 'devoirs');
                         
@@ -1892,7 +1864,7 @@
             return homeworkEl;
         }
 
-        // 📝 HOMEWORK CRUD OPERATIONS
+        // 📝 HOMEWORK CRUD OPERATIONS - Structure Optimisée
         async function handleHomeworkSubmit(event) {
             event.preventDefault();
             
@@ -1988,10 +1960,7 @@
             console.log('🆔 UID utilisateur:', currentUser.uid);
 
             try {
-                // Vérifier l'authentification avant l'ajout
-                const idToken = await currentUser.getIdToken();
-                console.log('✅ Token validé pour l\'ajout');
-                
+                // Structure optimisée: directement dans la collection principale
                 const homeworkData = {
                     title: SecurityUtils.sanitizeInput(title),
                     subject: SecurityUtils.sanitizeInput(subject),
@@ -2001,14 +1970,18 @@
                     completed: false,
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
-                    userId: currentUser.uid
+                    userId: currentUser.uid,
+                    // Champs additionnels pour l'optimisation
+                    userEmail: currentUser.email,
+                    year: new Date(dueDate).getFullYear(),
+                    month: new Date(dueDate).getMonth() + 1
                 };
 
                 console.log('📊 Données du devoir:', homeworkData);
 
-                // Référence à la collection des devoirs de l'utilisateur
-                const homeworksRef = collection(homeworkDb, 'users', currentUser.uid, 'homeworks');
-                console.log('📂 Référence pour ajout:', `users/${currentUser.uid}/homeworks`);
+                // Référence à la collection principale
+                const homeworksRef = collection(db, 'homeworks');
+                console.log('📂 Référence pour ajout: /homeworks');
                 
                 // Ajouter le devoir
                 const docRef = await addDoc(homeworksRef, homeworkData);
@@ -2062,11 +2035,14 @@
                     description: SecurityUtils.sanitizeInput(description),
                     dueDate: dueDate,
                     priority: priority,
-                    updatedAt: serverTimestamp()
+                    updatedAt: serverTimestamp(),
+                    // Mettre à jour les champs d'optimisation
+                    year: new Date(dueDate).getFullYear(),
+                    month: new Date(dueDate).getMonth() + 1
                 };
 
                 // Référence au devoir spécifique
-                const homeworkRef = doc(homeworkDb, 'users', currentUser.uid, 'homeworks', editingHomeworkId);
+                const homeworkRef = doc(db, 'homeworks', editingHomeworkId);
                 
                 // Mettre à jour le devoir
                 await updateDoc(homeworkRef, homeworkData);
@@ -2092,7 +2068,7 @@
             console.log('✅ Basculement statut devoir:', homeworkId, completed);
 
             try {
-                const homeworkRef = doc(homeworkDb, 'users', currentUser.uid, 'homeworks', homeworkId);
+                const homeworkRef = doc(db, 'homeworks', homeworkId);
                 
                 await updateDoc(homeworkRef, {
                     completed: completed,
@@ -2143,30 +2119,6 @@
             const homeworkForm = document.querySelector('.homework-form');
             if (homeworkForm) {
                 homeworkForm.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        async function deleteHomework(homeworkId) {
-            if (!confirm('Êtes-vous sûr de vouloir supprimer ce devoir ?')) return;
-
-            if (!currentUser) {
-                console.error('❌ Pas d\'utilisateur connecté');
-                return;
-            }
-
-            console.log('🗑️ Suppression du devoir:', homeworkId);
-
-            try {
-                const homeworkRef = doc(homeworkDb, 'users', currentUser.uid, 'homeworks', homeworkId);
-                
-                await deleteDoc(homeworkRef);
-                
-                console.log('✅ Devoir supprimé avec succès');
-                showNotification('Devoir supprimé avec succès', 'success');
-                
-            } catch (error) {
-                console.error('❌ Erreur lors de la suppression du devoir:', error);
-                showNotification('Erreur lors de la suppression du devoir: ' + handleFirebaseError(error), 'error');
             }
         }
 
@@ -2327,7 +2279,7 @@
                 currentUser,
                 allHomeworks,
                 filteredHomeworks,
-                homeworkDb,
+                db,
                 auth,
                 SecurityUtils,
                 DateUtils,
@@ -2338,8 +2290,8 @@
 
         // 📊 PERFORMANCE MONITORING
         console.log('🚀 Application initialisée avec succès');
-        console.log('🔥 Firebase #1 (Auth):', mainApp.name);
-        console.log('🔥 Firebase #2 (Homework):', homeworkApp.name);
+        console.log('🔥 Firebase unifié (schoolreport-f8db0):', app.name);
+        console.log('📊 Structure optimisée: /homeworks avec userId filter');
 
     </script>
 </body>
