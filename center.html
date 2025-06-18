@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SchoolReport</title>
+    <title>SchoolReport - Dashboard</title>
     <style>
         :root {
-            --primary: #2E8B57;
-            --secondary: #1a5c38;
-            --light: #F8F4E6;
-            --dark: #0A192F;
-            --success: #64FFDA;
-            --warning: #f8961e;
+            --primary: #4361ee;
+            --primary-light: #5a75f1;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --accent-light: #6fd7f3;
+            --success: #4cc9f0;
             --danger: #e63946;
-            --calendar: #3B82F6;
-            --text-primary: #CCD6F6;
-            --text-secondary: #8892B0;
-            --input-bg: #112240;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
         }
 
         * {
@@ -27,47 +31,59 @@
         }
 
         body {
-            background-color: var(--dark);
+            background-color: #f5f7fa;
             min-height: 100vh;
-            color: var(--text-primary);
+            color: var(--dark);
+            overflow-x: hidden;
             background-image: url('photos/background.webp');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            overflow-x: hidden;
+        }
+
+        .overlay {
+            background-color: rgba(245, 247, 250, 0.95);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 2rem;
         }
 
-        .overlay {
-            background-color: rgba(10, 25, 47, 0.9);
-            min-height: 100vh;
-        }
-
-        header {
+        /* Header unifié */
+        .header {
+            background: var(--bg-gradient);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            margin-bottom: 50px;
         }
 
-        .logo {
+        .header h1 {
+            font-weight: 700;
+            font-size: 1.75rem;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
 
-        .logo h1 {
-            color: var(--primary);
-            font-size: 28px;
-            margin-left: 10px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+        .header-subtitle {
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .time-online {
@@ -77,11 +93,12 @@
         }
 
         .time {
-            background: rgba(16, 36, 69, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             font-weight: 500;
         }
 
@@ -106,12 +123,12 @@
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s;
-            border: 2px solid rgba(100, 255, 218, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .user-avatar:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(46, 139, 87, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
 
         .user-avatar img {
@@ -124,26 +141,59 @@
         .user-name {
             font-weight: 500;
             font-size: 16px;
-            color: var(--text-primary);
+            color: white;
+            margin-right: 15px;
         }
 
         .logout-btn {
-            background: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
             border: none;
-            color: var(--danger);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
             cursor: pointer;
-            margin-left: 15px;
-            font-size: 15px;
             transition: all 0.3s;
-            padding: 6px 12px;
-            border-radius: 5px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .logout-btn:hover {
-            background: rgba(230, 57, 70, 0.1);
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
+        .online-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #2ecc71;
+            border: 2px solid white;
+            transition: all 0.3s ease;
+        }
+
+        .user-count {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 18px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-count:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.03);
+        }
+
+        /* Main Content Section */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -157,6 +207,16 @@
             align-items: center;
             width: 100%;
             margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (min-width: 992px) {
@@ -170,33 +230,32 @@
         }
 
         .profile-card {
-            background: rgba(16, 36, 69, 0.7);
-            border-radius: 18px;
-            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
             width: 100%;
             max-width: 350px;
             text-align: center;
             margin-bottom: 25px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
-            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--light-gray);
         }
 
         .profile-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .profile-image {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             margin: 0 auto 20px;
             overflow: hidden;
             border: 3px solid var(--primary);
             position: relative;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
         }
 
         .profile-image img {
@@ -222,34 +281,51 @@
 
         .profile-card h2 {
             margin-bottom: 12px;
-            color: var(--text-primary);
+            color: var(--dark);
             font-size: 22px;
             font-weight: 600;
         }
 
         .profile-card p {
-            color: var(--text-secondary);
+            color: var(--gray);
             font-size: 15px;
             margin-bottom: 20px;
             line-height: 1.5;
         }
 
+        /* Description Card avec animation morphose */
         .description-card {
-            background: rgba(16, 36, 69, 0.7);
-            border-radius: 18px;
-            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
             width: 100%;
             max-width: 700px;
             margin-bottom: 30px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
-            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .description-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(67, 97, 238, 0.1), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .description-card:hover::before {
+            left: 100%;
         }
 
         .description-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
         }
 
         .description-card h3 {
@@ -257,58 +333,54 @@
             margin-bottom: 15px;
             font-size: 22px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .description-card p {
-            color: var(--text-secondary);
+            color: var(--gray);
             line-height: 1.7;
             font-size: 15px;
             margin-bottom: 25px;
         }
 
+        .action-btn {
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        /* Mini Cards avec animations PowerPoint */
         .mini-cards-container {
             width: 100%;
-            overflow-x: auto;
+            overflow: hidden;
             padding: 20px 0;
             margin-bottom: 40px;
             position: relative;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) transparent;
-        }
-
-        .mini-cards-container::-webkit-scrollbar {
-            height: 6px;
-            background: transparent;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .mini-cards-container:hover::-webkit-scrollbar {
-            opacity: 1;
-        }
-
-        .mini-cards-container::-webkit-scrollbar-thumb {
-            background-color: var(--primary);
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .mini-cards-container:hover::-webkit-scrollbar-thumb {
-            opacity: 0.7;
-        }
-
-        .mini-cards-container::-webkit-scrollbar-thumb:hover {
-            opacity: 1 !important;
         }
 
         .mini-cards-track {
             display: flex;
-            gap: 40px;
+            gap: 30px;
             padding: 10px;
             width: max-content;
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .mini-card {
@@ -319,32 +391,54 @@
             flex-shrink: 0;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-            border: 2px solid rgba(100, 255, 218, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 2px solid transparent;
+            transform-style: preserve-3d;
+        }
+
+        .mini-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 14px;
+        }
+
+        .mini-card:hover::before {
+            opacity: 1;
         }
 
         .mini-card:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-            border-color: rgba(100, 255, 218, 0.4);
+            transform: translateY(-8px) scale(1.05) rotateX(5deg);
+            box-shadow: 0 15px 40px rgba(67, 97, 238, 0.2);
+            border-color: var(--primary);
         }
 
         .mini-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
+            transition: transform 0.4s ease;
+        }
+
+        .mini-card:hover img {
+            transform: scale(1.1);
         }
 
         .mini-card.active {
             border: 2px solid var(--primary);
-            box-shadow: 0 0 20px rgba(46, 139, 87, 0.6);
+            box-shadow: 0 8px 30px rgba(67, 97, 238, 0.4);
             transform: scale(1.08);
         }
 
         .mini-card.active:hover {
-            transform: scale(1.08) translateY(-3px);
+            transform: scale(1.12) translateY(-5px);
         }
 
         .mini-card .card-title {
@@ -352,14 +446,14 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 25, 47, 0.85);
-            color: var(--text-primary);
-            padding: 8px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            color: white;
+            padding: 15px 8px 8px;
             text-align: center;
             font-size: 13px;
             font-weight: 500;
             transform: translateY(100%);
-            transition: transform 0.3s;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             opacity: 0;
         }
 
@@ -373,7 +467,7 @@
             top: -8px;
             right: -8px;
             background-color: var(--danger);
-            color: var(--light);
+            color: white;
             width: 26px;
             height: 26px;
             border-radius: 50%;
@@ -383,315 +477,63 @@
             font-size: 13px;
             font-weight: bold;
             z-index: 2;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 3px 10px rgba(230, 57, 70, 0.4);
+            animation: pulse 2s infinite;
         }
 
-        .profile-badge {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .online-status {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background-color: #2ecc71;
-            border: 2px solid var(--dark);
-            z-index: 1;
-        }
-        
-        .user-count {
-            background-color: var(--primary);
-            color: var(--light);
-            padding: 4px 10px;
-            border-radius: 18px;
-            font-size: 13px;
-            margin-left: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-            border: 1px solid rgba(100, 255, 218, 0.2);
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        .user-count:hover {
-            background-color: var(--secondary);
-            transform: scale(1.03);
+        /* Animations de transition morphose */
+        .content-transition {
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Modals */
-        #setup-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        .fade-out {
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            transform: translateX(-30px) scale(0.95);
         }
 
-        #setup-modal.show {
+        .fade-in {
             opacity: 1;
-            pointer-events: all;
-        }
-
-        .setup-container {
-            background: var(--dark);
-            padding: 35px;
-            border-radius: 18px;
-            width: 90%;
-            max-width: 480px;
-            text-align: center;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            transform: scale(0.95);
-            transition: transform 0.3s;
-        }
-
-        #setup-modal.show .setup-container {
-            transform: scale(1);
-        }
-
-        .setup-container h2 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            font-size: 26px;
-            font-weight: 600;
-        }
-
-        .setup-container input {
-            width: 100%;
-            padding: 14px;
-            margin: 12px 0;
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            border-radius: 8px;
-            font-size: 15px;
-            background: var(--input-bg);
-            color: var(--text-primary);
-            transition: all 0.3s;
-        }
-
-        .setup-container input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
-            outline: none;
-        }
-
-        .profile-preview {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            margin: 20px auto;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            overflow: hidden;
-            position: relative;
-            border: 2px solid rgba(100, 255, 218, 0.3);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .profile-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .setup-btn {
-            background-color: var(--primary);
-            color: var(--light);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 15px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .setup-btn:hover {
-            background-color: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-        }
-
-        .users-list {
-            position: absolute;
-            top: 55px;
-            right: 0;
-            background: var(--dark);
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            padding: 18px;
-            width: 240px;
-            display: none;
-            z-index: 100;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            transform: translateY(8px);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .users-list.show {
-            display: block;
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .users-list h4 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
-            padding-bottom: 8px;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
-        }
-
-        .user-avatar-small {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 12px;
-            font-size: 17px;
-            overflow: hidden;
-            position: relative;
-            flex-shrink: 0;
-            border: 1px solid rgba(100, 255, 218, 0.2);
-        }
-
-        .user-avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        #image-input-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        #image-input-modal.show {
-            display: flex;
-            opacity: 1;
-        }
-
-        .image-input-container {
-            background: var(--dark);
-            padding: 28px;
-            border-radius: 14px;
-            width: 90%;
-            max-width: 380px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            transform: scale(0.95);
-            transition: transform 0.3s;
-        }
-
-        #image-input-modal.show .image-input-container {
-            transform: scale(1);
-        }
-
-        .image-input-container h3 {
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .image-input-container p {
-            color: var(--text-secondary);
-            margin-bottom: 18px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .image-input-container input {
-            width: 100%;
-            padding: 14px;
-            margin: 14px 0;
-            background: var(--input-bg);
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            color: var(--text-primary);
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-
-        .image-input-container input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(46, 139, 87, 0.5);
-            outline: none;
-        }
-
-        .image-input-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 18px;
-            gap: 12px;
+            transform: translateX(0) scale(1);
         }
 
         /* Settings Panel */
         .settings-panel {
             display: none;
-            background: rgba(16, 36, 69, 0.9);
-            border-radius: 18px;
-            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
             width: 100%;
             max-width: 700px;
             margin-bottom: 30px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-gray);
         }
 
         .settings-panel.show {
             display: block;
-            animation: fadeIn 0.4s ease-out;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .settings-tabs {
             display: flex;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            border-bottom: 1px solid var(--light-gray);
             margin-bottom: 25px;
             overflow-x: auto;
             scrollbar-width: none;
@@ -702,689 +544,160 @@
         }
 
         .settings-tab {
-            padding: 10px 20px;
+            padding: 12px 20px;
             cursor: pointer;
-            color: var(--text-secondary);
+            color: var(--gray);
             font-weight: 500;
             transition: all 0.3s;
             position: relative;
             white-space: nowrap;
+            border-radius: 8px 8px 0 0;
         }
 
         .settings-tab.active {
             color: var(--primary);
-        }
-
-        .settings-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
         }
 
         .settings-tab:hover {
-            color: var(--text-primary);
+            color: var(--primary-light);
+            background: rgba(67, 97, 238, 0.05);
         }
 
-        .settings-content {
-            display: none;
-        }
-
-        .settings-content.active {
-            display: block;
-        }
-
-        .settings-section {
-            margin-bottom: 25px;
-        }
-
-        .settings-section h4 {
-            color: var(--text-primary);
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .settings-option {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
-        }
-
-        .settings-option:last-child {
-            border-bottom: none;
-        }
-
-        .settings-option label {
-            color: var(--text-primary);
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .settings-option p {
-            color: var(--text-secondary);
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
+        /* Modals */
+        .modal {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--input-bg);
-            transition: .4s;
-            border-radius: 34px;
-            border: 1px solid rgba(100, 255, 218, 0.2);
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 3px;
-            background-color: var(--text-secondary);
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-            background-color: var(--light);
-        }
-
-        .friend-search {
-            display: flex;
-            margin-bottom: 20px;
-        }
-
-        .friend-search input {
-            flex: 1;
-            padding: 12px 16px;
-            background: var(--input-bg);
-            border: 1px solid rgba(100, 255, 218, 0.2);
-            border-radius: 8px 0 0 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-
-        .friend-search button {
-            padding: 0 18px;
-            background: var(--primary);
-            color: var(--light);
-            border: none;
-            border-radius: 0 8px 8px 0;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .friend-search button:hover {
-            background: var(--secondary);
-        }
-
-        .friend-requests {
-            margin-top: 20px;
-        }
-
-        .friend-request-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(100, 255, 218, 0.05);
-        }
-
-        .friend-request-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .friend-request-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            overflow: hidden;
-        }
-
-        .friend-request-avatar img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background: rgba(0,0,0,0.5);
             display: none;
-        }
-
-        .friend-request-name {
-            color: var(--text-primary);
-            font-size: 15px;
-        }
-
-        .friend-request-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .friend-request-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s;
-        }
-
-        .accept-btn {
-            background: var(--primary);
-            color: var(--light);
-        }
-
-        .accept-btn:hover {
-            background: var(--secondary);
-        }
-
-        .decline-btn {
-            background: rgba(230, 57, 70, 0.1);
-            color: var(--danger);
-        }
-
-        .decline-btn:hover {
-            background: rgba(230, 57, 70, 0.2);
-        }
-
-        /* Profile Switch */
-        .profile-switch {
-            display: flex;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 25px;
-            background: rgba(16, 36, 69, 0.5);
-            padding: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
             border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s;
         }
 
-        .profile-switch-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            overflow: hidden;
-            position: relative;
-            border: 2px solid rgba(100, 255, 218, 0.3);
-        }
-
-        .profile-switch-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .profile-switch-info {
-            flex: 1;
-        }
-
-        .profile-switch-name {
-            color: var(--text-primary);
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-
-        .profile-switch-email {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-
-        .profile-switch-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-        }
-
-        .profile-switch-btn:hover {
-            color: var(--success);
-        }
-
-        .profile-switch-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--dark);
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            padding: 15px;
-            width: 220px;
-            z-index: 10;
-            display: none;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-        }
-
-        .profile-switch-dropdown.show {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .profile-switch-dropdown-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .profile-switch-dropdown-item:hover {
-            background: rgba(100, 255, 218, 0.05);
-        }
-
-        .profile-switch-dropdown-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .profile-switch-dropdown-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .profile-switch-dropdown-name {
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-
-        /* Coming Soon */
-        .coming-soon {
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-style: italic;
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes cardToMain {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.08); }
-        }
-
-        @keyframes mainToCard {
-            0% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes slideInFromRight {
-            from { transform: translateX(30px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideInFromLeft {
-            from { transform: translateX(-30px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOutToRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(30px); opacity: 0; }
-        }
-
-        @keyframes slideOutToLeft {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-30px); opacity: 0; }
-        }
-
-        .card-to-main {
-            animation: cardToMain 0.3s ease-out forwards;
-        }
-
-        .main-to-card {
-            animation: mainToCard 0.3s ease-out forwards;
-        }
-
-        .slide-in-right {
-            animation: slideInFromRight 0.3s ease-out forwards;
-        }
-
-        .slide-in-left {
-            animation: slideInFromLeft 0.3s ease-out forwards;
-        }
-
-        .slide-out-right {
-            animation: slideOutToRight 0.3s ease-out forwards;
-        }
-
-        .slide-out-left {
-            animation: slideOutToLeft 0.3s ease-out forwards;
+        .modal.show .modal-content {
+            transform: scale(1);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            header {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
                 flex-direction: column;
-                gap: 15px;
-                padding-bottom: 15px;
+                gap: 1rem;
+                text-align: center;
             }
 
-            .time-online {
-                order: 3;
-                margin-top: 15px;
-            }
-
-            .profile-card, .description-card {
-                padding: 25px;
+            .profile-section {
+                flex-direction: column;
             }
 
             .mini-card {
-                width: 130px;
-                height: 130px;
+                width: 120px;
+                height: 120px;
             }
 
-            .settings-panel {
-                padding: 20px;
-            }
-
-            .settings-tab {
-                padding: 10px 15px;
-                font-size: 14px;
-            }
-
-            .settings-option {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .friend-search {
-                flex-direction: column;
-            }
-
-            .friend-search input {
-                border-radius: 8px;
-                margin-bottom: 10px;
-            }
-
-            .friend-search button {
-                border-radius: 8px;
-                padding: 10px;
-            }
-
-            .friend-request-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .friend-request-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .friend-request-btn {
-                flex: 1;
-                padding: 8px;
+            .mini-cards-track {
+                gap: 20px;
             }
         }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
 
-            .profile-card {
-                max-width: 100%;
-                padding: 20px;
-            }
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-            .description-card {
-                padding: 20px;
-            }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-            .mini-card {
-                width: 110px;
-                height: 110px;
-            }
-
-            .user-menu {
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 10px;
-            }
-
-            .user-name {
-                display: none;
-            }
-
-            .settings-tab {
-                padding: 8px 12px;
-                font-size: 13px;
-            }
-
-            .profile-switch {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .profile-switch-avatar {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-
-            .profile-switch-btn {
-                align-self: flex-end;
-            }
-
-            .profile-switch-dropdown {
-                width: 100%;
-                right: auto;
-                left: 0;
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
-<style>
-/* Terminal Loader Styles */
-@keyframes blinkCursor {
-  50% {
-    border-right-color: transparent;
-  }
-}
-
-@keyframes typeAndDelete {
-  0%,
-  10% {
-    width: 0;
-  }
-  45%,
-  55% {
-    width: 6.2em;
-  }
-  90%,
-  100% {
-    width: 0;
-  }
-}
-
-#loader-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  background: #000;
-  inset: 0;
-  z-index: 9999;
-}
-
-.terminal-loader {
-  border: 0.1em solid #333;
-  background-color: #1a1a1a;
-  color: #0f0;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 1em;
-  padding: 1.5em 1em;
-  width: 12em;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.terminal-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1.5em;
-  background-color: #333;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  padding: 0 0.4em;
-  box-sizing: border-box;
-}
-
-.terminal-controls {
-  float: right;
-}
-
-.control {
-  display: inline-block;
-  width: 0.6em;
-  height: 0.6em;
-  margin-left: 0.4em;
-  border-radius: 50%;
-  background-color: #777;
-}
-
-.control.close {
-  background-color: #e33;
-}
-
-.control.minimize {
-  background-color: #ee0;
-}
-
-.control.maximize {
-  background-color: #0b0;
-}
-
-.terminal-title {
-  float: left;
-  line-height: 1.5em;
-  color: #eee;
-}
-
-.text {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 0.2em solid green;
-  animation: typeAndDelete 4s steps(11) infinite,
-             blinkCursor 0.5s step-end infinite alternate;
-  margin-top: 1.5em;
-}
-</style>
 </head>
 <body>
-
-<!-- Loader Terminal Inspired by Uiverse -->
-<div id="loader-container">
-  <div class="terminal-loader">
-    <div class="terminal-header">
-      <div class="terminal-title">Status</div>
-      <div class="terminal-controls">
-        <div class="control close"></div>
-        <div class="control minimize"></div>
-        <div class="control maximize"></div>
-      </div>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
     </div>
-    <div class="text">Loading...</div>
-  </div>
-</div>
 
     <div class="overlay">
-        <!-- Modal de configuration du profil -->
-        <div id="setup-modal">
-            <div class="setup-container">
+        <!-- Modals de configuration du profil -->
+        <div id="setup-modal" class="modal">
+            <div class="modal-content">
                 <h2>Configuration du profil</h2>
                 
-                <div class="profile-preview" id="profile-preview">
+                <div class="profile-preview" id="profile-preview" style="width: 100px; height: 100px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; margin: 20px auto; font-size: 36px; font-weight: bold;">
                     <span id="profile-letter">?</span>
-                    <img id="profile-preview-img">
+                    <img id="profile-preview-img" style="width: 100%; height: 100%; object-fit: cover; display: none;">
                 </div>
                 
-                <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
+                <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 8px; margin: 10px 0; font-size: 16px;">
 
-                <p id="username-info" style="color: var(--text-secondary); font-size: 14px;">
+                <p id="username-info" style="color: var(--gray); font-size: 14px; text-align: center; margin: 10px 0;">
                     Ce nom ne pourra pas être changé avant 30 jours
                 </p>
 
-                <button class="setup-btn" id="save-profile-btn">Enregistrer</button>
+                <button class="action-btn" id="save-profile-btn" style="width: 100%; margin-top: 15px;">Enregistrer</button>
             </div>
         </div>
 
         <!-- Modal pour saisir le nom de l'image -->
-        <div id="image-input-modal">
-            <div class="image-input-container">
+        <div id="image-input-modal" class="modal">
+            <div class="modal-content">
                 <h3>Changer la photo de profil</h3>
-                <p>Entrez le nom de la photo (sans extension .webp)</p>
-                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off">
-                <div class="image-input-buttons">
-                    <button class="logout-btn" id="cancel-image-btn">Annuler</button>
-                    <button class="setup-btn" id="confirm-image-btn">Valider</button>
+                <p style="color: var(--gray); margin-bottom: 20px;">Entrez le nom de la photo (sans extension .webp)</p>
+                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off" style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 8px; margin: 10px 0;">
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="logout-btn" id="cancel-image-btn" style="flex: 1;">Annuler</button>
+                    <button class="action-btn" id="confirm-image-btn" style="flex: 1;">Valider</button>
                 </div>
             </div>
         </div>
@@ -1392,31 +705,32 @@
         <!-- Interface principale -->
         <div id="main-interface" style="display: none;">
             <div class="container">
-                <header>
-                    <div class="logo">
-                        <h1>SchoolReport</h1>
+                <header class="header">
+                    <div>
+                        <h1>
+                            <i class="fas fa-home"></i>
+                            SchoolReport Dashboard
+                        </h1>
+                        <p class="header-subtitle">Votre plateforme éducative centralisée</p>
                     </div>
 
-                    <div class="time-online">
-                        <div class="time" id="current-time">00:00:00</div>
-                        <div class="user-count" id="online-count">0 en ligne</div>
-                    </div>
+                    <div class="header-actions">
+                        <div class="time-online">
+                            <div class="time" id="current-time">00:00:00</div>
+                            <div class="user-count" id="online-count">0 en ligne</div>
+                        </div>
 
-                    <div class="user-menu">
-                        <div class="profile-badge">
+                        <div class="user-menu">
                             <div class="user-avatar" id="user-avatar">
                                 <img id="profile-pic">
                                 <span id="avatar-letter">U</span>
+                                <div class="online-status" id="online-status"></div>
                             </div>
-                            <div class="online-status" id="online-status"></div>
-                        </div>
-
-                        <span class="user-name" id="user-name">Utilisateur</span>
-                        <button class="logout-btn" id="logout-btn">Déconnexion</button>
-
-                        <div class="users-list" id="users-list">
-                            <h4>Utilisateurs en ligne</h4>
-                            <div id="online-users-container"></div>
+                            <span class="user-name" id="user-name">Utilisateur</span>
+                            <button class="logout-btn" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Déconnexion
+                            </button>
                         </div>
                     </div>
                 </header>
@@ -1432,155 +746,55 @@
                             <p>Membre depuis <span id="member-since">aujourd'hui</span></p>
                         </div>
 
-                        <div class="description-card" id="main-description-card">
-                            <h3>Messagerie</h3>
+                        <div class="description-card content-transition" id="main-description-card">
+                            <h3>
+                                <i class="fas fa-comments"></i>
+                                Messagerie
+                            </h3>
                             <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe.</p>
-                            <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
+                            <a href="chat.html" class="action-btn">
+                                <i class="fas fa-comments"></i>
+                                Accéder au chat
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Panel des paramètres (caché par défaut) -->
+                    <!-- Panel des paramètres -->
                     <div class="settings-panel" id="settings-panel">
-                        <div class="profile-switch">
-                            <div class="profile-switch-avatar" id="current-profile-avatar">
-                                <img id="current-profile-pic">
-                                <span id="current-profile-initial">U</span>
-                            </div>
-                            <div class="profile-switch-info">
-                                <div class="profile-switch-name" id="current-profile-name">Utilisateur</div>
-                                <div class="profile-switch-email" id="current-profile-email">email@exemple.com</div>
-                            </div>
-                            <button class="profile-switch-btn" id="profile-switch-btn">
-                                <span>Changer</span>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </button>
-                            
-                            <div class="profile-switch-dropdown" id="profile-switch-dropdown">
-                                <!-- Les profils amis seront ajoutés ici dynamiquement -->
-                                <div class="profile-switch-dropdown-item" data-uid="current">
-                                    <div class="profile-switch-dropdown-avatar">
-                                        <img id="dropdown-current-pic">
-                                        <span id="dropdown-current-initial">U</span>
-                                    </div>
-                                    <div class="profile-switch-dropdown-name">Mon profil</div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="settings-tabs">
-                            <div class="settings-tab active" data-tab="account">Compte</div>
-                            <div class="settings-tab" data-tab="friends">Amis</div>
-                            <div class="settings-tab" data-tab="privacy">Confidentialité</div>
-                            <div class="settings-tab" data-tab="notifications">Notifications</div>
-                        </div>
-
-                        <div class="settings-content active" data-content="account">
-                            <div class="settings-section">
-                                <h4>Photo de profil</h4>
-                                <div class="settings-option">
-                                    <div>
-                                        <label>Changer la photo de profil</label>
-                                        <p>Format .webp recommandé</p>
-                                    </div>
-                                    <button class="setup-btn" id="change-profile-pic-btn" style="padding: 8px 16px; font-size: 14px;">Changer</button>
-                                </div>
+                            <div class="settings-tab active" data-tab="account">
+                                <i class="fas fa-user"></i>
+                                Compte
                             </div>
-
-                            <div class="settings-section">
-                                <h4>Informations personnelles</h4>
-                                <div class="settings-option">
-                                    <div>
-                                        <label>Nom d'utilisateur</label>
-                                        <p id="username-change-info">Modifiable dans 30 jours</p>
-                                    </div>
-                                    <button class="setup-btn" id="change-username-btn" style="padding: 8px 16px; font-size: 14px; background: var(--input-bg); color: var(--text-primary);" disabled>Changer</button>
-                                </div>
+                            <div class="settings-tab" data-tab="friends">
+                                <i class="fas fa-users"></i>
+                                Amis
+                            </div>
+                            <div class="settings-tab" data-tab="privacy">
+                                <i class="fas fa-shield-alt"></i>
+                                Confidentialité
                             </div>
                         </div>
 
-                        <div class="settings-content" data-content="friends">
-                            <div class="settings-section">
-                                <h4>Ajouter un ami</h4>
-                                <div class="friend-search">
-                                    <input type="text" id="friend-search-input" placeholder="Rechercher par nom ou email">
-                                    <button id="friend-search-btn">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="11" cy="11" r="8"></circle>
-                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="settings-section">
-                                <h4>Demandes d'amis</h4>
-                                <div class="friend-requests" id="friend-requests-container">
-                                    <!-- Les demandes d'amis seront ajoutées ici dynamiquement -->
-                                    <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">Aucune demande d'ami pour le moment</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="settings-content" data-content="privacy">
-                            <div class="settings-section">
-                                <h4>Visibilité du profil</h4>
-                                <div class="settings-option">
-                                    <div>
-                                        <label>Profil public</label>
-                                        <p>Autoriser les autres utilisateurs à vous trouver et vous envoyer des demandes d'amis</p>
-                                    </div>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="public-profile-toggle">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="settings-section">
-                                <h4>Confidentialité des données</h4>
-                                <div class="settings-option">
-                                    <div>
-                                        <label>Partager les notes avec les amis</label>
-                                        <p>Autoriser vos amis à voir vos résultats</p>
-                                    </div>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="share-grades-toggle" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="settings-content" data-content="notifications">
-                            <div class="coming-soon">
-                                Fonctionnalité de notifications en cours de développement
+                        <div id="settings-content">
+                            <!-- Contenu des paramètres -->
+                            <div style="padding: 20px;">
+                                <h4 style="color: var(--primary); margin-bottom: 15px;">Paramètres du compte</h4>
+                                <p style="color: var(--gray);">Gérez vos informations personnelles et préférences.</p>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Mini Cards Navigation -->
                     <div class="mini-cards-container" id="mini-cards-container">
                         <div class="mini-cards-track" id="mini-cards-track">
-                            <div class="mini-card" data-target="workspace">
-                                <img src="photos/mini_workspace.webp" alt="Espace de travail">
-                                <div class="card-title">Espace de travail</div>
-                            </div>
                             <div class="mini-card" data-target="homework">
                                 <img src="photos/mini_homework.webp" alt="Devoirs">
                                 <div class="card-title">Gestion des devoirs</div>
                             </div>
-                            <div class="mini-card" data-target="calendar">
-                                <img src="photos/mini_calendar.webp" alt="Calendrier">
-                                <div class="card-title">Calendrier</div>
-                            </div>
-                            <div class="mini-card" data-target="grades">
-                                <img src="photos/mini_grades.webp" alt="Notes">
-                                <div class="card-title">Notes</div>
-                            </div>
-                            <div class="mini-card" data-target="resources">
-                                <img src="photos/mini_resources.webp" alt="Ressources">
-                                <div class="card-title">Ressources</div>
+                            <div class="mini-card" data-target="files">
+                                <img src="photos/mini_workspace.webp" alt="Fichiers">
+                                <div class="card-title">Gestionnaire de fichiers</div>
                             </div>
                             <div class="mini-card active" data-target="chat">
                                 <img src="photos/mini_chat.webp" alt="Messagerie">
@@ -1596,25 +810,52 @@
             </div>
         </div>
 
+        <!-- Font Awesome -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+        
         <script type="module">
             import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getDatabase, ref, set, onValue, update, onDisconnect, remove, push, get, child } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+            import { getDatabase, ref, set, onValue, update, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
             import { app, auth, db } from "./firebase/firebase-config.js";
 
             // Variables globales
             let currentUser = null;
             let currentUsername = '';
-            let currentUserStatusRef = null;
-            let pressTimer = null;
-            let connectedUsersRef = null;
-            let currentCardIndex = 5; // Commence par la carte "Messagerie"
+            let currentCardIndex = 2; // Commence par la messagerie
             let isAnimating = false;
-            const cardWidth = 140 + 15; // Largeur de la carte + gap réduit
-            let lastScrollDirection = 'right'; // 'left' ou 'right'
-            let isDragging = false;
-            let startX, scrollLeft;
-            let friendsList = [];
-            let friendRequests = [];
+            let pressTimer = null;
+
+            // Données des cartes
+            const cardData = {
+                homework: {
+                    title: 'Gestion des devoirs',
+                    description: 'Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires.',
+                    icon: 'fas fa-tasks',
+                    link: 'homework.html',
+                    buttonText: 'Voir les devoirs'
+                },
+                files: {
+                    title: 'Gestionnaire de fichiers',
+                    description: 'Gérez vos documents et ressources éducatives. Uploadez, organisez et partagez vos fichiers en toute sécurité avec vos camarades.',
+                    icon: 'fas fa-folder-open',
+                    link: 'files.html',
+                    buttonText: 'Gérer les fichiers'
+                },
+                chat: {
+                    title: 'Messagerie',
+                    description: 'Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement.',
+                    icon: 'fas fa-comments',
+                    link: 'chat.html',
+                    buttonText: 'Accéder au chat'
+                },
+                settings: {
+                    title: 'Paramètres',
+                    description: 'Personnalisez votre expérience, gérez votre profil et configurez vos préférences de confidentialité et de notifications.',
+                    icon: 'fas fa-cog',
+                    link: '#',
+                    buttonText: 'Configurer'
+                }
+            };
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
@@ -1623,21 +864,17 @@
                 updateClock();
                 setInterval(updateClock, 1000);
                 centerActiveCard();
+                
+                // Masquer le loader après l'initialisation
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 1000);
             });
 
             function updateClock() {
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString();
                 document.getElementById('current-time').textContent = timeStr;
-            }
-
-            function centerActiveCard() {
-                const container = document.getElementById('mini-cards-container');
-                const track = document.getElementById('mini-cards-track');
-                const containerWidth = container.offsetWidth;
-                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
-                
-                track.style.transform = `translateX(${targetPosition}px)`;
             }
 
             function initAuthState() {
@@ -1658,170 +895,42 @@
                     const userData = snapshot.val();
                     
                     if (userData && userData.username) {
-                        // Profil existant
                         currentUsername = userData.username;
                         setupMainInterface(user, userData);
-                        
-                        // Mettre à jour le temps restant pour le changement de nom
                         updateUsernameChangeTime(userData);
                     } else {
-                        // Nouvel utilisateur
                         setupProfileConfiguration(user);
                     }
                 });
             }
 
-            function updateUsernameChangeTime(userData) {
-                const usernameChangeInfo = document.getElementById('username-change-info');
-                
-                if (userData.canChangeUsername) {
-                    usernameChangeInfo.textContent = "Modifiable maintenant";
-                    document.getElementById('change-username-btn').disabled = false;
-                    document.getElementById('change-username-btn').style.background = 'var(--primary)';
-                } else {
-                    const createdAt = userData.createdAt || Date.now();
-                    const daysPassed = Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
-                    const daysLeft = Math.max(0, 30 - daysPassed);
-                    
-                    if (daysLeft > 0) {
-                        usernameChangeInfo.textContent = `Modifiable dans ${daysLeft} jour${daysLeft > 1 ? 's' : ''}`;
-                        document.getElementById('change-username-btn').disabled = true;
-                        document.getElementById('change-username-btn').style.background = 'var(--input-bg)';
-                    } else {
-                        usernameChangeInfo.textContent = "Modifiable maintenant";
-                        document.getElementById('change-username-btn').disabled = false;
-                        document.getElementById('change-username-btn').style.background = 'var(--primary)';
-                        
-                        // Mettre à jour la base de données
-                        update(ref(db, 'users/' + currentUser.uid), {
-                            canChangeUsername: true
-                        });
-                    }
-                }
-            }
-
-            function setupProfileConfiguration(user) {
-                const setupModal = document.getElementById('setup-modal');
-                const usernameInput = document.getElementById('username-input');
-                const saveBtn = document.getElementById('save-profile-btn');
-                const profileLetter = document.getElementById('profile-letter');
-
-                // Afficher le modal avec animation
-                setTimeout(() => {
-                    setupModal.classList.add('show');
-                }, 100);
-
-                // Mise à jour de l'initiale
-                usernameInput.addEventListener('input', () => {
-                    const username = usernameInput.value.trim();
-                    profileLetter.textContent = username.length > 0 ? username.charAt(0).toUpperCase() : '?';
-                });
-
-                // Gestion de l'enregistrement
-                saveBtn.addEventListener('click', async () => {
-                    const username = usernameInput.value.trim();
-                    
-                    if (username.length < 3 || username.length > 20) {
-                        alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
-                        return;
-                    }
-
-                    saveBtn.disabled = true;
-                    saveBtn.textContent = 'Enregistrement...';
-
-                    try {
-                        await saveUserProfile(user, username);
-                        setupModal.classList.remove('show');
-                        
-                        // Recharger les données utilisateur
-                        const userRef = ref(db, 'users/' + user.uid);
-                        onValue(userRef, (snapshot) => {
-                            const userData = snapshot.val();
-                            setupMainInterface(user, userData);
-                        }, { onlyOnce: true });
-                        
-                    } catch (error) {
-                        console.error("Erreur lors de l'enregistrement:", error);
-                        alert("Une erreur est survenue lors de l'enregistrement");
-                    } finally {
-                        saveBtn.disabled = false;
-                        saveBtn.textContent = 'Enregistrer';
-                    }
-                });
-            }
-
-            async function saveUserProfile(user, username) {
-                const userRef = ref(db, 'users/' + user.uid);
-                
-                await set(userRef, {
-                    username,
-                    email: user.email,
-                    createdAt: Date.now(),
-                    canChangeUsername: false,
-                    lastSeen: Date.now(),
-                    profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null,
-                    publicProfile: false,
-                    shareGrades: true,
-                    emailNotifications: true,
-                    pushNotifications: true
-                });
-
-                currentUsername = username;
-            }
-
             function setupMainInterface(user, userData) {
-                const mainInterface = document.getElementById('main-interface');
-                mainInterface.style.display = 'block';
-
-                // Mise à jour des infos utilisateur
+                document.getElementById('main-interface').style.display = 'block';
                 updateUserInfo(userData);
-
-                // Suivi des utilisateurs en ligne
                 setupPresenceTracking(user);
-
-                // Vérifier les devoirs urgents
-                checkUrgentHomeworks(user);
-
-                // Gestion de la déconnexion
-                document.getElementById('logout-btn').addEventListener('click', handleLogout);
-
-                // Gestion du clic long sur l'avatar
-                setupLongPressAvatar();
-
-                // Initialiser les mini-cards
-                initMiniCards();
-
-                // Charger les amis et demandes d'amis
-                loadFriendsAndRequests(user.uid);
+                setupEventListeners();
             }
 
             function updateUserInfo(userData) {
                 document.getElementById('user-name').textContent = userData.username;
                 document.getElementById('profile-username').textContent = userData.username;
-                document.getElementById('current-profile-name').textContent = userData.username;
-                document.getElementById('current-profile-email').textContent = userData.email || 'email@exemple.com';
                 
                 const avatarLetter = document.getElementById('avatar-letter');
                 const profilePic = document.getElementById('profile-pic');
                 const mainProfilePic = document.getElementById('main-profile-pic');
                 const profileInitials = document.getElementById('profile-initials');
-                const currentProfileInitial = document.getElementById('current-profile-initial');
-                const dropdownCurrentInitial = document.getElementById('dropdown-current-initial');
                 
                 const firstLetter = userData.username.charAt(0).toUpperCase();
                 avatarLetter.textContent = firstLetter;
                 profileInitials.textContent = firstLetter;
-                currentProfileInitial.textContent = firstLetter;
-                dropdownCurrentInitial.textContent = firstLetter;
                 
-                // Format member since date
                 if (userData.createdAt) {
                     const joinDate = new Date(userData.createdAt);
                     const options = { year: 'numeric', month: 'long', day: 'numeric' };
                     document.getElementById('member-since').textContent = joinDate.toLocaleDateString('fr-FR', options);
                 }
                 
-                // Vérifier si une image existe déjà
+                // Gérer l'image de profil
                 if (userData.profileImage) {
                     profilePic.src = userData.profileImage;
                     profilePic.style.display = 'block';
@@ -1830,16 +939,6 @@
                     mainProfilePic.src = userData.profileImage;
                     mainProfilePic.style.display = 'block';
                     profileInitials.style.display = 'none';
-                    
-                    document.getElementById('current-profile-pic').src = userData.profileImage;
-                    document.getElementById('current-profile-pic').style.display = 'block';
-                    currentProfileInitial.style.display = 'none';
-                    
-                    document.getElementById('dropdown-current-pic').src = userData.profileImage;
-                    document.getElementById('dropdown-current-pic').style.display = 'block';
-                    dropdownCurrentInitial.style.display = 'none';
-                    
-                    localStorage.setItem(`profileImage_${currentUser.uid}`, userData.profileImage);
                 } else {
                     const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
                     if (savedImage) {
@@ -1850,195 +949,57 @@
                         mainProfilePic.src = savedImage;
                         mainProfilePic.style.display = 'block';
                         profileInitials.style.display = 'none';
-                        
-                        document.getElementById('current-profile-pic').src = savedImage;
-                        document.getElementById('current-profile-pic').style.display = 'block';
-                        currentProfileInitial.style.display = 'none';
-                        
-                        document.getElementById('dropdown-current-pic').src = savedImage;
-                        document.getElementById('dropdown-current-pic').style.display = 'block';
-                        dropdownCurrentInitial.style.display = 'none';
-                    } else {
-                        profilePic.style.display = 'none';
-                        avatarLetter.style.display = 'flex';
-                        
-                        mainProfilePic.style.display = 'none';
-                        profileInitials.style.display = 'flex';
-                        
-                        document.getElementById('current-profile-pic').style.display = 'none';
-                        currentProfileInitial.style.display = 'flex';
-                        
-                        document.getElementById('dropdown-current-pic').style.display = 'none';
-                        dropdownCurrentInitial.style.display = 'flex';
                     }
-                }
-                
-                // Mettre à jour les paramètres
-                if (userData.publicProfile !== undefined) {
-                    document.getElementById('public-profile-toggle').checked = userData.publicProfile;
-                }
-                if (userData.shareGrades !== undefined) {
-                    document.getElementById('share-grades-toggle').checked = userData.shareGrades;
-                }
-            }
-
-            function checkUrgentHomeworks(user) {
-                const homeworksRef = ref(db, `homeworks/${user.uid}`);
-                const now = new Date();
-                const twoDaysFromNow = new Date(now.getTime() + 48 * 60 * 60 * 1000);
-
-                onValue(homeworksRef, (snapshot) => {
-                    let urgentCount = 0;
-                    const homeworks = snapshot.val();
-                    if (homeworks) {
-                        Object.values(homeworks).forEach((dateHomeworks) => {
-                            Object.values(dateHomeworks).forEach((homework) => {
-                                const dueDate = new Date(homework.dueDate);
-                                if (dueDate <= twoDaysFromNow && !homework.completed) {
-                                    urgentCount++;
-                                }
-                            });
-                        });
-                    }
-
-                    // Mettre à jour l'indicateur sur la mini-card calendrier
-                    const calendarCards = document.querySelectorAll('.mini-card[data-target="calendar"]');
-                    calendarCards.forEach(card => {
-                        if (urgentCount > 0) {
-                            let indicator = card.querySelector('.active-indicator');
-                            if (!indicator) {
-                                indicator = document.createElement('div');
-                                indicator.className = 'active-indicator';
-                                card.appendChild(indicator);
-                            }
-                            indicator.textContent = urgentCount;
-                            indicator.style.display = 'flex';
-                        } else {
-                            const indicator = card.querySelector('.active-indicator');
-                            if (indicator) {
-                                indicator.style.display = 'none';
-                            }
-                        }
-                    });
-                });
-            }
-
-            function setupPresenceTracking(user) {
-                // Référence pour le suivi des utilisateurs connectés
-                connectedUsersRef = ref(db, 'connectedUsers');
-                
-                // Référence pour l'utilisateur actuel
-                currentUserStatusRef = ref(db, 'connectedUsers/' + user.uid);
-                
-                // Récupérer l'image de profil depuis le stockage local ou la base de données
-                const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
-                
-                // Marquer l'utilisateur comme connecté avec toutes ses infos
-                set(currentUserStatusRef, {
-                    uid: user.uid,
-                    username: currentUsername,
-                    email: user.email,
-                    profileImage: profileImage,
-                    timestamp: Date.now(),
-                    firstLetter: currentUsername.charAt(0).toUpperCase()
-                });
-
-                // Supprimer la présence lors de la déconnexion
-                onDisconnect(currentUserStatusRef).remove();
-                
-                // Écouter les changements dans la liste des utilisateurs connectés
-                onValue(connectedUsersRef, (snapshot) => {
-                    const connectedUsers = snapshot.val() || {};
-                    const onlineUsers = [];
-                    let onlineCount = 0;
-
-                    // Compter les utilisateurs connectés et préparer la liste
-                    Object.entries(connectedUsers).forEach(([uid, userData]) => {
-                        if (uid !== user.uid) { // Exclure l'utilisateur actuel
-                            onlineCount++;
-                            onlineUsers.push({
-                                userId: uid,
-                                username: userData.username || 'Utilisateur',
-                                email: userData.email || '',
-                                firstLetter: userData.firstLetter || (userData.username || 'U').charAt(0).toUpperCase(),
-                                profileImage: userData.profileImage || null
-                            });
-                        }
-                    });
-
-                    // Mettre à jour l'interface
-                    updateOnlineUsersDisplay(onlineCount, onlineUsers);
-                });
-            }
-
-            function updateOnlineUsersDisplay(onlineCount, onlineUsers) {
-                // Mettre à jour le compteur
-                document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
-
-                // Mettre à jour la liste des utilisateurs
-                const container = document.getElementById('online-users-container');
-                container.innerHTML = '';
-
-                if (onlineUsers.length === 0) {
-                    container.innerHTML = '<p style="color: var(--text-secondary); font-size: 14px;">Aucun autre utilisateur en ligne</p>';
-                } else {
-                    onlineUsers.forEach(user => {
-                        const userElement = document.createElement('div');
-                        userElement.className = 'user-item';
-                        
-                        // Créer le contenu de l'avatar
-                        let avatarContent = '';
-                        if (user.profileImage) {
-                            avatarContent = `<img src="${user.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-                        } else {
-                            avatarContent = user.firstLetter;
-                        }
-                        
-                        userElement.innerHTML = `
-                            <div class="user-avatar-small">
-                                ${avatarContent}
-                            </div>
-                            <span>${user.username}</span>
-                        `;
-                        container.appendChild(userElement);
-                    });
-                }
-            }
-
-            async function handleLogout() {
-                try {
-                    // Supprimer immédiatement la présence de l'utilisateur
-                    if (currentUserStatusRef) {
-                        await remove(currentUserStatusRef);
-                    }
-                    
-                    // Déconnecter l'utilisateur
-                    await signOut(auth);
-                    
-                    // Rediriger vers la page de connexion
-                    window.location.href = 'index.html';
-                } catch (error) {
-                    console.error("Erreur lors de la déconnexion:", error);
-                    alert("Une erreur est survenue lors de la déconnexion");
                 }
             }
 
             function setupEventListeners() {
-                // Gestion de l'affichage de la liste des utilisateurs
-                document.getElementById('online-count').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const usersList = document.getElementById('users-list');
-                    usersList.classList.toggle('show');
+                // Navigation des mini-cards
+                const miniCards = document.querySelectorAll('.mini-card');
+                miniCards.forEach((card, index) => {
+                    card.addEventListener('click', function(e) {
+                        if (isAnimating) return;
+                        
+                        const targetIndex = Array.from(miniCards).indexOf(this);
+                        if (targetIndex === currentCardIndex) {
+                            // Double clic pour naviguer
+                            const target = this.getAttribute('data-target');
+                            if (target && cardData[target] && cardData[target].link !== '#') {
+                                window.location.href = cardData[target].link;
+                            }
+                            return;
+                        }
+                        
+                        navigateToCard(targetIndex);
+                    });
                 });
 
-                // Fermer la liste quand on clique ailleurs
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.user-count') && !e.target.closest('.users-list')) {
-                        document.getElementById('users-list').classList.remove('show');
+                // Gestion du clic long sur l'avatar
+                setupLongPressAvatar();
+
+                // Déconnexion
+                document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+                // Navigation clavier
+                document.addEventListener('keydown', (e) => {
+                    if (isAnimating) return;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        navigateToCard((currentCardIndex - 1 + 4) % 4);
+                    } else if (e.key === 'ArrowRight') {
+                        navigateToCard((currentCardIndex + 1) % 4);
+                    } else if (e.key === 'Enter') {
+                        const activeCard = document.querySelector('.mini-card.active');
+                        if (activeCard) {
+                            const target = activeCard.getAttribute('data-target');
+                            if (target && cardData[target] && cardData[target].link !== '#') {
+                                window.location.href = cardData[target].link;
+                            }
+                        }
                     }
                 });
 
-                // Gestion du modal d'import d'image
+                // Gestion des modals
                 document.getElementById('cancel-image-btn').addEventListener('click', () => {
                     document.getElementById('image-input-modal').classList.remove('show');
                 });
@@ -2050,356 +1011,132 @@
                     handleImageImport(`photos/${imageName}.webp`);
                 });
 
-                // Gestion des touches du clavier
-                document.addEventListener('keydown', (e) => {
-                    if (isAnimating) return;
+                document.getElementById('save-profile-btn').addEventListener('click', async () => {
+                    const username = document.getElementById('username-input').value.trim();
                     
-                    if (e.key === 'ArrowLeft') {
-                        navigateToCard((currentCardIndex - 1 + 7) % 7);
-                        lastScrollDirection = 'left';
-                    } else if (e.key === 'ArrowRight') {
-                        navigateToCard((currentCardIndex + 1) % 7);
-                        lastScrollDirection = 'right';
+                    if (username.length < 3 || username.length > 20) {
+                        alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
+                        return;
+                    }
+
+                    try {
+                        await saveUserProfile(currentUser, username);
+                        document.getElementById('setup-modal').classList.remove('show');
+                        location.reload();
+                    } catch (error) {
+                        console.error("Erreur lors de l'enregistrement:", error);
+                        alert("Une erreur est survenue lors de l'enregistrement");
                     }
                 });
 
-                // Gestion des onglets des paramètres
+                // Gestion des onglets paramètres
                 document.querySelectorAll('.settings-tab').forEach(tab => {
                     tab.addEventListener('click', () => {
                         document.querySelector('.settings-tab.active').classList.remove('active');
                         tab.classList.add('active');
-                        
-                        const tabName = tab.getAttribute('data-tab');
-                        document.querySelector('.settings-content.active').classList.remove('active');
-                        document.querySelector(`.settings-content[data-content="${tabName}"]`).classList.add('active');
                     });
                 });
-
-                // Gestion du bouton de changement de photo de profil
-                document.getElementById('change-profile-pic-btn').addEventListener('click', showImageInputModal);
-
-                // Gestion du menu de changement de profil
-                document.getElementById('profile-switch-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    document.getElementById('profile-switch-dropdown').classList.toggle('show');
-                });
-
-                // Fermer le menu de changement de profil quand on clique ailleurs
-                document.addEventListener('click', () => {
-                    document.getElementById('profile-switch-dropdown').classList.remove('show');
-                });
-
-                // Gestion des paramètres
-                document.getElementById('public-profile-toggle').addEventListener('change', updateUserSettings);
-                document.getElementById('share-grades-toggle').addEventListener('change', updateUserSettings);
-
-                // Gestion de la recherche d'amis
-                document.getElementById('friend-search-btn').addEventListener('click', searchFriend);
-                document.getElementById('friend-search-input').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        searchFriend();
-                    }
-                });
             }
 
-            async function updateUserSettings() {
-                const userRef = ref(db, 'users/' + currentUser.uid);
-                const publicProfile = document.getElementById('public-profile-toggle').checked;
-                const shareGrades = document.getElementById('share-grades-toggle').checked;
+            function navigateToCard(targetIndex) {
+                if (isAnimating || targetIndex === currentCardIndex) return;
                 
-                try {
-                    await update(userRef, {
-                        publicProfile,
-                        shareGrades
-                    });
-                    
-                    // Mettre à jour aussi dans la liste des utilisateurs connectés
-                    if (currentUserStatusRef) {
-                        update(currentUserStatusRef, {
-                            publicProfile
-                        });
-                    }
-                } catch (error) {
-                    console.error("Erreur lors de la mise à jour des paramètres:", error);
-                    alert("Une erreur est survenue lors de la mise à jour des paramètres");
-                }
-            }
-
-            async function searchFriend() {
-                const searchInput = document.getElementById('friend-search-input').value.trim();
-                if (!searchInput) return;
-
-                try {
-                    // Vérifier si le profil est public
-                    const currentUserRef = ref(db, `users/${currentUser.uid}`);
-                    const currentUserSnapshot = await get(currentUserRef);
-                    const currentUserData = currentUserSnapshot.val();
-                    
-                    if (!currentUserData.publicProfile) {
-                        alert("Votre profil n'est pas public. Activez 'Profil public' dans les paramètres de confidentialité pour recevoir des demandes d'amis.");
-                        return;
-                    }
-
-                    // Recherche dans la base de données
-                    const usersRef = ref(db, 'users');
-                    const snapshot = await get(usersRef);
-                    
-                    if (snapshot.exists()) {
-                        const allUsers = snapshot.val();
-                        let foundUser = null;
-                        
-                        // Recherche par email ou nom d'utilisateur
-                        Object.entries(allUsers).forEach(([uid, userData]) => {
-                            if (uid !== currentUser.uid && 
-                                userData.publicProfile && // Seulement les profils publics
-                                (userData.email === searchInput || userData.username.toLowerCase().includes(searchInput.toLowerCase()))) {
-                                foundUser = {
-                                    uid,
-                                    ...userData
-                                };
-                            }
-                        });
-
-                        if (foundUser) {
-                            // Vérifier si déjà ami
-                            const isFriend = friendsList.some(friend => friend.uid === foundUser.uid);
-                            const hasPendingRequest = friendRequests.some(req => req.from === foundUser.uid || req.to === foundUser.uid);
-
-                            if (isFriend) {
-                                alert(`${foundUser.username} est déjà dans votre liste d'amis`);
-                            } else if (hasPendingRequest) {
-                                alert(`Une demande d'ami est déjà en attente avec ${foundUser.username}`);
-                            } else {
-                                // Envoyer une demande d'ami
-                                await sendFriendRequest(foundUser.uid);
-                                alert(`Demande d'ami envoyée à ${foundUser.username}`);
-                            }
-                        } else {
-                            alert("Aucun utilisateur trouvé avec ces informations ou le profil n'est pas public");
-                        }
-                    }
-                } catch (error) {
-                    console.error("Erreur lors de la recherche d'ami:", error);
-                    alert("Une erreur est survenue lors de la recherche");
-                }
-            }
-
-            async function sendFriendRequest(friendUid) {
-                const requestsRef = ref(db, 'friendRequests');
-                const newRequestRef = push(requestsRef);
+                isAnimating = true;
                 
-                await set(newRequestRef, {
-                    from: currentUser.uid,
-                    to: friendUid,
-                    timestamp: Date.now(),
-                    status: 'pending'
-                });
-            }
-
-            async function loadFriendsAndRequests(userId) {
-                // Charger les amis
-                const friendsRef = ref(db, `friends/${userId}`);
-                onValue(friendsRef, (snapshot) => {
-                    friendsList = [];
-                    const friendsData = snapshot.val();
-                    
-                    if (friendsData) {
-                        Object.entries(friendsData).forEach(([friendId, friendData]) => {
-                            friendsList.push({
-                                uid: friendId,
-                                ...friendData
-                            });
-                        });
-                        
-                        updateFriendsDropdown();
-                    }
-                });
-
-                // Charger les demandes d'amis
-                const requestsRef = ref(db, 'friendRequests');
-                onValue(requestsRef, (snapshot) => {
-                    friendRequests = [];
-                    const requestsData = snapshot.val();
-                    
-                    if (requestsData) {
-                        Object.entries(requestsData).forEach(([requestId, request]) => {
-                            if (request.to === userId && request.status === 'pending') {
-                                friendRequests.push({
-                                    id: requestId,
-                                    ...request
-                                });
-                            }
-                        });
-                        
-                        updateFriendRequestsDisplay();
-                    }
-                });
-            }
-
-            function updateFriendsDropdown() {
-                const dropdown = document.getElementById('profile-switch-dropdown');
+                const miniCards = document.querySelectorAll('.mini-card');
+                const descriptionCard = document.getElementById('main-description-card');
+                const settingsPanel = document.getElementById('settings-panel');
+                const currentCard = miniCards[currentCardIndex];
+                const targetCard = miniCards[targetIndex];
                 
-                // Garder seulement l'élément "Mon profil"
-                while (dropdown.children.length > 1) {
-                    dropdown.removeChild(dropdown.lastChild);
-                }
+                // Animation de sortie de la carte actuelle
+                currentCard.classList.remove('active');
+                currentCard.style.transform = 'scale(1)';
                 
-                // Ajouter les amis
-                friendsList.forEach(friend => {
-                    const friendElement = document.createElement('div');
-                    friendElement.className = 'profile-switch-dropdown-item';
-                    friendElement.setAttribute('data-uid', friend.uid);
+                // Animation morphose du contenu
+                const targetData = cardData[targetCard.getAttribute('data-target')];
+                
+                if (targetCard.getAttribute('data-target') === 'settings') {
+                    // Afficher le panel des paramètres avec animation
+                    descriptionCard.classList.add('fade-out');
                     
-                    let avatarContent = '';
-                    if (friend.profileImage) {
-                        avatarContent = `<img src="${friend.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-                    } else {
-                        avatarContent = friend.username.charAt(0).toUpperCase();
+                    setTimeout(() => {
+                        descriptionCard.style.display = 'none';
+                        settingsPanel.classList.add('show');
+                    }, 300);
+                } else {
+                    // Masquer le panel des paramètres et afficher la description
+                    if (settingsPanel.classList.contains('show')) {
+                        settingsPanel.classList.remove('show');
                     }
                     
-                    friendElement.innerHTML = `
-                        <div class="profile-switch-dropdown-avatar">
-                            ${avatarContent}
-                        </div>
-                        <div class="profile-switch-dropdown-name">${friend.username}</div>
-                    `;
+                    descriptionCard.style.display = 'block';
+                    descriptionCard.classList.add('fade-out');
                     
-                    friendElement.addEventListener('click', () => {
-                        // Charger les informations de l'ami dans la vue principale
-                        document.getElementById('profile-username').textContent = friend.username;
-                        
-                        const mainProfilePic = document.getElementById('main-profile-pic');
-                        const profileInitials = document.getElementById('profile-initials');
-                        
-                        if (friend.profileImage) {
-                            mainProfilePic.src = friend.profileImage;
-                            mainProfilePic.style.display = 'block';
-                            profileInitials.style.display = 'none';
-                        } else {
-                            mainProfilePic.style.display = 'none';
-                            profileInitials.textContent = friend.username.charAt(0).toUpperCase();
-                            profileInitials.style.display = 'flex';
-                        }
-                        
-                        // Mettre à jour la description pour l'ami
-                        const descriptionCard = document.getElementById('main-description-card');
+                    setTimeout(() => {
+                        // Mettre à jour le contenu
                         descriptionCard.innerHTML = `
-                            <h3>Profil de ${friend.username}</h3>
-                            <p>Membre depuis ${new Date(friend.since || Date.now()).toLocaleDateString('fr-FR')}</p>
-                            ${friend.shareGrades ? 
-                                `<a href="404-page.html?uid=${friend.uid}" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir ses notes</a>` : 
-                                '<p style="color: var(--text-secondary);">Cet ami ne partage pas ses notes</p>'}
+                            <h3>
+                                <i class="${targetData.icon}"></i>
+                                ${targetData.title}
+                            </h3>
+                            <p>${targetData.description}</p>
+                            ${targetData.link !== '#' ? 
+                                `<a href="${targetData.link}" class="action-btn">
+                                    <i class="${targetData.icon}"></i>
+                                    ${targetData.buttonText}
+                                </a>` : 
+                                `<button class="action-btn" onclick="toggleSettings()">
+                                    <i class="${targetData.icon}"></i>
+                                    ${targetData.buttonText}
+                                </button>`
+                            }
                         `;
                         
-                        // Fermer le dropdown
-                        document.getElementById('profile-switch-dropdown').classList.remove('show');
-                    });
-                    
-                    dropdown.appendChild(friendElement);
-                });
-            }
-
-            async function updateFriendRequestsDisplay() {
-                const container = document.getElementById('friend-requests-container');
-                
-                if (friendRequests.length === 0) {
-                    container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">Aucune demande d\'ami pour le moment</p>';
-                    return;
+                        descriptionCard.classList.remove('fade-out');
+                        descriptionCard.classList.add('fade-in');
+                        
+                        setTimeout(() => {
+                            descriptionCard.classList.remove('fade-in');
+                        }, 600);
+                    }, 300);
                 }
                 
-                container.innerHTML = '';
+                // Animation de la nouvelle carte active
+                targetCard.classList.add('active');
                 
-                for (const request of friendRequests) {
-                    try {
-                        // Récupérer les informations de l'utilisateur qui a envoyé la demande
-                        const userRef = ref(db, `users/${request.from}`);
-                        const snapshot = await get(userRef);
-                        
-                        if (snapshot.exists()) {
-                            const userData = snapshot.val();
-                            const requestElement = document.createElement('div');
-                            requestElement.className = 'friend-request-item';
-                            
-                            let avatarContent = '';
-                            if (userData.profileImage) {
-                                avatarContent = `<img src="${userData.profileImage}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-                            } else {
-                                avatarContent = userData.username.charAt(0).toUpperCase();
-                            }
-                            
-                            requestElement.innerHTML = `
-                                <div class="friend-request-info">
-                                    <div class="friend-request-avatar">
-                                        ${avatarContent}
-                                    </div>
-                                    <div class="friend-request-name">${userData.username}</div>
-                                </div>
-                                <div class="friend-request-actions">
-                                    <button class="friend-request-btn accept-btn" data-request-id="${request.id}">Accepter</button>
-                                    <button class="friend-request-btn decline-btn" data-request-id="${request.id}">Refuser</button>
-                                </div>
-                            `;
-                            
-                            container.appendChild(requestElement);
-                            
-                            // Gestion des boutons
-                            requestElement.querySelector('.accept-btn').addEventListener('click', () => handleFriendRequest(request.id, 'accept'));
-                            requestElement.querySelector('.decline-btn').addEventListener('click', () => handleFriendRequest(request.id, 'decline'));
-                        }
-                    } catch (error) {
-                        console.error("Erreur lors du chargement de la demande d'ami:", error);
-                    }
-                }
+                // Mettre à jour l'index courant
+                currentCardIndex = targetIndex;
+                
+                // Centrer la carte active
+                centerActiveCard();
+                
+                // Terminer l'animation
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 600);
             }
 
-            async function handleFriendRequest(requestId, action) {
-                try {
-                    if (action === 'accept') {
-                        // Mettre à jour le statut de la demande
-                        await update(ref(db, `friendRequests/${requestId}`), {
-                            status: 'accepted'
-                        });
-                        
-                        // Récupérer les informations de la demande
-                        const requestRef = ref(db, `friendRequests/${requestId}`);
-                        const requestSnapshot = await get(requestRef);
-                        const requestData = requestSnapshot.val();
-                        
-                        // Récupérer les informations des deux utilisateurs
-                        const fromUserRef = ref(db, `users/${requestData.from}`);
-                        const fromUserSnapshot = await get(fromUserRef);
-                        const fromUserData = fromUserSnapshot.val();
-                        
-                        const currentUserRef = ref(db, `users/${currentUser.uid}`);
-                        const currentUserSnapshot = await get(currentUserRef);
-                        const currentUserData = currentUserSnapshot.val();
-                        
-                        // Ajouter l'ami à la liste de l'utilisateur actuel
-                        await set(ref(db, `friends/${currentUser.uid}/${requestData.from}`), {
-                            username: fromUserData.username,
-                            email: fromUserData.email,
-                            profileImage: fromUserData.profileImage || null,
-                            since: Date.now()
-                        });
-                        
-                        // Ajouter l'utilisateur actuel à la liste de l'ami
-                        await set(ref(db, `friends/${requestData.from}/${currentUser.uid}`), {
-                            username: currentUserData.username,
-                            email: currentUserData.email,
-                            profileImage: currentUserData.profileImage || null,
-                            since: Date.now()
-                        });
-                        
-                        alert(`${fromUserData.username} a été ajouté à vos amis`);
-                    } else {
-                        // Refuser la demande
-                        await update(ref(db, `friendRequests/${requestId}`), {
-                            status: 'declined'
-                        });
-                    }
-                } catch (error) {
-                    console.error("Erreur lors du traitement de la demande d'ami:", error);
-                    alert("Une erreur est survenue lors du traitement de la demande");
+            function centerActiveCard() {
+                const container = document.getElementById('mini-cards-container');
+                const track = document.getElementById('mini-cards-track');
+                const containerWidth = container.offsetWidth;
+                const cardWidth = 140 + 30; // largeur + gap
+                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
+                
+                track.style.transform = `translateX(${targetPosition}px)`;
+            }
+
+            function toggleSettings() {
+                const settingsPanel = document.getElementById('settings-panel');
+                const descriptionCard = document.getElementById('main-description-card');
+                
+                if (settingsPanel.classList.contains('show')) {
+                    settingsPanel.classList.remove('show');
+                    descriptionCard.style.display = 'block';
+                } else {
+                    descriptionCard.style.display = 'none';
+                    settingsPanel.classList.add('show');
                 }
             }
 
@@ -2409,7 +1146,7 @@
                 avatar.addEventListener('mousedown', () => {
                     pressTimer = setTimeout(() => {
                         showImageInputModal();
-                    }, 1000); // 1 seconde pour un clic long
+                    }, 1000);
                 });
 
                 avatar.addEventListener('mouseup', () => {
@@ -2443,15 +1180,10 @@
                 const img = new Image();
                 
                 img.onload = function() {
-                    // L'image existe, on peut l'utiliser
                     const profilePic = document.getElementById('profile-pic');
                     const avatarLetter = document.getElementById('avatar-letter');
                     const mainProfilePic = document.getElementById('main-profile-pic');
                     const profileInitials = document.getElementById('profile-initials');
-                    const currentProfilePic = document.getElementById('current-profile-pic');
-                    const currentProfileInitial = document.getElementById('current-profile-initial');
-                    const dropdownCurrentPic = document.getElementById('dropdown-current-pic');
-                    const dropdownCurrentInitial = document.getElementById('dropdown-current-initial');
                     
                     profilePic.src = imageUrl;
                     profilePic.style.display = 'block';
@@ -2461,29 +1193,13 @@
                     mainProfilePic.style.display = 'block';
                     profileInitials.style.display = 'none';
                     
-                    currentProfilePic.src = imageUrl;
-                    currentProfilePic.style.display = 'block';
-                    currentProfileInitial.style.display = 'none';
-                    
-                    dropdownCurrentPic.src = imageUrl;
-                    dropdownCurrentPic.style.display = 'block';
-                    dropdownCurrentInitial.style.display = 'none';
-                    
-                    // Sauvegarder dans le stockage local
                     localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
                     
-                    // Mettre à jour dans la base de données
+                    // Mettre à jour en base de données
                     const userRef = ref(db, 'users/' + currentUser.uid);
                     update(userRef, {
                         profileImage: imageUrl
                     });
-                    
-                    // Mettre à jour dans la liste des utilisateurs connectés
-                    if (currentUserStatusRef) {
-                        update(currentUserStatusRef, {
-                            profileImage: imageUrl
-                        });
-                    }
                     
                     document.getElementById('image-input-modal').classList.remove('show');
                 };
@@ -2495,197 +1211,104 @@
                 img.src = imageUrl;
             }
 
-            function initMiniCards() {
-                const miniCards = document.querySelectorAll('.mini-card');
-                const track = document.getElementById('mini-cards-track');
-                const container = document.getElementById('mini-cards-container');
-                
-                // Gestion du clic sur les mini-cards
-                miniCards.forEach((card, index) => {
-                    card.addEventListener('click', function(e) {
-                        if (isDragging) {
-                            isDragging = false;
-                            return;
-                        }
-                        
-                        if (isAnimating) return;
-                        
-                        const targetIndex = Array.from(miniCards).indexOf(this);
-                        if (targetIndex === currentCardIndex) return;
-                        
-                        // Déterminer la direction du scroll
-                        lastScrollDirection = targetIndex > currentCardIndex ? 'right' : 'left';
-                        if (Math.abs(targetIndex - currentCardIndex) > 3) {
-                            // Cas spécial pour le "loop"
-                            lastScrollDirection = targetIndex > currentCardIndex ? 'left' : 'right';
-                        }
-                        
-                        navigateToCard(targetIndex);
-                    });
+            function setupProfileConfiguration(user) {
+                const setupModal = document.getElementById('setup-modal');
+                const usernameInput = document.getElementById('username-input');
+                const profileLetter = document.getElementById('profile-letter');
+
+                setupModal.classList.add('show');
+
+                usernameInput.addEventListener('input', () => {
+                    const username = usernameInput.value.trim();
+                    profileLetter.textContent = username.length > 0 ? username.charAt(0).toUpperCase() : '?';
                 });
-                
-                // Gestion du drag and scroll
-                container.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                    startX = e.pageX - container.offsetLeft;
-                    scrollLeft = container.scrollLeft;
-                });
-                
-                container.addEventListener('mouseleave', () => {
-                    isDragging = false;
-                });
-                
-                container.addEventListener('mouseup', () => {
-                    isDragging = false;
-                });
-                
-                container.addEventListener('mousemove', (e) => {
-                    if(!isDragging) return;
-                    e.preventDefault();
-                    const x = e.pageX - container.offsetLeft;
-                    const walk = (x - startX) * 2;
-                    container.scrollLeft = scrollLeft - walk;
-                });
-                
-                // Pour les appareils tactiles
-                container.addEventListener('touchstart', (e) => {
-                    isDragging = true;
-                    startX = e.touches[0].pageX - container.offsetLeft;
-                    scrollLeft = container.scrollLeft;
-                }, { passive: false });
-                
-                container.addEventListener('touchend', () => {
-                    isDragging = false;
-                });
-                
-                container.addEventListener('touchmove', (e) => {
-                    if(!isDragging) return;
-                    e.preventDefault();
-                    const x = e.touches[0].pageX - container.offsetLeft;
-                    const walk = (x - startX) * 2;
-                    container.scrollLeft = scrollLeft - walk;
-                }, { passive: false });
-                
-                // Positionner initialement la track pour que la carte active soit au centre
-                centerActiveCard();
             }
-            
-            function navigateToCard(targetIndex) {
-                if (isAnimating) return;
-                isAnimating = true;
+
+            async function saveUserProfile(user, username) {
+                const userRef = ref(db, 'users/' + user.uid);
                 
-                const miniCards = document.querySelectorAll('.mini-card');
-                const descriptionCard = document.getElementById('main-description-card');
-                const settingsPanel = document.getElementById('settings-panel');
-                const currentCard = miniCards[currentCardIndex];
-                const targetCard = miniCards[targetIndex];
-                
-                // Animation de la mini-card actuelle qui redevient normale
-                currentCard.classList.remove('active');
-                currentCard.classList.add('main-to-card');
-                
-                // Animation de la mini-card cible qui devient principale
-                targetCard.classList.add('card-to-main');
-                
-                // Gestion du panel des paramètres
-                if (targetCard.getAttribute('data-target') === 'settings') {
-                    settingsPanel.classList.add('show');
-                } else {
-                    settingsPanel.classList.remove('show');
-                }
-                
-                // Animation de la description card (sauf pour les paramètres)
-                if (targetCard.getAttribute('data-target') !== 'settings') {
-                    updateDescriptionCard(targetCard.getAttribute('data-target'), lastScrollDirection);
-                }
-                
-                // Mettre à jour l'index courant
-                currentCardIndex = targetIndex;
-                
-                // Centrer la carte active
-                centerActiveCard();
-                
-                // Finaliser les animations
-                setTimeout(() => {
-                    targetCard.classList.add('active');
-                    targetCard.classList.remove('card-to-main');
-                    currentCard.classList.remove('main-to-card');
-                    
-                    isAnimating = false;
-                }, 300);
+                await set(userRef, {
+                    username,
+                    email: user.email,
+                    createdAt: Date.now(),
+                    canChangeUsername: false,
+                    lastSeen: Date.now(),
+                    profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null,
+                    publicProfile: false,
+                    shareGrades: true,
+                    emailNotifications: true,
+                    pushNotifications: true
+                });
+
+                currentUsername = username;
             }
-            
-            function updateDescriptionCard(target, direction) {
-                const descriptionCard = document.getElementById('main-description-card');
+
+            function setupPresenceTracking(user) {
+                const connectedRef = ref(db, '.info/connected');
+                const presenceRef = ref(db, 'connectedUsers');
+                const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
                 
-                // Animation de sortie
-                descriptionCard.classList.add(direction === 'right' ? 'slide-out-left' : 'slide-out-right');
-                
-                setTimeout(() => {
-                    // Mettre à jour le contenu
-                    let newContent = '';
-                    switch(target) {
-                        case 'workspace':
-                            newContent = `
-                                <h3>Espace de travail</h3>
-                                <p>Collaborez sur des documents en temps réel avec votre équipe. Créez, modifiez et partagez des fichiers avec vos camarades de classe et enseignants. L'espace de travail vous permet de garder tous vos documents scolaires organisés et accessibles où que vous soyez.</p>
-                                <a href="Codex.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Ouvrir l'espace</a>
-                            `;
-                            break;
-                        case 'homework':
-                            newContent = `
-                                <h3>Gestion des devoirs</h3>
-                                <p>Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires. Le système de gestion des devoirs vous aide à rester organisé et à ne rien oublier.</p>
-                                <a href="homework.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les devoirs</a>
-                            `;
-                            break;
-                        case 'calendar':
-                            newContent = `
-                                <h3>Partage de fichier</h3>
-                                <p>Planifiez vos cours, consultez vos emplois du temps et suivez vos devoirs à rendre. Ne manquez plus jamais une échéance importante. Le calendrier intégré synchronise tous vos événements scolaires et personnels.</p>
-                                <a href="files.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir le planning</a>
-                            `;
-                            break;
-                        case 'grades':
-                            newContent = `
-                                <h3>Notes et Évaluations</h3>
-                                <p>Consultez vos résultats scolaires, suivez votre progression et comparez vos performances avec les moyennes de classe. Analysez vos forces et vos faiblesses pour améliorer vos résultats.</p>
-                                <a href="404-page.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Voir les notes</a>
-                            `;
-                            break;
-                        case 'resources':
-                            newContent = `
-                                <h3>Ressources pédagogiques</h3>
-                                <p>Accédez à toutes vos ressources de cours, documents partagés par les enseignants et supports d'étude pour vos révisions. Toutes vos ressources scolaires organisées au même endroit.</p>
-                                <a href="404-page.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder aux ressources</a>
-                            `;
-                            break;
-                        default: // 'chat'
-                            newContent = `
-                                <h3>Messagerie</h3>
-                                <p>Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement avec vos camarades de classe. La communication simplifiée pour votre réussite scolaire.</p>
-                                <a href="chat.html" class="setup-btn" style="display: inline-block; margin-top: 15px; text-decoration: none;">Accéder au chat</a>
-                            `;
+                connectedRef.on('value', (snap) => {
+                    if (snap.val() === true) {
+                        const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
+                        
+                        const statusUpdate = {
+                            uid: user.uid,
+                            username: currentUsername,
+                            email: user.email,
+                            profileImage: profileImage,
+                            timestamp: Date.now(),
+                            firstLetter: currentUsername.charAt(0).toUpperCase()
+                        };
+                        
+                        set(userStatusRef, statusUpdate);
+                        onDisconnect(userStatusRef).remove();
                     }
-                    
-                    descriptionCard.innerHTML = newContent;
-                    descriptionCard.classList.remove('slide-out-left', 'slide-out-right');
-                    descriptionCard.classList.add(direction === 'right' ? 'slide-in-right' : 'slide-in-left');
-                    
-                    setTimeout(() => {
-                        descriptionCard.classList.remove('slide-in-right', 'slide-in-left');
-                    }, 300);
-                }, 300);
+                });
+                
+                onValue(presenceRef, (snapshot) => {
+                    const connectedUsers = snapshot.val() || {};
+                    let onlineCount = 0;
+
+                    Object.entries(connectedUsers).forEach(([uid, userData]) => {
+                        if (uid !== user.uid) {
+                            onlineCount++;
+                        }
+                    });
+
+                    document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
+                });
             }
+
+            async function handleLogout() {
+                try {
+                    const userStatusRef = ref(db, 'connectedUsers/' + currentUser.uid);
+                    await remove(userStatusRef);
+                    
+                    await signOut(auth);
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error("Erreur lors de la déconnexion:", error);
+                    alert("Une erreur est survenue lors de la déconnexion");
+                }
+            }
+
+            // Fonctions globales
+            window.toggleSettings = toggleSettings;
+
+            // Optimisation pour mobile
+            if (window.innerWidth <= 768) {
+                // Ajuster les animations pour mobile
+                document.documentElement.style.setProperty('--animation-duration', '0.3s');
+            }
+
+            // Gestion du redimensionnement
+            window.addEventListener('resize', () => {
+                if (!isAnimating) {
+                    centerActiveCard();
+                }
+            });
         </script>
     </div>
-
-<script>
-  window.addEventListener("load", () => {
-    const loader = document.getElementById("loader-container");
-    if (loader) loader.style.display = "none";
-  });
-</script>
-
 </body>
 </html>
