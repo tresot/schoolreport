@@ -1474,6 +1474,10 @@
                                 <img src="photos/mini_chat.webp" alt="Messagerie">
                                 <div class="card-title">Messagerie</div>
                             </div>
+                            <div class="mini-card" data-target="friends">
+                                <img src="photos/mini_friends.webp" alt="Amis">
+                                <div class="card-title">Gestion des amis</div>
+                            </div>
                             <div class="mini-card" data-target="codex">
                                 <img src="photos/mini_codex.webp" alt="Codex">
                                 <div class="card-title">Grimoire du Savoir</div>
@@ -1534,6 +1538,13 @@
                                 icon: 'fas fa-comments',
                                 link: 'chat.html',
                                 buttonText: 'Accéder au chat'
+                            },
+                            friends: {
+                                title: 'Gestion des amis',
+                                description: 'Connectez-vous avec vos camarades de classe. Envoyez et recevez des demandes d\'amis, gérez votre réseau social scolaire et communiquez facilement.',
+                                icon: 'fas fa-user-friends',
+                                link: 'friends.html',
+                                buttonText: 'Gérer mes amis'
                             },
                             codex: {
                                 title: 'Grimoire du Savoir',
@@ -1848,9 +1859,9 @@
                         if (this.isAnimating) return;
                         
                         if (e.key === 'ArrowLeft') {
-                            this.navigateToCard((this.currentCardIndex - 1 + 5) % 5);
+                            this.navigateToCard((this.currentCardIndex - 1 + 6) % 6);
                         } else if (e.key === 'ArrowRight') {
-                            this.navigateToCard((this.currentCardIndex + 1) % 5);
+                            this.navigateToCard((this.currentCardIndex + 1) % 6);
                         } else if (e.key === 'Enter') {
                             const activeCard = document.querySelector('.mini-card.active');
                             if (activeCard) {
