@@ -171,7 +171,7 @@
       height: 10px;
       border-radius: 50%;
       background-color: #2ecc71;
-      border: 2px solid black;
+      border: 2px solid white;
       transition: all 0.3s ease;
     }
 
@@ -1167,6 +1167,18 @@
       font-size: 8px;
     }
 
+    /* Friend request indicator */
+    .friend-request {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: var(--success);
+      border: 2px solid white;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar {
@@ -1267,6 +1279,12 @@
       <div id="group-chats"></div>
       
       <div class="chat-category">
+        <span>Amis</span>
+        <span class="badge badge-warning" id="friends-count">0</span>
+      </div>
+      <div id="friends-list"></div>
+      
+      <div class="chat-category">
         <span>Chat général</span>
       </div>
       <div class="chat-item" id="general-chat-item">
@@ -1317,6 +1335,14 @@
             <circle cx="9" cy="7" r="4"></circle>
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </button>
+        <button class="chat-header-btn" id="add-friend-btn" title="Ajouter un ami" style="display: none;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
           </svg>
         </button>
       </div>
@@ -1395,6 +1421,9 @@
           <div class="profile-label">Membre depuis</div>
           <div class="profile-value" id="profile-join-date">1 Jan 2023</div>
         </div>
+        <div class="profile-actions" id="profile-actions">
+          <!-- Friend request button will be added here -->
+        </div>
       </div>
     </div>
   </div>
@@ -1448,6 +1477,26 @@
     </div>
   </div>
   
+  <!-- Friend request modal -->
+  <div class="profile-modal" id="friend-request-modal">
+    <div class="profile-content">
+      <div class="profile-header">
+        <div class="profile-close" id="friend-request-close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </div>
+        <div class="profile-name">Demande d'ami</div>
+      </div>
+      <div class="profile-body">
+        <div id="friend-requests-list">
+          <!-- Friend requests will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <!-- Context menu -->
   <div class="context-menu" id="context-menu">
     <div class="context-menu-item" id="context-menu-reply">
@@ -1490,6 +1539,15 @@
         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
       </svg>
       Créer un groupe
+    </div>
+    <div class="context-menu-item" id="context-menu-add-friend">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="8.5" cy="7" r="4"></circle>
+        <line x1="20" y1="8" x2="20" y2="14"></line>
+        <line x1="23" y1="11" x2="17" y2="11"></line>
+      </svg>
+      Ajouter comme ami
     </div>
   </div>
   
@@ -1544,6 +1602,8 @@ let currentChatAvatar = '';
 let typingTimeout = null;
 let isTyping = false;
 let onlineUsers = {};
+let friends = {};
+let friendRequests = {};
 let chatMessagesLimit = 100;
 let selectedMessage = null;
 let messageListener = null;
@@ -1552,6 +1612,8 @@ let replyToMessageText = '';
 let replyToMessageSender = '';
 let groups = {};
 let groupTypingStatus = {};
+let lastMessageSeenTime = 0;
+let seenByDebounceTimer = null;
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
@@ -1588,6 +1650,7 @@ function loadUserData(userId) {
       currentUserJoinDate = formatDate(userData.createdAt || new Date().toISOString());
       
       setupPresenceTracking(userId);
+      loadFriendsAndRequests();
       loadChats();
       loadGroups();
       updateUserInterface();
@@ -1597,6 +1660,21 @@ function loadUserData(userId) {
   }).catch((error) => {
     console.error("Erreur:", error);
     window.location.href = 'center.html';
+  });
+}
+
+// Charger les amis et les demandes d'amis
+function loadFriendsAndRequests() {
+  // Écouter les amis
+  db.ref('friends/' + currentUser.uid).on('value', (snapshot) => {
+    friends = snapshot.val() || {};
+    updateFriendsList();
+  });
+  
+  // Écouter les demandes d'amis reçues
+  db.ref('friendRequests/' + currentUser.uid).on('value', (snapshot) => {
+    friendRequests = snapshot.val() || {};
+    updateFriendRequestsBadge();
   });
 }
 
@@ -1669,6 +1747,7 @@ function setupPresenceTracking(userId) {
     
     document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
     updateDirectChats();
+    updateFriendsList();
     updateChatListStatus();
   });
   
@@ -1683,6 +1762,7 @@ function setupPresenceTracking(userId) {
 function loadChats() {
   updateDirectChats();
   updateGroupChats();
+  updateFriendsList();
   
   // Écouter les nouveaux messages pour les aperçus
   firestore.collection("messages")
@@ -1711,6 +1791,30 @@ function updateDirectChats() {
   });
   
   document.getElementById('direct-count').textContent = directCount;
+}
+
+// Mise à jour des amis
+function updateFriendsList() {
+  const friendsContainer = document.getElementById('friends-list');
+  friendsContainer.innerHTML = '';
+  let friendsCount = 0;
+  
+  for (const friendId in friends) {
+    const friend = friends[friendId];
+    if (friend.status === 'accepted') {
+      friendsCount++;
+      const user = onlineUsers[friendId] || {
+        uid: friendId,
+        username: friend.username || 'Utilisateur',
+        profileImage: friend.profileImage || '',
+        status: 'offline',
+        firstLetter: (friend.username || 'U').charAt(0).toUpperCase()
+      };
+      createChatItem(user, 'friend');
+    }
+  }
+  
+  document.getElementById('friends-count').textContent = friendsCount;
 }
 
 // Mise à jour des conversations de groupe
@@ -1743,6 +1847,7 @@ function createChatItem(user, chatType) {
     <div class="chat-avatar">
       ${user.profileImage ? `<img src="${user.profileImage}">` : `<span>${avatarLetter}</span>`}
       <div class="online-status ${user.status !== 'online' ? 'offline' : 'pulse'}"></div>
+      ${friendRequests[user.uid] ? '<div class="friend-request"></div>' : ''}
     </div>
     <div class="chat-info">
       <div class="chat-name">
@@ -1754,7 +1859,7 @@ function createChatItem(user, chatType) {
   `;
   
   chatItem.addEventListener('click', () => openChat(chatType, user.uid, user.username || 'Utilisateur', user.profileImage));
-  document.getElementById(`${chatType}-chats`).appendChild(chatItem);
+  document.getElementById(`${chatType === 'friend' ? 'friends' : chatType}-chats`).appendChild(chatItem);
 }
 
 // Création d'un élément de groupe
@@ -1919,8 +2024,9 @@ function openChat(chatType, chatWith, chatName, chatAvatar) {
   setupTypingIndicator();
   markMessagesAsRead();
   
-  // Afficher/masquer le bouton d'info groupe
+  // Afficher/masquer les boutons appropriés
   document.getElementById('group-info-btn').style.display = chatType === 'group' ? 'block' : 'none';
+  document.getElementById('add-friend-btn').style.display = chatType === 'direct' && !friends[chatWith] ? 'block' : 'none';
 }
 
 function getChatId(userId1, userId2) {
@@ -1997,6 +2103,9 @@ function loadChatMessages() {
     const messages = processMessagesSnapshot(snapshot);
     displayMessages(messages);
     scrollToBottom();
+    
+    // Marquer les messages comme lus automatiquement
+    markMessagesAsSeenAutomatically(messages);
   }, (error) => {
     console.error("Erreur:", error);
     // Gestion de l'erreur d'index manquant
@@ -2004,6 +2113,38 @@ function loadChatMessages() {
       console.warn("Index Firestore manquant. Veuillez créer l'index requis.");
     }
   });
+}
+
+function markMessagesAsSeenAutomatically(messages) {
+  const now = Date.now();
+  if (now - lastMessageSeenTime < 1000) return; // Délai de 1 seconde entre les mises à jour
+  
+  lastMessageSeenTime = now;
+  
+  if (seenByDebounceTimer) {
+    clearTimeout(seenByDebounceTimer);
+  }
+  
+  seenByDebounceTimer = setTimeout(() => {
+    const unreadMessages = messages.filter(msg => 
+      msg.userId !== currentUser.uid && 
+      (!msg.seenBy || !msg.seenBy[currentUser.uid])
+    );
+    
+    if (unreadMessages.length > 0) {
+      const batch = firestore.batch();
+      unreadMessages.forEach(msg => {
+        const messageRef = firestore.collection("messages").doc(msg.id);
+        batch.update(messageRef, {
+          [`seenBy.${currentUser.uid}`]: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+      
+      batch.commit().catch(error => {
+        console.error("Erreur lors du marquage des messages comme lus:", error);
+      });
+    }
+  }, 500); // Délai de 500ms pour regrouper les mises à jour
 }
 
 function addTypingIndicator() {
@@ -2195,8 +2336,12 @@ function addSeenByIndicator(messageDiv, seenBy) {
   seenByUsers.className = 'seen-by-users';
   
   Object.keys(seenBy).forEach(userId => {
-    if (userId !== currentUser.uid && onlineUsers[userId]) {
-      const user = onlineUsers[userId];
+    if (userId !== currentUser.uid && (onlineUsers[userId] || friends[userId])) {
+      const user = onlineUsers[userId] || {
+        username: friends[userId]?.username || 'Utilisateur',
+        profileImage: friends[userId]?.profileImage || '',
+        firstLetter: (friends[userId]?.username || 'U').charAt(0).toUpperCase()
+      };
       const avatar = document.createElement('div');
       avatar.className = 'seen-by-avatar';
       
@@ -2505,7 +2650,7 @@ function clearTypingTimeout() {
 function showProfile(userId) {
   if (!userId || userId === currentUser.uid) {
     showCurrentUserProfile();
-  } else if (onlineUsers[userId]) {
+  } else if (onlineUsers[userId] || friends[userId]) {
     showOtherUserProfile(userId);
   }
   
@@ -2520,10 +2665,18 @@ function showCurrentUserProfile() {
   document.getElementById('profile-last-seen').textContent = 'Maintenant';
   
   updateProfileAvatar(currentUserAvatar, currentUsername);
+  
+  // Masquer les actions pour le profil actuel
+  document.getElementById('profile-actions').innerHTML = '';
 }
 
 function showOtherUserProfile(userId) {
-  const user = onlineUsers[userId];
+  const user = onlineUsers[userId] || {
+    username: friends[userId]?.username || 'Utilisateur',
+    profileImage: friends[userId]?.profileImage || '',
+    status: 'offline'
+  };
+  
   document.getElementById('profile-name').textContent = user.username || 'Utilisateur';
   document.getElementById('profile-status').textContent = user.status === 'online' ? 'En ligne' : 'Hors ligne';
   document.getElementById('profile-email').textContent = 'Non disponible';
@@ -2531,6 +2684,45 @@ function showOtherUserProfile(userId) {
   document.getElementById('profile-last-seen').textContent = user.status === 'online' ? 'Maintenant' : 'Dernière fois inconnue';
   
   updateProfileAvatar(user.profileImage, user.username);
+  
+  // Mettre à jour les actions du profil
+  const profileActions = document.getElementById('profile-actions');
+  profileActions.innerHTML = '';
+  
+  if (friends[userId]) {
+    if (friends[userId].status === 'accepted') {
+      // Afficher le bouton pour envoyer un message
+      const messageBtn = document.createElement('button');
+      messageBtn.className = 'group-btn group-btn-create';
+      messageBtn.textContent = 'Envoyer un message';
+      messageBtn.addEventListener('click', () => {
+        openChat('direct', userId, user.username || 'Utilisateur', user.profileImage);
+        document.getElementById('profile-modal').classList.remove('active');
+      });
+      profileActions.appendChild(messageBtn);
+    } else if (friends[userId].status === 'pending' && friends[userId].sender === userId) {
+      // Afficher les boutons pour accepter/rejeter la demande
+      const acceptBtn = document.createElement('button');
+      acceptBtn.className = 'group-btn group-btn-create';
+      acceptBtn.textContent = 'Accepter';
+      acceptBtn.addEventListener('click', () => acceptFriendRequest(userId));
+      
+      const rejectBtn = document.createElement('button');
+      rejectBtn.className = 'group-btn group-btn-cancel';
+      rejectBtn.textContent = 'Rejeter';
+      rejectBtn.addEventListener('click', () => rejectFriendRequest(userId));
+      
+      profileActions.appendChild(acceptBtn);
+      profileActions.appendChild(rejectBtn);
+    }
+  } else {
+    // Afficher le bouton pour ajouter comme ami
+    const addFriendBtn = document.createElement('button');
+    addFriendBtn.className = 'group-btn group-btn-create';
+    addFriendBtn.textContent = 'Ajouter comme ami';
+    addFriendBtn.addEventListener('click', () => sendFriendRequest(userId));
+    profileActions.appendChild(addFriendBtn);
+  }
 }
 
 function updateProfileAvatar(avatar, username) {
@@ -2545,6 +2737,149 @@ function updateProfileAvatar(avatar, username) {
     profileAvatarLetter.textContent = username ? username.charAt(0).toUpperCase() : 'U';
     profileAvatarLetter.style.display = 'block';
     profileAvatarImg.style.display = 'none';
+  }
+}
+
+// Gestion des amis
+function sendFriendRequest(friendId) {
+  if (!friendId || friends[friendId]) return;
+  
+  const updates = {};
+  updates[`friendRequests/${friendId}/${currentUser.uid}`] = {
+    sender: currentUser.uid,
+    receiver: friendId,
+    status: 'pending',
+    username: currentUsername,
+    profileImage: currentUserAvatar,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  };
+  
+  db.ref().update(updates)
+    .then(() => {
+      alert('Demande d\'ami envoyée');
+      document.getElementById('profile-modal').classList.remove('active');
+    })
+    .catch(error => {
+      console.error("Erreur:", error);
+      alert("Une erreur s'est produite lors de l'envoi de la demande d'ami");
+    });
+}
+
+function acceptFriendRequest(friendId) {
+  if (!friendId || !friendRequests[friendId]) return;
+  
+  const updates = {};
+  const timestamp = firebase.database.ServerValue.TIMESTAMP;
+  
+  // Mettre à jour la demande
+  updates[`friendRequests/${currentUser.uid}/${friendId}/status`] = 'accepted';
+  
+  // Ajouter l'ami pour les deux utilisateurs
+  updates[`friends/${currentUser.uid}/${friendId}`] = {
+    username: friendRequests[friendId].username,
+    profileImage: friendRequests[friendId].profileImage,
+    status: 'accepted',
+    timestamp: timestamp
+  };
+  
+  updates[`friends/${friendId}/${currentUser.uid}`] = {
+    username: currentUsername,
+    profileImage: currentUserAvatar,
+    status: 'accepted',
+    timestamp: timestamp
+  };
+  
+  db.ref().update(updates)
+    .then(() => {
+      alert('Demande d\'ami acceptée');
+      document.getElementById('profile-modal').classList.remove('active');
+    })
+    .catch(error => {
+      console.error("Erreur:", error);
+      alert("Une erreur s'est produite lors de l'acceptation de la demande d'ami");
+    });
+}
+
+function rejectFriendRequest(friendId) {
+  if (!friendId || !friendRequests[friendId]) return;
+  
+  db.ref(`friendRequests/${currentUser.uid}/${friendId}`).remove()
+    .then(() => {
+      alert('Demande d\'ami rejetée');
+      document.getElementById('profile-modal').classList.remove('active');
+    })
+    .catch(error => {
+      console.error("Erreur:", error);
+      alert("Une erreur s'est produite lors du rejet de la demande d'ami");
+    });
+}
+
+function showFriendRequests() {
+  const modal = document.getElementById('friend-request-modal');
+  const requestsList = document.getElementById('friend-requests-list');
+  
+  requestsList.innerHTML = '';
+  
+  for (const friendId in friendRequests) {
+    const request = friendRequests[friendId];
+    if (request.status === 'pending' && request.sender === friendId) {
+      const user = onlineUsers[friendId] || {
+        username: request.username || 'Utilisateur',
+        profileImage: request.profileImage || '',
+        status: 'offline'
+      };
+      
+      const requestItem = document.createElement('div');
+      requestItem.className = 'group-info-member';
+      requestItem.innerHTML = `
+        <div class="group-avatar">
+          ${user.profileImage 
+            ? `<img src="${user.profileImage}">` 
+            : `<span>${user.username ? user.username.charAt(0).toUpperCase() : 'U'}</span>`}
+        </div>
+        <div class="group-info-member-name">${user.username || 'Utilisateur'}</div>
+        <div class="group-info-member-status">${user.status === 'online' ? 'En ligne' : 'Hors ligne'}</div>
+      `;
+      
+      const actions = document.createElement('div');
+      actions.style.display = 'flex';
+      actions.style.gap = '5px';
+      
+      const acceptBtn = document.createElement('button');
+      acceptBtn.className = 'group-btn group-btn-create';
+      acceptBtn.textContent = 'Accepter';
+      acceptBtn.addEventListener('click', () => acceptFriendRequest(friendId));
+      
+      const rejectBtn = document.createElement('button');
+      rejectBtn.className = 'group-btn group-btn-cancel';
+      rejectBtn.textContent = 'Rejeter';
+      rejectBtn.addEventListener('click', () => rejectFriendRequest(friendId));
+      
+      actions.appendChild(acceptBtn);
+      actions.appendChild(rejectBtn);
+      requestItem.appendChild(actions);
+      requestsList.appendChild(requestItem);
+    }
+  }
+  
+  modal.classList.add('active');
+}
+
+function updateFriendRequestsBadge() {
+  let pendingCount = 0;
+  for (const friendId in friendRequests) {
+    if (friendRequests[friendId].status === 'pending' && friendRequests[friendId].sender === friendId) {
+      pendingCount++;
+    }
+  }
+  
+  const friendCountBadge = document.getElementById('friends-count');
+  if (pendingCount > 0) {
+    friendCountBadge.textContent = `${Object.keys(friends).length} (${pendingCount})`;
+    friendCountBadge.style.backgroundColor = 'var(--warning)';
+  } else {
+    friendCountBadge.textContent = Object.keys(friends).length;
+    friendCountBadge.style.backgroundColor = 'var(--success)';
   }
 }
 
@@ -2632,6 +2967,15 @@ function setupContextMenu() {
     }
     document.getElementById('context-menu').style.display = 'none';
   });
+  
+  // Gestion de l'ajout d'ami
+  document.getElementById('context-menu-add-friend').addEventListener('click', () => {
+    const userId = selectedMessage?.dataset?.userId;
+    if (userId && !friends[userId]) {
+      sendFriendRequest(userId);
+    }
+    document.getElementById('context-menu').style.display = 'none';
+  });
 }
 
 function showContextMenu(e, messageElement) {
@@ -2642,14 +2986,22 @@ function showContextMenu(e, messageElement) {
   selectedMessage = messageElement;
   setupContextMenuActions(messageElement);
   
-  // Afficher/masquer l'option "Marquer comme lu" selon le type de message
+  // Afficher/masquer les options selon le contexte
   const markAsReadItem = document.getElementById('context-menu-mark-as-read');
+  const addFriendItem = document.getElementById('context-menu-add-friend');
   const messageId = messageElement.dataset.messageId;
+  const userId = messageElement.dataset.userId;
   
   if (messageId && messageElement.classList.contains('received')) {
     markAsReadItem.style.display = 'flex';
   } else {
     markAsReadItem.style.display = 'none';
+  }
+  
+  if (userId && !friends[userId] && userId !== currentUser.uid) {
+    addFriendItem.style.display = 'flex';
+  } else {
+    addFriendItem.style.display = 'none';
   }
 }
 
@@ -2723,9 +3075,17 @@ function showGroupCreationModal() {
   // Vider la liste des membres
   membersList.innerHTML = '';
   
-  // Ajouter les utilisateurs en ligne
-  Object.values(onlineUsers).forEach(user => {
-    if (user.uid !== currentUser.uid) {
+  // Ajouter les amis comme membres potentiels
+  for (const friendId in friends) {
+    if (friends[friendId].status === 'accepted') {
+      const friend = friends[friendId];
+      const user = onlineUsers[friendId] || {
+        uid: friendId,
+        username: friend.username || 'Utilisateur',
+        profileImage: friend.profileImage || '',
+        status: 'offline'
+      };
+      
       const memberItem = document.createElement('div');
       memberItem.className = 'group-member';
       memberItem.dataset.userId = user.uid;
@@ -2734,7 +3094,7 @@ function showGroupCreationModal() {
         <div class="group-avatar">
           ${user.profileImage 
             ? `<img src="${user.profileImage}">` 
-            : `<span>${user.firstLetter || (user.username ? user.username.charAt(0).toUpperCase() : 'U')}</span>`}
+            : `<span>${user.username ? user.username.charAt(0).toUpperCase() : 'U'}</span>`}
         </div>
         <div>${user.username || 'Utilisateur'}</div>
       `;
@@ -2745,7 +3105,7 @@ function showGroupCreationModal() {
       
       membersList.appendChild(memberItem);
     }
-  });
+  }
   
   // Afficher le modal
   modal.classList.add('active');
@@ -2779,8 +3139,8 @@ function createGroup() {
     selectedMembers.forEach(member => {
       const userId = member.dataset.userId;
       updates[`groups/${existingGroupId}/members/${userId}`] = {
-        username: onlineUsers[userId].username,
-        profileImage: onlineUsers[userId].profileImage,
+        username: friends[userId]?.username || 'Utilisateur',
+        profileImage: friends[userId]?.profileImage || '',
         joinedAt: firebase.database.ServerValue.TIMESTAMP
       };
     });
@@ -2814,8 +3174,8 @@ function createGroup() {
     selectedMembers.forEach(member => {
       const userId = member.dataset.userId;
       groupData.members[userId] = {
-        username: onlineUsers[userId].username,
-        profileImage: onlineUsers[userId].profileImage,
+        username: friends[userId]?.username || 'Utilisateur',
+        profileImage: friends[userId]?.profileImage || '',
         joinedAt: firebase.database.ServerValue.TIMESTAMP
       };
     });
@@ -3029,6 +3389,18 @@ function setupEventListeners() {
   });
   
   document.getElementById('reply-close').addEventListener('click', clearReplyIndicator);
+  
+  document.getElementById('add-friend-btn').addEventListener('click', () => {
+    if (currentChatWith) {
+      sendFriendRequest(currentChatWith);
+    }
+  });
+  
+  document.getElementById('friends-count').addEventListener('click', showFriendRequests);
+  
+  document.getElementById('friend-request-close').addEventListener('click', () => {
+    document.getElementById('friend-request-modal').classList.remove('active');
+  });
   
   document.addEventListener('click', () => {
     document.getElementById('emoji-picker').style.display = 'none';
