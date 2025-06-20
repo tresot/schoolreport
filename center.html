@@ -6,6 +6,7 @@
     <title>SchoolReport - Dashboard</title>
     <style>
         :root {
+            /* Light theme */
             --primary: #4361ee;
             --primary-light: #5a75f1;
             --primary-dark: #3a56d4;
@@ -21,6 +22,37 @@
             --gray: #6c757d;
             --light-gray: #e9ecef;
             --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+
+            /* Dark theme colors */
+            --dark-bg-primary: #121212;
+            --dark-bg-secondary: #1e1e1e;
+            --dark-bg-tertiary: #2d2d2d;
+            --dark-text-primary: #ffffff;
+            --dark-text-secondary: #b3b3b3;
+            --dark-border: #404040;
+            --dark-shadow: rgba(0, 0, 0, 0.3);
+
+            /* Theme variables */
+            --bg-primary: #f5f7fa;
+            --bg-secondary: var(--light);
+            --bg-tertiary: #ffffff;
+            --text-primary: var(--dark);
+            --text-secondary: var(--gray);
+            --border-color: var(--light-gray);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --overlay-bg: rgba(245, 247, 250, 0.95);
+        }
+
+        /* Dark theme overrides */
+        [data-theme="dark"] {
+            --bg-primary: var(--dark-bg-primary);
+            --bg-secondary: var(--dark-bg-secondary);
+            --bg-tertiary: var(--dark-bg-tertiary);
+            --text-primary: var(--dark-text-primary);
+            --text-secondary: var(--dark-text-secondary);
+            --border-color: var(--dark-border);
+            --shadow-color: var(--dark-shadow);
+            --overlay-bg: rgba(18, 18, 18, 0.95);
         }
 
         * {
@@ -28,12 +60,13 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         body {
-            background-color: #f5f7fa;
+            background-color: var(--bg-primary);
             min-height: 100vh;
-            color: var(--dark);
+            color: var(--text-primary);
             overflow-x: hidden;
             background-image: url('photos/background.webp');
             background-size: cover;
@@ -41,8 +74,15 @@
             background-attachment: fixed;
         }
 
+        /* Dark mode background overlay */
+        [data-theme="dark"] body {
+            background-image: 
+                linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)),
+                url('photos/background.webp');
+        }
+
         .overlay {
-            background-color: rgba(245, 247, 250, 0.95);
+            background-color: var(--overlay-bg);
             backdrop-filter: blur(10px);
             min-height: 100vh;
         }
@@ -53,6 +93,67 @@
             padding: 2rem;
         }
 
+        /* Theme Toggle */
+        .theme-toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        [data-theme="dark"] .theme-toggle-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-icon {
+            font-size: 1rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: var(--primary-light);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .theme-switch::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        [data-theme="dark"] .theme-switch {
+            background: var(--dark-bg-tertiary);
+        }
+
+        [data-theme="dark"] .theme-switch::before {
+            transform: translateX(25px);
+            background: var(--primary);
+        }
+
         /* Header unifié */
         .header {
             background: var(--bg-gradient);
@@ -60,7 +161,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -230,21 +331,21 @@
         }
 
         .profile-card {
-            background: white;
+            background: var(--bg-tertiary);
             border-radius: 12px;
             padding: 2rem;
             width: 100%;
             max-width: 350px;
             text-align: center;
             margin-bottom: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
             transition: all 0.3s ease;
-            border: 1px solid var(--light-gray);
+            border: 1px solid var(--border-color);
         }
 
         .profile-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px var(--shadow-color);
         }
 
         .profile-image {
@@ -281,13 +382,13 @@
 
         .profile-card h2 {
             margin-bottom: 12px;
-            color: var(--dark);
+            color: var(--text-primary);
             font-size: 22px;
             font-weight: 600;
         }
 
         .profile-card p {
-            color: var(--gray);
+            color: var(--text-secondary);
             font-size: 15px;
             margin-bottom: 20px;
             line-height: 1.5;
@@ -295,15 +396,15 @@
 
         /* Description Card avec animation morphose */
         .description-card {
-            background: white;
+            background: var(--bg-tertiary);
             border-radius: 12px;
             padding: 2rem;
             width: 100%;
             max-width: 700px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--light-gray);
+            border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
         }
@@ -325,7 +426,7 @@
 
         .description-card:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 35px var(--shadow-color);
         }
 
         .description-card h3 {
@@ -339,7 +440,7 @@
         }
 
         .description-card p {
-            color: var(--gray);
+            color: var(--text-secondary);
             line-height: 1.7;
             font-size: 15px;
             margin-bottom: 25px;
@@ -391,7 +492,7 @@
             flex-shrink: 0;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 20px var(--shadow-color);
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             border: 2px solid transparent;
             transform-style: preserve-3d;
@@ -505,14 +606,14 @@
         /* Settings Panel */
         .settings-panel {
             display: none;
-            background: white;
+            background: var(--bg-tertiary);
             border-radius: 12px;
             padding: 2rem;
             width: 100%;
             max-width: 700px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--light-gray);
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
+            border: 1px solid var(--border-color);
         }
 
         .settings-panel.show {
@@ -533,7 +634,7 @@
 
         .settings-tabs {
             display: flex;
-            border-bottom: 1px solid var(--light-gray);
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 25px;
             overflow-x: auto;
             scrollbar-width: none;
@@ -546,7 +647,7 @@
         .settings-tab {
             padding: 12px 20px;
             cursor: pointer;
-            color: var(--gray);
+            color: var(--text-secondary);
             font-weight: 500;
             transition: all 0.3s;
             position: relative;
@@ -587,22 +688,41 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--bg-tertiary);
             padding: 2rem;
             border-radius: 12px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px var(--shadow-color);
             transform: scale(0.9);
             transition: transform 0.3s;
+            border: 1px solid var(--border-color);
         }
 
         .modal.show .modal-content {
             transform: scale(1);
         }
 
+        /* Form elements */
+        input, select, textarea {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .theme-toggle-container {
+                top: 10px;
+                right: 10px;
+                padding: 0.4rem 0.8rem;
+            }
+
             .container {
                 padding: 1rem;
             }
@@ -669,6 +789,13 @@
     </div>
 
     <div class="overlay">
+        <!-- Theme Toggle -->
+        <div class="theme-toggle-container">
+            <i class="theme-icon fas fa-sun" id="light-icon"></i>
+            <div class="theme-switch" id="theme-switch"></div>
+            <i class="theme-icon fas fa-moon" id="dark-icon"></i>
+        </div>
+
         <!-- Modals de configuration du profil -->
         <div id="setup-modal" class="modal">
             <div class="modal-content">
@@ -679,9 +806,9 @@
                     <img id="profile-preview-img" style="width: 100%; height: 100%; object-fit: cover; display: none;">
                 </div>
                 
-                <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 8px; margin: 10px 0; font-size: 16px;">
+                <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; margin: 10px 0; font-size: 16px; background: var(--bg-tertiary); color: var(--text-primary);">
 
-                <p id="username-info" style="color: var(--gray); font-size: 14px; text-align: center; margin: 10px 0;">
+                <p id="username-info" style="color: var(--text-secondary); font-size: 14px; text-align: center; margin: 10px 0;">
                     Ce nom ne pourra pas être changé avant 30 jours
                 </p>
 
@@ -693,8 +820,8 @@
         <div id="image-input-modal" class="modal">
             <div class="modal-content">
                 <h3>Changer la photo de profil</h3>
-                <p style="color: var(--gray); margin-bottom: 20px;">Entrez le nom de la photo (sans extension .webp)</p>
-                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off" style="width: 100%; padding: 12px; border: 2px solid var(--light-gray); border-radius: 8px; margin: 10px 0;">
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Entrez le nom de la photo (sans extension .webp)</p>
+                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; margin: 10px 0; background: var(--bg-tertiary); color: var(--text-primary);">
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button class="logout-btn" id="cancel-image-btn" style="flex: 1;">Annuler</button>
                     <button class="action-btn" id="confirm-image-btn" style="flex: 1;">Valider</button>
@@ -780,7 +907,7 @@
                             <!-- Contenu des paramètres -->
                             <div style="padding: 20px;">
                                 <h4 style="color: var(--primary); margin-bottom: 15px;">Paramètres du compte</h4>
-                                <p style="color: var(--gray);">Gérez vos informations personnelles et préférences.</p>
+                                <p style="color: var(--text-secondary);">Gérez vos informations personnelles et préférences.</p>
                             </div>
                         </div>
                     </div>
@@ -818,12 +945,136 @@
             import { getDatabase, ref, set, onValue, update, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
             import { app, auth, db } from "./firebase/firebase-config.js";
 
+            // Theme Manager
+            class ThemeManager {
+                constructor() {
+                    this.currentTheme = this.getInitialTheme();
+                    this.init();
+                }
+
+                getInitialTheme() {
+                    // 1. Check localStorage first
+                    const savedTheme = localStorage.getItem('schoolreport-theme');
+                    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+                        return savedTheme;
+                    }
+
+                    // 2. Check system preference
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        return 'dark';
+                    }
+
+                    // 3. Default to light
+                    return 'light';
+                }
+
+                init() {
+                    this.applyTheme(this.currentTheme);
+                    this.setupToggle();
+                    this.setupSystemListener();
+                }
+
+                applyTheme(theme) {
+                    document.documentElement.setAttribute('data-theme', theme);
+                    this.currentTheme = theme;
+                    localStorage.setItem('schoolreport-theme', theme);
+                    
+                    // Update icons
+                    const lightIcon = document.getElementById('light-icon');
+                    const darkIcon = document.getElementById('dark-icon');
+                    
+                    if (lightIcon && darkIcon) {
+                        if (theme === 'dark') {
+                            lightIcon.style.opacity = '0.5';
+                            darkIcon.style.opacity = '1';
+                        } else {
+                            lightIcon.style.opacity = '1';
+                            darkIcon.style.opacity = '0.5';
+                        }
+                    }
+                }
+
+                setupToggle() {
+                    const themeSwitch = document.getElementById('theme-switch');
+                    if (themeSwitch) {
+                        themeSwitch.addEventListener('click', () => {
+                            this.toggleTheme();
+                        });
+                    }
+                }
+
+                setupSystemListener() {
+                    if (window.matchMedia) {
+                        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                        mediaQuery.addEventListener('change', (e) => {
+                            // Only auto-switch if user hasn't manually set a preference
+                            const savedTheme = localStorage.getItem('schoolreport-theme');
+                            if (!savedTheme) {
+                                this.applyTheme(e.matches ? 'dark' : 'light');
+                            }
+                        });
+                    }
+                }
+
+                toggleTheme() {
+                    const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                    this.applyTheme(newTheme);
+                    
+                    // Add a nice ripple effect
+                    this.createRippleEffect();
+                }
+
+                createRippleEffect() {
+                    const toggle = document.getElementById('theme-switch');
+                    if (!toggle) return;
+
+                    const ripple = document.createElement('div');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(67, 97, 238, 0.3);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                        top: 50%;
+                        left: 50%;
+                        width: 60px;
+                        height: 60px;
+                        margin-left: -30px;
+                        margin-top: -30px;
+                    `;
+
+                    toggle.style.position = 'relative';
+                    toggle.appendChild(ripple);
+
+                    // Add keyframes for ripple animation
+                    if (!document.querySelector('#ripple-keyframes')) {
+                        const style = document.createElement('style');
+                        style.id = 'ripple-keyframes';
+                        style.textContent = `
+                            @keyframes ripple {
+                                to {
+                                    transform: scale(2);
+                                    opacity: 0;
+                                }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                }
+            }
+
             // Variables globales
             let currentUser = null;
             let currentUsername = '';
             let currentCardIndex = 2; // Commence par la messagerie
             let isAnimating = false;
             let pressTimer = null;
+            let themeManager = null;
 
             // Données des cartes
             const cardData = {
@@ -859,6 +1110,7 @@
 
             // Initialisation
             document.addEventListener('DOMContentLoaded', () => {
+                themeManager = new ThemeManager();
                 initAuthState();
                 setupEventListeners();
                 updateClock();
@@ -996,6 +1248,12 @@
                                 window.location.href = cardData[target].link;
                             }
                         }
+                    }
+
+                    // Raccourci pour le thème
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                        e.preventDefault();
+                        themeManager.toggleTheme();
                     }
                 });
 
