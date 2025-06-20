@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport - Dashboard</title>
     <style>
+        /* ===== VARIABLES ET THEMES ===== */
         :root {
-            /* Light theme */
+            /* Couleurs de base */
             --primary: #4361ee;
             --primary-light: #5a75f1;
             --primary-dark: #3a56d4;
             --secondary: #3f37c9;
             --accent: #4cc9f0;
-            --accent-light: #6fd7f3;
             --success: #4cc9f0;
             --danger: #e63946;
             --warning: #f8961e;
@@ -21,18 +21,8 @@
             --dark: #212529;
             --gray: #6c757d;
             --light-gray: #e9ecef;
-            --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
-
-            /* Dark theme colors */
-            --dark-bg-primary: #121212;
-            --dark-bg-secondary: #1e1e1e;
-            --dark-bg-tertiary: #2d2d2d;
-            --dark-text-primary: #ffffff;
-            --dark-text-secondary: #b3b3b3;
-            --dark-border: #404040;
-            --dark-shadow: rgba(0, 0, 0, 0.3);
-
-            /* Theme variables */
+            
+            /* Thème clair */
             --bg-primary: #f5f7fa;
             --bg-secondary: var(--light);
             --bg-tertiary: #ffffff;
@@ -41,9 +31,25 @@
             --border-color: var(--light-gray);
             --shadow-color: rgba(0, 0, 0, 0.1);
             --overlay-bg: rgba(245, 247, 250, 0.95);
+            --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+
+            /* Thème sombre */
+            --dark-bg-primary: #121212;
+            --dark-bg-secondary: #1e1e1e;
+            --dark-bg-tertiary: #2d2d2d;
+            --dark-text-primary: #ffffff;
+            --dark-text-secondary: #b3b3b3;
+            --dark-border: #404040;
+            --dark-shadow: rgba(0, 0, 0, 0.3);
+
+            /* Animations */
+            --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+            --transition-slow: 0.5s;
         }
 
-        /* Dark theme overrides */
         [data-theme="dark"] {
             --bg-primary: var(--dark-bg-primary);
             --bg-secondary: var(--dark-bg-secondary);
@@ -55,12 +61,12 @@
             --overlay-bg: rgba(18, 18, 18, 0.95);
         }
 
+        /* ===== BASE STYLES ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         body {
@@ -72,9 +78,9 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            transition: background-color var(--transition-normal) ease;
         }
 
-        /* Dark mode background overlay */
         [data-theme="dark"] body {
             background-image: 
                 linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)),
@@ -93,7 +99,42 @@
             padding: 2rem;
         }
 
-        /* Theme Toggle */
+        /* ===== LOADER ===== */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity var(--transition-slow) ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== THEME TOGGLE ===== */
         .theme-toggle-container {
             position: fixed;
             top: 20px;
@@ -108,6 +149,7 @@
             border-radius: 25px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 15px var(--shadow-color);
+            transition: all var(--transition-normal) ease;
         }
 
         [data-theme="dark"] .theme-toggle-container {
@@ -118,7 +160,7 @@
         .theme-icon {
             font-size: 1rem;
             color: var(--primary);
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) ease;
         }
 
         .theme-switch {
@@ -128,8 +170,9 @@
             background: var(--primary-light);
             border-radius: 25px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) ease;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            will-change: transform;
         }
 
         .theme-switch::before {
@@ -143,6 +186,7 @@
             border-radius: 50%;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            will-change: transform;
         }
 
         [data-theme="dark"] .theme-switch {
@@ -154,7 +198,7 @@
             background: var(--primary);
         }
 
-        /* Header unifié */
+        /* ===== HEADER ===== */
         .header {
             background: var(--bg-gradient);
             color: white;
@@ -165,6 +209,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all var(--transition-normal) ease;
         }
 
         .header h1 {
@@ -201,6 +246,7 @@
             font-size: 14px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             font-weight: 500;
+            transition: all var(--transition-normal) ease;
         }
 
         .user-menu {
@@ -223,13 +269,14 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all var(--transition-normal) ease;
             border: 2px solid rgba(255, 255, 255, 0.3);
+            will-change: transform;
         }
 
         .user-avatar:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
         }
 
         .user-avatar img {
@@ -253,11 +300,12 @@
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all var(--transition-normal) ease;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            will-change: transform;
         }
 
         .logout-btn:hover {
@@ -274,7 +322,7 @@
             border-radius: 50%;
             background-color: #2ecc71;
             border: 2px solid white;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) ease;
         }
 
         .user-count {
@@ -284,9 +332,10 @@
             border-radius: 18px;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all var(--transition-normal) ease;
             font-weight: 500;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            will-change: transform;
         }
 
         .user-count:hover {
@@ -294,7 +343,7 @@
             transform: scale(1.03);
         }
 
-        /* Main Content Section */
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -310,7 +359,7 @@
             margin-bottom: 30px;
             opacity: 0;
             transform: translateY(30px);
-            animation: fadeInUp 0.8s ease-out forwards;
+            animation: fadeInUp 0.8s var(--ease-smooth) forwards;
         }
 
         @keyframes fadeInUp {
@@ -330,6 +379,7 @@
             }
         }
 
+        /* ===== PROFILE CARD ===== */
         .profile-card {
             background: var(--bg-tertiary);
             border-radius: 12px;
@@ -339,13 +389,14 @@
             text-align: center;
             margin-bottom: 25px;
             box-shadow: 0 4px 6px -1px var(--shadow-color);
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) ease;
             border: 1px solid var(--border-color);
+            will-change: transform;
         }
 
         .profile-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px var(--shadow-color);
+            filter: drop-shadow(0 8px 25px var(--shadow-color));
         }
 
         .profile-image {
@@ -356,7 +407,8 @@
             overflow: hidden;
             border: 3px solid var(--primary);
             position: relative;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            filter: drop-shadow(0 4px 15px rgba(67, 97, 238, 0.3));
+            will-change: transform;
         }
 
         .profile-image img {
@@ -394,7 +446,7 @@
             line-height: 1.5;
         }
 
-        /* Description Card avec animation morphose */
+        /* ===== DESCRIPTION CARD ===== */
         .description-card {
             background: var(--bg-tertiary);
             border-radius: 12px;
@@ -403,10 +455,11 @@
             max-width: 700px;
             margin-bottom: 30px;
             box-shadow: 0 4px 6px -1px var(--shadow-color);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
+            will-change: transform;
         }
 
         .description-card::before {
@@ -426,7 +479,7 @@
 
         .description-card:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 35px var(--shadow-color);
+            filter: drop-shadow(0 12px 35px var(--shadow-color));
         }
 
         .description-card h3 {
@@ -453,21 +506,22 @@
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all var(--transition-normal) ease;
             font-weight: 600;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            filter: drop-shadow(0 4px 15px rgba(67, 97, 238, 0.3));
+            will-change: transform;
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+            filter: drop-shadow(0 8px 25px rgba(67, 97, 238, 0.4));
         }
 
-        /* Mini Cards avec animations PowerPoint */
+        /* ===== MINI CARDS ===== */
         .mini-cards-container {
             width: 100%;
             overflow: hidden;
@@ -482,6 +536,7 @@
             padding: 10px;
             width: max-content;
             transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
         }
 
         .mini-card {
@@ -492,10 +547,11 @@
             flex-shrink: 0;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 6px 20px var(--shadow-color);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: drop-shadow(0 6px 20px var(--shadow-color));
+            transition: all var(--transition-slow) cubic-bezier(0.25, 0.46, 0.45, 0.94);
             border: 2px solid transparent;
             transform-style: preserve-3d;
+            will-change: transform, filter;
         }
 
         .mini-card::before {
@@ -507,7 +563,7 @@
             bottom: 0;
             background: linear-gradient(45deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity var(--transition-normal) ease;
             border-radius: 14px;
         }
 
@@ -517,7 +573,7 @@
 
         .mini-card:hover {
             transform: translateY(-8px) scale(1.05) rotateX(5deg);
-            box-shadow: 0 15px 40px rgba(67, 97, 238, 0.2);
+            filter: drop-shadow(0 15px 40px rgba(67, 97, 238, 0.2));
             border-color: var(--primary);
         }
 
@@ -525,7 +581,8 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s ease;
+            transition: transform var(--transition-normal) ease;
+            will-change: transform;
         }
 
         .mini-card:hover img {
@@ -534,7 +591,7 @@
 
         .mini-card.active {
             border: 2px solid var(--primary);
-            box-shadow: 0 8px 30px rgba(67, 97, 238, 0.4);
+            filter: drop-shadow(0 8px 30px rgba(67, 97, 238, 0.4));
             transform: scale(1.08);
         }
 
@@ -554,8 +611,9 @@
             font-size: 13px;
             font-weight: 500;
             transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform var(--transition-slow) cubic-bezier(0.25, 0.46, 0.45, 0.94);
             opacity: 0;
+            will-change: transform;
         }
 
         .mini-card:hover .card-title {
@@ -563,34 +621,10 @@
             opacity: 1;
         }
 
-        .active-indicator {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: var(--danger);
-            color: white;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: bold;
-            z-index: 2;
-            box-shadow: 0 3px 10px rgba(230, 57, 70, 0.4);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* Animations de transition morphose */
+        /* ===== TRANSITIONS ===== */
         .content-transition {
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all var(--transition-slow) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform, opacity;
         }
 
         .fade-out {
@@ -603,7 +637,7 @@
             transform: translateX(0) scale(1);
         }
 
-        /* Settings Panel */
+        /* ===== SETTINGS PANEL ===== */
         .settings-panel {
             display: none;
             background: var(--bg-tertiary);
@@ -614,11 +648,12 @@
             margin-bottom: 30px;
             box-shadow: 0 4px 6px -1px var(--shadow-color);
             border: 1px solid var(--border-color);
+            will-change: transform;
         }
 
         .settings-panel.show {
             display: block;
-            animation: slideInUp 0.5s ease-out;
+            animation: slideInUp 0.5s var(--ease-smooth);
         }
 
         @keyframes slideInUp {
@@ -649,10 +684,11 @@
             cursor: pointer;
             color: var(--text-secondary);
             font-weight: 500;
-            transition: all 0.3s;
+            transition: all var(--transition-fast) ease;
             position: relative;
             white-space: nowrap;
             border-radius: 8px 8px 0 0;
+            will-change: transform;
         }
 
         .settings-tab.active {
@@ -665,7 +701,7 @@
             background: rgba(67, 97, 238, 0.05);
         }
 
-        /* Modals */
+        /* ===== MODALS ===== */
         .modal {
             position: fixed;
             top: 0;
@@ -678,7 +714,7 @@
             align-items: center;
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity var(--transition-normal);
             backdrop-filter: blur(5px);
         }
 
@@ -693,29 +729,65 @@
             border-radius: 12px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 30px var(--shadow-color);
+            filter: drop-shadow(0 10px 30px var(--shadow-color));
             transform: scale(0.9);
-            transition: transform 0.3s;
+            transition: transform var(--transition-normal);
             border: 1px solid var(--border-color);
+            will-change: transform;
         }
 
         .modal.show .modal-content {
             transform: scale(1);
         }
 
-        /* Form elements */
+        .profile-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
         input, select, textarea {
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 2px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 16px;
+            transition: all var(--transition-fast) ease;
         }
 
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             outline: none;
+            filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.2));
         }
 
-        /* Responsive */
+        #username-info {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .theme-toggle-container {
                 top: 10px;
@@ -733,6 +805,17 @@
                 text-align: center;
             }
 
+            .header-actions {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: center;
+            }
+
             .profile-section {
                 flex-direction: column;
             }
@@ -745,40 +828,20 @@
             .mini-cards-track {
                 gap: 20px;
             }
+
+            .description-card, .profile-card {
+                padding: 1.5rem;
+            }
         }
 
-        /* Loading Animation */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-gradient);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* ===== PERFORMANCE OPTIMIZATIONS ===== */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
@@ -796,32 +859,32 @@
             <i class="theme-icon fas fa-moon" id="dark-icon"></i>
         </div>
 
-        <!-- Modals de configuration du profil -->
+        <!-- Profile Setup Modal -->
         <div id="setup-modal" class="modal">
             <div class="modal-content">
                 <h2>Configuration du profil</h2>
                 
-                <div class="profile-preview" id="profile-preview" style="width: 100px; height: 100px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; margin: 20px auto; font-size: 36px; font-weight: bold;">
+                <div class="profile-preview" id="profile-preview">
                     <span id="profile-letter">?</span>
-                    <img id="profile-preview-img" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    <img id="profile-preview-img">
                 </div>
                 
-                <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; margin: 10px 0; font-size: 16px; background: var(--bg-tertiary); color: var(--text-primary);">
+                <input type="text" id="username-input" placeholder="Votre nom d'utilisateur" maxlength="20" required>
 
-                <p id="username-info" style="color: var(--text-secondary); font-size: 14px; text-align: center; margin: 10px 0;">
+                <p id="username-info">
                     Ce nom ne pourra pas être changé avant 30 jours
                 </p>
 
-                <button class="action-btn" id="save-profile-btn" style="width: 100%; margin-top: 15px;">Enregistrer</button>
+                <button class="action-btn" id="save-profile-btn">Enregistrer</button>
             </div>
         </div>
 
-        <!-- Modal pour saisir le nom de l'image -->
+        <!-- Image Input Modal -->
         <div id="image-input-modal" class="modal">
             <div class="modal-content">
                 <h3>Changer la photo de profil</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">Entrez le nom de la photo (sans extension .webp)</p>
-                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; margin: 10px 0; background: var(--bg-tertiary); color: var(--text-primary);">
+                <input type="text" id="image-name-input" placeholder="nomdelaphoto" autocomplete="off">
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button class="logout-btn" id="cancel-image-btn" style="flex: 1;">Annuler</button>
                     <button class="action-btn" id="confirm-image-btn" style="flex: 1;">Valider</button>
@@ -829,7 +892,7 @@
             </div>
         </div>
 
-        <!-- Interface principale -->
+        <!-- Main Interface -->
         <div id="main-interface" style="display: none;">
             <div class="container">
                 <header class="header">
@@ -886,7 +949,7 @@
                         </div>
                     </div>
 
-                    <!-- Panel des paramètres -->
+                    <!-- Settings Panel -->
                     <div class="settings-panel" id="settings-panel">
                         <div class="settings-tabs">
                             <div class="settings-tab active" data-tab="account">
@@ -904,7 +967,6 @@
                         </div>
 
                         <div id="settings-content">
-                            <!-- Contenu des paramètres -->
                             <div style="padding: 20px;">
                                 <h4 style="color: var(--primary); margin-bottom: 15px;">Paramètres du compte</h4>
                                 <p style="color: var(--text-secondary);">Gérez vos informations personnelles et préférences.</p>
@@ -941,11 +1003,68 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
         
         <script type="module">
+            // 🔥 CONFIGURATION FIREBASE
             import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
             import { getDatabase, ref, set, onValue, update, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
             import { app, auth, db } from "./firebase/firebase-config.js";
 
-            // Theme Manager
+            // ===== GESTIONNAIRE D'ÉTAT GLOBAL =====
+            class StateManager {
+                constructor() {
+                    this.state = {
+                        user: null,
+                        theme: 'light',
+                        activeCard: 'chat',
+                        onlineUsers: [],
+                        cardData: {
+                            homework: {
+                                title: 'Gestion des devoirs',
+                                description: 'Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires.',
+                                icon: 'fas fa-tasks',
+                                link: 'homework.html',
+                                buttonText: 'Voir les devoirs'
+                            },
+                            files: {
+                                title: 'Gestionnaire de fichiers',
+                                description: 'Gérez vos documents et ressources éducatives. Uploadez, organisez et partagez vos fichiers en toute sécurité avec vos camarades.',
+                                icon: 'fas fa-folder-open',
+                                link: 'files.html',
+                                buttonText: 'Gérer les fichiers'
+                            },
+                            chat: {
+                                title: 'Messagerie',
+                                description: 'Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement.',
+                                icon: 'fas fa-comments',
+                                link: 'chat.html',
+                                buttonText: 'Accéder au chat'
+                            },
+                            settings: {
+                                title: 'Paramètres',
+                                description: 'Personnalisez votre expérience, gérez votre profil et configurez vos préférences de confidentialité et de notifications.',
+                                icon: 'fas fa-cog',
+                                link: '#',
+                                buttonText: 'Configurer'
+                            }
+                        }
+                    };
+                    this.subscribers = [];
+                }
+
+                subscribe(callback) {
+                    this.subscribers.push(callback);
+                }
+
+                setState(newState) {
+                    this.state = {...this.state, ...newState};
+                    this.notifySubscribers();
+                }
+
+                notifySubscribers() {
+                    this.subscribers.forEach(cb => cb(this.state));
+                }
+            }
+
+            // ===== GESTIONNAIRE DE THÈME =====
             class ThemeManager {
                 constructor() {
                     this.currentTheme = this.getInitialTheme();
@@ -953,18 +1072,15 @@
                 }
 
                 getInitialTheme() {
-                    // 1. Check localStorage first
                     const savedTheme = localStorage.getItem('schoolreport-theme');
                     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
                         return savedTheme;
                     }
 
-                    // 2. Check system preference
                     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                         return 'dark';
                     }
 
-                    // 3. Default to light
                     return 'light';
                 }
 
@@ -979,27 +1095,23 @@
                     this.currentTheme = theme;
                     localStorage.setItem('schoolreport-theme', theme);
                     
-                    // Update icons
+                    this.updateThemeIcons();
+                }
+
+                updateThemeIcons() {
                     const lightIcon = document.getElementById('light-icon');
                     const darkIcon = document.getElementById('dark-icon');
                     
                     if (lightIcon && darkIcon) {
-                        if (theme === 'dark') {
-                            lightIcon.style.opacity = '0.5';
-                            darkIcon.style.opacity = '1';
-                        } else {
-                            lightIcon.style.opacity = '1';
-                            darkIcon.style.opacity = '0.5';
-                        }
+                        lightIcon.style.opacity = this.currentTheme === 'dark' ? '0.5' : '1';
+                        darkIcon.style.opacity = this.currentTheme === 'dark' ? '1' : '0.5';
                     }
                 }
 
                 setupToggle() {
                     const themeSwitch = document.getElementById('theme-switch');
                     if (themeSwitch) {
-                        themeSwitch.addEventListener('click', () => {
-                            this.toggleTheme();
-                        });
+                        themeSwitch.addEventListener('click', () => this.toggleTheme());
                     }
                 }
 
@@ -1007,7 +1119,6 @@
                     if (window.matchMedia) {
                         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
                         mediaQuery.addEventListener('change', (e) => {
-                            // Only auto-switch if user hasn't manually set a preference
                             const savedTheme = localStorage.getItem('schoolreport-theme');
                             if (!savedTheme) {
                                 this.applyTheme(e.matches ? 'dark' : 'light');
@@ -1017,10 +1128,7 @@
                 }
 
                 toggleTheme() {
-                    const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
-                    this.applyTheme(newTheme);
-                    
-                    // Add a nice ripple effect
+                    this.applyTheme(this.currentTheme === 'light' ? 'dark' : 'light');
                     this.createRippleEffect();
                 }
 
@@ -1068,376 +1176,82 @@
                 }
             }
 
-            // Variables globales
-            let currentUser = null;
-            let currentUsername = '';
-            let currentCardIndex = 2; // Commence par la messagerie
-            let isAnimating = false;
-            let pressTimer = null;
-            let themeManager = null;
-
-            // Données des cartes
-            const cardData = {
-                homework: {
-                    title: 'Gestion des devoirs',
-                    description: 'Organisez vos devoirs et projets avec des échéances claires. Recevez des rappels et suivez votre progression dans vos travaux scolaires.',
-                    icon: 'fas fa-tasks',
-                    link: 'homework.html',
-                    buttonText: 'Voir les devoirs'
-                },
-                files: {
-                    title: 'Gestionnaire de fichiers',
-                    description: 'Gérez vos documents et ressources éducatives. Uploadez, organisez et partagez vos fichiers en toute sécurité avec vos camarades.',
-                    icon: 'fas fa-folder-open',
-                    link: 'files.html',
-                    buttonText: 'Gérer les fichiers'
-                },
-                chat: {
-                    title: 'Messagerie',
-                    description: 'Discutez en temps réel avec vos amis et vos groupes de travail. Envoyez des messages, partagez des fichiers et collaborez facilement.',
-                    icon: 'fas fa-comments',
-                    link: 'chat.html',
-                    buttonText: 'Accéder au chat'
-                },
-                settings: {
-                    title: 'Paramètres',
-                    description: 'Personnalisez votre expérience, gérez votre profil et configurez vos préférences de confidentialité et de notifications.',
-                    icon: 'fas fa-cog',
-                    link: '#',
-                    buttonText: 'Configurer'
+            // ===== GESTIONNAIRE D'AUTHENTIFICATION =====
+            class AuthManager {
+                constructor(stateManager) {
+                    this.stateManager = stateManager;
+                    this.currentUser = null;
+                    this.currentUsername = '';
+                    this.currentCardIndex = 2; // Commence par la messagerie
+                    this.isAnimating = false;
+                    this.pressTimer = null;
                 }
-            };
 
-            // Initialisation
-            document.addEventListener('DOMContentLoaded', () => {
-                themeManager = new ThemeManager();
-                initAuthState();
-                setupEventListeners();
-                updateClock();
-                setInterval(updateClock, 1000);
-                centerActiveCard();
-                
-                // Masquer le loader après l'initialisation
-                setTimeout(() => {
-                    document.getElementById('loader').classList.add('hidden');
-                }, 1000);
-            });
-
-            function updateClock() {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString();
-                document.getElementById('current-time').textContent = timeStr;
-            }
-
-            function initAuthState() {
-                onAuthStateChanged(auth, (user) => {
-                    if (!user) {
-                        window.location.href = 'index.html';
-                    } else {
-                        currentUser = user;
-                        checkUserProfile(user);
-                    }
-                });
-            }
-
-            function checkUserProfile(user) {
-                const userRef = ref(db, 'users/' + user.uid);
-                
-                onValue(userRef, (snapshot) => {
-                    const userData = snapshot.val();
-                    
-                    if (userData && userData.username) {
-                        currentUsername = userData.username;
-                        setupMainInterface(user, userData);
-                        updateUsernameChangeTime(userData);
-                    } else {
-                        setupProfileConfiguration(user);
-                    }
-                });
-            }
-
-            function setupMainInterface(user, userData) {
-                document.getElementById('main-interface').style.display = 'block';
-                updateUserInfo(userData);
-                setupPresenceTracking(user);
-                setupEventListeners();
-            }
-
-            function updateUserInfo(userData) {
-                document.getElementById('user-name').textContent = userData.username;
-                document.getElementById('profile-username').textContent = userData.username;
-                
-                const avatarLetter = document.getElementById('avatar-letter');
-                const profilePic = document.getElementById('profile-pic');
-                const mainProfilePic = document.getElementById('main-profile-pic');
-                const profileInitials = document.getElementById('profile-initials');
-                
-                const firstLetter = userData.username.charAt(0).toUpperCase();
-                avatarLetter.textContent = firstLetter;
-                profileInitials.textContent = firstLetter;
-                
-                if (userData.createdAt) {
-                    const joinDate = new Date(userData.createdAt);
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    document.getElementById('member-since').textContent = joinDate.toLocaleDateString('fr-FR', options);
-                }
-                
-                // Gérer l'image de profil
-                if (userData.profileImage) {
-                    profilePic.src = userData.profileImage;
-                    profilePic.style.display = 'block';
-                    avatarLetter.style.display = 'none';
-                    
-                    mainProfilePic.src = userData.profileImage;
-                    mainProfilePic.style.display = 'block';
-                    profileInitials.style.display = 'none';
-                } else {
-                    const savedImage = localStorage.getItem(`profileImage_${currentUser.uid}`);
-                    if (savedImage) {
-                        profilePic.src = savedImage;
-                        profilePic.style.display = 'block';
-                        avatarLetter.style.display = 'none';
-                        
-                        mainProfilePic.src = savedImage;
-                        mainProfilePic.style.display = 'block';
-                        profileInitials.style.display = 'none';
-                    }
-                }
-            }
-
-            function setupEventListeners() {
-                // Navigation des mini-cards
-                const miniCards = document.querySelectorAll('.mini-card');
-                miniCards.forEach((card, index) => {
-                    card.addEventListener('click', function(e) {
-                        if (isAnimating) return;
-                        
-                        const targetIndex = Array.from(miniCards).indexOf(this);
-                        if (targetIndex === currentCardIndex) {
-                            // Double clic pour naviguer
-                            const target = this.getAttribute('data-target');
-                            if (target && cardData[target] && cardData[target].link !== '#') {
-                                window.location.href = cardData[target].link;
-                            }
-                            return;
+                async initAuthState() {
+                    onAuthStateChanged(auth, (user) => {
+                        if (!user) {
+                            window.location.href = 'index.html';
+                        } else {
+                            this.currentUser = user;
+                            this.checkUserProfile(user);
                         }
-                        
-                        navigateToCard(targetIndex);
                     });
-                });
+                }
 
-                // Gestion du clic long sur l'avatar
-                setupLongPressAvatar();
-
-                // Déconnexion
-                document.getElementById('logout-btn').addEventListener('click', handleLogout);
-
-                // Navigation clavier
-                document.addEventListener('keydown', (e) => {
-                    if (isAnimating) return;
+                checkUserProfile(user) {
+                    const userRef = ref(db, 'users/' + user.uid);
                     
-                    if (e.key === 'ArrowLeft') {
-                        navigateToCard((currentCardIndex - 1 + 4) % 4);
-                    } else if (e.key === 'ArrowRight') {
-                        navigateToCard((currentCardIndex + 1) % 4);
-                    } else if (e.key === 'Enter') {
-                        const activeCard = document.querySelector('.mini-card.active');
-                        if (activeCard) {
-                            const target = activeCard.getAttribute('data-target');
-                            if (target && cardData[target] && cardData[target].link !== '#') {
-                                window.location.href = cardData[target].link;
-                            }
+                    onValue(userRef, (snapshot) => {
+                        const userData = snapshot.val();
+                        
+                        if (userData && userData.username) {
+                            this.currentUsername = userData.username;
+                            this.setupMainInterface(user, userData);
+                        } else {
+                            this.setupProfileConfiguration(user);
+                        }
+                    });
+                }
+
+                setupMainInterface(user, userData) {
+                    document.getElementById('main-interface').style.display = 'block';
+                    this.updateUserInfo(userData);
+                    this.setupPresenceTracking(user);
+                    this.setupEventListeners();
+                    this.setupClock();
+                    this.centerActiveCard();
+                }
+
+                updateUserInfo(userData) {
+                    document.getElementById('user-name').textContent = userData.username;
+                    document.getElementById('profile-username').textContent = userData.username;
+                    
+                    const avatarLetter = document.getElementById('avatar-letter');
+                    const profilePic = document.getElementById('profile-pic');
+                    const mainProfilePic = document.getElementById('main-profile-pic');
+                    const profileInitials = document.getElementById('profile-initials');
+                    
+                    const firstLetter = userData.username.charAt(0).toUpperCase();
+                    avatarLetter.textContent = firstLetter;
+                    profileInitials.textContent = firstLetter;
+                    
+                    if (userData.createdAt) {
+                        const joinDate = new Date(userData.createdAt);
+                        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                        document.getElementById('member-since').textContent = joinDate.toLocaleDateString('fr-FR', options);
+                    }
+                    
+                    if (userData.profileImage) {
+                        this.updateProfileImage(userData.profileImage);
+                    } else {
+                        const savedImage = localStorage.getItem(`profileImage_${this.currentUser.uid}`);
+                        if (savedImage) {
+                            this.updateProfileImage(savedImage);
                         }
                     }
-
-                    // Raccourci pour le thème
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                        e.preventDefault();
-                        themeManager.toggleTheme();
-                    }
-                });
-
-                // Gestion des modals
-                document.getElementById('cancel-image-btn').addEventListener('click', () => {
-                    document.getElementById('image-input-modal').classList.remove('show');
-                });
-
-                document.getElementById('confirm-image-btn').addEventListener('click', () => {
-                    const imageName = document.getElementById('image-name-input').value.trim();
-                    if (!imageName) return;
-                    
-                    handleImageImport(`photos/${imageName}.webp`);
-                });
-
-                document.getElementById('save-profile-btn').addEventListener('click', async () => {
-                    const username = document.getElementById('username-input').value.trim();
-                    
-                    if (username.length < 3 || username.length > 20) {
-                        alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
-                        return;
-                    }
-
-                    try {
-                        await saveUserProfile(currentUser, username);
-                        document.getElementById('setup-modal').classList.remove('show');
-                        location.reload();
-                    } catch (error) {
-                        console.error("Erreur lors de l'enregistrement:", error);
-                        alert("Une erreur est survenue lors de l'enregistrement");
-                    }
-                });
-
-                // Gestion des onglets paramètres
-                document.querySelectorAll('.settings-tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelector('.settings-tab.active').classList.remove('active');
-                        tab.classList.add('active');
-                    });
-                });
-            }
-
-            function navigateToCard(targetIndex) {
-                if (isAnimating || targetIndex === currentCardIndex) return;
-                
-                isAnimating = true;
-                
-                const miniCards = document.querySelectorAll('.mini-card');
-                const descriptionCard = document.getElementById('main-description-card');
-                const settingsPanel = document.getElementById('settings-panel');
-                const currentCard = miniCards[currentCardIndex];
-                const targetCard = miniCards[targetIndex];
-                
-                // Animation de sortie de la carte actuelle
-                currentCard.classList.remove('active');
-                currentCard.style.transform = 'scale(1)';
-                
-                // Animation morphose du contenu
-                const targetData = cardData[targetCard.getAttribute('data-target')];
-                
-                if (targetCard.getAttribute('data-target') === 'settings') {
-                    // Afficher le panel des paramètres avec animation
-                    descriptionCard.classList.add('fade-out');
-                    
-                    setTimeout(() => {
-                        descriptionCard.style.display = 'none';
-                        settingsPanel.classList.add('show');
-                    }, 300);
-                } else {
-                    // Masquer le panel des paramètres et afficher la description
-                    if (settingsPanel.classList.contains('show')) {
-                        settingsPanel.classList.remove('show');
-                    }
-                    
-                    descriptionCard.style.display = 'block';
-                    descriptionCard.classList.add('fade-out');
-                    
-                    setTimeout(() => {
-                        // Mettre à jour le contenu
-                        descriptionCard.innerHTML = `
-                            <h3>
-                                <i class="${targetData.icon}"></i>
-                                ${targetData.title}
-                            </h3>
-                            <p>${targetData.description}</p>
-                            ${targetData.link !== '#' ? 
-                                `<a href="${targetData.link}" class="action-btn">
-                                    <i class="${targetData.icon}"></i>
-                                    ${targetData.buttonText}
-                                </a>` : 
-                                `<button class="action-btn" onclick="toggleSettings()">
-                                    <i class="${targetData.icon}"></i>
-                                    ${targetData.buttonText}
-                                </button>`
-                            }
-                        `;
-                        
-                        descriptionCard.classList.remove('fade-out');
-                        descriptionCard.classList.add('fade-in');
-                        
-                        setTimeout(() => {
-                            descriptionCard.classList.remove('fade-in');
-                        }, 600);
-                    }, 300);
                 }
-                
-                // Animation de la nouvelle carte active
-                targetCard.classList.add('active');
-                
-                // Mettre à jour l'index courant
-                currentCardIndex = targetIndex;
-                
-                // Centrer la carte active
-                centerActiveCard();
-                
-                // Terminer l'animation
-                setTimeout(() => {
-                    isAnimating = false;
-                }, 600);
-            }
 
-            function centerActiveCard() {
-                const container = document.getElementById('mini-cards-container');
-                const track = document.getElementById('mini-cards-track');
-                const containerWidth = container.offsetWidth;
-                const cardWidth = 140 + 30; // largeur + gap
-                const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (currentCardIndex * cardWidth);
-                
-                track.style.transform = `translateX(${targetPosition}px)`;
-            }
-
-            function toggleSettings() {
-                const settingsPanel = document.getElementById('settings-panel');
-                const descriptionCard = document.getElementById('main-description-card');
-                
-                if (settingsPanel.classList.contains('show')) {
-                    settingsPanel.classList.remove('show');
-                    descriptionCard.style.display = 'block';
-                } else {
-                    descriptionCard.style.display = 'none';
-                    settingsPanel.classList.add('show');
-                }
-            }
-
-            function setupLongPressAvatar() {
-                const avatar = document.getElementById('user-avatar');
-
-                avatar.addEventListener('mousedown', () => {
-                    pressTimer = setTimeout(() => {
-                        showImageInputModal();
-                    }, 1000);
-                });
-
-                avatar.addEventListener('mouseup', () => {
-                    clearTimeout(pressTimer);
-                });
-
-                avatar.addEventListener('mouseleave', () => {
-                    clearTimeout(pressTimer);
-                });
-
-                // Pour les appareils tactiles
-                avatar.addEventListener('touchstart', () => {
-                    pressTimer = setTimeout(() => {
-                        showImageInputModal();
-                    }, 1000);
-                });
-
-                avatar.addEventListener('touchend', () => {
-                    clearTimeout(pressTimer);
-                });
-            }
-
-            function showImageInputModal() {
-                const modal = document.getElementById('image-input-modal');
-                modal.classList.add('show');
-                document.getElementById('image-name-input').value = '';
-                document.getElementById('image-name-input').focus();
-            }
-
-            function handleImageImport(imageUrl) {
-                const img = new Image();
-                
-                img.onload = function() {
+                updateProfileImage(imageUrl) {
                     const profilePic = document.getElementById('profile-pic');
                     const avatarLetter = document.getElementById('avatar-letter');
                     const mainProfilePic = document.getElementById('main-profile-pic');
@@ -1450,122 +1264,378 @@
                     mainProfilePic.src = imageUrl;
                     mainProfilePic.style.display = 'block';
                     profileInitials.style.display = 'none';
-                    
-                    localStorage.setItem(`profileImage_${currentUser.uid}`, imageUrl);
-                    
-                    // Mettre à jour en base de données
-                    const userRef = ref(db, 'users/' + currentUser.uid);
-                    update(userRef, {
-                        profileImage: imageUrl
+                }
+
+                setupEventListeners() {
+                    // Navigation des mini-cards
+                    const miniCards = document.querySelectorAll('.mini-card');
+                    miniCards.forEach((card, index) => {
+                        card.addEventListener('click', (e) => {
+                            if (this.isAnimating) return;
+                            
+                            const targetIndex = Array.from(miniCards).indexOf(card);
+                            if (targetIndex === this.currentCardIndex) {
+                                const target = card.getAttribute('data-target');
+                                if (target && this.stateManager.state.cardData[target] && 
+                                    this.stateManager.state.cardData[target].link !== '#') {
+                                    window.location.href = this.stateManager.state.cardData[target].link;
+                                }
+                                return;
+                            }
+                            
+                            this.navigateToCard(targetIndex);
+                        });
                     });
-                    
-                    document.getElementById('image-input-modal').classList.remove('show');
-                };
-                
-                img.onerror = function() {
-                    alert("Image non trouvée. Vérifiez le nom et assurez-vous qu'elle est au format .webp dans le dossier photos/");
-                };
-                
-                img.src = imageUrl;
-            }
 
-            function setupProfileConfiguration(user) {
-                const setupModal = document.getElementById('setup-modal');
-                const usernameInput = document.getElementById('username-input');
-                const profileLetter = document.getElementById('profile-letter');
+                    // Gestion du clic long sur l'avatar
+                    this.setupLongPressAvatar();
 
-                setupModal.classList.add('show');
+                    // Déconnexion
+                    document.getElementById('logout-btn').addEventListener('click', () => this.handleLogout());
 
-                usernameInput.addEventListener('input', () => {
-                    const username = usernameInput.value.trim();
-                    profileLetter.textContent = username.length > 0 ? username.charAt(0).toUpperCase() : '?';
-                });
-            }
-
-            async function saveUserProfile(user, username) {
-                const userRef = ref(db, 'users/' + user.uid);
-                
-                await set(userRef, {
-                    username,
-                    email: user.email,
-                    createdAt: Date.now(),
-                    canChangeUsername: false,
-                    lastSeen: Date.now(),
-                    profileImage: localStorage.getItem(`profileImage_${user.uid}`) || null,
-                    publicProfile: false,
-                    shareGrades: true,
-                    emailNotifications: true,
-                    pushNotifications: true
-                });
-
-                currentUsername = username;
-            }
-
-            function setupPresenceTracking(user) {
-                const connectedRef = ref(db, '.info/connected');
-                const presenceRef = ref(db, 'connectedUsers');
-                const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
-                
-                connectedRef.on('value', (snap) => {
-                    if (snap.val() === true) {
-                        const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
+                    // Navigation clavier
+                    document.addEventListener('keydown', (e) => {
+                        if (this.isAnimating) return;
                         
-                        const statusUpdate = {
-                            uid: user.uid,
-                            username: currentUsername,
-                            email: user.email,
-                            profileImage: profileImage,
-                            timestamp: Date.now(),
-                            firstLetter: currentUsername.charAt(0).toUpperCase()
-                        };
-                        
-                        set(userStatusRef, statusUpdate);
-                        onDisconnect(userStatusRef).remove();
-                    }
-                });
-                
-                onValue(presenceRef, (snapshot) => {
-                    const connectedUsers = snapshot.val() || {};
-                    let onlineCount = 0;
+                        if (e.key === 'ArrowLeft') {
+                            this.navigateToCard((this.currentCardIndex - 1 + 4) % 4);
+                        } else if (e.key === 'ArrowRight') {
+                            this.navigateToCard((this.currentCardIndex + 1) % 4);
+                        } else if (e.key === 'Enter') {
+                            const activeCard = document.querySelector('.mini-card.active');
+                            if (activeCard) {
+                                const target = activeCard.getAttribute('data-target');
+                                if (target && this.stateManager.state.cardData[target] && 
+                                    this.stateManager.state.cardData[target].link !== '#') {
+                                    window.location.href = this.stateManager.state.cardData[target].link;
+                                }
+                            }
+                        }
 
-                    Object.entries(connectedUsers).forEach(([uid, userData]) => {
-                        if (uid !== user.uid) {
-                            onlineCount++;
+                        // Raccourci pour le thème Ctrl+D
+                        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                            e.preventDefault();
+                            window.themeManager.toggleTheme();
                         }
                     });
 
-                    document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
-                });
-            }
+                    // Gestion des modals
+                    document.getElementById('cancel-image-btn').addEventListener('click', () => {
+                        document.getElementById('image-input-modal').classList.remove('show');
+                    });
 
-            async function handleLogout() {
-                try {
-                    const userStatusRef = ref(db, 'connectedUsers/' + currentUser.uid);
-                    await remove(userStatusRef);
+                    document.getElementById('confirm-image-btn').addEventListener('click', () => {
+                        const imageName = document.getElementById('image-name-input').value.trim();
+                        if (!imageName) return;
+                        
+                        this.handleImageImport(`photos/${imageName}.webp`);
+                    });
+
+                    document.getElementById('save-profile-btn').addEventListener('click', async () => {
+                        const username = document.getElementById('username-input').value.trim();
+                        
+                        if (username.length < 3 || username.length > 20) {
+                            alert("Le nom d'utilisateur doit contenir entre 3 et 20 caractères");
+                            return;
+                        }
+
+                        try {
+                            await this.saveUserProfile(username);
+                            document.getElementById('setup-modal').classList.remove('show');
+                            location.reload();
+                        } catch (error) {
+                            console.error("Erreur lors de l'enregistrement:", error);
+                            alert("Une erreur est survenue lors de l'enregistrement");
+                        }
+                    });
+
+                    // Gestion des onglets paramètres
+                    document.querySelectorAll('.settings-tab').forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            document.querySelector('.settings-tab.active').classList.remove('active');
+                            tab.classList.add('active');
+                        });
+                    });
+
+                    // Gestion du redimensionnement
+                    window.addEventListener('resize', () => {
+                        if (!this.isAnimating) {
+                            this.centerActiveCard();
+                        }
+                    });
+                }
+
+                navigateToCard(targetIndex) {
+                    if (this.isAnimating || targetIndex === this.currentCardIndex) return;
                     
-                    await signOut(auth);
-                    window.location.href = 'index.html';
-                } catch (error) {
-                    console.error("Erreur lors de la déconnexion:", error);
-                    alert("Une erreur est survenue lors de la déconnexion");
+                    this.isAnimating = true;
+                    
+                    const miniCards = document.querySelectorAll('.mini-card');
+                    const descriptionCard = document.getElementById('main-description-card');
+                    const settingsPanel = document.getElementById('settings-panel');
+                    const currentCard = miniCards[this.currentCardIndex];
+                    const targetCard = miniCards[targetIndex];
+                    
+                    // Animation de sortie de la carte actuelle
+                    currentCard.classList.remove('active');
+                    currentCard.style.transform = 'scale(1)';
+                    
+                    // Animation morphose du contenu
+                    const targetData = this.stateManager.state.cardData[targetCard.getAttribute('data-target')];
+                    
+                    if (targetCard.getAttribute('data-target') === 'settings') {
+                        descriptionCard.classList.add('fade-out');
+                        
+                        setTimeout(() => {
+                            descriptionCard.style.display = 'none';
+                            settingsPanel.classList.add('show');
+                        }, 300);
+                    } else {
+                        if (settingsPanel.classList.contains('show')) {
+                            settingsPanel.classList.remove('show');
+                        }
+                        
+                        descriptionCard.style.display = 'block';
+                        descriptionCard.classList.add('fade-out');
+                        
+                        setTimeout(() => {
+                            descriptionCard.innerHTML = `
+                                <h3>
+                                    <i class="${targetData.icon}"></i>
+                                    ${targetData.title}
+                                </h3>
+                                <p>${targetData.description}</p>
+                                ${targetData.link !== '#' ? 
+                                    `<a href="${targetData.link}" class="action-btn">
+                                        <i class="${targetData.icon}"></i>
+                                        ${targetData.buttonText}
+                                    </a>` : 
+                                    `<button class="action-btn" onclick="window.authManager.toggleSettings()">
+                                        <i class="${targetData.icon}"></i>
+                                        ${targetData.buttonText}
+                                    </button>`
+                                }
+                            `;
+                            
+                            descriptionCard.classList.remove('fade-out');
+                            descriptionCard.classList.add('fade-in');
+                            
+                            setTimeout(() => {
+                                descriptionCard.classList.remove('fade-in');
+                            }, 600);
+                        }, 300);
+                    }
+                    
+                    targetCard.classList.add('active');
+                    this.currentCardIndex = targetIndex;
+                    this.centerActiveCard();
+                    
+                    setTimeout(() => {
+                        this.isAnimating = false;
+                    }, 600);
+                }
+
+                centerActiveCard() {
+                    const container = document.getElementById('mini-cards-container');
+                    const track = document.getElementById('mini-cards-track');
+                    if (!container || !track) return;
+                    
+                    const containerWidth = container.offsetWidth;
+                    const cardWidth = 140 + 30; // largeur + gap
+                    const targetPosition = (containerWidth / 2) - (cardWidth / 2) - (this.currentCardIndex * cardWidth);
+                    
+                    track.style.transform = `translateX(${targetPosition}px)`;
+                }
+
+                toggleSettings() {
+                    const settingsPanel = document.getElementById('settings-panel');
+                    const descriptionCard = document.getElementById('main-description-card');
+                    
+                    if (settingsPanel.classList.contains('show')) {
+                        settingsPanel.classList.remove('show');
+                        descriptionCard.style.display = 'block';
+                    } else {
+                        descriptionCard.style.display = 'none';
+                        settingsPanel.classList.add('show');
+                    }
+                }
+
+                setupLongPressAvatar() {
+                    const avatar = document.getElementById('user-avatar');
+
+                    avatar.addEventListener('mousedown', () => {
+                        this.pressTimer = setTimeout(() => {
+                            this.showImageInputModal();
+                        }, 1000);
+                    });
+
+                    avatar.addEventListener('mouseup', () => {
+                        clearTimeout(this.pressTimer);
+                    });
+
+                    avatar.addEventListener('mouseleave', () => {
+                        clearTimeout(this.pressTimer);
+                    });
+
+                    avatar.addEventListener('touchstart', () => {
+                        this.pressTimer = setTimeout(() => {
+                            this.showImageInputModal();
+                        }, 1000);
+                    });
+
+                    avatar.addEventListener('touchend', () => {
+                        clearTimeout(this.pressTimer);
+                    });
+                }
+
+                showImageInputModal() {
+                    const modal = document.getElementById('image-input-modal');
+                    modal.classList.add('show');
+                    document.getElementById('image-name-input').value = '';
+                    document.getElementById('image-name-input').focus();
+                }
+
+                handleImageImport(imageUrl) {
+                    const img = new Image();
+                    
+                    img.onload = () => {
+                        this.updateProfileImage(imageUrl);
+                        localStorage.setItem(`profileImage_${this.currentUser.uid}`, imageUrl);
+                        
+                        const userRef = ref(db, 'users/' + this.currentUser.uid);
+                        update(userRef, {
+                            profileImage: imageUrl
+                        });
+                        
+                        document.getElementById('image-input-modal').classList.remove('show');
+                    };
+                    
+                    img.onerror = () => {
+                        alert("Image non trouvée. Vérifiez le nom et assurez-vous qu'elle est au format .webp dans le dossier photos/");
+                    };
+                    
+                    img.src = imageUrl;
+                }
+
+                setupProfileConfiguration(user) {
+                    const setupModal = document.getElementById('setup-modal');
+                    const usernameInput = document.getElementById('username-input');
+                    const profileLetter = document.getElementById('profile-letter');
+
+                    setupModal.classList.add('show');
+
+                    usernameInput.addEventListener('input', () => {
+                        const username = usernameInput.value.trim();
+                        profileLetter.textContent = username.length > 0 ? username.charAt(0).toUpperCase() : '?';
+                    });
+                }
+
+                async saveUserProfile(username) {
+                    const userRef = ref(db, 'users/' + this.currentUser.uid);
+                    
+                    await set(userRef, {
+                        username,
+                        email: this.currentUser.email,
+                        createdAt: Date.now(),
+                        canChangeUsername: false,
+                        lastSeen: Date.now(),
+                        profileImage: localStorage.getItem(`profileImage_${this.currentUser.uid}`) || null,
+                        publicProfile: false,
+                        shareGrades: true,
+                        emailNotifications: true,
+                        pushNotifications: true
+                    });
+
+                    this.currentUsername = username;
+                }
+
+                setupPresenceTracking(user) {
+                    const connectedRef = ref(db, '.info/connected');
+                    const presenceRef = ref(db, 'connectedUsers');
+                    const userStatusRef = ref(db, 'connectedUsers/' + user.uid);
+                    
+                    onValue(connectedRef, (snap) => {
+                        if (snap.val() === true) {
+                            const profileImage = localStorage.getItem(`profileImage_${user.uid}`) || null;
+                            
+                            const statusUpdate = {
+                                uid: user.uid,
+                                username: this.currentUsername,
+                                email: user.email,
+                                profileImage: profileImage,
+                                timestamp: Date.now(),
+                                firstLetter: this.currentUsername.charAt(0).toUpperCase()
+                            };
+                            
+                            set(userStatusRef, statusUpdate);
+                            onDisconnect(userStatusRef).remove();
+                        }
+                    });
+                    
+                    onValue(presenceRef, (snapshot) => {
+                        const connectedUsers = snapshot.val() || {};
+                        let onlineCount = 0;
+
+                        Object.entries(connectedUsers).forEach(([uid, userData]) => {
+                            if (uid !== user.uid) {
+                                onlineCount++;
+                            }
+                        });
+
+                        document.getElementById('online-count').textContent = `${onlineCount} en ligne`;
+                    });
+                }
+
+                setupClock() {
+                    this.updateClock();
+                    setInterval(() => this.updateClock(), 1000);
+                }
+
+                updateClock() {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString();
+                    const timeEl = document.getElementById('current-time');
+                    if (timeEl) timeEl.textContent = timeStr;
+                }
+
+                async handleLogout() {
+                    try {
+                        const userStatusRef = ref(db, 'connectedUsers/' + this.currentUser.uid);
+                        await remove(userStatusRef);
+                        
+                        await signOut(auth);
+                        window.location.href = 'index.html';
+                    } catch (error) {
+                        console.error("Erreur lors de la déconnexion:", error);
+                        alert("Une erreur est survenue lors de la déconnexion");
+                    }
                 }
             }
 
-            // Fonctions globales
-            window.toggleSettings = toggleSettings;
+            // ===== INITIALISATION PRINCIPALE =====
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('🚀 Initialisation du dashboard...');
+                
+                // Initialisation des gestionnaires
+                window.themeManager = new ThemeManager();
+                const stateManager = new StateManager();
+                window.authManager = new AuthManager(stateManager);
+                
+                // Démarrage de l'authentification
+                window.authManager.initAuthState();
+                
+                // Masquer le loader après l'initialisation
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    if (loader) loader.classList.add('hidden');
+                }, 1000);
+            });
 
             // Optimisation pour mobile
             if (window.innerWidth <= 768) {
-                // Ajuster les animations pour mobile
                 document.documentElement.style.setProperty('--animation-duration', '0.3s');
             }
 
-            // Gestion du redimensionnement
-            window.addEventListener('resize', () => {
-                if (!isAnimating) {
-                    centerActiveCard();
-                }
-            });
         </script>
     </div>
 </body>
