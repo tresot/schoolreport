@@ -618,6 +618,37 @@
                 scroll-behavior: auto !important;
             }
         }
+
+        /* ===== ERROR STATE ===== */
+        .error-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--danger);
+            background: rgba(230, 57, 70, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .retry-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all var(--transition-normal) ease;
+        }
+
+        .retry-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -662,7 +693,7 @@
                     <div class="tab active" onclick="showTab('requests')">
                         <i class="fas fa-user-plus"></i>
                         Demandes
-                        <span class="notification-badge" id="requests-badge">0</span>
+                        <span class="notification-badge" id="requests-badge" style="display: none;">0</span>
                     </div>
                     <div class="tab" onclick="showTab('friends')">
                         <i class="fas fa-users"></i>
@@ -676,31 +707,31 @@
 
                 <div class="content">
                     <div id="requests-tab" class="tab-content">
-                        <div class="content" id="requests-content">
-                            <div class="search-bar">
-                                <input type="text" class="search-input" placeholder="Rechercher des demandes...">
-                                <i class="search-icon fas fa-search"></i>
-                            </div>
+                        <div class="search-bar">
+                            <input type="text" class="search-input" placeholder="Rechercher des demandes...">
+                            <i class="search-icon fas fa-search"></i>
+                        </div>
+                        <div id="requests-content">
                             <!-- Le contenu sera chargé dynamiquement par Firebase -->
                         </div>
                     </div>
 
                     <div id="friends-tab" class="tab-content" style="display: none;">
-                        <div class="content" id="friends-content">
-                            <div class="search-bar">
-                                <input type="text" class="search-input" placeholder="Rechercher parmi mes amis...">
-                                <i class="search-icon fas fa-search"></i>
-                            </div>
+                        <div class="search-bar">
+                            <input type="text" class="search-input" placeholder="Rechercher parmi mes amis...">
+                            <i class="search-icon fas fa-search"></i>
+                        </div>
+                        <div id="friends-content">
                             <!-- Le contenu sera chargé dynamiquement par Firebase -->
                         </div>
                     </div>
 
                     <div id="suggestions-tab" class="tab-content" style="display: none;">
-                        <div class="content" id="suggestions-content">
-                            <div class="search-bar">
-                                <input type="text" class="search-input" placeholder="Rechercher des personnes...">
-                                <i class="search-icon fas fa-search"></i>
-                            </div>
+                        <div class="search-bar">
+                            <input type="text" class="search-input" placeholder="Rechercher des personnes...">
+                            <i class="search-icon fas fa-search"></i>
+                        </div>
+                        <div id="suggestions-content">
                             <!-- Le contenu sera chargé dynamiquement par Firebase -->
                         </div>
                     </div>
@@ -712,11 +743,31 @@
     <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     
+    <!-- Firebase SDK v9 (modular) -->
     <script type="module">
-        // 🔥 IMPORTS FIREBASE
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, update, remove, push, serverTimestamp, off } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-        import { app, auth, db } from "./firebase/firebase-config.js";
+        // 🔥 Configuration Firebase directe
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getDatabase, ref, set, onValue, update, remove, push, serverTimestamp, off } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js';
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgbZ8YHHPbaKWmEMzwI65jXflv-8qYCVM",
+            authDomain: "schoolreport-f8db0.firebaseapp.com",
+            databaseURL: "https://schoolreport-f8db0-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "schoolreport-f8db0",
+            storageBucket: "schoolreport-f8db0.appspot.com",
+            messagingSenderId: "313069994450",
+            appId: "1:313069994450:web:37b009be4f1812fdca880b",
+            measurementId: "G-N8YF0VKWCD"
+        };
+
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        console.log('🔥 Firebase initialisé avec succès');
 
         // ===== GESTIONNAIRE DE THÈME =====
         class ThemeManager {
@@ -781,124 +832,207 @@
                 this.allUsers = [];
                 this.onlineUsers = [];
                 this.listeners = [];
+                this.isInitialized = false;
             }
 
             async init() {
-                // Vérifier l'authentification
-                onAuthStateChanged(auth, (user) => {
-                    if (!user) {
-                        window.location.href = 'index.html';
-                        return;
+                console.log('🚀 Initialisation du gestionnaire d\'amis...');
+                
+                try {
+                    // Vérifier l'authentification
+                    onAuthStateChanged(auth, (user) => {
+                        if (!user) {
+                            console.log('❌ Utilisateur non connecté, redirection...');
+                            this.showError('Vous devez être connecté pour accéder à cette page', () => {
+                                window.location.href = 'index.html';
+                            });
+                            return;
+                        }
+                        
+                        console.log('✅ Utilisateur connecté:', user.email);
+                        this.currentUser = user;
+                        this.setupFirebaseListeners();
+                        this.setupEventListeners();
+                        this.isInitialized = true;
+                    });
+                } catch (error) {
+                    console.error('❌ Erreur lors de l\'initialisation:', error);
+                    this.showError('Erreur de connexion à Firebase', () => {
+                        window.location.reload();
+                    });
+                }
+            }
+
+            showError(message, retryCallback = null) {
+                const containers = ['requests-content', 'friends-content', 'suggestions-content'];
+                
+                containers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="error-state">
+                                <div class="error-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <p>${message}</p>
+                                ${retryCallback ? '<button class="retry-btn" onclick="this.callback()">Réessayer</button>' : ''}
+                            </div>
+                        `;
+                        
+                        if (retryCallback) {
+                            container.querySelector('.retry-btn').callback = retryCallback;
+                        }
                     }
-                    
-                    this.currentUser = user;
-                    this.setupFirebaseListeners();
-                    this.setupEventListeners();
+                });
+            }
+
+            showLoading() {
+                const containers = ['requests-content', 'friends-content', 'suggestions-content'];
+                
+                containers.forEach(containerId => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <p>Chargement...</p>
+                            </div>
+                        `;
+                    }
                 });
             }
 
             setupFirebaseListeners() {
                 if (!this.currentUser) return;
 
-                // Écouter les demandes d'amis reçues
-                const requestsRef = ref(db, `friendRequests/${this.currentUser.uid}`);
-                const requestsListener = onValue(requestsRef, (snapshot) => {
-                    this.friendRequests = [];
-                    const data = snapshot.val();
-                    
-                    if (data) {
-                        Object.entries(data).forEach(([senderUid, requestData]) => {
-                            if (requestData.status === 'pending') {
-                                this.friendRequests.push({
-                                    id: senderUid,
-                                    ...requestData
-                                });
-                            }
-                        });
-                    }
-                    
-                    this.updateRequestsUI();
-                });
-                this.listeners.push(() => off(requestsRef, 'value', requestsListener));
+                console.log('🔗 Configuration des listeners Firebase...');
 
-                // Écouter la liste des amis
-                const friendsRef = ref(db, `friends/${this.currentUser.uid}`);
-                const friendsListener = onValue(friendsRef, (snapshot) => {
-                    this.friends = [];
-                    const data = snapshot.val();
-                    
-                    if (data) {
-                        Object.entries(data).forEach(([friendUid, friendData]) => {
-                            this.friends.push({
-                                id: friendUid,
-                                ...friendData
+                this.showLoading();
+
+                try {
+                    // Écouter les demandes d'amis reçues
+                    const requestsRef = ref(db, `friendRequests/${this.currentUser.uid}`);
+                    const requestsListener = onValue(requestsRef, (snapshot) => {
+                        console.log('📥 Mise à jour des demandes d\'amis');
+                        this.friendRequests = [];
+                        const data = snapshot.val();
+                        
+                        if (data) {
+                            Object.entries(data).forEach(([senderUid, requestData]) => {
+                                if (requestData.status === 'pending') {
+                                    this.friendRequests.push({
+                                        id: senderUid,
+                                        ...requestData
+                                    });
+                                }
                             });
-                        });
-                    }
-                    
-                    this.updateFriendsUI();
-                });
-                this.listeners.push(() => off(friendsRef, 'value', friendsListener));
+                        }
+                        
+                        this.updateRequestsUI();
+                    }, (error) => {
+                        console.error('❌ Erreur lors de l\'écoute des demandes:', error);
+                        this.showError('Erreur lors du chargement des demandes d\'amis');
+                    });
+                    this.listeners.push(() => off(requestsRef, 'value', requestsListener));
 
-                // Écouter tous les utilisateurs pour les suggestions
-                const usersRef = ref(db, 'users');
-                const usersListener = onValue(usersRef, (snapshot) => {
-                    this.allUsers = [];
-                    const data = snapshot.val();
-                    
-                    if (data) {
-                        Object.entries(data).forEach(([uid, userData]) => {
-                            if (uid !== this.currentUser.uid) {
-                                this.allUsers.push({
-                                    id: uid,
-                                    ...userData
+                    // Écouter la liste des amis
+                    const friendsRef = ref(db, `friends/${this.currentUser.uid}`);
+                    const friendsListener = onValue(friendsRef, (snapshot) => {
+                        console.log('👥 Mise à jour de la liste d\'amis');
+                        this.friends = [];
+                        const data = snapshot.val();
+                        
+                        if (data) {
+                            Object.entries(data).forEach(([friendUid, friendData]) => {
+                                this.friends.push({
+                                    id: friendUid,
+                                    ...friendData
                                 });
-                            }
-                        });
-                    }
-                    
-                    this.updateSuggestionsUI();
-                });
-                this.listeners.push(() => off(usersRef, 'value', usersListener));
+                            });
+                        }
+                        
+                        this.updateFriendsUI();
+                    }, (error) => {
+                        console.error('❌ Erreur lors de l\'écoute des amis:', error);
+                        this.showError('Erreur lors du chargement de la liste d\'amis');
+                    });
+                    this.listeners.push(() => off(friendsRef, 'value', friendsListener));
 
-                // Écouter les utilisateurs en ligne
-                const onlineRef = ref(db, 'connectedUsers');
-                const onlineListener = onValue(onlineRef, (snapshot) => {
-                    this.onlineUsers = [];
-                    const data = snapshot.val();
-                    
-                    if (data) {
-                        Object.keys(data).forEach(uid => {
-                            this.onlineUsers.push(uid);
-                        });
-                    }
-                    
-                    this.updateOnlineStatus();
-                });
-                this.listeners.push(() => off(onlineRef, 'value', onlineListener));
+                    // Écouter tous les utilisateurs pour les suggestions
+                    const usersRef = ref(db, 'users');
+                    const usersListener = onValue(usersRef, (snapshot) => {
+                        console.log('🔍 Mise à jour des suggestions');
+                        this.allUsers = [];
+                        const data = snapshot.val();
+                        
+                        if (data) {
+                            Object.entries(data).forEach(([uid, userData]) => {
+                                if (uid !== this.currentUser.uid) {
+                                    this.allUsers.push({
+                                        id: uid,
+                                        ...userData
+                                    });
+                                }
+                            });
+                        }
+                        
+                        this.updateSuggestionsUI();
+                    }, (error) => {
+                        console.error('❌ Erreur lors de l\'écoute des utilisateurs:', error);
+                        this.showError('Erreur lors du chargement des suggestions');
+                    });
+                    this.listeners.push(() => off(usersRef, 'value', usersListener));
+
+                    // Écouter les utilisateurs en ligne
+                    const onlineRef = ref(db, 'connectedUsers');
+                    const onlineListener = onValue(onlineRef, (snapshot) => {
+                        console.log('🟢 Mise à jour du statut en ligne');
+                        this.onlineUsers = [];
+                        const data = snapshot.val();
+                        
+                        if (data) {
+                            Object.keys(data).forEach(uid => {
+                                this.onlineUsers.push(uid);
+                            });
+                        }
+                        
+                        this.updateOnlineStatus();
+                    }, (error) => {
+                        console.error('❌ Erreur lors de l\'écoute du statut en ligne:', error);
+                        // Ne pas afficher d'erreur pour le statut en ligne, ce n'est pas critique
+                    });
+                    this.listeners.push(() => off(onlineRef, 'value', onlineListener));
+
+                } catch (error) {
+                    console.error('❌ Erreur lors de la configuration des listeners:', error);
+                    this.showError('Erreur de connexion à la base de données', () => {
+                        this.setupFirebaseListeners();
+                    });
+                }
             }
 
             updateRequestsUI() {
                 const container = document.getElementById('requests-content');
+                if (!container) return;
                 
                 // Mise à jour du badge
                 const badge = document.getElementById('requests-badge');
-                if (this.friendRequests.length > 0) {
-                    badge.textContent = this.friendRequests.length;
-                    badge.style.display = 'flex';
-                } else {
-                    badge.style.display = 'none';
+                if (badge) {
+                    if (this.friendRequests.length > 0) {
+                        badge.textContent = this.friendRequests.length;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
                 }
 
-                // Nettoyer le contenu existant (sauf la barre de recherche)
-                const searchBar = container.querySelector('.search-bar');
+                // Nettoyer le contenu existant
                 container.innerHTML = '';
-                if (searchBar) {
-                    container.appendChild(searchBar);
-                }
 
                 if (this.friendRequests.length === 0) {
-                    container.innerHTML += `
+                    container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-user-friends"></i>
@@ -917,20 +1051,19 @@
 
             updateFriendsUI() {
                 const container = document.getElementById('friends-content');
+                if (!container) return;
                 
-                // Nettoyer le contenu existant (sauf la barre de recherche)
-                const searchBar = container.querySelector('.search-bar');
+                // Nettoyer le contenu existant
                 container.innerHTML = '';
-                if (searchBar) {
-                    container.appendChild(searchBar);
-                }
 
                 if (this.friends.length === 0) {
-                    container.innerHTML += `
+                    container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-users"></i>
                             </div>
+                            <p>Vous n'avez pas encore d'amis</p>
+                            <p style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Consultez l'onglet Suggestions pour ajouter des amis !</p>
                         </div>
                     `;
                     return;
@@ -944,13 +1077,10 @@
 
             updateSuggestionsUI() {
                 const container = document.getElementById('suggestions-content');
+                if (!container) return;
                 
-                // Nettoyer le contenu existant (sauf la barre de recherche)
-                const searchBar = container.querySelector('.search-bar');
+                // Nettoyer le contenu existant
                 container.innerHTML = '';
-                if (searchBar) {
-                    container.appendChild(searchBar);
-                }
 
                 // Filtrer les utilisateurs (exclure les amis actuels et les demandes en cours)
                 const friendIds = this.friends.map(f => f.id);
@@ -962,12 +1092,13 @@
                 );
 
                 if (suggestions.length === 0) {
-                    container.innerHTML += `
+                    container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-search"></i>
                             </div>
                             <p>Aucune suggestion disponible</p>
+                            <p style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Il semble que vous connaissiez déjà tout le monde !</p>
                         </div>
                     `;
                     return;
@@ -984,16 +1115,17 @@
                 document.querySelectorAll('.friend-item').forEach(item => {
                     const userId = item.dataset.userId;
                     const indicator = item.querySelector('.online-indicator');
+                    const detailsElement = item.querySelector('.friend-details');
                     
-                    if (indicator) {
+                    if (indicator && detailsElement) {
                         if (this.onlineUsers.includes(userId)) {
                             indicator.style.display = 'block';
-                            item.querySelector('.friend-details').textContent = 
-                                item.querySelector('.friend-details').textContent.replace('Hors ligne', 'En ligne');
+                            // Remplacer "Hors ligne" par "En ligne" dans le texte
+                            detailsElement.textContent = detailsElement.textContent.replace('Hors ligne', 'En ligne');
                         } else {
                             indicator.style.display = 'none';
-                            item.querySelector('.friend-details').textContent = 
-                                item.querySelector('.friend-details').textContent.replace('En ligne', 'Hors ligne');
+                            // Remplacer "En ligne" par "Hors ligne" dans le texte
+                            detailsElement.textContent = detailsElement.textContent.replace('En ligne', 'Hors ligne');
                         }
                     }
                 });
@@ -1010,12 +1142,19 @@
                     `<img src="${request.profileImage}" alt="${request.username}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : 
                     initials;
 
+                const formattedDate = request.timestamp ? 
+                    new Date(request.timestamp).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    }) : 'Date inconnue';
+
                 div.innerHTML = `
                     <div class="avatar">${profileImage}</div>
                     <div class="friend-info">
-                        <div class="friend-name">${request.username || 'Utilisateur'}</div>
-                        <div class="friend-details">${request.email || ''}</div>
-                        <div class="mutual-friends">Demande envoyée le ${new Date(request.timestamp).toLocaleDateString('fr-FR')}</div>
+                        <div class="friend-name">${request.username || 'Utilisateur inconnu'}</div>
+                        <div class="friend-details">${request.email || 'Email non disponible'}</div>
+                        <div class="mutual-friends">Demande envoyée le ${formattedDate}</div>
                     </div>
                     <div class="actions">
                         <button class="btn btn-accept" onclick="window.friendsManager.acceptRequest('${request.id}')">
@@ -1047,14 +1186,21 @@
                 const onlineIndicator = isOnline ? '<div class="online-indicator"></div>' : '';
                 const status = isOnline ? 'En ligne' : 'Hors ligne';
 
+                const formattedDate = friend.addedAt ? 
+                    new Date(friend.addedAt).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    }) : 'Date inconnue';
+
                 div.innerHTML = `
                     <div class="avatar-container">
                         <div class="avatar">${profileImage}</div>
                         ${onlineIndicator}
                     </div>
                     <div class="friend-info">
-                        <div class="friend-name">${friend.username || 'Utilisateur'}</div>
-                        <div class="friend-details">${status} • Ami depuis ${new Date(friend.addedAt).toLocaleDateString('fr-FR')}</div>
+                        <div class="friend-name">${friend.username || 'Utilisateur inconnu'}</div>
+                        <div class="friend-details">${status} • Ami depuis le ${formattedDate}</div>
                     </div>
                     <div class="actions">
                         <button class="btn btn-accept" onclick="window.friendsManager.sendMessage('${friend.id}')">
@@ -1089,8 +1235,8 @@
                 div.innerHTML = `
                     <div class="avatar">${profileImage}</div>
                     <div class="friend-info">
-                        <div class="friend-name">${user.username || 'Utilisateur'}</div>
-                        <div class="friend-details">${user.email || ''}</div>
+                        <div class="friend-name">${user.username || 'Utilisateur inconnu'}</div>
+                        <div class="friend-details">${user.email || 'Email non disponible'}</div>
                         <div class="mutual-friends">${mutualText}</div>
                     </div>
                     <div class="actions">
@@ -1118,29 +1264,37 @@
                     
                     // Récupérer les infos de l'utilisateur actuel
                     const currentUserRef = ref(db, `users/${this.currentUser.uid}`);
-                    const currentUserSnapshot = await new Promise((resolve) => {
-                        onValue(currentUserRef, resolve, { onlyOnce: true });
-                    });
                     
-                    const currentUserData = currentUserSnapshot.val();
-                    
-                    await set(requestRef, {
-                        username: currentUserData.username,
-                        email: this.currentUser.email,
-                        profileImage: currentUserData.profileImage || null,
-                        timestamp: Date.now(),
-                        status: 'pending'
+                    return new Promise((resolve, reject) => {
+                        onValue(currentUserRef, (snapshot) => {
+                            const currentUserData = snapshot.val();
+                            
+                            if (!currentUserData) {
+                                showNotification('Erreur: profil utilisateur introuvable', 'warning');
+                                reject(new Error('Profil utilisateur introuvable'));
+                                return;
+                            }
+
+                            set(requestRef, {
+                                username: currentUserData.username,
+                                email: this.currentUser.email,
+                                profileImage: currentUserData.profileImage || null,
+                                timestamp: Date.now(),
+                                status: 'pending'
+                            }).then(() => {
+                                // Mettre à jour l'UI
+                                const button = document.querySelector(`[data-user-id="${targetUserId}"] .btn-add`);
+                                if (button) {
+                                    button.innerHTML = '<i class="fas fa-check"></i> Envoyé';
+                                    button.style.background = 'var(--success)';
+                                    button.disabled = true;
+                                }
+
+                                showNotification(`Demande envoyée à ${targetUser.username} ! 📨`, 'success');
+                                resolve();
+                            }).catch(reject);
+                        }, { onlyOnce: true });
                     });
-
-                    // Mettre à jour l'UI
-                    const button = document.querySelector(`[data-user-id="${targetUserId}"] .btn-add`);
-                    if (button) {
-                        button.innerHTML = '<i class="fas fa-check"></i> Envoyé';
-                        button.style.background = 'var(--success)';
-                        button.disabled = true;
-                    }
-
-                    showNotification(`Demande envoyée à ${targetUser.username} ! 📨`, 'success');
                     
                 } catch (error) {
                     console.error('Erreur lors de l\'envoi de la demande:', error);
@@ -1151,41 +1305,53 @@
             async acceptRequest(senderUserId) {
                 try {
                     const request = this.friendRequests.find(r => r.id === senderUserId);
-                    if (!request) return;
+                    if (!request) {
+                        showNotification('Demande introuvable', 'warning');
+                        return;
+                    }
 
-                    // Ajouter dans la liste d'amis des deux utilisateurs
-                    const batch = {};
-                    
-                    // Ajouter l'ami dans la liste de l'utilisateur actuel
-                    batch[`friends/${this.currentUser.uid}/${senderUserId}`] = {
-                        username: request.username,
-                        email: request.email,
-                        profileImage: request.profileImage,
-                        addedAt: Date.now()
-                    };
-
-                    // Récupérer les infos de l'utilisateur actuel pour l'ajouter à la liste de l'expéditeur
+                    // Récupérer les infos de l'utilisateur actuel
                     const currentUserRef = ref(db, `users/${this.currentUser.uid}`);
-                    const currentUserSnapshot = await new Promise((resolve) => {
-                        onValue(currentUserRef, resolve, { onlyOnce: true });
+                    
+                    return new Promise((resolve, reject) => {
+                        onValue(currentUserRef, (snapshot) => {
+                            const currentUserData = snapshot.val();
+                            
+                            if (!currentUserData) {
+                                showNotification('Erreur: profil utilisateur introuvable', 'warning');
+                                reject(new Error('Profil utilisateur introuvable'));
+                                return;
+                            }
+
+                            // Préparer les modifications en batch
+                            const updates = {};
+                            
+                            // Ajouter l'ami dans la liste de l'utilisateur actuel
+                            updates[`friends/${this.currentUser.uid}/${senderUserId}`] = {
+                                username: request.username,
+                                email: request.email,
+                                profileImage: request.profileImage,
+                                addedAt: Date.now()
+                            };
+
+                            // Ajouter l'utilisateur actuel dans la liste d'amis de l'expéditeur
+                            updates[`friends/${senderUserId}/${this.currentUser.uid}`] = {
+                                username: currentUserData.username,
+                                email: this.currentUser.email,
+                                profileImage: currentUserData.profileImage,
+                                addedAt: Date.now()
+                            };
+
+                            // Supprimer la demande
+                            updates[`friendRequests/${this.currentUser.uid}/${senderUserId}`] = null;
+
+                            // Appliquer toutes les modifications
+                            update(ref(db), updates).then(() => {
+                                showNotification(`${request.username} a été ajouté à vos amis ! 🎉`, 'success');
+                                resolve();
+                            }).catch(reject);
+                        }, { onlyOnce: true });
                     });
-                    const currentUserData = currentUserSnapshot.val();
-
-                    // Ajouter l'utilisateur actuel dans la liste d'amis de l'expéditeur
-                    batch[`friends/${senderUserId}/${this.currentUser.uid}`] = {
-                        username: currentUserData.username,
-                        email: this.currentUser.email,
-                        profileImage: currentUserData.profileImage,
-                        addedAt: Date.now()
-                    };
-
-                    // Supprimer la demande
-                    batch[`friendRequests/${this.currentUser.uid}/${senderUserId}`] = null;
-
-                    // Appliquer toutes les modifications
-                    await update(ref(db), batch);
-
-                    showNotification(`${request.username} a été ajouté à vos amis ! 🎉`, 'success');
                     
                 } catch (error) {
                     console.error('Erreur lors de l\'acceptation:', error);
@@ -1196,7 +1362,10 @@
             async declineRequest(senderUserId) {
                 try {
                     const request = this.friendRequests.find(r => r.id === senderUserId);
-                    if (!request) return;
+                    if (!request) {
+                        showNotification('Demande introuvable', 'warning');
+                        return;
+                    }
 
                     // Supprimer la demande
                     const requestRef = ref(db, `friendRequests/${this.currentUser.uid}/${senderUserId}`);
@@ -1212,18 +1381,21 @@
 
             async removeFriend(friendUserId) {
                 const friend = this.friends.find(f => f.id === friendUserId);
-                if (!friend) return;
+                if (!friend) {
+                    showNotification('Ami introuvable', 'warning');
+                    return;
+                }
 
                 const confirmed = confirm(`Êtes-vous sûr de vouloir retirer ${friend.username} de vos amis ?`);
                 if (!confirmed) return;
 
                 try {
                     // Supprimer des deux listes d'amis
-                    const batch = {};
-                    batch[`friends/${this.currentUser.uid}/${friendUserId}`] = null;
-                    batch[`friends/${friendUserId}/${this.currentUser.uid}`] = null;
+                    const updates = {};
+                    updates[`friends/${this.currentUser.uid}/${friendUserId}`] = null;
+                    updates[`friends/${friendUserId}/${this.currentUser.uid}`] = null;
 
-                    await update(ref(db), batch);
+                    await update(ref(db), updates);
 
                     showNotification(`${friend.username} a été retiré de vos amis`, 'info');
                     
@@ -1235,7 +1407,10 @@
 
             sendMessage(friendUserId) {
                 const friend = this.friends.find(f => f.id === friendUserId);
-                if (!friend) return;
+                if (!friend) {
+                    showNotification('Ami introuvable', 'warning');
+                    return;
+                }
 
                 showNotification(`Redirection vers la conversation avec ${friend.username}...`, 'info');
                 
@@ -1348,7 +1523,13 @@
 
             cleanup() {
                 // Nettoyer les listeners Firebase
-                this.listeners.forEach(unsubscribe => unsubscribe());
+                this.listeners.forEach(unsubscribe => {
+                    try {
+                        unsubscribe();
+                    } catch (error) {
+                        console.error('Erreur lors du nettoyage des listeners:', error);
+                    }
+                });
                 this.listeners = [];
             }
         }
@@ -1369,13 +1550,19 @@
             
             document.body.appendChild(notification);
             
+            // Animation d'entrée
             setTimeout(() => {
                 notification.classList.add('show');
             }, 100);
             
+            // Animation de sortie
             setTimeout(() => {
                 notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
             }, 3000);
         }
 
@@ -1421,23 +1608,35 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initialisation de la page Amis avec Firebase...');
             
-            // Initialisation du gestionnaire de thème
-            window.themeManager = new ThemeManager();
-            
-            // Initialisation du gestionnaire d'amis Firebase
-            window.friendsManager = new FriendsManager();
-            window.friendsManager.init();
-            
-            // Masquer le loader
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                if (loader) loader.classList.add('hidden');
-            }, 1000);
+            try {
+                // Initialisation du gestionnaire de thème
+                window.themeManager = new ThemeManager();
+                console.log('✅ Gestionnaire de thème initialisé');
+                
+                // Initialisation du gestionnaire d'amis Firebase
+                window.friendsManager = new FriendsManager();
+                window.friendsManager.init();
+                console.log('✅ Gestionnaire d\'amis initialisé');
+                
+                // Masquer le loader
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    if (loader) {
+                        loader.classList.add('hidden');
+                        console.log('✅ Loader masqué');
+                    }
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation:', error);
+                showNotification('Erreur lors de l\'initialisation de l\'application', 'warning');
+            }
             
             // Nettoyage à la fermeture de la page
             window.addEventListener('beforeunload', () => {
                 if (window.friendsManager) {
                     window.friendsManager.cleanup();
+                    console.log('🧹 Nettoyage effectué');
                 }
             });
         });
@@ -1456,14 +1655,39 @@
 
         // ===== GESTION DES ERREURS GLOBALES =====
         window.addEventListener('error', (event) => {
-            console.error('Erreur JavaScript:', event.error);
+            console.error('❌ Erreur JavaScript:', event.error);
             showNotification('Une erreur est survenue. Veuillez recharger la page.', 'warning');
         });
 
         window.addEventListener('unhandledrejection', (event) => {
-            console.error('Promesse rejetée:', event.reason);
+            console.error('❌ Promesse rejetée:', event.reason);
             showNotification('Erreur de connexion. Vérifiez votre connexion internet.', 'warning');
         });
+
+        // ===== TEST DE CONNECTIVITÉ FIREBASE =====
+        function testFirebaseConnection() {
+            console.log('🔍 Test de connectivité Firebase...');
+            
+            try {
+                const testRef = ref(db, '.info/connected');
+                onValue(testRef, (snapshot) => {
+                    if (snapshot.val() === true) {
+                        console.log('✅ Firebase connecté');
+                    } else {
+                        console.log('❌ Firebase déconnecté');
+                        showNotification('Connexion Firebase instable', 'warning');
+                    }
+                });
+            } catch (error) {
+                console.error('❌ Erreur lors du test de connectivité:', error);
+                showNotification('Erreur de connexion Firebase', 'warning');
+            }
+        }
+
+        // Lancer le test de connectivité
+        testFirebaseConnection();
+
+        console.log('🎉 Script Firebase complètement chargé et prêt !');
 
     </script>
 </body>
