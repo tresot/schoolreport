@@ -876,14 +876,14 @@
         <section class="user-section animate-fade-in-up">
             <div class="user-avatar" id="user-avatar">
                 <img id="profile-pic" alt="Profile" class="cloudinary-image">
-                <span id="avatar-letter">J</span>
+                <span id="avatar-letter">?</span>
                 <div class="online-status"></div>
             </div>
             <div class="user-info">
-                <h2 id="user-name">Jean Dupont</h2>
+                <h2 id="user-name">Chargement...</h2>
                 <div class="user-status">
                     <i class="fas fa-circle"></i>
-                    En ligne
+                    Connexion...
                 </div>
             </div>
             <div class="user-actions">
@@ -914,16 +914,15 @@
                     <i class="fas fa-comments"></i>
                 </div>
                 <h3 class="module-title">Messagerie</h3>
-                <p class="module-description">Nouveau message de Marie</p>
+                <p class="module-description">Accéder à la messagerie</p>
             </div>
 
             <div class="module-card files-module animate-fade-in-up" data-module="files" style="animation-delay: 0.3s">
                 <div class="module-icon">
                     <i class="fas fa-folder"></i>
                 </div>
-                <div class="module-notification">1</div>
                 <h3 class="module-title">Fichiers partagés</h3>
-                <p class="module-description">Voir les fichiers partagés</p>
+                <p class="module-description">Gérer vos fichiers</p>
             </div>
 
             <div class="module-card homework-module animate-fade-in-up" data-module="homework" style="animation-delay: 0.4s">
@@ -931,7 +930,7 @@
                     <i class="fas fa-tasks"></i>
                 </div>
                 <h3 class="module-title">Devoirs</h3>
-                <p class="module-description">1 devoir à rendre pour demain</p>
+                <p class="module-description">Consulter vos devoirs</p>
             </div>
 
             <div class="module-card codex-module animate-fade-in-up" data-module="codex" style="animation-delay: 0.5s">
@@ -972,11 +971,11 @@
             <form id="profile-form">
                 <div class="form-group">
                     <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="username" value="Jean Dupont">
+                    <input type="text" id="username" name="username" placeholder="Votre nom d'utilisateur">
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="jean.dupont@email.com" readonly>
+                    <input type="email" id="email" name="email" placeholder="votre.email@exemple.com" readonly>
                 </div>
                 <div class="form-group">
                     <label for="profile-image">Photo de profil</label>
@@ -1731,8 +1730,10 @@
                 const userNameEl = document.getElementById('user-name');
                 const avatarLetter = document.getElementById('avatar-letter');
                 const profilePic = document.getElementById('profile-pic');
+                const userStatus = document.querySelector('.user-status span');
                 
                 if (userNameEl) userNameEl.textContent = userData.username;
+                if (userStatus) userStatus.textContent = 'En ligne';
                 
                 const firstLetter = userData.username.charAt(0).toUpperCase();
                 if (avatarLetter) avatarLetter.textContent = firstLetter;
