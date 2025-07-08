@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SchoolReport - Amis</title>
     <style>
-        /* ===== VARIABLES ET THEMES ===== */
         :root {
-            /* Couleurs de base */
             --primary: #4361ee;
             --primary-light: #5a75f1;
             --primary-dark: #3a56d4;
@@ -21,47 +19,11 @@
             --dark: #212529;
             --gray: #6c757d;
             --light-gray: #e9ecef;
-            
-            /* Thème clair */
-            --bg-primary: #f5f7fa;
-            --bg-secondary: var(--light);
-            --bg-tertiary: #ffffff;
-            --text-primary: var(--dark);
-            --text-secondary: var(--gray);
-            --border-color: var(--light-gray);
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --overlay-bg: rgba(245, 247, 250, 0.95);
             --bg-gradient: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
-
-            /* Thème sombre */
-            --dark-bg-primary: #121212;
-            --dark-bg-secondary: #1e1e1e;
-            --dark-bg-tertiary: #2d2d2d;
-            --dark-text-primary: #ffffff;
-            --dark-text-secondary: #b3b3b3;
-            --dark-border: #404040;
-            --dark-shadow: rgba(0, 0, 0, 0.3);
-
-            /* Animations */
-            --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
-            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --transition-fast: 0.15s;
-            --transition-normal: 0.3s;
-            --transition-slow: 0.5s;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        [data-theme="dark"] {
-            --bg-primary: var(--dark-bg-primary);
-            --bg-secondary: var(--dark-bg-secondary);
-            --bg-tertiary: var(--dark-bg-tertiary);
-            --text-primary: var(--dark-text-primary);
-            --text-secondary: var(--dark-text-secondary);
-            --border-color: var(--dark-border);
-            --shadow-color: var(--dark-shadow);
-            --overlay-bg: rgba(18, 18, 18, 0.95);
-        }
-
-        /* ===== BASE STYLES ===== */
         * {
             margin: 0;
             padding: 0;
@@ -70,25 +32,18 @@
         }
 
         body {
-            background-color: var(--bg-primary);
+            background-color: #f5f7fa;
             min-height: 100vh;
-            color: var(--text-primary);
+            color: var(--dark);
             overflow-x: hidden;
             background-image: url('photos/background.webp');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            transition: background-color var(--transition-normal) ease;
-        }
-
-        [data-theme="dark"] body {
-            background-image: 
-                linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)),
-                url('photos/background.webp');
         }
 
         .overlay {
-            background-color: var(--overlay-bg);
+            background-color: rgba(245, 247, 250, 0.95);
             backdrop-filter: blur(10px);
             min-height: 100vh;
         }
@@ -99,117 +54,17 @@
             padding: 2rem;
         }
 
-        /* ===== LOADER ===== */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-gradient);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity var(--transition-slow) ease;
-        }
-
-        .loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            will-change: transform;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* ===== THEME TOGGLE ===== */
-        .theme-toggle-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 15px var(--shadow-color);
-            transition: all var(--transition-normal) ease;
-        }
-
-        [data-theme="dark"] .theme-toggle-container {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .theme-icon {
-            font-size: 1rem;
-            color: var(--primary);
-            transition: all var(--transition-normal) ease;
-        }
-
-        .theme-switch {
-            position: relative;
-            width: 50px;
-            height: 25px;
-            background: var(--primary-light);
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all var(--transition-normal) ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-            will-change: transform;
-        }
-
-        .theme-switch::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 21px;
-            height: 21px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            will-change: transform;
-        }
-
-        [data-theme="dark"] .theme-switch {
-            background: var(--dark-bg-tertiary);
-        }
-
-        [data-theme="dark"] .theme-switch::before {
-            transform: translateX(25px);
-            background: var(--primary);
-        }
-
-        /* ===== HEADER ===== */
+        /* Header */
         .header {
             background: var(--bg-gradient);
             color: white;
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px var(--shadow-color);
+            box-shadow: var(--shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all var(--transition-normal) ease;
         }
 
         .header h1 {
@@ -239,13 +94,12 @@
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
-            transition: all var(--transition-normal) ease;
+            transition: all 0.3s;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
-            will-change: transform;
         }
 
         .back-btn:hover {
@@ -253,13 +107,13 @@
             transform: translateY(-2px);
         }
 
-        /* ===== FRIENDS CONTENT ===== */
+        /* Friends container */
         .friends-container {
-            background: var(--bg-tertiary);
+            background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px var(--shadow-color);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--light-gray);
             margin-bottom: 2rem;
         }
 
@@ -283,8 +137,8 @@
 
         .tabs {
             display: flex;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
+            background: var(--light);
+            border-bottom: 1px solid var(--light-gray);
         }
 
         .tab {
@@ -293,8 +147,8 @@
             text-align: center;
             cursor: pointer;
             font-weight: 600;
-            color: var(--text-secondary);
-            transition: all var(--transition-normal) ease;
+            color: var(--gray);
+            transition: all 0.3s;
             border-bottom: 3px solid transparent;
             position: relative;
         }
@@ -302,7 +156,7 @@
         .tab.active {
             color: var(--primary);
             border-bottom-color: var(--primary);
-            background: var(--bg-tertiary);
+            background: white;
         }
 
         .tab:hover {
@@ -340,18 +194,18 @@
         .search-input {
             width: 100%;
             padding: 12px 40px 12px 16px;
-            border: 2px solid var(--border-color);
+            border: 2px solid var(--light-gray);
             border-radius: 25px;
             font-size: 14px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            transition: all var(--transition-normal) ease;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.3s;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            background: var(--bg-tertiary);
+            background: white;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
 
@@ -360,33 +214,35 @@
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-secondary);
+            color: var(--gray);
             font-size: 16px;
         }
 
-        /* ===== FRIEND ITEMS ===== */
+        /* Friend items */
         .friend-request, .friend-item {
             display: flex;
             align-items: center;
             padding: 15px;
             margin-bottom: 15px;
-            background: var(--bg-secondary);
+            background: var(--light);
             border-radius: 15px;
-            transition: all var(--transition-normal) ease;
-            border: 1px solid var(--border-color);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideInUp 0.5s var(--ease-smooth) forwards;
+            transition: all 0.3s;
+            border: 1px solid var(--light-gray);
+            animation: slideInUp 0.5s ease forwards;
         }
 
         .friend-request:hover, .friend-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--shadow-color);
-            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-lg);
+            background: white;
             border-color: var(--primary-light);
         }
 
         @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -405,9 +261,10 @@
             font-weight: bold;
             font-size: 20px;
             margin-right: 15px;
-            border: 3px solid var(--bg-tertiary);
+            border: 3px solid white;
             box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
             position: relative;
+            overflow: hidden;
         }
 
         .avatar img {
@@ -426,10 +283,22 @@
             height: 16px;
             background: var(--success);
             border-radius: 50%;
-            border: 2px solid var(--bg-tertiary);
+            border: 2px solid white;
             position: absolute;
             bottom: 2px;
             right: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        .online-indicator.offline {
+            background: var(--gray);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .friend-info {
@@ -439,24 +308,25 @@
         .friend-name {
             font-weight: 700;
             font-size: 16px;
-            color: var(--text-primary);
+            color: var(--dark);
             margin-bottom: 4px;
         }
 
         .friend-details {
-            color: var(--text-secondary);
+            color: var(--gray);
             font-size: 14px;
             margin-bottom: 8px;
         }
 
         .mutual-friends {
-            color: var(--text-secondary);
+            color: var(--gray);
             font-size: 12px;
         }
 
         .actions {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -466,10 +336,11 @@
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
-            transition: all var(--transition-normal) ease;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
 
         .btn-accept {
@@ -482,13 +353,13 @@
             transform: scale(1.05);
         }
 
-        .btn-decline {
-            background: var(--border-color);
-            color: var(--text-primary);
+        .btn-decline, .btn-remove {
+            background: var(--light-gray);
+            color: var(--dark);
         }
 
-        .btn-decline:hover {
-            background: var(--text-secondary);
+        .btn-decline:hover, .btn-remove:hover {
+            background: var(--danger);
             color: white;
         }
 
@@ -502,10 +373,29 @@
             transform: scale(1.05);
         }
 
+        .btn-message {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-message:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark);
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: var(--text-secondary);
+            color: var(--gray);
         }
 
         .empty-icon {
@@ -514,7 +404,67 @@
             opacity: 0.5;
         }
 
-        /* ===== NOTIFICATIONS ===== */
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--light-gray);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error state */
+        .error-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--danger);
+            background: rgba(230, 57, 70, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .retry-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .retry-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.05);
+        }
+
+        /* Notification */
         .notification {
             position: fixed;
             top: 80px;
@@ -523,14 +473,15 @@
             color: white;
             padding: 15px 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-lg);
             z-index: 1000;
             font-weight: 600;
             transform: translateX(300px);
-            transition: transform var(--transition-normal) ease;
+            transition: transform 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            max-width: 350px;
         }
 
         .notification.show {
@@ -549,14 +500,82 @@
             background: var(--warning);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .theme-toggle-container {
-                top: 10px;
-                right: 10px;
-                padding: 0.4rem 0.8rem;
-            }
+        .notification.error {
+            background: var(--danger);
+        }
 
+        /* Add friend modal */
+        .add-friend-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .add-friend-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
@@ -590,16 +609,20 @@
 
             .friend-request, .friend-item {
                 padding: 12px;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
             }
 
             .avatar {
                 width: 50px;
                 height: 50px;
                 font-size: 18px;
+                margin-right: 0;
             }
 
             .actions {
-                flex-direction: column;
+                justify-content: center;
                 gap: 5px;
             }
 
@@ -608,63 +631,10 @@
                 font-size: 13px;
             }
         }
-
-        /* ===== PERFORMANCE OPTIMIZATIONS ===== */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-        /* ===== ERROR STATE ===== */
-        .error-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--danger);
-            background: rgba(230, 57, 70, 0.1);
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-
-        .error-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .retry-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all var(--transition-normal) ease;
-        }
-
-        .retry-btn:hover {
-            background: #d32f2f;
-            transform: scale(1.05);
-        }
     </style>
 </head>
 <body>
-    <!-- Loader -->
-    <div class="loader" id="loader">
-        <div class="spinner"></div>
-    </div>
-
     <div class="overlay">
-        <!-- Theme Toggle -->
-        <div class="theme-toggle-container">
-            <i class="theme-icon fas fa-sun" id="light-icon"></i>
-            <div class="theme-switch" id="theme-switch"></div>
-            <i class="theme-icon fas fa-moon" id="dark-icon"></i>
-        </div>
-
         <div class="container">
             <header class="header">
                 <div>
@@ -676,6 +646,10 @@
                 </div>
 
                 <div class="header-actions">
+                    <button class="back-btn" onclick="window.location.href='chat.html'">
+                        <i class="fas fa-comments"></i>
+                        Chat
+                    </button>
                     <a href="center.html" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                         Retour au Dashboard
@@ -712,7 +686,10 @@
                             <i class="search-icon fas fa-search"></i>
                         </div>
                         <div id="requests-content">
-                            <!-- Le contenu sera chargé dynamiquement par Firebase -->
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Chargement des demandes...
+                            </div>
                         </div>
                     </div>
 
@@ -722,7 +699,10 @@
                             <i class="search-icon fas fa-search"></i>
                         </div>
                         <div id="friends-content">
-                            <!-- Le contenu sera chargé dynamiquement par Firebase -->
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Chargement des amis...
+                            </div>
                         </div>
                     </div>
 
@@ -731,8 +711,15 @@
                             <input type="text" class="search-input" placeholder="Rechercher des personnes...">
                             <i class="search-icon fas fa-search"></i>
                         </div>
+                        <button class="btn btn-add" onclick="showAddFriendModal()" style="margin-bottom: 20px;">
+                            <i class="fas fa-plus"></i>
+                            Ajouter par email
+                        </button>
                         <div id="suggestions-content">
-                            <!-- Le contenu sera chargé dynamiquement par Firebase -->
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Chargement des suggestions...
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -740,15 +727,52 @@
         </div>
     </div>
 
+    <!-- Add Friend Modal -->
+    <div class="add-friend-modal" id="add-friend-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajouter un ami</h3>
+                <p>Ajoutez un ami en utilisant son adresse email</p>
+            </div>
+            <form id="add-friend-form">
+                <div class="form-group">
+                    <label for="friend-email">Email de l'ami</label>
+                    <input type="email" id="friend-email" placeholder="exemple@email.com" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideAddFriendModal()">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-add">
+                        <i class="fas fa-plus"></i>
+                        Ajouter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     
-    <!-- Firebase SDK v9 (modular) -->
+    <!-- Firebase v11 SDK -->
     <script type="module">
-        // 🔥 Configuration Firebase directe
+        // 🔥 Configuration Firebase unifiée
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getDatabase, ref, set, onValue, update, remove, push, serverTimestamp, off } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js';
+        import { 
+            getDatabase, 
+            ref, 
+            set, 
+            onValue, 
+            update, 
+            remove, 
+            serverTimestamp,
+            off,
+            query,
+            orderByChild,
+            equalTo
+        } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js';
 
         // Configuration Firebase
         const firebaseConfig = {
@@ -769,68 +793,14 @@
 
         console.log('🔥 Firebase initialisé avec succès');
 
-        // ===== GESTIONNAIRE DE THÈME =====
-        class ThemeManager {
-            constructor() {
-                this.currentTheme = this.getInitialTheme();
-                this.init();
-            }
-
-            getInitialTheme() {
-                const savedTheme = localStorage.getItem('schoolreport-theme');
-                if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-                    return savedTheme;
-                }
-
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    return 'dark';
-                }
-
-                return 'light';
-            }
-
-            init() {
-                this.applyTheme(this.currentTheme);
-                this.setupToggle();
-            }
-
-            applyTheme(theme) {
-                document.documentElement.setAttribute('data-theme', theme);
-                this.currentTheme = theme;
-                localStorage.setItem('schoolreport-theme', theme);
-                this.updateThemeIcons();
-            }
-
-            updateThemeIcons() {
-                const lightIcon = document.getElementById('light-icon');
-                const darkIcon = document.getElementById('dark-icon');
-                
-                if (lightIcon && darkIcon) {
-                    lightIcon.style.opacity = this.currentTheme === 'dark' ? '0.5' : '1';
-                    darkIcon.style.opacity = this.currentTheme === 'dark' ? '1' : '0.5';
-                }
-            }
-
-            setupToggle() {
-                const themeSwitch = document.getElementById('theme-switch');
-                if (themeSwitch) {
-                    themeSwitch.addEventListener('click', () => this.toggleTheme());
-                }
-            }
-
-            toggleTheme() {
-                this.applyTheme(this.currentTheme === 'light' ? 'dark' : 'light');
-            }
-        }
-
         // ===== GESTIONNAIRE D'AMIS FIREBASE =====
         class FriendsManager {
             constructor() {
                 this.currentUser = null;
-                this.friendRequests = [];
-                this.friends = [];
-                this.allUsers = [];
-                this.onlineUsers = [];
+                this.friendRequests = new Map();
+                this.friends = new Map();
+                this.allUsers = new Map();
+                this.onlineUsers = new Map();
                 this.listeners = [];
                 this.isInitialized = false;
             }
@@ -838,69 +808,18 @@
             async init() {
                 console.log('🚀 Initialisation du gestionnaire d\'amis...');
                 
-                try {
-                    // Vérifier l'authentification
-                    onAuthStateChanged(auth, (user) => {
-                        if (!user) {
-                            console.log('❌ Utilisateur non connecté, redirection...');
-                            this.showError('Vous devez être connecté pour accéder à cette page', () => {
-                                window.location.href = 'index.html';
-                            });
-                            return;
-                        }
-                        
-                        console.log('✅ Utilisateur connecté:', user.email);
-                        this.currentUser = user;
-                        this.setupFirebaseListeners();
-                        this.setupEventListeners();
-                        this.isInitialized = true;
-                    });
-                } catch (error) {
-                    console.error('❌ Erreur lors de l\'initialisation:', error);
-                    this.showError('Erreur de connexion à Firebase', () => {
-                        window.location.reload();
-                    });
-                }
-            }
-
-            showError(message, retryCallback = null) {
-                const containers = ['requests-content', 'friends-content', 'suggestions-content'];
-                
-                containers.forEach(containerId => {
-                    const container = document.getElementById(containerId);
-                    if (container) {
-                        container.innerHTML = `
-                            <div class="error-state">
-                                <div class="error-icon">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </div>
-                                <p>${message}</p>
-                                ${retryCallback ? '<button class="retry-btn" onclick="this.callback()">Réessayer</button>' : ''}
-                            </div>
-                        `;
-                        
-                        if (retryCallback) {
-                            container.querySelector('.retry-btn').callback = retryCallback;
-                        }
+                onAuthStateChanged(auth, (user) => {
+                    if (!user) {
+                        console.log('❌ Utilisateur non connecté, redirection...');
+                        window.location.href = 'index.html';
+                        return;
                     }
-                });
-            }
-
-            showLoading() {
-                const containers = ['requests-content', 'friends-content', 'suggestions-content'];
-                
-                containers.forEach(containerId => {
-                    const container = document.getElementById(containerId);
-                    if (container) {
-                        container.innerHTML = `
-                            <div class="empty-state">
-                                <div class="empty-icon">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </div>
-                                <p>Chargement...</p>
-                            </div>
-                        `;
-                    }
+                    
+                    console.log('✅ Utilisateur connecté:', user.email);
+                    this.currentUser = user;
+                    this.setupFirebaseListeners();
+                    this.setupEventListeners();
+                    this.isInitialized = true;
                 });
             }
 
@@ -909,238 +828,224 @@
 
                 console.log('🔗 Configuration des listeners Firebase...');
 
-                this.showLoading();
-
-                try {
-                    // Écouter les demandes d'amis reçues
-                    const requestsRef = ref(db, `friendRequests/${this.currentUser.uid}`);
-                    const requestsListener = onValue(requestsRef, (snapshot) => {
-                        console.log('📥 Mise à jour des demandes d\'amis');
-                        this.friendRequests = [];
+                // Écouter les demandes d'amis reçues
+                const requestsRef = ref(db, `friendRequests/${this.currentUser.uid}`);
+                const requestsListener = onValue(requestsRef, (snapshot) => {
+                    console.log('📥 Mise à jour des demandes d\'amis');
+                    this.friendRequests.clear();
+                    
+                    if (snapshot.exists()) {
                         const data = snapshot.val();
-                        
-                        if (data) {
-                            Object.entries(data).forEach(([senderUid, requestData]) => {
-                                if (requestData.status === 'pending') {
-                                    this.friendRequests.push({
-                                        id: senderUid,
-                                        ...requestData
-                                    });
-                                }
-                            });
-                        }
-                        
-                        this.updateRequestsUI();
-                    }, (error) => {
-                        console.error('❌ Erreur lors de l\'écoute des demandes:', error);
-                        this.showError('Erreur lors du chargement des demandes d\'amis');
-                    });
-                    this.listeners.push(() => off(requestsRef, 'value', requestsListener));
+                        Object.entries(data).forEach(([senderUid, requestData]) => {
+                            if (requestData.status === 'pending') {
+                                this.friendRequests.set(senderUid, requestData);
+                            }
+                        });
+                    }
+                    
+                    this.updateRequestsUI();
+                });
+                this.listeners.push(() => off(requestsRef, 'value', requestsListener));
 
-                    // Écouter la liste des amis
-                    const friendsRef = ref(db, `friends/${this.currentUser.uid}`);
-                    const friendsListener = onValue(friendsRef, (snapshot) => {
-                        console.log('👥 Mise à jour de la liste d\'amis');
-                        this.friends = [];
+                // Écouter la liste des amis
+                const friendsRef = ref(db, `friends/${this.currentUser.uid}`);
+                const friendsListener = onValue(friendsRef, (snapshot) => {
+                    console.log('👥 Mise à jour de la liste d\'amis');
+                    this.friends.clear();
+                    
+                    if (snapshot.exists()) {
                         const data = snapshot.val();
-                        
-                        if (data) {
-                            Object.entries(data).forEach(([friendUid, friendData]) => {
-                                this.friends.push({
-                                    id: friendUid,
-                                    ...friendData
-                                });
-                            });
-                        }
-                        
-                        this.updateFriendsUI();
-                    }, (error) => {
-                        console.error('❌ Erreur lors de l\'écoute des amis:', error);
-                        this.showError('Erreur lors du chargement de la liste d\'amis');
-                    });
-                    this.listeners.push(() => off(friendsRef, 'value', friendsListener));
+                        Object.entries(data).forEach(([friendUid, friendData]) => {
+                            if (friendData.status === 'accepted') {
+                                this.friends.set(friendUid, friendData);
+                            }
+                        });
+                    }
+                    
+                    this.updateFriendsUI();
+                });
+                this.listeners.push(() => off(friendsRef, 'value', friendsListener));
 
-                    // Écouter tous les utilisateurs pour les suggestions
-                    const usersRef = ref(db, 'users');
-                    const usersListener = onValue(usersRef, (snapshot) => {
-                        console.log('🔍 Mise à jour des suggestions');
-                        this.allUsers = [];
+                // Écouter tous les utilisateurs pour les suggestions
+                const usersRef = ref(db, 'users');
+                const usersListener = onValue(usersRef, (snapshot) => {
+                    console.log('🔍 Mise à jour des suggestions');
+                    this.allUsers.clear();
+                    
+                    if (snapshot.exists()) {
                         const data = snapshot.val();
-                        
-                        if (data) {
-                            Object.entries(data).forEach(([uid, userData]) => {
-                                if (uid !== this.currentUser.uid) {
-                                    this.allUsers.push({
-                                        id: uid,
-                                        ...userData
-                                    });
-                                }
-                            });
-                        }
-                        
-                        this.updateSuggestionsUI();
-                    }, (error) => {
-                        console.error('❌ Erreur lors de l\'écoute des utilisateurs:', error);
-                        this.showError('Erreur lors du chargement des suggestions');
-                    });
-                    this.listeners.push(() => off(usersRef, 'value', usersListener));
+                        Object.entries(data).forEach(([uid, userData]) => {
+                            if (uid !== this.currentUser.uid) {
+                                this.allUsers.set(uid, userData);
+                            }
+                        });
+                    }
+                    
+                    this.updateSuggestionsUI();
+                });
+                this.listeners.push(() => off(usersRef, 'value', usersListener));
 
-                    // Écouter les utilisateurs en ligne
-                    const onlineRef = ref(db, 'connectedUsers');
-                    const onlineListener = onValue(onlineRef, (snapshot) => {
-                        console.log('🟢 Mise à jour du statut en ligne');
-                        this.onlineUsers = [];
+                // Écouter les utilisateurs en ligne
+                const onlineRef = ref(db, 'connectedUsers');
+                const onlineListener = onValue(onlineRef, (snapshot) => {
+                    console.log('🟢 Mise à jour du statut en ligne');
+                    this.onlineUsers.clear();
+                    
+                    if (snapshot.exists()) {
                         const data = snapshot.val();
-                        
-                        if (data) {
-                            Object.keys(data).forEach(uid => {
-                                this.onlineUsers.push(uid);
-                            });
-                        }
-                        
-                        this.updateOnlineStatus();
-                    }, (error) => {
-                        console.error('❌ Erreur lors de l\'écoute du statut en ligne:', error);
-                        // Ne pas afficher d'erreur pour le statut en ligne, ce n'est pas critique
-                    });
-                    this.listeners.push(() => off(onlineRef, 'value', onlineListener));
-
-                } catch (error) {
-                    console.error('❌ Erreur lors de la configuration des listeners:', error);
-                    this.showError('Erreur de connexion à la base de données', () => {
-                        this.setupFirebaseListeners();
-                    });
-                }
+                        Object.entries(data).forEach(([uid, userData]) => {
+                            if (uid !== this.currentUser.uid) {
+                                this.onlineUsers.set(uid, userData);
+                            }
+                        });
+                    }
+                    
+                    this.updateOnlineStatus();
+                });
+                this.listeners.push(() => off(onlineRef, 'value', onlineListener));
             }
 
             updateRequestsUI() {
                 const container = document.getElementById('requests-content');
+                const badge = document.getElementById('requests-badge');
+                
                 if (!container) return;
                 
                 // Mise à jour du badge
-                const badge = document.getElementById('requests-badge');
                 if (badge) {
-                    if (this.friendRequests.length > 0) {
-                        badge.textContent = this.friendRequests.length;
+                    if (this.friendRequests.size > 0) {
+                        badge.textContent = this.friendRequests.size;
                         badge.style.display = 'flex';
                     } else {
                         badge.style.display = 'none';
                     }
                 }
 
-                // Nettoyer le contenu existant
                 container.innerHTML = '';
 
-                if (this.friendRequests.length === 0) {
+                if (this.friendRequests.size === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-user-friends"></i>
                             </div>
-                            <p>Aucune demande d'ami en attente</p>
+                            <h3>Aucune demande d'ami</h3>
+                            <p>Vous n'avez pas de demandes d'ami en attente</p>
                         </div>
                     `;
                     return;
                 }
 
-                this.friendRequests.forEach((request, index) => {
-                    const requestElement = this.createRequestElement(request, index);
+                this.friendRequests.forEach((request, senderId) => {
+                    const requestElement = this.createRequestElement(senderId, request);
                     container.appendChild(requestElement);
                 });
             }
 
             updateFriendsUI() {
                 const container = document.getElementById('friends-content');
+                
                 if (!container) return;
                 
-                // Nettoyer le contenu existant
                 container.innerHTML = '';
 
-                if (this.friends.length === 0) {
+                if (this.friends.size === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-users"></i>
                             </div>
-                            <p>Vous n'avez pas encore d'amis</p>
-                            <p style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Consultez l'onglet Suggestions pour ajouter des amis !</p>
+                            <h3>Aucun ami</h3>
+                            <p>Vous n'avez pas encore d'amis. Consultez l'onglet Suggestions pour ajouter des amis !</p>
                         </div>
                     `;
                     return;
                 }
 
-                this.friends.forEach((friend, index) => {
-                    const friendElement = this.createFriendElement(friend, index);
+                this.friends.forEach((friend, friendId) => {
+                    const friendElement = this.createFriendElement(friendId, friend);
                     container.appendChild(friendElement);
                 });
             }
 
             updateSuggestionsUI() {
                 const container = document.getElementById('suggestions-content');
+                
                 if (!container) return;
                 
-                // Nettoyer le contenu existant
                 container.innerHTML = '';
 
                 // Filtrer les utilisateurs (exclure les amis actuels et les demandes en cours)
-                const friendIds = this.friends.map(f => f.id);
-                const requestIds = this.friendRequests.map(r => r.id);
+                const suggestions = new Map();
                 
-                const suggestions = this.allUsers.filter(user => 
-                    !friendIds.includes(user.id) && 
-                    !requestIds.includes(user.id)
-                );
+                this.allUsers.forEach((user, userId) => {
+                    if (!this.friends.has(userId) && !this.friendRequests.has(userId)) {
+                        suggestions.set(userId, user);
+                    }
+                });
 
-                if (suggestions.length === 0) {
+                if (suggestions.size === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-search"></i>
                             </div>
-                            <p>Aucune suggestion disponible</p>
-                            <p style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Il semble que vous connaissiez déjà tout le monde !</p>
+                            <h3>Aucune suggestion</h3>
+                            <p>Il semble que vous connaissiez déjà tout le monde !</p>
                         </div>
                     `;
                     return;
                 }
 
-                suggestions.slice(0, 10).forEach((user, index) => {
-                    const suggestionElement = this.createSuggestionElement(user, index);
-                    container.appendChild(suggestionElement);
+                // Afficher jusqu'à 10 suggestions
+                let count = 0;
+                suggestions.forEach((user, userId) => {
+                    if (count < 10) {
+                        const suggestionElement = this.createSuggestionElement(userId, user);
+                        container.appendChild(suggestionElement);
+                        count++;
+                    }
                 });
             }
 
             updateOnlineStatus() {
-                // Mettre à jour les indicateurs en ligne
-                document.querySelectorAll('.friend-item').forEach(item => {
+                // Mettre à jour les indicateurs en ligne dans toutes les listes
+                document.querySelectorAll('.friend-item, .friend-request').forEach(item => {
                     const userId = item.dataset.userId;
                     const indicator = item.querySelector('.online-indicator');
-                    const detailsElement = item.querySelector('.friend-details');
                     
-                    if (indicator && detailsElement) {
-                        if (this.onlineUsers.includes(userId)) {
-                            indicator.style.display = 'block';
-                            // Remplacer "Hors ligne" par "En ligne" dans le texte
-                            detailsElement.textContent = detailsElement.textContent.replace('Hors ligne', 'En ligne');
+                    if (indicator && userId) {
+                        if (this.onlineUsers.has(userId)) {
+                            indicator.classList.remove('offline');
+                            // Mettre à jour le texte de statut
+                            const detailsElement = item.querySelector('.friend-details');
+                            if (detailsElement && detailsElement.textContent.includes('Hors ligne')) {
+                                detailsElement.textContent = detailsElement.textContent.replace('Hors ligne', 'En ligne');
+                            }
                         } else {
-                            indicator.style.display = 'none';
-                            // Remplacer "En ligne" par "Hors ligne" dans le texte
-                            detailsElement.textContent = detailsElement.textContent.replace('En ligne', 'Hors ligne');
+                            indicator.classList.add('offline');
+                            // Mettre à jour le texte de statut
+                            const detailsElement = item.querySelector('.friend-details');
+                            if (detailsElement && detailsElement.textContent.includes('En ligne')) {
+                                detailsElement.textContent = detailsElement.textContent.replace('En ligne', 'Hors ligne');
+                            }
                         }
                     }
                 });
             }
 
-            createRequestElement(request, index) {
+            createRequestElement(senderId, request) {
                 const div = document.createElement('div');
                 div.className = 'friend-request';
-                div.style.animationDelay = `${index * 0.1}s`;
-                div.dataset.userId = request.id;
+                div.dataset.userId = senderId;
                 
                 const initials = request.username ? request.username.charAt(0).toUpperCase() : '?';
                 const profileImage = request.profileImage ? 
-                    `<img src="${request.profileImage}" alt="${request.username}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : 
+                    `<img src="${request.profileImage}" alt="${request.username}">` : 
                     initials;
+
+                const isOnline = this.onlineUsers.has(senderId);
+                const onlineIndicator = `<div class="online-indicator ${isOnline ? '' : 'offline'}"></div>`;
 
                 const formattedDate = request.timestamp ? 
                     new Date(request.timestamp).toLocaleDateString('fr-FR', {
@@ -1150,18 +1055,21 @@
                     }) : 'Date inconnue';
 
                 div.innerHTML = `
-                    <div class="avatar">${profileImage}</div>
+                    <div class="avatar-container">
+                        <div class="avatar">${profileImage}</div>
+                        ${onlineIndicator}
+                    </div>
                     <div class="friend-info">
                         <div class="friend-name">${request.username || 'Utilisateur inconnu'}</div>
                         <div class="friend-details">${request.email || 'Email non disponible'}</div>
                         <div class="mutual-friends">Demande envoyée le ${formattedDate}</div>
                     </div>
                     <div class="actions">
-                        <button class="btn btn-accept" onclick="window.friendsManager.acceptRequest('${request.id}')">
+                        <button class="btn btn-accept" onclick="window.friendsManager.acceptRequest('${senderId}')">
                             <i class="fas fa-check"></i>
                             Accepter
                         </button>
-                        <button class="btn btn-decline" onclick="window.friendsManager.declineRequest('${request.id}')">
+                        <button class="btn btn-decline" onclick="window.friendsManager.declineRequest('${senderId}')">
                             <i class="fas fa-times"></i>
                             Refuser
                         </button>
@@ -1171,19 +1079,18 @@
                 return div;
             }
 
-            createFriendElement(friend, index) {
+            createFriendElement(friendId, friend) {
                 const div = document.createElement('div');
                 div.className = 'friend-item';
-                div.style.animationDelay = `${index * 0.1}s`;
-                div.dataset.userId = friend.id;
+                div.dataset.userId = friendId;
                 
                 const initials = friend.username ? friend.username.charAt(0).toUpperCase() : '?';
                 const profileImage = friend.profileImage ? 
-                    `<img src="${friend.profileImage}" alt="${friend.username}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : 
+                    `<img src="${friend.profileImage}" alt="${friend.username}">` : 
                     initials;
 
-                const isOnline = this.onlineUsers.includes(friend.id);
-                const onlineIndicator = isOnline ? '<div class="online-indicator"></div>' : '';
+                const isOnline = this.onlineUsers.has(friendId);
+                const onlineIndicator = `<div class="online-indicator ${isOnline ? '' : 'offline'}"></div>`;
                 const status = isOnline ? 'En ligne' : 'Hors ligne';
 
                 const formattedDate = friend.addedAt ? 
@@ -1203,11 +1110,11 @@
                         <div class="friend-details">${status} • Ami depuis le ${formattedDate}</div>
                     </div>
                     <div class="actions">
-                        <button class="btn btn-accept" onclick="window.friendsManager.sendMessage('${friend.id}')">
+                        <button class="btn btn-message" onclick="window.friendsManager.sendMessage('${friendId}')">
                             <i class="fas fa-comment"></i>
                             Message
                         </button>
-                        <button class="btn btn-decline" onclick="window.friendsManager.removeFriend('${friend.id}')" style="background: var(--danger);">
+                        <button class="btn btn-remove" onclick="window.friendsManager.removeFriend('${friendId}')">
                             <i class="fas fa-user-minus"></i>
                             Retirer
                         </button>
@@ -1217,30 +1124,35 @@
                 return div;
             }
 
-            createSuggestionElement(user, index) {
+            createSuggestionElement(userId, user) {
                 const div = document.createElement('div');
                 div.className = 'friend-request';
-                div.style.animationDelay = `${index * 0.1}s`;
-                div.dataset.userId = user.id;
+                div.dataset.userId = userId;
                 
                 const initials = user.username ? user.username.charAt(0).toUpperCase() : '?';
                 const profileImage = user.profileImage ? 
-                    `<img src="${user.profileImage}" alt="${user.username}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : 
+                    `<img src="${user.profileImage}" alt="${user.username}">` : 
                     initials;
+
+                const isOnline = this.onlineUsers.has(userId);
+                const onlineIndicator = `<div class="online-indicator ${isOnline ? '' : 'offline'}"></div>`;
 
                 // Calculer les amis en commun (simulation pour l'instant)
                 const mutualCount = Math.floor(Math.random() * 5);
                 const mutualText = mutualCount > 0 ? `${mutualCount} ami${mutualCount > 1 ? 's' : ''} en commun` : 'Aucun ami en commun';
 
                 div.innerHTML = `
-                    <div class="avatar">${profileImage}</div>
+                    <div class="avatar-container">
+                        <div class="avatar">${profileImage}</div>
+                        ${onlineIndicator}
+                    </div>
                     <div class="friend-info">
                         <div class="friend-name">${user.username || 'Utilisateur inconnu'}</div>
                         <div class="friend-details">${user.email || 'Email non disponible'}</div>
                         <div class="mutual-friends">${mutualText}</div>
                     </div>
                     <div class="actions">
-                        <button class="btn btn-add" onclick="window.friendsManager.sendFriendRequest('${user.id}')">
+                        <button class="btn btn-add" onclick="window.friendsManager.sendFriendRequest('${userId}')">
                             <i class="fas fa-plus"></i>
                             Ajouter
                         </button>
@@ -1252,118 +1164,111 @@
 
             async sendFriendRequest(targetUserId) {
                 try {
-                    // Vérifier que l'utilisateur cible existe
-                    const targetUser = this.allUsers.find(u => u.id === targetUserId);
+                    const targetUser = this.allUsers.get(targetUserId);
                     if (!targetUser) {
-                        showNotification('Utilisateur introuvable', 'warning');
+                        this.showNotification('Utilisateur introuvable', 'error');
+                        return;
+                    }
+
+                    // Récupérer les infos de l'utilisateur actuel
+                    const currentUserRef = ref(db, `users/${this.currentUser.uid}`);
+                    const currentUserSnapshot = await new Promise((resolve, reject) => {
+                        onValue(currentUserRef, resolve, reject, { onlyOnce: true });
+                    });
+                    
+                    const currentUserData = currentUserSnapshot.val();
+                    if (!currentUserData) {
+                        this.showNotification('Erreur: profil utilisateur introuvable', 'error');
                         return;
                     }
 
                     // Ajouter la demande dans la base du destinataire
                     const requestRef = ref(db, `friendRequests/${targetUserId}/${this.currentUser.uid}`);
-                    
-                    // Récupérer les infos de l'utilisateur actuel
-                    const currentUserRef = ref(db, `users/${this.currentUser.uid}`);
-                    
-                    return new Promise((resolve, reject) => {
-                        onValue(currentUserRef, (snapshot) => {
-                            const currentUserData = snapshot.val();
-                            
-                            if (!currentUserData) {
-                                showNotification('Erreur: profil utilisateur introuvable', 'warning');
-                                reject(new Error('Profil utilisateur introuvable'));
-                                return;
-                            }
-
-                            set(requestRef, {
-                                username: currentUserData.username,
-                                email: this.currentUser.email,
-                                profileImage: currentUserData.profileImage || null,
-                                timestamp: Date.now(),
-                                status: 'pending'
-                            }).then(() => {
-                                // Mettre à jour l'UI
-                                const button = document.querySelector(`[data-user-id="${targetUserId}"] .btn-add`);
-                                if (button) {
-                                    button.innerHTML = '<i class="fas fa-check"></i> Envoyé';
-                                    button.style.background = 'var(--success)';
-                                    button.disabled = true;
-                                }
-
-                                showNotification(`Demande envoyée à ${targetUser.username} ! 📨`, 'success');
-                                resolve();
-                            }).catch(reject);
-                        }, { onlyOnce: true });
+                    await set(requestRef, {
+                        username: currentUserData.username,
+                        email: this.currentUser.email,
+                        profileImage: currentUserData.profileImage || null,
+                        timestamp: Date.now(),
+                        status: 'pending'
                     });
+
+                    // Mettre à jour l'UI
+                    const button = document.querySelector(`[data-user-id="${targetUserId}"] .btn-add`);
+                    if (button) {
+                        button.innerHTML = '<i class="fas fa-check"></i> Envoyé';
+                        button.style.background = 'var(--success)';
+                        button.disabled = true;
+                    }
+
+                    this.showNotification(`Demande envoyée à ${targetUser.username} ! 📨`, 'success');
                     
                 } catch (error) {
                     console.error('Erreur lors de l\'envoi de la demande:', error);
-                    showNotification('Erreur lors de l\'envoi de la demande', 'warning');
+                    this.showNotification('Erreur lors de l\'envoi de la demande', 'error');
                 }
             }
 
             async acceptRequest(senderUserId) {
                 try {
-                    const request = this.friendRequests.find(r => r.id === senderUserId);
+                    const request = this.friendRequests.get(senderUserId);
                     if (!request) {
-                        showNotification('Demande introuvable', 'warning');
+                        this.showNotification('Demande introuvable', 'error');
                         return;
                     }
 
                     // Récupérer les infos de l'utilisateur actuel
                     const currentUserRef = ref(db, `users/${this.currentUser.uid}`);
-                    
-                    return new Promise((resolve, reject) => {
-                        onValue(currentUserRef, (snapshot) => {
-                            const currentUserData = snapshot.val();
-                            
-                            if (!currentUserData) {
-                                showNotification('Erreur: profil utilisateur introuvable', 'warning');
-                                reject(new Error('Profil utilisateur introuvable'));
-                                return;
-                            }
-
-                            // Préparer les modifications en batch
-                            const updates = {};
-                            
-                            // Ajouter l'ami dans la liste de l'utilisateur actuel
-                            updates[`friends/${this.currentUser.uid}/${senderUserId}`] = {
-                                username: request.username,
-                                email: request.email,
-                                profileImage: request.profileImage,
-                                addedAt: Date.now()
-                            };
-
-                            // Ajouter l'utilisateur actuel dans la liste d'amis de l'expéditeur
-                            updates[`friends/${senderUserId}/${this.currentUser.uid}`] = {
-                                username: currentUserData.username,
-                                email: this.currentUser.email,
-                                profileImage: currentUserData.profileImage,
-                                addedAt: Date.now()
-                            };
-
-                            // Supprimer la demande
-                            updates[`friendRequests/${this.currentUser.uid}/${senderUserId}`] = null;
-
-                            // Appliquer toutes les modifications
-                            update(ref(db), updates).then(() => {
-                                showNotification(`${request.username} a été ajouté à vos amis ! 🎉`, 'success');
-                                resolve();
-                            }).catch(reject);
-                        }, { onlyOnce: true });
+                    const currentUserSnapshot = await new Promise((resolve, reject) => {
+                        onValue(currentUserRef, resolve, reject, { onlyOnce: true });
                     });
+                    
+                    const currentUserData = currentUserSnapshot.val();
+                    if (!currentUserData) {
+                        this.showNotification('Erreur: profil utilisateur introuvable', 'error');
+                        return;
+                    }
+
+                    // Préparer les modifications en batch
+                    const updates = {};
+                    const timestamp = Date.now();
+                    
+                    // Ajouter l'ami dans la liste de l'utilisateur actuel
+                    updates[`friends/${this.currentUser.uid}/${senderUserId}`] = {
+                        username: request.username,
+                        email: request.email,
+                        profileImage: request.profileImage,
+                        addedAt: timestamp,
+                        status: 'accepted'
+                    };
+
+                    // Ajouter l'utilisateur actuel dans la liste d'amis de l'expéditeur
+                    updates[`friends/${senderUserId}/${this.currentUser.uid}`] = {
+                        username: currentUserData.username,
+                        email: this.currentUser.email,
+                        profileImage: currentUserData.profileImage,
+                        addedAt: timestamp,
+                        status: 'accepted'
+                    };
+
+                    // Supprimer la demande
+                    updates[`friendRequests/${this.currentUser.uid}/${senderUserId}`] = null;
+
+                    // Appliquer toutes les modifications
+                    await update(ref(db), updates);
+
+                    this.showNotification(`${request.username} a été ajouté à vos amis ! 🎉`, 'success');
                     
                 } catch (error) {
                     console.error('Erreur lors de l\'acceptation:', error);
-                    showNotification('Erreur lors de l\'acceptation de la demande', 'warning');
+                    this.showNotification('Erreur lors de l\'acceptation de la demande', 'error');
                 }
             }
 
             async declineRequest(senderUserId) {
                 try {
-                    const request = this.friendRequests.find(r => r.id === senderUserId);
+                    const request = this.friendRequests.get(senderUserId);
                     if (!request) {
-                        showNotification('Demande introuvable', 'warning');
+                        this.showNotification('Demande introuvable', 'error');
                         return;
                     }
 
@@ -1371,18 +1276,18 @@
                     const requestRef = ref(db, `friendRequests/${this.currentUser.uid}/${senderUserId}`);
                     await remove(requestRef);
 
-                    showNotification(`Demande de ${request.username} refusée`, 'info');
+                    this.showNotification(`Demande de ${request.username} refusée`, 'info');
                     
                 } catch (error) {
                     console.error('Erreur lors du refus:', error);
-                    showNotification('Erreur lors du refus de la demande', 'warning');
+                    this.showNotification('Erreur lors du refus de la demande', 'error');
                 }
             }
 
             async removeFriend(friendUserId) {
-                const friend = this.friends.find(f => f.id === friendUserId);
+                const friend = this.friends.get(friendUserId);
                 if (!friend) {
-                    showNotification('Ami introuvable', 'warning');
+                    this.showNotification('Ami introuvable', 'error');
                     return;
                 }
 
@@ -1397,22 +1302,22 @@
 
                     await update(ref(db), updates);
 
-                    showNotification(`${friend.username} a été retiré de vos amis`, 'info');
+                    this.showNotification(`${friend.username} a été retiré de vos amis`, 'info');
                     
                 } catch (error) {
                     console.error('Erreur lors de la suppression:', error);
-                    showNotification('Erreur lors de la suppression de l\'ami', 'warning');
+                    this.showNotification('Erreur lors de la suppression de l\'ami', 'error');
                 }
             }
 
             sendMessage(friendUserId) {
-                const friend = this.friends.find(f => f.id === friendUserId);
+                const friend = this.friends.get(friendUserId);
                 if (!friend) {
-                    showNotification('Ami introuvable', 'warning');
+                    this.showNotification('Ami introuvable', 'error');
                     return;
                 }
 
-                showNotification(`Redirection vers la conversation avec ${friend.username}...`, 'info');
+                this.showNotification(`Redirection vers la conversation avec ${friend.username}...`, 'info');
                 
                 setTimeout(() => {
                     // Rediriger vers le chat avec cet ami spécifique
@@ -1420,9 +1325,65 @@
                 }, 1500);
             }
 
+            async addFriendByEmail(email) {
+                try {
+                    // Chercher l'utilisateur par email
+                    const usersRef = ref(db, 'users');
+                    const usersQuery = query(usersRef, orderByChild('email'), equalTo(email));
+                    
+                    const snapshot = await new Promise((resolve, reject) => {
+                        onValue(usersQuery, resolve, reject, { onlyOnce: true });
+                    });
+
+                    if (!snapshot.exists()) {
+                        this.showNotification('Aucun utilisateur trouvé avec cette adresse email', 'error');
+                        return;
+                    }
+
+                    const userData = snapshot.val();
+                    const targetUserId = Object.keys(userData)[0];
+                    const targetUser = userData[targetUserId];
+
+                    if (targetUserId === this.currentUser.uid) {
+                        this.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
+                        return;
+                    }
+
+                    if (this.friends.has(targetUserId)) {
+                        this.showNotification('Cette personne est déjà votre ami', 'info');
+                        return;
+                    }
+
+                    if (this.friendRequests.has(targetUserId)) {
+                        this.showNotification('Une demande d\'ami est déjà en cours avec cette personne', 'info');
+                        return;
+                    }
+
+                    // Envoyer la demande d'ami
+                    await this.sendFriendRequest(targetUserId);
+                    
+                } catch (error) {
+                    console.error('Erreur lors de la recherche par email:', error);
+                    this.showNotification('Erreur lors de la recherche', 'error');
+                }
+            }
+
             setupEventListeners() {
                 // Recherche en temps réel
                 this.setupSearch();
+                
+                // Formulaire d'ajout d'ami
+                const addFriendForm = document.getElementById('add-friend-form');
+                if (addFriendForm) {
+                    addFriendForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const email = document.getElementById('friend-email').value.trim();
+                        if (email) {
+                            await this.addFriendByEmail(email);
+                            this.hideAddFriendModal();
+                        }
+                    });
+                }
                 
                 // Navigation clavier
                 this.setupKeyboardNavigation();
@@ -1459,9 +1420,10 @@
                                     <div class="empty-icon">
                                         <i class="fas fa-search"></i>
                                     </div>
-                                    <p>Aucun résultat trouvé pour "${searchTerm}"</p>
+                                    <h3>Aucun résultat trouvé</h3>
+                                    <p>Aucun résultat pour "${searchTerm}"</p>
                                 `;
-                                container.appendChild(emptyState);
+                                container.querySelector('#' + container.id.replace('-tab', '-content')).appendChild(emptyState);
                             }
                         } else if (emptyState) {
                             emptyState.remove();
@@ -1478,6 +1440,9 @@
                             input.value = '';
                             input.dispatchEvent(new Event('input'));
                         });
+                        
+                        // Fermer le modal
+                        this.hideAddFriendModal();
                     }
                     
                     // Navigation entre onglets avec les flèches
@@ -1512,13 +1477,50 @@
                                 break;
                         }
                     }
-                    
-                    // Raccourci pour le thème
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                        e.preventDefault();
-                        window.themeManager.toggleTheme();
-                    }
                 });
+            }
+
+            showAddFriendModal() {
+                document.getElementById('add-friend-modal').classList.add('show');
+                document.getElementById('friend-email').focus();
+            }
+
+            hideAddFriendModal() {
+                document.getElementById('add-friend-modal').classList.remove('show');
+                document.getElementById('friend-email').value = '';
+            }
+
+            showNotification(message, type = 'success') {
+                // Supprimer les notifications existantes
+                const existingNotifications = document.querySelectorAll('.notification');
+                existingNotifications.forEach(notif => notif.remove());
+
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const icon = type === 'success' ? '✅' : 
+                            type === 'info' ? 'ℹ️' : 
+                            type === 'warning' ? '⚠️' : 
+                            type === 'error' ? '❌' : '✅';
+                
+                notification.innerHTML = `${icon} ${message}`;
+                
+                document.body.appendChild(notification);
+                
+                // Animation d'entrée
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Animation de sortie
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }, 3000);
             }
 
             cleanup() {
@@ -1532,38 +1534,6 @@
                 });
                 this.listeners = [];
             }
-        }
-
-        // ===== GESTIONNAIRE DE NOTIFICATIONS =====
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            
-            const icon = type === 'success' ? 'fas fa-check-circle' : 
-                        type === 'info' ? 'fas fa-info-circle' : 
-                        type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
-            
-            notification.innerHTML = `
-                <i class="${icon}"></i>
-                ${message}
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Animation d'entrée
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 100);
-            
-            // Animation de sortie
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 300);
-            }, 3000);
         }
 
         // ===== GESTIONNAIRE D'ONGLETS =====
@@ -1594,42 +1564,42 @@
                 items.forEach((item, index) => {
                     item.style.animation = 'none';
                     item.offsetHeight; // Trigger reflow
-                    item.style.animation = `slideInUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+                    item.style.animation = `slideInUp 0.5s ease forwards`;
                     item.style.animationDelay = `${index * 0.1}s`;
                 });
             }
         }
 
-        // ===== FONCTIONS GLOBALES POUR L'INTERFACE =====
-        window.showTab = showTab;
-        window.showNotification = showNotification;
+        // ===== FONCTIONS GLOBALES =====
+        function showAddFriendModal() {
+            if (window.friendsManager) {
+                window.friendsManager.showAddFriendModal();
+            }
+        }
 
-        // ===== INITIALISATION PRINCIPALE =====
+        function hideAddFriendModal() {
+            if (window.friendsManager) {
+                window.friendsManager.hideAddFriendModal();
+            }
+        }
+
+        // ===== INITIALISATION =====
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initialisation de la page Amis avec Firebase...');
+            console.log('🚀 Initialisation de la page Amis avec intégration Chat...');
             
             try {
-                // Initialisation du gestionnaire de thème
-                window.themeManager = new ThemeManager();
-                console.log('✅ Gestionnaire de thème initialisé');
-                
-                // Initialisation du gestionnaire d'amis Firebase
+                // Initialisation du gestionnaire d'amis
                 window.friendsManager = new FriendsManager();
                 window.friendsManager.init();
                 console.log('✅ Gestionnaire d\'amis initialisé');
                 
-                // Masquer le loader
-                setTimeout(() => {
-                    const loader = document.getElementById('loader');
-                    if (loader) {
-                        loader.classList.add('hidden');
-                        console.log('✅ Loader masqué');
-                    }
-                }, 1500);
+                // Faire les fonctions globales accessibles
+                window.showTab = showTab;
+                window.showAddFriendModal = showAddFriendModal;
+                window.hideAddFriendModal = hideAddFriendModal;
                 
             } catch (error) {
                 console.error('❌ Erreur lors de l\'initialisation:', error);
-                showNotification('Erreur lors de l\'initialisation de l\'application', 'warning');
             }
             
             // Nettoyage à la fermeture de la page
@@ -1639,55 +1609,25 @@
                     console.log('🧹 Nettoyage effectué');
                 }
             });
+
+            // Fermer le modal en cliquant à l'extérieur
+            document.getElementById('add-friend-modal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('add-friend-modal')) {
+                    hideAddFriendModal();
+                }
+            });
         });
 
-        // ===== OPTIMISATIONS PERFORMANCES =====
-        if (window.innerWidth <= 768) {
-            document.documentElement.style.setProperty('--transition-normal', '0.2s');
-            document.documentElement.style.setProperty('--transition-slow', '0.3s');
-        }
-
-        // Optimisation pour les appareils à performance réduite
-        if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) {
-            document.documentElement.style.setProperty('--transition-normal', '0.15s');
-            document.documentElement.style.setProperty('--transition-slow', '0.25s');
-        }
-
-        // ===== GESTION DES ERREURS GLOBALES =====
+        // ===== GESTION DES ERREURS =====
         window.addEventListener('error', (event) => {
             console.error('❌ Erreur JavaScript:', event.error);
-            showNotification('Une erreur est survenue. Veuillez recharger la page.', 'warning');
         });
 
         window.addEventListener('unhandledrejection', (event) => {
             console.error('❌ Promesse rejetée:', event.reason);
-            showNotification('Erreur de connexion. Vérifiez votre connexion internet.', 'warning');
         });
 
-        // ===== TEST DE CONNECTIVITÉ FIREBASE =====
-        function testFirebaseConnection() {
-            console.log('🔍 Test de connectivité Firebase...');
-            
-            try {
-                const testRef = ref(db, '.info/connected');
-                onValue(testRef, (snapshot) => {
-                    if (snapshot.val() === true) {
-                        console.log('✅ Firebase connecté');
-                    } else {
-                        console.log('❌ Firebase déconnecté');
-                        showNotification('Connexion Firebase instable', 'warning');
-                    }
-                });
-            } catch (error) {
-                console.error('❌ Erreur lors du test de connectivité:', error);
-                showNotification('Erreur de connexion Firebase', 'warning');
-            }
-        }
-
-        // Lancer le test de connectivité
-        testFirebaseConnection();
-
-        console.log('🎉 Script Firebase complètement chargé et prêt !');
+        console.log('🎉 Système d\'amis avec intégration Chat complètement initialisé !');
 
     </script>
 </body>
