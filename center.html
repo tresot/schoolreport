@@ -964,7 +964,7 @@
             <div class="header-right">
                 <div class="connection-status" id="connection-status">
                     <div class="connection-dot" id="connection-dot"></div>
-                    <span id="connection-text">Connexion...</span>
+                    <span id="connection-text">Connecté</span>
                 </div>
                 <div class="header-time" id="current-time">00:00:00</div>
                 <button class="theme-toggle" id="theme-toggle">
@@ -991,7 +991,7 @@
                 <h2 id="user-name">Chargement...</h2>
                 <div class="user-status">
                     <i class="fas fa-circle"></i>
-                    Connexion...
+                    En ligne
                 </div>
             </div>
             <div class="user-actions">
@@ -1536,7 +1536,7 @@
                 switch(status) {
                     case 'online':
                         dot.className = 'connection-dot';
-                        text.textContent = 'En ligne';
+                        text.textContent = 'Connecté';
                         break;
                     case 'offline':
                         dot.className = 'connection-dot offline';
@@ -1733,7 +1733,7 @@
                 this.setupEventListeners();
                 this.setupClock();
                 this.loadUserSettings(userData);
-                this.setupOptimizedOnlineUsersListener();
+                this.setupOnlineUsersListener();
                 window.performanceManager.setupCloudinaryLazyLoading();
             }
 
@@ -1752,22 +1752,16 @@
                 if (emailInput) emailInput.value = this.currentUser.email;
             }
 
-            setupOptimizedOnlineUsersListener() {
+            setupOnlineUsersListener() {
                 const presenceRef = ref(db, 'connectedUsers');
                 
-                // Check cache first
-                const cachedUsers = window.performanceManager.getCache('onlineUsers');
-                if (cachedUsers) {
-                    this.updateOnlineUsersList(cachedUsers);
-                }
+                console.log('👥 Initialisation du listener des utilisateurs en ligne');
                 
-                // Setup listener with debouncing
                 onValue(presenceRef, (snapshot) => {
-                    window.performanceManager.debounce('updateOnlineUsers', () => {
-                        const connectedUsers = snapshot.val() || {};
-                        window.performanceManager.setCache('onlineUsers', connectedUsers, 30000);
-                        this.updateOnlineUsersList(connectedUsers);
-                    }, 1000);
+                    const connectedUsers = snapshot.val() || {};
+                    console.log('👥 Utilisateurs en ligne:', Object.keys(connectedUsers).length);
+                    
+                    this.updateOnlineUsersList(connectedUsers);
                 });
             }
 
@@ -1777,6 +1771,9 @@
                 
                 if (!onlineUsersList || !onlineCount) return;
 
+                console.log('🔄 Mise à jour de la liste des utilisateurs en ligne');
+                
+                // Clear existing list
                 onlineUsersList.innerHTML = '';
                 
                 let count = 0;
@@ -1800,6 +1797,8 @@
                 if (onlineUsersSection) {
                     onlineUsersSection.style.display = count > 0 ? 'block' : 'none';
                 }
+                
+                console.log(`✅ ${count} utilisateurs en ligne affichés`);
             }
 
             async createOnlineUserElement(userData) {
@@ -1809,18 +1808,15 @@
                 const avatarDiv = document.createElement('div');
                 avatarDiv.className = 'online-user-avatar';
                 
-                // Optimisé: Images Cloudinary avec lazy loading
+                // Utilisation de l'image Cloudinary si disponible
                 if (userData.cloudinaryPublicId) {
                     const img = document.createElement('img');
-                    img.dataset.cloudinaryId = userData.cloudinaryPublicId;
-                    img.dataset.transformation = 'thumbnail';
+                    img.src = window.cloudinaryManager.getOptimizedUrl(userData.cloudinaryPublicId, 'thumbnail');
                     img.alt = userData.username;
-                    img.className = 'cloudinary-image loading';
+                    img.className = 'cloudinary-image';
                     avatarDiv.appendChild(img);
-                    
-                    // Trigger lazy loading
-                    window.performanceManager.setupCloudinaryLazyLoading();
                 } else {
+                    // Fallback avec l'initiale du nom
                     avatarDiv.textContent = userData.firstLetter || userData.username?.charAt(0)?.toUpperCase() || '?';
                 }
                 
@@ -1846,7 +1842,7 @@
                 const firstLetter = userData.username.charAt(0).toUpperCase();
                 if (avatarLetter) avatarLetter.textContent = firstLetter;
                 
-                // Optimisé: Charger l'image de profil depuis Cloudinary
+                // Charger l'image de profil depuis Cloudinary si disponible
                 if (userData.cloudinaryPublicId) {
                     console.log('🖼️ Chargement image profil depuis Cloudinary:', userData.cloudinaryPublicId);
                     await this.updateProfileImageFromCloudinary(userData.cloudinaryPublicId);
